@@ -75,7 +75,7 @@ process.metrics <- function(means, variances, truth) {
 j <- 1 # row counter for simulation metrics
 k <- 1 # row counter for ATEs
 
-for (i in 1:scenarios) {
+for (i in seq_len(scenarios)) {
   file.id <- paste0("N_AC", pc$N_AC[i], "meanX_AC", pc$meanX_AC[i])   
   ### Matching-adjusted indirect comparison (MAIC)
   load(paste0("Results/MAIC/means_", file.id, ".RData"))

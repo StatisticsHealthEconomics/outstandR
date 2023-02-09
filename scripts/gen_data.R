@@ -79,7 +79,7 @@ gen.data <- function(N, b_trt, b_X, b_EM, b_0, meanX, sdX, event_rate,
   return(as.data.frame(cbind(X, trt, y)))
 }
 
-for (i in 1:scenarios) {
+for (i in seq_len(scenarios)) {
   print(i)
   # simulate IPD covariates and outcome for A vs. C trial (S=1)
   IPD.AC <- replicate(n=N_sim, expr=gen.data(pc$N_AC[i], b_trt, b_X, b_EM, 
