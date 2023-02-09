@@ -1,15 +1,11 @@
-## This file processes the results of the simulation study and computes
-## and graphs the relevant performance metrics.
+# process the results of the simulation study and computes
+# and graphs the relevant performance metrics.
 
-rm(list=ls())
 
-# setwd("C:/Users/Antonio/Desktop/Gcomp_indirect_comparisons_simstudy") 
-load(file="binary_settings.RData")
-source("functions.R") # load functions to compute performance measures
+load(file="data/binary_settings.RData")
 
-# packages required for plotting simulation study results
-if(!require(ggplot2)) {install.packages("ggplot2"); library(ggplot2)}
-if(!require(gridExtra)) {install.packages("gridExtra"); library(gridExtra)}
+library(ggplot2)
+library(gridExtra)
 
 scenario.settings <- pc # parameter combinations
 scenarios <- nrow(pc) # number of scenarios
@@ -33,44 +29,6 @@ ate.table <- scenario.settings[rep(seq_len(nrow(scenario.settings)),
 ate.table["Method"] <- NA
 ate.table["ATE"] <- NA
 
-# function that computes performance metrics for a given method
-process.metrics <- function(means, variances, truth) {
-  # remove NAs (an issue for MAIC in Scenario 7, separation issues)
-  NAs <- is.na(means)
-  means <- means[!NAs]  
-  variances <- variances[!NAs]
-  number.NAs <- sum(NAs) # number that do not converge
-  replicates <- length(means)
-  bias.metric <- bias(means, truth)
-  bias.metric.mcse <- bias.mcse(means)
-  # # bias is equal to estimated marginal treatment effect (truth is zero)
-  # ate <- mean(means)
-  # ate.mcse <- mcse.estimate(means)
-  mae.metric <- mae(means, truth)
-  abs.err <- abs(means - truth)
-  mae.mcse <- mcse.estimate(abs.err)
-  mse.metric <- mse(means, truth) 
-  mse.metric.mcse <- mse.mcse(means, truth) 
-  # construct Wald-type interval estimates using normal distribution
-  lci <- means + qnorm(0.025)*sqrt(variances)
-  uci <- means + qnorm(0.975)*sqrt(variances)
-  lci.mean <- mean(lci)
-  lci.mcse <- mcse.estimate(lci)
-  uci.mean <- mean(uci)
-  uci.mcse <- mcse.estimate(uci)
-  cov <- coverage(lci, uci, truth)
-  cov.mcse <- coverage.mcse(cov, replicates)
-  empse.metric <- empse(means)
-  empse.metric.mcse <- empse.mcse(empse.metric, replicates)
-  vr <- var.ratio(means, sqrt(variances))
-  vr.mcse <- var.ratio.mcse(avg.se=mean(sqrt(variances)), 
-                            emp.se=empse.metric,
-                            var.avg.se=mcse.estimate(sqrt(variances))^2,
-                            var.emp.se=empse.metric.mcse^2)
-  list(bias.metric, bias.metric.mcse, lci.mean, lci.mcse, uci.mean, uci.mcse,
-       vr, vr.mcse, cov, cov.mcse, empse.metric, empse.metric.mcse,
-       mse.metric, mse.metric.mcse, mae.metric, mae.mcse, number.NAs)
-} 
 
 j <- 1 # row counter for simulation metrics
 k <- 1 # row counter for ATEs
@@ -81,7 +39,7 @@ for (i in seq_len(scenarios)) {
   load(paste0("Results/MAIC/means_", file.id, ".RData"))
   load(paste0("Results/MAIC/variances_", file.id, ".RData"))
   simulation.metrics[j,3] <- "MAIC"
-  maic.metrics <- process.metrics(means, variances, Delta.AB) 
+  maic.metrics <- process_metrics(means, variances, Delta.AB) 
   simulation.metrics[j,4:20] <- unlist(maic.metrics)
   ate.table[k:(k+replicates-1),3] <- "MAIC"
   ate.table[k:(k+replicates-1),4] <- means
@@ -91,7 +49,7 @@ for (i in seq_len(scenarios)) {
   load(paste0("Results/STC/means_", file.id, ".RData"))
   load(paste0("Results/STC/variances_", file.id, ".RData"))  
   simulation.metrics[j,3] <- "STC"
-  stc.metrics <- process.metrics(means, variances, Delta.AB)
+  stc.metrics <- process_metrics(means, variances, Delta.AB)
   simulation.metrics[j,4:20] <- unlist(stc.metrics)
   ate.table[k:(k+replicates-1),3] <- "STC"
   ate.table[k:(k+replicates-1),4] <- means
@@ -101,7 +59,7 @@ for (i in seq_len(scenarios)) {
   load(paste0("Results/GcompML/means_", file.id, ".RData"))
   load(paste0("Results/GcompML/variances_", file.id, ".RData"))    
   simulation.metrics[j,3] <- "G-comp (ML)"
-  gcomp.ml.metrics <- process.metrics(means, variances, Delta.AB)
+  gcomp.ml.metrics <- process_metrics(means, variances, Delta.AB)
   simulation.metrics[j,4:20] <- unlist(gcomp.ml.metrics)
   ate.table[k:(k+replicates-1),3] <- "G-comp (ML)"
   ate.table[k:(k+replicates-1),4] <- means
@@ -111,7 +69,7 @@ for (i in seq_len(scenarios)) {
   load(paste0("Results/GcompBayes/means_", file.id, ".RData"))
   load(paste0("Results/GcompBayes/variances_", file.id, ".RData"))
   simulation.metrics[j,3] <- "G-comp (Bayes)"
-  gcomp.bayes.metrics <- process.metrics(means, variances, Delta.AB)
+  gcomp.bayes.metrics <- process_metrics(means, variances, Delta.AB)
   simulation.metrics[j,4:20] <- unlist(gcomp.bayes.metrics)
   ate.table[k:(k+replicates-1),3] <- "G-comp (Bayes)"
   ate.table[k:(k+replicates-1),4] <- means
@@ -158,4 +116,4 @@ p1 <- ggplot(scenario.ates, aes(x=Method, y=ATE, fill=Method)) +
   # geom_text(x="MAIC", y=-4, label="-10.3",hjust = -0.3,color="red") +
   ylab("Marginal treatment effect")
 p2 <- tableGrob(display.table, theme=ttheme_minimal())
-grid.arrange(p1,p2,ncol=1) 
+grid.arrange(p1,p2,ncol=1)
