@@ -23,10 +23,10 @@ sdX <- 0.4             # standard deviation of each covariate (same for AC and B
 corX <- 0.2            # covariate correlation coefficient  
 
 # parameter combinations for each scenario
-pc <- expand.grid(N_AC = N_AC, meanX_AC = meanX_AC)
+pc_AC <- expand.grid(N = N_AC, meanX = meanX_AC)
 
-scenarios <- nrow(pc) # number of simulation scenarios
-save(pc, n_sim, allocation,
+scenarios <- nrow(pc_AC)    # number of simulation scenarios
+save(pc_AC, n_sim, allocation,
      file = here::here("data", "binary_settings.RData"))
 
 b_0 <- optim(par = 0,
@@ -36,50 +36,61 @@ b_0 <- optim(par = 0,
              method = "Brent",
              lower = -2, upper = 2)$par
 
+gen_data_args <-
+  tibble::lst(b_trt, b_X,
+              b_EM, b_0,
+              sdX, event_rate,
+              corX, allocation)
+
+# simulate IPD covariates and outcome for B vs. C trial (S=2)
+IPD.BC <-
+  replicate(n = n_sim,
+            expr = do.call(gen_data,
+                           c(N = N_BC, meanX = meanX_BC, gen_data_args)), 
+            simplify = FALSE)
+
+# summarize BC IPD as ALD
+ALD.BC <- lapply(1:n_sim, function(j) {
+  as.data.frame(cbind(
+    # aggregate data for the BC trial 
+    summarise(
+      IPD.BC[[j]],
+      mean.X1 = mean(X1),
+      mean.X2 = mean(X2),
+      mean.X3 = mean(X3),
+      mean.X4 = mean(X4),
+      sd.X1 = sd(X1),
+      sd.X2 = sd(X2),
+      sd.X3 = sd(X3),
+      sd.X4 = sd(X4)),
+    # summarize outcomes for the BC trial (treatment B)
+    filter(IPD.BC[[j]], trt == 1) %>%
+      summarise(y.B.sum = sum(y),
+                y.B.bar = mean(y),
+                N.B = n()),
+    # summarize outcomes for the BC trial (treatment C)
+    filter(IPD.BC[[j]], trt == 0) %>%
+      summarise(y.C.sum = sum(y),
+                y.C.bar = mean(y),
+                N.C = n())))   
+})
+
+save(IPD.BC, file = glue::glue("Data/IPD_BC.RData"))
+save(ALD.BC, file = glue::glue("Data/ALD_BC.RData"))  
+
+
+# simulate IPD covariates and outcome for A vs. C trial (S=1)
 for (i in seq_len(scenarios)) {
-  print(i)
   
-  # simulate IPD covariates and outcome for A vs. C trial (S=1)
-  IPD.AC <- replicate(n = n_sim,
-                      expr = gen_data(N = pc$N_AC[i], b_trt, b_X, b_EM, 
-                                      b_0, pc$meanX_AC[i], sdX, event_rate, 
-                                      corX, allocation),
-                      simplify = FALSE)
-  # simulate IPD covariates and outcome for B vs. C trial (S=2)
-  IPD.BC <- replicate(n = n_sim,
-                      expr = gen_data(N = N_BC, b_trt, b_X, b_EM, 
-                                      b_0, meanX_BC, sdX, event_rate, 
-                                      corX, allocation),
-                      simplify = FALSE)
-  # summarize BC IPD as ALD
-  ALD.BC <- lapply(1:n_sim, function(j) {
-    as.data.frame(cbind(
-      # aggregate data for the BC trial 
-      summarise(
-        IPD.BC[[j]],
-        mean.X1 = mean(X1),
-        mean.X2 = mean(X2),
-        mean.X3 = mean(X3),
-        mean.X4 = mean(X4),
-        sd.X1 = sd(X1),
-        sd.X2 = sd(X2),
-        sd.X3 = sd(X3),
-        sd.X4 = sd(X4)),
-      # summarize outcomes for the BC trial (treatment B)
-      filter(IPD.BC[[j]], trt == 1) %>%
-        summarise(y.B.sum = sum(y),
-                  y.B.bar = mean(y),
-                  N.B = n()),
-      # summarize outcomes for the BC trial (treatment C)
-      filter(IPD.BC[[j]], trt == 0) %>%
-        summarise(y.C.sum = sum(y),
-                  y.C.bar = mean(y),
-                  N.C = n())))    
-  })
+  params <- pc_AC[i, ]
+  file_id <- glue::glue("N_AC{params$N}meanX_AC{params$meanX}")
+  print(file_id)
   
-  file.id <- glue::glue("N_AC{pc$N_AC[i]}meanX_AC{pc$meanX_AC[i]}")
-  
-  save(IPD.AC, file = glue::glue("Data/IPD_AC_{file.id}.RData"))
-  save(IPD.BC, file = glue::glue("Data/IPD_BC_{file.id}.RData"))
-  save(ALD.BC, file = glue::glue("Data/ALD_BC_{file.id}.RData"))  
+  replicate(n = n_sim,
+            expr =
+              do.call(gen_data,
+                      c(N = params$N, meanX = params$meanX, gen_data_args)),
+            simplify = FALSE) |> 
+    save(file = glue::glue("Data/IPD_AC_{file_id}.RData"))
 }                       
+
