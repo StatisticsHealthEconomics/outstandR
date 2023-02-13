@@ -2,14 +2,14 @@
 
 
 library(dplyr)
-library(MASS) # sample/simulate covariates from multivariate normal
+library(MASS)  # sample/simulate covariates from multivariate normal
 
 set.seed(555)
 
 # Define simulation study parameters
 
-N_sim <- 2000     # number of Monte Carlo replicates
-allocation <- 2/3 # active treatment vs. placebo allocation ratio (2:1)
+n_sim <- 2000      # number of Monte Carlo replicates
+allocation <- 2/3  # active treatment vs. placebo allocation ratio (2:1)
 
 N_AC <- c(200, 400, 600) # number of subjects in the AC trial
 N_BC <- 600            # number of subjects in the BC trial 
@@ -26,7 +26,7 @@ corX <- 0.2            # covariate correlation coefficient
 pc <- expand.grid(N_AC = N_AC, meanX_AC = meanX_AC)
 
 scenarios <- nrow(pc) # number of simulation scenarios
-save(pc, N_sim, allocation,
+save(pc, n_sim, allocation,
      file = here::here("data", "binary_settings.RData"))
 
 b_0 <- optim(par = 0,
@@ -38,22 +38,23 @@ b_0 <- optim(par = 0,
 
 for (i in seq_len(scenarios)) {
   print(i)
+  
   # simulate IPD covariates and outcome for A vs. C trial (S=1)
-  IPD.AC <- replicate(n=N_sim,
-                      expr=gen_data(pc$N_AC[i], b_trt, b_X, b_EM, 
-                                    b_0, pc$meanX_AC[i], sdX, event_rate, 
-                                    corX, allocation),
-                      simplify=FALSE)
+  IPD.AC <- replicate(n = n_sim,
+                      expr = gen_data(N = pc$N_AC[i], b_trt, b_X, b_EM, 
+                                      b_0, pc$meanX_AC[i], sdX, event_rate, 
+                                      corX, allocation),
+                      simplify = FALSE)
   # simulate IPD covariates and outcome for B vs. C trial (S=2)
-  IPD.BC <- replicate(n=N_sim,
-                      expr=gen_data(N_BC, b_trt, b_X, b_EM, 
-                                    b_0, meanX_BC, sdX, event_rate, 
-                                    corX, allocation),
-                      simplify=FALSE)
+  IPD.BC <- replicate(n = n_sim,
+                      expr = gen_data(N = N_BC, b_trt, b_X, b_EM, 
+                                      b_0, meanX_BC, sdX, event_rate, 
+                                      corX, allocation),
+                      simplify = FALSE)
   # summarize BC IPD as ALD
-  ALD.BC <- lapply(1:N_sim, function(j) {
+  ALD.BC <- lapply(1:n_sim, function(j) {
     as.data.frame(cbind(
-      # aggregate the data for the BC trial 
+      # aggregate data for the BC trial 
       summarise(
         IPD.BC[[j]],
         mean.X1 = mean(X1),
@@ -64,17 +65,17 @@ for (i in seq_len(scenarios)) {
         sd.X2 = sd(X2),
         sd.X3 = sd(X3),
         sd.X4 = sd(X4)),
-      # summarize the outcomes for the BC trial (treatment B)
+      # summarize outcomes for the BC trial (treatment B)
       filter(IPD.BC[[j]], trt == 1) %>%
-        summarise(y.B.sum=sum(y),
+        summarise(y.B.sum = sum(y),
                   y.B.bar = mean(y),
                   N.B = n()),
-      # summarize the outcomes for the BC trial (treatment C)
+      # summarize outcomes for the BC trial (treatment C)
       filter(IPD.BC[[j]], trt == 0) %>%
-        summarise(y.C.sum=sum(y),
+        summarise(y.C.sum = sum(y),
                   y.C.bar = mean(y),
                   N.C = n())))    
-  } )
+  })
   
   file.id <- glue::glue("N_AC{pc$N_AC[i]}meanX_AC{pc$meanX_AC[i]}")
   
@@ -82,4 +83,3 @@ for (i in seq_len(scenarios)) {
   save(IPD.BC, file = glue::glue("Data/IPD_BC_{file.id}.RData"))
   save(ALD.BC, file = glue::glue("Data/ALD_BC_{file.id}.RData"))  
 }                       
-                      
