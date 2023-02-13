@@ -55,7 +55,6 @@ outcome.model <-
 hat.Delta.AC <- coef(outcome.model)["trt"]
 # estimated variance for A vs C from model fit
 hat.var.Delta.AC <- vcov(outcome.model)["trt", "trt"]
-# B vs C marginal treatment effect estimated from reported event counts
 hat.Delta.BC <- marginal_treatment_effect(BC.ALD)
 
 hat.var.Delta.BC <- marginal_variance(BC.ALD)
