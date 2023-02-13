@@ -62,10 +62,10 @@ mae <- function(theta.hat, theta) {
 
 #' Monte Carlo SE of any continuous performance metric
 #' 
-mcse.estimate <- function(perf.measure) {
-  nsim <- length(perf.measure)
-  perf.measure.mean <- sum(perf.measure)/nsim
-  sqrt(sum((perf.measure - perf.measure.mean)^2)/(nsim*(nsim-1)))
+mcse.estimate <- function(pm) {
+  nsim <- length(pm)
+  pm_mean <- sum(pm)/nsim
+  sqrt(sum((pm - pm_mean)^2)/(nsim*(nsim-1)))
 }
 
 #' Empirical standard error 
