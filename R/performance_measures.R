@@ -26,7 +26,8 @@ bias.mcse <- function(theta.hat) {
 #' 
 coverage <- function(theta.hat.low, theta.hat.upp, theta) {
   nsim <- length(theta.hat.low)
-  in_range <- ifelse(theta>=theta.hat.low & theta<=theta.hat.upp, 1, 0)
+  theta_inside_range <- theta >= theta.hat.low & theta <= theta.hat.upp
+  in_range <- ifelse(theta_inside_range, 1, 0)
   sum(in_range)/nsim
 }
 
