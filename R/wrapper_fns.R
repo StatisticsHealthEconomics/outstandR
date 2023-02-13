@@ -1,8 +1,12 @@
 
-### Matching-adjusted indirect comparison (MAIC)
+#' Matching-adjusted indirect comparison (MAIC)
+#'
+#' @param data.AC AC individual patient-level data
+#' @param data.BC BC aggregate-level data  
+#' @param resamples number of resamples for non-parametric bootstrap
+#'
 maic.wrapper <- function(data.AC, data.BC, resamples) { 
-  # Inputs: data.AC - AC individual patient-level data; data.BC - BC aggregate-level data  
-  # resamples - number of resamples for non-parametric bootstrap
+
   maic.boot <- function(data, indices) {
     dat <- data[indices,]
     x.EM <- dat[,c("X1","X2")] # AC effect modifiers 
@@ -34,9 +38,13 @@ maic.wrapper <- function(data.AC, data.BC, resamples) {
   list(hat.Delta.AB, hat.var.Delta.AB)
 }  
 
-### Simulated treatment comparison (STC); conventional outcome regression approach
+#' Simulated treatment comparison (STC); conventional outcome regression approach
+#'
+#' @param data.AC AC individual patient-level data
+#' @param data.BC BC aggregate-level data
+#'
 stc.wrapper <- function(data.AC, data.BC) {
-  # Inputs: data.AC - AC individual patient-level data; data.BC - BC aggregate-level data
+
   # fit outcome regression model: regression of outcome on treatment and covariates
   # IPD effect modifiers centered at the mean BC values 
   # purely prognostic variables are included but not centered
