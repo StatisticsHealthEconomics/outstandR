@@ -38,6 +38,7 @@ for (i in seq_len(scenarios)) {
 }
 
 replicates <- N_sim # number of Monte Carlo replicates per scenario
+repl_seq <- 1:replicates
 
 # set up cluster for parallel computing
 num.cores <- detectCores()-1
@@ -55,7 +56,6 @@ comb <- function(x, ...) {
          function(i) c(x[[i]], lapply(list(...), function(y) y[[i]])))
 }
 
-repl_seq <- 1:replicates
 
 # run population adjustment methods
 # for all replicates/scenarios in parallel
