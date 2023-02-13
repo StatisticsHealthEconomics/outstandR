@@ -12,6 +12,14 @@ set.seed(555)
 AC.IPD <- read.csv(here::here("data", "AC_IPD.csv"))  # AC patient-level data
 BC.ALD <- read.csv(here::here("data", "BC_ALD.csv"))  # BC aggregate-level data
 
+# marginal effect variance using the delta method
+marginal_variance <- function(x)
+  1/x$y.C.sum + 1/(x$N.C - x$y.C.sum) + 1/x$y.B.sum + 1/(x$N.B - x$y.B.sum)
+
+# B vs C marginal treatment effect from reported event counts
+marginal_treatment_effect <- function(x)
+  log(x$y.B.sum*(x$N.C - x$y.C.sum)/(x$y.C.sum*(x$N.B - x$y.B.sum)))
+
 ### MAIC ###
 
 # non-parametric bootstrap with 1000 resamples
@@ -23,20 +31,15 @@ hat.Delta.AC <- mean(boot.object$t)
 # bootstrap variance of A vs C treatment effect estimate
 hat.var.Delta.AC <- var(boot.object$t)
 
-# B vs C marginal treatment effect from reported event counts
-hat.Delta.BC <-
-  with(BC.ALD, log(y.B.sum*(N.C - y.C.sum)/(y.C.sum*(N.B - y.B.sum))))
+hat.Delta.BC <- marginal_treatment_effect(BC.ALD)
 
-# B vs C marginal effect variance using the delta method
-hat.var.Delta.BC <-
-  with(BC.ALD, 1/y.C.sum+1/(N.C - y.C.sum) + 1/y.B.sum+1/(N.B - y.B.sum))
+hat.var.Delta.BC <- marginal_variance(BC.ALD)
 
 hat.Delta.AB <- hat.Delta.AC - hat.Delta.BC
 hat.var.Delta.AB <- hat.var.Delta.AC + hat.var.Delta.BC
 
 # construct Wald-type normal distribution-based confidence interval
-uci.Delta.AB <- hat.Delta.AB + qnorm(0.975)*sqrt(hat.var.Delta.AB)
-lci.Delta.AB <- hat.Delta.AB + qnorm(0.025)*sqrt(hat.var.Delta.AB)
+ci.Delta.AB <- hat.Delta.AB + qnorm(c(0.025, 0.975))*sqrt(hat.var.Delta.AB)
 
 ### STC (conventional outcome regression) ###
 
@@ -53,18 +56,15 @@ hat.Delta.AC <- coef(outcome.model)["trt"]
 # estimated variance for A vs C from model fit
 hat.var.Delta.AC <- vcov(outcome.model)["trt", "trt"]
 # B vs C marginal treatment effect estimated from reported event counts
-hat.Delta.BC <-
-  with(BC.ALD, log(y.B.sum*(N.C - y.C.sum)/(y.C.sum*(N.B - y.B.sum))))
+hat.Delta.BC <- marginal_treatment_effect(BC.ALD)
 
-# B vs C marginal treatment effect variance using the delta method
-hat.var.Delta.BC <-
-  with(BC.ALD, 1/y.C.sum + 1/(N.C - y.C.sum) + 1/y.B.sum + 1/(N.B - y.B.sum))
+hat.var.Delta.BC <- marginal_variance(BC.ALD)
+
 hat.Delta.AB <- hat.Delta.AC - hat.Delta.BC
 hat.var.Delta.AB <- hat.var.Delta.AC + hat.var.Delta.BC
 
 # construct Wald-type normal distribution-based confidence interval
-uci.Delta.AB <- hat.Delta.AB + qnorm(0.975)*sqrt(hat.var.Delta.AB)
-lci.Delta.AB <- hat.Delta.AB + qnorm(0.025)*sqrt(hat.var.Delta.AB)
+ci.Delta.AB <- hat.Delta.AB + qnorm(c(0.025, 0.975))*sqrt(hat.var.Delta.AB)
 
 ### Parametric G-computation with maximum-likelihood estimation ###
 
@@ -96,13 +96,9 @@ hat.Delta.AC <- mean(boot.object$t)
 # bootstrap variance of A vs C treatment effect estimate
 hat.var.Delta.AC <- var(boot.object$t)
 
-# marginal log-odds ratio for B vs C from reported event counts
-hat.Delta.BC <-
-  with(BC.ALD,log(y.B.sum*(N.C - y.C.sum)/(y.C.sum*(N.B - y.B.sum))))
+hat.Delta.BC <- marginal_treatment_effect(BC.ALD)
 
-# variance of B vs C using delta method
-hat.var.Delta.BC <-
-  with(BC.ALD,1/y.C.sum + 1/(N.C - y.C.sum) + 1/y.B.sum + 1/(N.B - y.B.sum))
+hat.var.Delta.BC <- marginal_variance(BC.ALD)
 
 # marginal treatment effect for A vs B
 hat.Delta.AB <- hat.Delta.AC - hat.Delta.BC
@@ -110,8 +106,7 @@ hat.Delta.AB <- hat.Delta.AC - hat.Delta.BC
 hat.var.Delta.AB <- hat.var.Delta.AC + hat.var.Delta.BC
 
 # construct Wald-type normal distribution-based confidence interval
-uci.Delta.AB <- hat.Delta.AB + qnorm(0.975)*sqrt(hat.var.Delta.AB)
-lci.Delta.AB <- hat.Delta.AB + qnorm(0.025)*sqrt(hat.var.Delta.AB)
+ci.Delta.AB <- hat.Delta.AB + qnorm(c(0.025, 0.975))*sqrt(hat.var.Delta.AB)
 
 ### Bayesian G-computation with MCMC ###
 
@@ -134,6 +129,7 @@ mvd <- mvdc(copula=cop, margins=c("norm", "norm", # Gaussian marginals
 # simulated BC pseudo-population of size 1000
 x_star <- as.data.frame(rMvdc(1000, mvd))
 colnames(x_star) <- c("X1", "X2", "X3", "X4")
+
 # outcome logistic regression fitted to IPD using MCMC (Stan)
 outcome.model <- stan_glm(y ~ X3+X4+trt*X1+trt*X2,
                           data = AC.IPD,
@@ -144,27 +140,24 @@ outcome.model <- stan_glm(y ~ X3+X4+trt*X1+trt*X2,
 data.trtA <- data.trtC <- x_star
 
 # intervene on treatment while keeping set covariates fixed
-data.trtA$trt <- 1 # dataset where everyone receives treatment A
-data.trtC$trt <- 0 # dataset where all observations receive C
+data.trtA$trt <- 1 # everyone receives treatment A
+data.trtC$trt <- 0 # all observations receive C
 
 # draw binary responses from posterior predictive distribution
-# matrix of posterior predictive draws under A
 y.star.A <- posterior_predict(outcome.model, newdata=data.trtA)
-# matrix of posterior predictive draws under C
 y.star.C <- posterior_predict(outcome.model, newdata=data.trtC)
 
 # compute marginal log-odds ratio for A vs C for each MCMC sample
 # by transforming from probability to linear predictor scale
 hat.delta.AC <- qlogis(rowMeans(y.star.A)) - qlogis(rowMeans(y.star.C))
-hat.Delta.AC <- mean(hat.delta.AC) # average over samples
-hat.var.Delta.AC <- var(hat.delta.AC) # sample variance
+hat.Delta.AC <- mean(hat.delta.AC)     # average over samples
+hat.var.Delta.AC <- var(hat.delta.AC)  # sample variance
 
 # B vs C from reported aggregate event counts in contingency table
 hat.Delta.BC <-
   with(BC.ALD, log(y.B.sum*(N.C - y.C.sum)/(y.C.sum*(N.B - y.B.sum))))
-# B vs C variance using the delta method
-hat.var.Delta.BC <-
-  with(BC.ALD, 1/y.C.sum + 1/(N.C - y.C.sum) + 1/y.B.sum + 1/(N.B - y.B.sum))
+
+hat.var.Delta.BC <- marginal_variance(BC.ALD)
 
 # marginal treatment effect for A vs B
 hat.Delta.AB <- hat.Delta.AC - hat.Delta.BC
@@ -172,5 +165,4 @@ hat.Delta.AB <- hat.Delta.AC - hat.Delta.BC
 hat.var.Delta.AB <- hat.var.Delta.AC + hat.var.Delta.BC
 
 # construct Wald-type normal distribution-based confidence interval
-uci.Delta.AB <- hat.Delta.AB + qnorm(0.975)*sqrt(hat.var.Delta.AB)
-lci.Delta.AB <- hat.Delta.AB + qnorm(0.025)*sqrt(hat.var.Delta.AB)
+ci.Delta.AB <- hat.Delta.AB + qnorm(c(0.025, 0.975))*sqrt(hat.var.Delta.AB)

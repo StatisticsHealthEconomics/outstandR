@@ -31,59 +31,61 @@ j <- 1 # row counter for simulation metrics
 k <- 1 # row counter for ATEs
 
 for (i in seq_len(n_scenarios)) {
-  file.id <- paste0("N_AC", pc$N_AC[i], "meanX_AC", pc$meanX_AC[i])
+  file_id <- paste0("N_AC", pc$N_AC[i], "meanX_AC", pc$meanX_AC[i])
   
   ### Matching-adjusted indirect comparison (MAIC)
-  load(paste0("Results/MAIC/means_", file.id, ".RData"))
-  load(paste0("Results/MAIC/variances_", file.id, ".RData"))
+  load(paste0("Results/MAIC/means_", file_id, ".RData"))
+  load(paste0("Results/MAIC/variances_", file_id, ".RData"))
   
-  simulation.metrics[j,3] <- "MAIC"
+  simulation.metrics[j, 3] <- "MAIC"
   maic.metrics <- process_metrics(means, variances, Delta.AB) 
-  simulation.metrics[j,4:20] <- unlist(maic.metrics)
-  ate.table[k:(k+replicates-1),3] <- "MAIC"
-  ate.table[k:(k+replicates-1),4] <- means
+  simulation.metrics[j, 4:20] <- unlist(maic.metrics)
+  ate.table[k:(k + replicates - 1), 3] <- "MAIC"
+  ate.table[k:(k + replicates - 1), 4] <- means
   j <- j+1
   k <- k + replicates
   
   ### Simulated treatment comparison (STC); conventional outcome regression approach
-  load(paste0("Results/STC/means_", file.id, ".RData"))
-  load(paste0("Results/STC/variances_", file.id, ".RData"))
+  load(paste0("Results/STC/means_", file_id, ".RData"))
+  load(paste0("Results/STC/variances_", file_id, ".RData"))
   
-  simulation.metrics[j,3] <- "STC"
+  simulation.metrics[j, 3] <- "STC"
   stc.metrics <- process_metrics(means, variances, Delta.AB)
-  simulation.metrics[j,4:20] <- unlist(stc.metrics)
-  ate.table[k:(k+replicates-1),3] <- "STC"
-  ate.table[k:(k+replicates-1),4] <- means
+  simulation.metrics[j, 4:20] <- unlist(stc.metrics)
+  ate.table[k:(k + replicates - 1), 3] <- "STC"
+  ate.table[k:(k + replicates - 1), 4] <- means
   j <- j+1
   k <- k + replicates  
   
   ### G-computation with maximum-likelihood estimation and bootstrapping
-  load(paste0("Results/GcompML/means_", file.id, ".RData"))
-  load(paste0("Results/GcompML/variances_", file.id, ".RData"))
+  load(paste0("Results/GcompML/means_", file_id, ".RData"))
+  load(paste0("Results/GcompML/variances_", file_id, ".RData"))
   
-  simulation.metrics[j,3] <- "G-comp (ML)"
+  simulation.metrics[j, 3] <- "G-comp (ML)"
   gcomp.ml.metrics <- process_metrics(means, variances, Delta.AB)
-  simulation.metrics[j,4:20] <- unlist(gcomp.ml.metrics)
-  ate.table[k:(k+replicates-1),3] <- "G-comp (ML)"
-  ate.table[k:(k+replicates-1),4] <- means
+  simulation.metrics[j, 4:20] <- unlist(gcomp.ml.metrics)
+  ate.table[k:(k + replicates - 1), 3] <- "G-comp (ML)"
+  ate.table[k:(k + replicates - 1), 4] <- means
   j <- j+1
   k <- k + replicates
   
   ### Bayesian G-computation
-  load(paste0("Results/GcompBayes/means_", file.id, ".RData"))
-  load(paste0("Results/GcompBayes/variances_", file.id, ".RData"))
+  load(paste0("Results/GcompBayes/means_", file_id, ".RData"))
+  load(paste0("Results/GcompBayes/variances_", file_id, ".RData"))
   
-  simulation.metrics[j,3] <- "G-comp (Bayes)"
+  simulation.metrics[j, 3] <- "G-comp (Bayes)"
   gcomp.bayes.metrics <- process_metrics(means, variances, Delta.AB)
-  simulation.metrics[j,4:20] <- unlist(gcomp.bayes.metrics)
-  ate.table[k:(k+replicates-1),3] <- "G-comp (Bayes)"
-  ate.table[k:(k+replicates-1),4] <- means
+  simulation.metrics[j, 4:20] <- unlist(gcomp.bayes.metrics)
+  ate.table[k:(k + replicates - 1), 3] <- "G-comp (Bayes)"
+  ate.table[k:(k + replicates - 1), 4] <- means
   j <- j+1
   k <- k + replicates      
 }
 
 # Save simulation study performance metrics
-write.csv(simulation.metrics, file = "Analysis/scenarios.csv", row.names = FALSE)
+write.csv(simulation.metrics,
+          file = here::here("Analysis/scenarios.csv"),
+          row.names = FALSE)
 
 ########
 ## plot
