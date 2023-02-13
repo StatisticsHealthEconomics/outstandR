@@ -12,7 +12,7 @@ library(boot)
 # for simulating BC trial covariates from multivariate Gaussian copula
 library(copula)
 
-set.seed(444) # set seed for reproducibility
+set.seed(444)
 scenarios <- nrow(pc) # number of simulation scenarios
 
 # settings for the methods
