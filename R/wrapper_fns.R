@@ -55,11 +55,15 @@ stc.wrapper <- function(data.AC, data.BC) {
   list(hat.Delta.AB, hat.var.Delta.AB)
 }
 
-### G-computation with maximum-likelihood estimation and bootstrapping
+#' G-computation with maximum-likelihood estimation and bootstrapping
+#'
+#' @param data.AC AC individual patient-level data
+#' @param data.BC BC aggregate-level data
+#' @param resamples number of resamples for non-parametric bootstrap
+#' @param N_star size of simulated BC pseudo-population (high for small Monte Carlo error)
+#'
 gcomp.ml.wrapper <- function(data.AC, data.BC, resamples, N_star) {
-  # Inputs: data.AC - AC individual patient-level data; data.BC - BC aggregate-level data;
-  # resamples - number of resamples for non-parametric bootstrap
-  # N_star - size of simulated BC pseudo-population (high for small Monte Carlo error)
+
   # matrix of pairwise correlations between IPD covariates  
   rho <- cor(data.AC[,c("X1","X2","X3","X4")]) 
   #  covariate simulation for comparator trial using copula package
@@ -111,12 +115,15 @@ gcomp.ml.wrapper <- function(data.AC, data.BC, resamples, N_star) {
   list(hat.Delta.AB, hat.var.Delta.AB)
 }  
 
-### Bayesian G-computation
+#' Bayesian G-computation
+#'
+#' @param data.AC AC individual patient-level data
+#' @param data.BC BC aggregate-level data
+#' @param n.chains,burnin,iters MCMC information
+#' @param N_star size of simulated BC pseudo-population (high for small Monte Carlo error)
+#'
 gcomp.bayes.wrapper <- function(data.AC, data.BC, n.chains, warmup, iters,
                                 N_star) {
-  # Inputs: data.AC - AC individual patient-level data; data.BC - BC aggregate-level data;
-  # n.chains, burnin, iters - MCMC info
-  # N_star - size of simulated BC pseudo-population (high for small Monte Carlo error)
   # matrix of pairwise correlations between IPD covariates  
   rho <- cor(data.AC[,c("X1","X2","X3","X4")]) 
   #  covariate simulation for comparator trial using copula package
