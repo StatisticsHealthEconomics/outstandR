@@ -1,29 +1,35 @@
 
 #' Estimate MAIC weights 
 #' 
-#' @param X.EM centred S=1 effect modifiers
-#' @return estimated weights
+#' @references J. E. Signorovitch et al,
+#' Comparative Effectiveness Without Head-to-Head Trials:
+#' A Method for Matching-Adjusted Indirect Comparisons Applied
+#' to Psoriasis Treatment with Adalimumab or Etanercept,
+#' Pharmacoeconomics 2010; 28 (10): 935-945
+#' 
+#' @param X.EM Centred S=1 effect modifiers; matrix or data frame
+#' @return Estimated weights for each individual; vector
 #' 
 maic <- function(X.EM) {
-  # objective function to be minimized for standard method of moments MAIC
-  Q <- function(alpha, X) {
-    sum(exp(X %*% alpha))
+  # objective function to minimize for standard method of moments MAIC
+  Q <- function(beta, X) {
+    sum(exp(X %*% beta))
   }
   
   X.EM <- as.matrix(X.EM)
   
-  N <- nrow(X.EM)
-  K.EM <- ncol(X.EM)
-  init <- rep(1, K.EM) # arbitrary starting point for the optimizer
-  # objective function minimized using BFGS
+  N <- nrow(X.EM)    # number of individuals
+  K <- ncol(X.EM)    # number of covariates
+  init <- rep(1, K)  # arbitrary starting point for optimizer
   Q.min <- optim(fn=Q, X=X.EM, par=init, method="BFGS")
   
   # finite solution is the logistic regression parameters
-  hat_alpha <- Q.min$par
+  hat_beta <- Q.min$par
   log.hat_w <- rep(0, N)
   
-  for (k in seq_len(K.EM)) {
-    log.hat_w <- log.hat_w + hat_alpha[k]*X.EM[, k]
+  # linear eqn for logistic
+  for (k in seq_len(K)) {
+    log.hat_w <- log.hat_w + hat_beta[k]*X.EM[, k]
   }
   
   exp(log.hat_w)
@@ -38,7 +44,7 @@ maic <- function(X.EM) {
 #' 
 maic.boot <- function(data, indices) {
   dat <- data[indices, ]  # bootstrap sample
-  X.EM <- dat[,c("X1","X2")]  # AC effect modifiers
+  X.EM <- dat[, c("X1","X2")]  # AC effect modifiers
 
   ##TODO: this seems odd. where is BC.ALD passed from?
   ##      the call uses AC.IPD data

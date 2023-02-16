@@ -81,9 +81,10 @@ marginal_treatment_effect <- function(x)
 
 ## MAIC
 
-Using the individual level data firstly perform non-parametric bootstrap of the `maic.boot` function with `R` = 1000 replicates.
-This function fits treatment coefficient for the  marginal effect for A vs C.
-The returned value is an object of class `boot`.
+Using the individual level data firstly perform non-parametric bootstrap
+of the `maic.boot` function with `R` = 1000 replicates. This function
+fits treatment coefficient for the marginal effect for A vs C. The
+returned value is an object of class `boot`.
 
 ```{r}
 AC_maic_boot <- boot::boot(data=AC.IPD, statistic=maic.boot, R=1000)
