@@ -6,8 +6,8 @@
 #' 
 maic <- function(X.EM) {
   # objective function to be minimized for standard method of moments MAIC
-  Q <- function(init, X) {
-    sum(exp(X %*% init))
+  Q <- function(alpha, X) {
+    sum(exp(X %*% alpha))
   }
   
   X.EM <- as.matrix(X.EM)
