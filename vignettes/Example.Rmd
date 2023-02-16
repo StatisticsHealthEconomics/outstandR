@@ -20,15 +20,13 @@ knitr::opts_chunk$set(
 ## Introduction
 
 ```{r setup}
-
 library(boot)      # non-parametric bootstrap in MAIC and ML G-computation
 library(copula)    # simulating BC covariates from Gaussian copula
 library(rstanarm)  # fit outcome regression, draw outcomes in Bayesian G-computation
 library(mimR)
 ```
 
-Implementing for MAIC, STC, G-computation methods on a simulated
-example.
+Implementing for MAIC, STC, G-computation methods on a simulated example.
 
 ```{r load-data}
 set.seed(555)
@@ -49,8 +47,8 @@ This data consists of the following.
 
 -   `mean.X*`: mean
 -   `sd.X*`: standard deviation
--   `y.*.sum`: total number of events \* `N.*`: total number of
-    individuals
+-   `y.*.sum`: total number of events
+-   `N.*`: total number of individuals
 
 ```{r}
 head(AC.IPD)
