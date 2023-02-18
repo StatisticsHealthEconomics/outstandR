@@ -5,7 +5,7 @@
 #' 
 gcomp_ml.boot <- function(data, indices,
                           formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")) {
-  dat <- data[indices,]
+  dat <- data[indices, ]
   gcomp_ml_log_odds_ratio(formula, dat) 
 }
 
