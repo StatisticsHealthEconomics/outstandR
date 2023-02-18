@@ -42,7 +42,7 @@ maic_weights <- function(X.EM) {
 #' @param indices vector of indices which define the bootstrap sample
 #' @return fitted treatment coefficient is marginal effect for A vs C
 #' 
-maic.boot <- function(data, indices) {
+maic.boot <- function(data, indices, formula) {
   dat <- data[indices, ]  # bootstrap sample
   X.EM <- dat[, c("X1","X2")]  # AC effect modifiers
 
@@ -58,7 +58,7 @@ maic.boot <- function(data, indices) {
   hat_w <- maic_weights(X.EM)
   
   # fit weighted logistic regression model
-  outcome.fit <- glm(y ~ trt,
+  outcome.fit <- glm(formula,
                      family = "quasibinomial",
                      weights = hat_w,
                      data = dat)
@@ -69,8 +69,10 @@ maic.boot <- function(data, indices) {
 
 #' marginal A vs C treatment effect estimates
 #'
-maic_boot_stats <- function(data, R = 1000) {
-  maic_boot <- boot::boot(data=AC.IPD, statistic=maic.boot, R=R)
+maic_boot_stats <- function(formula = as.formula("y ~ trt"),
+                            data, R = 1000) {
+  maic_boot <- boot::boot(data=AC.IPD, statistic=maic.boot, R=R,
+                          formula = formula)
   
   list(mean =  mean(maic_boot$t),
        var = var(maic_boot$t))

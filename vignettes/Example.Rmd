@@ -96,22 +96,13 @@ IPD effect modifiers centred at the mean BC values
 purely prognostic variables are included but not centred.
 
 ```{r}
-fit_stc <-
-  glm(y ~ X3 + X4 + trt*I(X1-BC.ALD$mean.X1) + trt*I(X2-BC.ALD$mean.X2),
-      data = AC.IPD,
-      family = binomial)
-
-# fitted treatment coefficient is relative A vs C conditional effect
-hat_delta_stc_AC <- coef(fit_stc)["trt"]
-
-# estimated variance for A vs C from model fit
-hat_var_delta_stc_AC <- vcov(fit_stc)["trt", "trt"]
+AC_hat_stc <- stc_stats(data = AC.IPD)
 
 hat.mean.Delta.BC <- marginal_treatment_effect(BC.ALD)
 hat.var.Delta.BC <- marginal_variance(BC.ALD)
 
-hat.Delta.AB <- hat_delta_stc_AC - hat.mean.Delta.BC
-hat.var.Delta.AB <- hat_var_delta_stc_AC + hat.var.Delta.BC
+hat.Delta.AB <- AC_hat_stc$mean - hat.mean.Delta.BC
+hat.var.Delta.AB <- AC_hat_stc$var + hat.var.Delta.BC
 
 # construct Wald-type normal distribution-based confidence interval
 ci.Delta.AB <- hat.Delta.AB + qnorm(c(0.025, 0.975))*sqrt(hat.var.Delta.AB)
