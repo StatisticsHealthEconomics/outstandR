@@ -10,7 +10,7 @@
 #' @param X.EM Centred S=1 effect modifiers; matrix or data frame
 #' @return Estimated weights for each individual; vector
 #' 
-maic <- function(X.EM) {
+maic_weights <- function(X.EM) {
   # objective function to minimize for standard method of moments MAIC
   Q <- function(beta, X) {
     sum(exp(X %*% beta))
@@ -55,7 +55,7 @@ maic.boot <- function(data, indices) {
   X.EM$X1 <- X.EM$X1 - theta$mean.X1
   X.EM$X2 <- X.EM$X2 - theta$mean.X2
   
-  hat_w <- maic(X.EM)
+  hat_w <- maic_weights(X.EM)
   
   # fit weighted logistic regression model
   outcome.fit <- glm(y ~ trt,
@@ -65,3 +65,14 @@ maic.boot <- function(data, indices) {
   
   coef(outcome.fit)["trt"]
 }
+
+
+#' marginal A vs C treatment effect estimates
+#'
+maic_boot_stats <- function(data, R = 1000) {
+  maic_boot <- boot::boot(data=AC.IPD, statistic=maic.boot, R=R)
+  
+  list(mean =  mean(maic_boot$t),
+       var = var(maic_boot$t))
+}
+

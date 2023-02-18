@@ -64,80 +64,74 @@ $$
 and the marginal treatment effect, defined as
 
 $$
-\log(n_B n_{\bar{C}})  -log(n_C n_{\bar{B}})
+\log(n_B n_{\bar{C}}) - log(n_C n_{\bar{B}})
 $$
 
-```{r}
-# marginal effect variance using the delta method
-marginal_variance <- function(x)
-  1/x$y.C.sum + 1/(x$N.C - x$y.C.sum) + 1/x$y.B.sum + 1/(x$N.B - x$y.B.sum)
-
-# B vs C marginal treatment effect from reported event counts
-marginal_treatment_effect <- function(x)
-  log(x$y.B.sum*(x$N.C - x$y.C.sum)) - log((x$y.C.sum*(x$N.B - x$y.B.sum)))
-```
 
 ## MAIC
 
 Using the individual level data firstly perform non-parametric bootstrap
 of the `maic.boot` function with `R` = 1000 replicates. This function
-fits treatment coefficient for the marginal effect for A vs C. The
-returned value is an object of class `boot`.
+fits treatment coefficient for the marginal effect for $A$ vs $C$.
+The returned value is an object of class `boot`. Then calculate the bootstrap mean and variance
+in the wrapper function `maic_boot_stats`.
 
 ```{r}
-AC_maic_boot <- boot::boot(data=AC.IPD, statistic=maic.boot, R=1000)
-```
+AC_hat_Delta_stats <- maic_boot_stats(data = AC.IPD) 
 
-```{r}
-# bootstrap mean of marginal A vs C treatment effect estimate
-hat.Delta.AC <- mean(AC_maic_boot$t)
-
-# bootstrap variance of A vs C treatment effect estimate
-hat.var.Delta.AC <- var(AC_maic_boot$t)
-
-hat.Delta.BC <- marginal_treatment_effect(BC.ALD)
-
+hat.mean.Delta.BC <- marginal_treatment_effect(BC.ALD)
 hat.var.Delta.BC <- marginal_variance(BC.ALD)
 
-hat.Delta.AB <- hat.Delta.AC - hat.Delta.BC
-hat.var.Delta.AB <- hat.var.Delta.AC + hat.var.Delta.BC
+hat.mean.Delta.AB <- AC_hat_Delta_stats$mean - hat.mean.Delta.BC
+hat.var.Delta.AB <- AC_hat_Delta_stats$var + hat.var.Delta.BC
 
 # construct Wald-type normal distribution-based confidence interval
-ci.Delta.AB <- hat.Delta.AB + qnorm(c(0.025, 0.975))*sqrt(hat.var.Delta.AB)
+ci.Delta.AB <- hat.mean.Delta.AB + qnorm(c(0.025, 0.975))*sqrt(hat.var.Delta.AB)
+```
 
-### STC (conventional outcome regression) ###
+## STC (conventional outcome regression)
 
-# fit regression model of outcome on treatment and covariates
-# IPD effect modifiers centred at the mean BC values
-# purely prognostic variables are included but not centred
-outcome.model <-
+Fit regression model of outcome on treatment and covariates
+IPD effect modifiers centred at the mean BC values
+purely prognostic variables are included but not centred.
+
+```{r}
+fit_stc <-
   glm(y ~ X3 + X4 + trt*I(X1-BC.ALD$mean.X1) + trt*I(X2-BC.ALD$mean.X2),
       data = AC.IPD,
       family = binomial)
 
 # fitted treatment coefficient is relative A vs C conditional effect
-hat.Delta.AC <- coef(outcome.model)["trt"]
-# estimated variance for A vs C from model fit
-hat.var.Delta.AC <- vcov(outcome.model)["trt", "trt"]
-hat.Delta.BC <- marginal_treatment_effect(BC.ALD)
+hat_delta_stc_AC <- coef(fit_stc)["trt"]
 
+# estimated variance for A vs C from model fit
+hat_var_delta_stc_AC <- vcov(fit_stc)["trt", "trt"]
+
+hat.mean.Delta.BC <- marginal_treatment_effect(BC.ALD)
 hat.var.Delta.BC <- marginal_variance(BC.ALD)
 
-hat.Delta.AB <- hat.Delta.AC - hat.Delta.BC
-hat.var.Delta.AB <- hat.var.Delta.AC + hat.var.Delta.BC
+hat.Delta.AB <- hat_delta_stc_AC - hat.mean.Delta.BC
+hat.var.Delta.AB <- hat_var_delta_stc_AC + hat.var.Delta.BC
 
 # construct Wald-type normal distribution-based confidence interval
 ci.Delta.AB <- hat.Delta.AB + qnorm(c(0.025, 0.975))*sqrt(hat.var.Delta.AB)
+```
 
-### Parametric G-computation with maximum-likelihood estimation ###
+Next we perform G-computation firstly with a frequentist MLE approach and then a Bayesian approach.
 
-# matrix of pairwise correlations between IPD covariates
+## Parametric G-computation with maximum-likelihood estimation 
+
+Matrix of pairwise correlations between IPD covariates.
+
+```{r}
 rho <- cor(AC.IPD[,c("X1","X2","X3","X4")])
+
 # covariate simulation for BC trial using copula package
+# AC IPD pairwise correlations
 cop <-
   normalCopula(param = c(rho[1,2],rho[1,3],rho[1,4],rho[2,3],rho[2,4],rho[3,4]),
                dim = 4,
-               dispstr = "un") # AC IPD pairwise correlations
+               dispstr = "un")
 
 # sample covariates from approximate joint distribution using copula
 mvd <- mvdc(copula=cop, margins=c("norm", "norm", # Gaussian marginals
@@ -170,11 +164,16 @@ hat.var.Delta.AB <- hat.var.Delta.AC + hat.var.Delta.BC
 
 # construct Wald-type normal distribution-based confidence interval
 ci.Delta.AB <- hat.Delta.AB + qnorm(c(0.025, 0.975))*sqrt(hat.var.Delta.AB)
+```
 
-### Bayesian G-computation with MCMC ###
 
-# matrix of pairwise correlations between IPD covariates
+## Bayesian G-computation with MCMC 
+
+Matrix of pairwise correlations between IPD covariates.
+
+```{r}
 rho <- cor(AC.IPD[,c("X1","X2","X3","X4")])
+
 #  covariate simulation for BC trial using copula package
 cop <-
   normalCopula(param = c(rho[1,2],rho[1,3],rho[1,4],rho[2,3],rho[2,4],rho[3,4]),
@@ -194,7 +193,7 @@ x_star <- as.data.frame(rMvdc(1000, mvd))
 colnames(x_star) <- c("X1", "X2", "X3", "X4")
 
 # outcome logistic regression fitted to IPD using MCMC (Stan)
-outcome.model <- stan_glm(y ~ X3+X4+trt*X1+trt*X2,
+outcome.model <- stan_glm(y ~ X3 + X4 + trt*X1 + trt*X2,
                           data = AC.IPD,
                           family = binomial,
                           algorithm = "sampling",
@@ -229,5 +228,5 @@ hat.var.Delta.AB <- hat.var.Delta.AC + hat.var.Delta.BC
 
 # construct Wald-type normal distribution-based confidence interval
 ci.Delta.AB <- hat.Delta.AB + qnorm(c(0.025, 0.975))*sqrt(hat.var.Delta.AB)
-
 ```
+
