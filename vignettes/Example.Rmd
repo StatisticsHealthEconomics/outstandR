@@ -138,7 +138,8 @@ x_star <- as.data.frame(rMvdc(1000, mvd))
 colnames(x_star) <- c("X1", "X2", "X3", "X4")
 
 # non-parametric bootstrap with 1000 resamples
-AC_maic_boot <- boot::boot(data=AC.IPD, statistic=gcomp_ml.boot, R=1000)
+AC_maic_boot <- boot::boot(data=AC.IPD, statistic=gcomp_ml.boot, R=1000,
+                           formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"))
 
 # bootstrap mean of marginal A vs C treatment effect estimate
 hat.Delta.AC <- mean(AC_maic_boot$t)
