@@ -125,8 +125,9 @@ cop <-
                dispstr = "un")
 
 # sample covariates from approximate joint distribution using copula
-mvd <- mvdc(copula=cop, margins=c("norm", "norm", # Gaussian marginals
-                                  "norm", "norm"),
+mvd <- mvdc(copula=cop,
+            margins=c("norm", "norm",  # Gaussian marginals
+                      "norm", "norm"),
             # BC covariate means and standard deviations
             paramMargins = list(list(mean=BC.ALD$mean.X1, sd=BC.ALD$sd.X1),
                                 list(mean=BC.ALD$mean.X2, sd=BC.ALD$sd.X2),
@@ -137,7 +138,7 @@ x_star <- as.data.frame(rMvdc(1000, mvd))
 colnames(x_star) <- c("X1", "X2", "X3", "X4")
 
 # non-parametric bootstrap with 1000 resamples
-AC_maic_boot <- boot::boot(data=AC.IPD, statistic=gcomp_ml, R=1000)
+AC_maic_boot <- boot::boot(data=AC.IPD, statistic=gcomp_ml.boot, R=1000)
 
 # bootstrap mean of marginal A vs C treatment effect estimate
 hat.Delta.AC <- mean(AC_maic_boot$t)
