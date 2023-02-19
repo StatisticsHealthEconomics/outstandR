@@ -45,7 +45,7 @@ maic_weights <- function(X.EM) {
 maic.boot <- function(data, indices, formula) {
   dat <- data[indices, ]  # bootstrap sample
   X.EM <- dat[, c("X1","X2")]  # AC effect modifiers
-
+  
   ##TODO: this seems odd. where is BC.ALD passed from?
   ##      the call uses AC.IPD data
   ##TODO: why is this centering used in maic.boot() and not maic()?
@@ -66,15 +66,4 @@ maic.boot <- function(data, indices, formula) {
   coef(outcome.fit)["trt"]
 }
 
-
-#' marginal A vs C treatment effect estimates
-#'
-maic_boot_stats <- function(formula = as.formula("y ~ trt"),
-                            data, R = 1000) {
-  maic_boot <- boot::boot(data=AC.IPD, statistic=maic.boot, R=R,
-                          formula = formula)
-  
-  list(mean =  mean(maic_boot$t),
-       var = var(maic_boot$t))
-}
 

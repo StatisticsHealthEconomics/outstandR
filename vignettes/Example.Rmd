@@ -77,15 +77,12 @@ The returned value is an object of class `boot`. Then calculate the bootstrap me
 in the wrapper function `maic_boot_stats`.
 
 ```{r}
-AC_hat_Delta_stats <- maic_boot_stats(data = AC.IPD) 
+hat_Delta_stats_maic <- IPD_stats(AC.IPD, BC.ALD, strategy = "maic")
+```
 
-hat.mean.Delta.BC <- marginal_treatment_effect(BC.ALD)
-hat.var.Delta.BC <- marginal_variance(BC.ALD)
+Construct Wald-type normal distribution-based 95\% confidence interval.
 
-hat.mean.Delta.AB <- AC_hat_Delta_stats$mean - hat.mean.Delta.BC
-hat.var.Delta.AB <- AC_hat_Delta_stats$var + hat.var.Delta.BC
-
-# construct Wald-type normal distribution-based confidence interval
+```{r}
 ci_range <- c(0.025, 0.975)
 ci.Delta.AB <- hat.mean.Delta.AB + qnorm(ci_range)*sqrt(hat.var.Delta.AB)
 ```
@@ -97,15 +94,8 @@ IPD effect modifiers centred at the mean BC values
 purely prognostic variables are included but not centred.
 
 ```{r}
-AC_hat_stc <- stc_stats(data = AC.IPD)
+hat_Delta_stats_stc <- IPD_stats(AC.IPD, BC.ALD, strategy = "stc")
 
-hat.mean.Delta.BC <- marginal_treatment_effect(BC.ALD)
-hat.var.Delta.BC <- marginal_variance(BC.ALD)
-
-hat.Delta.AB <- AC_hat_stc$mean - hat.mean.Delta.BC
-hat.var.Delta.AB <- AC_hat_stc$var + hat.var.Delta.BC
-
-# construct Wald-type normal distribution-based confidence interval
 ci.Delta.AB <- hat.Delta.AB + qnorm(ci_range)*sqrt(hat.var.Delta.AB)
 ```
 
@@ -116,47 +106,8 @@ Next we perform G-computation firstly with a frequentist MLE approach and then a
 Matrix of pairwise correlations between IPD covariates.
 
 ```{r}
-rho <- cor(AC.IPD[, c("X1","X2","X3","X4")])
-
-# covariate simulation for BC trial using copula package
-# AC IPD pairwise correlations
-cop <-
-  normalCopula(param = c(rho[1,2],rho[1,3],rho[1,4],rho[2,3],rho[2,4],rho[3,4]),
-               dim = 4,
-               dispstr = "un")
-
-# sample covariates from approximate joint distribution using copula
-mvd <- mvdc(copula = cop,
-            margins = c("norm", "norm",  # Gaussian marginals
-                        "norm", "norm"),
-            # BC covariate means and standard deviations
-            paramMargins = list(list(mean=BC.ALD$mean.X1, sd=BC.ALD$sd.X1),
-                                list(mean=BC.ALD$mean.X2, sd=BC.ALD$sd.X2),
-                                list(mean=BC.ALD$mean.X3, sd=BC.ALD$sd.X3),
-                                list(mean=BC.ALD$mean.X4, sd=BC.ALD$sd.X4)))
-# simulated BC pseudo-population of size 1000
-x_star <- as.data.frame(rMvdc(1000, mvd))
-colnames(x_star) <- c("X1", "X2", "X3", "X4")
-
-# non-parametric bootstrap with 1000 resamples
-AC_maic_boot <- boot::boot(data=AC.IPD, statistic=gcomp_ml.boot, R=1000,
-                           formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"))
-
-# bootstrap mean of marginal A vs C treatment effect estimate
-hat.Delta.AC <- mean(AC_maic_boot$t)
-# bootstrap variance of A vs C treatment effect estimate
-hat.var.Delta.AC <- var(AC_maic_boot$t)
-
-hat.Delta.BC <- marginal_treatment_effect(BC.ALD)
-
-hat.var.Delta.BC <- marginal_variance(BC.ALD)
-
-# marginal treatment effect for A vs B
-hat.Delta.AB <- hat.Delta.AC - hat.Delta.BC
-# variance for A vs B
-hat.var.Delta.AB <- hat.var.Delta.AC + hat.var.Delta.BC
-
-# construct Wald-type normal distribution-based confidence interval
+hat_Delta_stats_gcomp_ml <- IPD_stats(AC.IPD, BC.ALD, strategy = "gcomp_ml")
+  
 ci.Delta.AB <- hat.Delta.AB + qnorm(ci_range)*sqrt(hat.var.Delta.AB)
 ```
 
@@ -166,48 +117,8 @@ ci.Delta.AB <- hat.Delta.AB + qnorm(ci_range)*sqrt(hat.var.Delta.AB)
 Matrix of pairwise correlations between IPD covariates.
 
 ```{r}
-rho <- cor(AC.IPD[,c("X1","X2","X3","X4")])
+hat_Delta_stats_gcomp_stan <- IPD_stats(AC.IPD, BC.ALD, strategy = "gcomp_stan")
 
-#  covariate simulation for BC trial using copula package
-cop <-
-  normalCopula(param = c(rho[1,2],rho[1,3],rho[1,4],rho[2,3],rho[2,4],rho[3,4]),
-               dim = 4,
-               dispstr = "un") # AC IPD pairwise correlations
-
-# sample covariates from approximate joint distribution using copula
-mvd <- mvdc(copula = cop,
-            margins = c("norm", "norm", # Gaussian marginals
-                        "norm", "norm"),
-            # BC covariate means and standard deviations
-            paramMargins = list(list(mean=BC.ALD$mean.X1, sd=BC.ALD$sd.X1),
-                                list(mean=BC.ALD$mean.X2, sd=BC.ALD$sd.X2),
-                                list(mean=BC.ALD$mean.X3, sd=BC.ALD$sd.X3),
-                                list(mean=BC.ALD$mean.X4, sd=BC.ALD$sd.X4)))
-# simulated BC pseudo-population of size 1000
-x_star <- as.data.frame(rMvdc(1000, mvd))
-colnames(x_star) <- c("X1", "X2", "X3", "X4")
-
-ppv <- gcomp_stan(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
-                  dat = AC.IPD)
-
-# compute marginal log-odds ratio for A vs C for each MCMC sample
-# by transforming from probability to linear predictor scale
-hat.delta.AC <- qlogis(rowMeans(ppv$y.star.A)) - qlogis(rowMeans(ppv$y.star.C))
-hat.Delta.AC <- mean(hat.delta.AC)     # average over samples
-hat.var.Delta.AC <- var(hat.delta.AC)  # sample variance
-
-# B vs C from reported aggregate event counts in contingency table
-hat.Delta.BC <-
-  with(BC.ALD, log(y.B.sum*(N.C - y.C.sum)/(y.C.sum*(N.B - y.B.sum))))
-
-hat.var.Delta.BC <- marginal_variance(BC.ALD)
-
-# marginal treatment effect for A vs B
-hat.Delta.AB <- hat.Delta.AC - hat.Delta.BC
-# A vs B variance
-hat.var.Delta.AB <- hat.var.Delta.AC + hat.var.Delta.BC
-
-# construct Wald-type normal distribution-based confidence interval
 ci.Delta.AB <- hat.Delta.AB + qnorm(ci_range)*sqrt(hat.var.Delta.AB)
 ```
 
