@@ -77,7 +77,7 @@ The returned value is an object of class `boot`. Then calculate the bootstrap me
 in the wrapper function `maic_boot_stats`.
 
 ```{r}
-hat_Delta_stats_maic <- IPD_stats(AC.IPD, BC.ALD, strategy = "maic")
+hat_Delta_stats_maic <- hat_Delta_stats(AC.IPD, BC.ALD, strategy = strategy_maic())
 ```
 
 Construct Wald-type normal distribution-based 95\% confidence interval.
@@ -94,7 +94,7 @@ IPD effect modifiers centred at the mean BC values
 purely prognostic variables are included but not centred.
 
 ```{r}
-hat_Delta_stats_stc <- IPD_stats(AC.IPD, BC.ALD, strategy = "stc")
+hat_Delta_stats_stc <- hat_Delta_stats(AC.IPD, BC.ALD, strategy = strategy_stc())
 
 ci.Delta.AB <- hat.Delta.AB + qnorm(ci_range)*sqrt(hat.var.Delta.AB)
 ```
@@ -106,7 +106,7 @@ Next we perform G-computation firstly with a frequentist MLE approach and then a
 Matrix of pairwise correlations between IPD covariates.
 
 ```{r}
-hat_Delta_stats_gcomp_ml <- IPD_stats(AC.IPD, BC.ALD, strategy = "gcomp_ml")
+hat_Delta_stats_gcomp_ml <- hat_Delta_stats(AC.IPD, BC.ALD, strategy = strategy_gcomp_ml())
   
 ci.Delta.AB <- hat.Delta.AB + qnorm(ci_range)*sqrt(hat.var.Delta.AB)
 ```
@@ -117,7 +117,7 @@ ci.Delta.AB <- hat.Delta.AB + qnorm(ci_range)*sqrt(hat.var.Delta.AB)
 Matrix of pairwise correlations between IPD covariates.
 
 ```{r}
-hat_Delta_stats_gcomp_stan <- IPD_stats(AC.IPD, BC.ALD, strategy = "gcomp_stan")
+hat_Delta_stats_gcomp_stan <- hat_Delta_stats(AC.IPD, BC.ALD, strategy = strategy_gcomp_stan())
 
 ci.Delta.AB <- hat.Delta.AB + qnorm(ci_range)*sqrt(hat.var.Delta.AB)
 ```

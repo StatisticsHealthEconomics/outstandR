@@ -1,20 +1,41 @@
 
-#'
+# create class for each approach
+
+strategy_maic <- function() {
+  structure("maic", class = "maic")
+}
+
+strategy_stcc <- function() {
+  structure("stc", class = "stc")
+}
+
+strategy_gcomp_ml <- function() {
+  structure("gcomp_ml", class = "gcomp_ml")
+}
+
+strategy_gcomp_stan <- function() {
+  structure("gcomp_stan", class = "gcomp_stan")
+}
+
+
+#' main wrapper
+#' 
 hat_Delta_stats <- function(AC.IPD, BC.ALD, strategy, ...) {
-  
-  strategy <- structure(strategy, class = c(strategy, class(strategy)))
   
   AC_hat_Delta_stats <- IPD_stats(strategy, data = AC.IPD, ...) 
   
   hat.mean.Delta.BC <- marginal_treatment_effect(BC.ALD)
   hat.var.Delta.BC <- marginal_variance(BC.ALD)
   
-  c(hat.mean.Delta.AB = AC_hat_Delta_stats$mean - hat.mean.Delta.BC,
-    hat.var.Delta.AB = AC_hat_Delta_stats$var + hat.var.Delta.BC)
+  stats <- c(hat.mean.Delta.AB = AC_hat_Delta_stats$mean - hat.mean.Delta.BC,
+             hat.var.Delta.AB = AC_hat_Delta_stats$var + hat.var.Delta.BC)
+  
+  structure(stats, class = c("mimR", class(stats)))
 }
 
 
-#
+#' individual level data statistics
+#'
 IPD_stats <- function(strategy, data, ...)
   UseMethod("IPD_stats", strategy)
 
