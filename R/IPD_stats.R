@@ -1,24 +1,31 @@
 
 # create class for each approach
 
-strategy_maic <- function() {
-  new_strategy("maic")
+strategy_maic <- function(formula = as.formula("y ~ trt"),
+                          R = 1000) {
+  new_strategy("maic", formula, R)
 }
 
-strategy_stc <- function() {
-  new_strategy("stc")
+strategy_stc <- function(formula =
+                           as.formula("y ~ X3 + X4 +
+                                   trt*I(X1-BC.ALD$mean.X1) +
+                                   trt*I(X2-BC.ALD$mean.X2)")) {
+  new_strategy("stc", formula)
 }
 
-strategy_gcomp_ml <- function() {
-  new_strategy("gcomp_ml")
+strategy_gcomp_ml <- function(formula =
+                                as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
+                              R = 1000) {
+  new_strategy("gcomp_ml", formula, R)
 }
 
-strategy_gcomp_stan <- function() {
-  new_strategy("gcomp_stan")
+strategy_gcomp_stan <- function(formula =
+                                  as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")) {
+  new_strategy("gcomp_stan", formula)
 }
 
-strategy_gcomp_stan <- function(strategy) {
-  structure(strategy, class = strategy)
+new_strategy <- function(strategy, ...) {
+  structure(list(...), class = strategy)
 }
 
 
@@ -53,13 +60,12 @@ IPD_stats.default <- function() {
 #' using bootstrapping
 #'
 IPD_stats.maic <- function(strategy,
-                           formula = as.formula("y ~ trt"),
-                           data = AC.IPD,
-                           R = 1000) {
+                           data = AC.IPD) {
+  
   maic_boot <- boot::boot(data = data,
                           statistic = maic.boot,
-                          R = R,
-                          formula = formula)
+                          R = strategy$R,
+                          formula = strategy$formula)
   
   list(mean =  mean(maic_boot$t),
        var = var(maic_boot$t))
@@ -68,12 +74,10 @@ IPD_stats.maic <- function(strategy,
 
 #'
 IPD_stats.stc <- function(strategy,
-                          formula =
-                            as.formula("y ~ X3 + X4 +
-                                   trt*I(X1-BC.ALD$mean.X1) +
-                                   trt*I(X2-BC.ALD$mean.X2)"),
                           data = AC.IPD) {
-  fit_stc <- glm(formula, data = data,
+  
+  fit_stc <- glm(strategy$formula,
+                 data = data,
                  family = binomial)
   
   # fitted treatment coefficient is relative A vs C conditional effect
@@ -84,16 +88,13 @@ IPD_stats.stc <- function(strategy,
 
 #
 IPD_stats.gcomp_ml <- function(strategy,
-                               formula =
-                                 as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
-                               data = AC.IPD,
-                               R = 1000) {
+                               data = AC.IPD) {
   
   # non-parametric bootstrap with 1000 resamples
   AC_maic_boot <- boot::boot(data = data,
                              statistic = gcomp_ml.boot,
-                             R = R,
-                             formula = formula)
+                             R = strategy$R,
+                             formula = strategy$formula)
   
   list(mean = mean(AC_maic_boot$t),
        var = var(AC_maic_boot$t))
@@ -102,11 +103,9 @@ IPD_stats.gcomp_ml <- function(strategy,
 
 #
 IPD_stats.gcomp_stan <- function(strategy,
-                                 formula =
-                                   as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
                                  data) {
   
-  ppv <- gcomp_stan(formula = formula,
+  ppv <- gcomp_stan(formula = strategy$formula,
                     dat = data)
   
   # compute marginal log-odds ratio for A vs C for each MCMC sample
