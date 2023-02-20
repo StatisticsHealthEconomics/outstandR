@@ -2,19 +2,23 @@
 # create class for each approach
 
 strategy_maic <- function() {
-  structure("maic", class = "maic")
+  new_strategy("maic")
 }
 
 strategy_stcc <- function() {
-  structure("stc", class = "stc")
+  new_strategy("stc")
 }
 
 strategy_gcomp_ml <- function() {
-  structure("gcomp_ml", class = "gcomp_ml")
+  new_strategy("gcomp_ml")
 }
 
 strategy_gcomp_stan <- function() {
-  structure("gcomp_stan", class = "gcomp_stan")
+  new_strategy("gcomp_stan")
+}
+
+strategy_gcomp_stan <- function(strategy) {
+  structure(strategy, class = strategy)
 }
 
 
