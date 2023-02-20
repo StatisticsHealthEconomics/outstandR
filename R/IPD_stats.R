@@ -5,7 +5,7 @@ strategy_maic <- function() {
   new_strategy("maic")
 }
 
-strategy_stcc <- function() {
+strategy_stc <- function() {
   new_strategy("stc")
 }
 
