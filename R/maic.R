@@ -44,16 +44,22 @@ maic_weights <- function(X.EM) {
 #' 
 maic.boot <- function(data, indices, formula) {
   dat <- data[indices, ]  # bootstrap sample
+  
+  # effect_modifier_names <- get_effect_modifiers(formula)
+  # X.EM <- dat[, effect_modifier_names]
+  
   X.EM <- dat[, c("X1","X2")]  # AC effect modifiers
   
   ##TODO: this seems odd. where is BC.ALD passed from?
   ##      the call uses AC.IPD data
   ##TODO: why is this centering used in maic.boot() and not maic()?
   # BC effect modifier means, assumed fixed
-  theta <- BC.ALD[c("mean.X1", "mean.X2")]
+  theta <- dat[c("mean.X1", "mean.X2")]
   # centre AC effect modifiers on BC means
   X.EM$X1 <- X.EM$X1 - theta$mean.X1
   X.EM$X2 <- X.EM$X2 - theta$mean.X2
+  
+  # X.EM <- centre_effect_modifiers(X.EM, formula)
   
   hat_w <- maic_weights(X.EM)
   

@@ -14,29 +14,39 @@ gcomp_ml.boot <- function(data, indices,
 #' estimated by transforming from probability to linear predictor scale
 #
 gcomp_ml_log_odds_ratio <- function(formula, dat) {
-  rho <- cor(AC.IPD[, c("X1","X2","X3","X4")])
+  
+  covariate_names <- get_covariate_names(formula)
+  n_covariates <- length(covariate_names)
+  rho <- cor(dat[, covariate_names])
   
   # covariate simulation for BC trial using copula package
   # AC IPD pairwise correlations
+  t_rho <- t(rho)  # so extract along rows
   cop <-
-    normalCopula(param = c(rho[1,2], rho[1,3], rho[1,4],
-                                     rho[2,3], rho[2,4],
-                                               rho[3,4]),
-                 dim = 4,
+    normalCopula(param = t_rho(lower.tri(t_rho)),
+                 dim = n_covariates,
                  dispstr = "un")
+  
+  mean_names <- get_mean_names(formula, dat)
+  sd_names <- get_sd_names(formula, dat)
+  
+  mean_sd_margins <- list()
+  for (i in seq_len(n_covariates)) {
+    mean_sd_margins <- c(mean_sd_margins,
+                         list(mean = dat[[mean_names[i]]],
+                              sd = dat[[sd_names[i]]]))
+  }
   
   # sample covariates from approximate joint distribution using copula
   mvd <- mvdc(copula = cop,
               margins = c("norm", "norm",  # Gaussian marginals
                           "norm", "norm"),
               # BC covariate means and standard deviations
-              paramMargins = list(list(mean=BC.ALD$mean.X1, sd=BC.ALD$sd.X1),
-                                  list(mean=BC.ALD$mean.X2, sd=BC.ALD$sd.X2),
-                                  list(mean=BC.ALD$mean.X3, sd=BC.ALD$sd.X3),
-                                  list(mean=BC.ALD$mean.X4, sd=BC.ALD$sd.X4)))
+              paramMargins = mean_sd_margins)
+  
   # simulated BC pseudo-population of size 1000
   x_star <- as.data.frame(rMvdc(1000, mvd))
-  colnames(x_star) <- c("X1", "X2", "X3", "X4")
+  colnames(x_star) <- covariate_names
   
   # outcome logistic regression fitted to IPD using maximum likelihood
   fit <- glm(formula, data = dat,
