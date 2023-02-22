@@ -74,7 +74,7 @@ IPD_stats.default <- function() {
 IPD_stats.maic <- function(strategy,
                            data = AC.IPD) {
   browser()
-  maic.boot(data = data, indices = 1, formula = strategy$formula)
+  maic.boot(data = data, indices = 1:nrow(data), formula = strategy$formula)
   maic_boot <- boot::boot(data = data,
                           statistic = maic.boot,
                           R = strategy$R,
