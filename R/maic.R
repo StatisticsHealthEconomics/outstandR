@@ -55,14 +55,11 @@ maic.boot <- function(data, indices, formula) {
   
   browser()
   # BC effect modifier means, assumed fixed
-  theta <- dat[c("mean.X1", "mean.X2")]
+  mean_names <- get_mean_names(formula, dat)
 
   # centre AC effect modifiers on BC means
-  X.EM$X1 <- X.EM$X1 - theta$mean.X1
-  X.EM$X2 <- X.EM$X2 - theta$mean.X2
-  
-  # X.EM <- centre_effect_modifiers(X.EM, formula)
-  
+  X.EM <- X.EM - dat[, mean_names]
+ 
   hat_w <- maic_weights(X.EM)
   
   # fit weighted logistic regression model
