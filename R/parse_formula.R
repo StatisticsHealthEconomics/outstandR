@@ -47,3 +47,8 @@ get_mean_names <- function(formula, dat) {
 get_sd_names <- function(formula, dat) {
   
 }
+
+#
+get_covariate_names <- function(formula) {
+
+}
