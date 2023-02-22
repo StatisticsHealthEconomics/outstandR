@@ -49,7 +49,8 @@ gcomp_ml_log_odds_ratio <- function(formula, dat) {
   colnames(x_star) <- covariate_names
   
   # outcome logistic regression fitted to IPD using maximum likelihood
-  fit <- glm(formula, data = dat,
+  fit <- glm(formula,
+             data = dat,
              family = binomial)
   
   # counterfactual datasets

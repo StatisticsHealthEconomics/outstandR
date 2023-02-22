@@ -39,7 +39,8 @@ maic_weights <- function(X.EM) {
 #' MAIC bootstrap
 #' 
 #' @param data original data
-#' @param indices vector of indices which define the bootstrap sample
+#' @param indices vector of indices, same length as original,
+#'   which define the bootstrap sample
 #' @return fitted treatment coefficient is marginal effect for A vs C
 #' 
 maic.boot <- function(data, indices, formula) {

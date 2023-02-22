@@ -2,7 +2,7 @@
 #
 get_effect_modifiers <- function(formula) {
   
-  formula <- as.formula(formula)# 
+  formula <- as.formula(formula)
   term.labels <- attr(terms(formula), "term.labels")
   
   modifiers <- term.labels[grepl(":", term.labels)]
@@ -24,4 +24,26 @@ rhs <- function(x, as_formula = FALSE) {
     out <- x[[2L]]
   }
   out
+}
+
+
+#
+get_treatment_name <- function(formula) {
+  formula <- as.formula(formula)
+  term.labels <- attr(terms(formula), "term.labels")
+  
+  treat_nm <- term.labels[grepl(":", term.labels)]
+  treat_nm <- gsub(":.+", "", treat_nm[1])
+  treat_nm
+}
+
+
+#
+get_mean_names <- function(formula, dat) {
+  
+}
+
+#
+get_sd_names <- function(formula, dat) {
+  
 }
