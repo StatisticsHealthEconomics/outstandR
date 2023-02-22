@@ -45,16 +45,17 @@ maic_weights <- function(X.EM) {
 maic.boot <- function(data, indices, formula) {
   dat <- data[indices, ]  # bootstrap sample
   
-  # effect_modifier_names <- get_effect_modifiers(formula)
-  # X.EM <- dat[, effect_modifier_names]
-  
-  X.EM <- dat[, c("X1","X2")]  # AC effect modifiers
+  effect_modifier_names <- get_effect_modifiers(formula)
+  X.EM <- dat[, effect_modifier_names]
   
   ##TODO: this seems odd. where is BC.ALD passed from?
   ##      the call uses AC.IPD data
   ##TODO: why is this centering used in maic.boot() and not maic()?
+  
+  browser()
   # BC effect modifier means, assumed fixed
   theta <- dat[c("mean.X1", "mean.X2")]
+
   # centre AC effect modifiers on BC means
   X.EM$X1 <- X.EM$X1 - theta$mean.X1
   X.EM$X2 <- X.EM$X2 - theta$mean.X2
@@ -64,12 +65,15 @@ maic.boot <- function(data, indices, formula) {
   hat_w <- maic_weights(X.EM)
   
   # fit weighted logistic regression model
-  outcome.fit <- glm(formula,
-                     family = "quasibinomial",
-                     weights = hat_w,
-                     data = dat)
+  fit <- glm(formula,
+             family = "quasibinomial",
+             weights = hat_w,
+             data = X.EM)
   
-  coef(outcome.fit)["trt"]
+  treat_nm <- "trt"
+  # treat_nm <- get_treatment_name(formula)
+  
+  coef(fit)[treat_nm]
 }
 
 

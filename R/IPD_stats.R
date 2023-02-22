@@ -1,9 +1,11 @@
 
 # create class for each approach
 
-strategy_maic <- function(formula = as.formula("y ~ trt"),
+strategy_maic <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
                           R = 1000) {
+  default_args <- formals()
   args <- as.list(match.call())[-1]
+  args <- modifyList(default_args, args)
   do.call(new_strategy, c(strategy = "maic", args))
 }
 
@@ -11,20 +13,26 @@ strategy_stc <- function(formula =
                            as.formula("y ~ X3 + X4 +
                                    trt*I(X1-BC.ALD$mean.X1) +
                                    trt*I(X2-BC.ALD$mean.X2)")) {
+  default_args <- formals()
   args <- as.list(match.call())[-1]
+  args <- modifyList(default_args, args)
   do.call(new_strategy, c(strategy = "stc", args))
 }
 
 strategy_gcomp_ml <- function(formula =
                                 as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
                               R = 1000) {
+  default_args <- formals()
   args <- as.list(match.call())[-1]
+  args <- modifyList(default_args, args)
   do.call(new_strategy, c(strategy = "gcomp_ml", args))
 }
 
 strategy_gcomp_stan <- function(formula =
                                   as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")) {
+  default_args <- formals()
   args <- as.list(match.call())[-1]
+  args <- modifyList(default_args, args)
   do.call(new_strategy, c(strategy = "gcomp_stan", args))
 }
 
@@ -65,7 +73,8 @@ IPD_stats.default <- function() {
 #'
 IPD_stats.maic <- function(strategy,
                            data = AC.IPD) {
-  
+  browser()
+  maic.boot(data = data, indices = 1, formula = strategy$formula)
   maic_boot <- boot::boot(data = data,
                           statistic = maic.boot,
                           R = strategy$R,
