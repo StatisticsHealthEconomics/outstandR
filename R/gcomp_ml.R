@@ -16,6 +16,9 @@ gcomp_ml.boot <- function(data, indices,
 gcomp_ml_log_odds_ratio <- function(formula, dat) {
   
   covariate_names <- get_covariate_names(formula)
+  mean_names <- get_mean_names(formula, dat)
+  sd_names <- get_sd_names(formula, dat)
+  
   n_covariates <- length(covariate_names)
   rho <- cor(dat[, covariate_names])
   
@@ -26,9 +29,6 @@ gcomp_ml_log_odds_ratio <- function(formula, dat) {
     normalCopula(param = t_rho(lower.tri(t_rho)),
                  dim = n_covariates,
                  dispstr = "un")
-  
-  mean_names <- get_mean_names(formula, dat)
-  sd_names <- get_sd_names(formula, dat)
   
   mean_sd_margins <- list()
   for (i in seq_len(n_covariates)) {

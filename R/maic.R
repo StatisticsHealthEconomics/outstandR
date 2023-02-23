@@ -68,8 +68,7 @@ maic.boot <- function(data, indices, formula) {
              weights = hat_w,
              data = X.EM)
   
-  treat_nm <- "trt"
-  # treat_nm <- get_treatment_name(formula)
+  treat_nm <- get_treatment_name(formula)
   
   coef(fit)[treat_nm]
 }
