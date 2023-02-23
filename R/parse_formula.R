@@ -24,23 +24,21 @@ get_treatment_name <- function(formula) {
 
 
 #
-get_mean_names <- function(formula, dat) {
+get_mean_names <- function(dat, var_names) {
   dat_names <- names(dat)
-  cov_names <- get_covariate_names(formula)
   is_sd_name <- grepl(pattern = "\\.mean", dat_names)
-  is_cov_name <- grepl(pattern = cov_names, dat_names)
+  is_var_name <- grepl(pattern = var_names, dat_names)
   
-  dat_names[is_sd_name & is_cov_name]
+  dat_names[is_sd_name & is_var_name]
 }
 
 #
-get_sd_names <- function(formula, dat) {
+get_sd_names <- function(dat, var_names) {
   dat_names <- names(dat)
-  cov_names <- get_covariate_names(formula)
   is_sd_name <- grepl(pattern = "\\.sd", dat_names)
-  is_cov_name <- grepl(pattern = cov_names, dat_names)
+  is_var_name <- grepl(pattern = var_names, dat_names)
   
-  dat_names[is_sd_name & is_cov_name]
+  dat_names[is_sd_name & is_var_name]
 }
 
 #

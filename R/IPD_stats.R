@@ -2,7 +2,8 @@
 # create class for each approach
 
 strategy_maic <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
-                          R = 1000) {
+                          R = 1000,
+                          dat_ALD = BC.ALD) {
   default_args <- formals()
   args <- as.list(match.call())[-1]
   args <- modifyList(default_args, args)
@@ -74,11 +75,13 @@ IPD_stats.default <- function() {
 IPD_stats.maic <- function(strategy,
                            data = AC.IPD) {
   browser()
-  maic.boot(data = data, indices = 1:nrow(data), formula = strategy$formula)
+  maic.boot(data = data, indices = 1:nrow(data), formula = strategy$formula, dat_ALD = strategy$dat_ALD)
+  
   maic_boot <- boot::boot(data = data,
                           statistic = maic.boot,
                           R = strategy$R,
-                          formula = strategy$formula)
+                          formula = strategy$formula,
+                          dat_ALD = strategy$BC.ALD)
   
   list(mean =  mean(maic_boot$t),
        var = var(maic_boot$t))
