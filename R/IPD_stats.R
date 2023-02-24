@@ -92,13 +92,15 @@ IPD_stats.maic <- function(strategy,
 IPD_stats.stc <- function(strategy,
                           data = AC.IPD) {
   
-  fit_stc <- glm(strategy$formula,
-                 data = data,
-                 family = binomial)
+  fit <- glm(strategy$formula,
+             data = data,
+             family = binomial)
+  
+  treat_nm <- get_treatment_name(formula)
   
   # fitted treatment coefficient is relative A vs C conditional effect
-  list(mean = coef(fit_stc)["trt"],
-       var = vcov(fit_stc)["trt", "trt"])
+  list(mean = coef(fit)[treat_nm],
+       var = vcov(fit)[treat_nm, treat_nm])
 }
 
 
