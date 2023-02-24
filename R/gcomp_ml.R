@@ -43,8 +43,8 @@ gcomp_ml_log_odds_ratio <- function(formula, dat) {
               margins = rep("norm", n_covariates),  # Gaussian marginals
               paramMargins = mean_sd_margins)
   
-  # simulated BC pseudo-population of size 1000
-  x_star <- as.data.frame(rMvdc(1000, mvd))
+  # simulated BC pseudo-population
+  x_star <- as.data.frame(rMvdc(n = 1000, mvd))
   colnames(x_star) <- covariate_names
   
   # outcome logistic regression fitted to IPD using maximum likelihood
