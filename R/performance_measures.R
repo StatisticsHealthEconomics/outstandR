@@ -1,10 +1,10 @@
 
 ## Functions to evaluate performance measures
 
-#' objective function to be minimized for standard method of moments
-#' 
-Q <- function(alpha, X.EM) {
-  sum(exp(X.EM %*% alpha))
+#' objective function to minimize for standard method of moments MAIC
+#'
+Q <- function(beta, X) {
+  sum(exp(X %*% beta))
 }
 
 #' bias estimate
