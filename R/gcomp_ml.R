@@ -30,6 +30,7 @@ gcomp_ml_log_odds_ratio <- function(formula, dat) {
                  dim = n_covariates,
                  dispstr = "un")
   
+  # BC covariate means & standard deviations
   mean_sd_margins <- list()
   for (i in seq_len(n_covariates)) {
     mean_sd_margins <- c(mean_sd_margins,
@@ -39,9 +40,7 @@ gcomp_ml_log_odds_ratio <- function(formula, dat) {
   
   # sample covariates from approximate joint distribution using copula
   mvd <- mvdc(copula = cop,
-              margins = c("norm", "norm",  # Gaussian marginals
-                          "norm", "norm"),
-              # BC covariate means and standard deviations
+              margins = rep("norm", n_covariates),  # Gaussian marginals
               paramMargins = mean_sd_margins)
   
   # simulated BC pseudo-population of size 1000
