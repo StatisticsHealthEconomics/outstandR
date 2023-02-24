@@ -50,7 +50,7 @@ gen_data <- function(N, b_trt, b_X, b_EM, b_0,
     b_X*X$X3 + b_X*X$X4 + b_trt*trt +
     b_EM*X$X1*trt + b_EM*X$X2*trt
   
-  yprob <- 1/(1+exp(-LP))               # binary outcome probability
+  yprob <- 1/(1 + exp(-LP))               # binary outcome probability
   y <- rbinom(n=N, size=1, prob=yprob)  # binary outcome
   
   as.data.frame(cbind(X, trt, y))
