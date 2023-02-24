@@ -11,11 +11,6 @@
 #' @return Estimated weights for each individual; vector
 #' 
 maic_weights <- function(X.EM) {
-  # objective function to minimize for standard method of moments MAIC
-  Q <- function(beta, X) {
-    sum(exp(X %*% beta))
-  }
-  
   X.EM <- as.matrix(X.EM)
   
   N <- nrow(X.EM)    # number of individuals
