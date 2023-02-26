@@ -18,6 +18,7 @@ gcomp_ml_log_odds_ratio <- function(formula, dat) {
   covariate_names <- get_covariate_names(formula)
   mean_names <- get_mean_names(formula, dat)
   sd_names <- get_sd_names(formula, dat)
+  treat_name <- get_treatment_name(formula)
   
   n_covariates <- length(covariate_names)
   rho <- cor(dat[, covariate_names])
@@ -56,8 +57,8 @@ gcomp_ml_log_odds_ratio <- function(formula, dat) {
   data.trtA <- data.trtC <- x_star
   
   # intervene on treatment while keeping set covariates fixed
-  data.trtA$trt <- 1 # dataset where everyone receives treatment A
-  data.trtC$trt <- 0 # dataset where all observations receive C
+  data.trtA[[treat_name]] <- 1 # dataset where everyone receives treatment A
+  data.trtC[[treat_name]] <- 0 # dataset where all observations receive C
   
   # predict counterfactual event probs, conditional on treatment/covariates
   hat.mu.A.i <- predict(fit, type="response", newdata=data.trtA)
