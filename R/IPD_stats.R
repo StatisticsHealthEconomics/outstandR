@@ -47,12 +47,28 @@ new_strategy <- function(strategy, ...) {
 hat_Delta_stats <- function(AC.IPD, BC.ALD, strategy, ...) {
   
   AC_hat_Delta_stats <- IPD_stats(strategy, data = AC.IPD, ...) 
+  BC_hat_Delta_stats <- ALD_stats(data = BC.IPD) 
   
-  hat.mean.Delta.BC <- marginal_treatment_effect(BC.ALD)
-  hat.var.Delta.BC <- marginal_variance(BC.ALD)
+  ci_range <- c(0.025, 0.975)
   
-  stats <- c(hat.mean.Delta.AB = AC_hat_Delta_stats$mean - hat.mean.Delta.BC,
-             hat.var.Delta.AB = AC_hat_Delta_stats$var + hat.var.Delta.BC)
+  contrasts <- list(
+    AB = AC_hat_Delta_stats$mean - BC_hat_Delta_stats$mean,
+    AC = AC_hat_Delta_stats$mean,
+    BC = BC_hat_Delta_stats$mean)
+  
+  contrast_variances <- list(
+    AB = AC_hat_Delta_stats$var + BC_hat_Delta_stats$var,
+    AC = AC_hat_Delta_stats$var,
+    BC = BC_hat_Delta_stats$var)
+  
+  contrast_ci <- list(
+    AB = contrasts$AB + qnorm(ci_range)*sqrt(contrast_variances$AB),
+    AC = contrasts$AC + qnorm(ci_range)*sqrt(contrast_variances$AC),
+    BC = contrasts$BC + qnorm(ci_range)*sqrt(contrast_variances$BC))
+  
+  stats <- list(contrasts,
+                contrast_variances,
+                contrast_ci)
   
   structure(stats, class = c("mimR", class(stats)))
 }
