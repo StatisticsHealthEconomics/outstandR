@@ -47,7 +47,7 @@ new_strategy <- function(strategy, ...) {
 hat_Delta_stats <- function(AC.IPD, BC.ALD, strategy, ...) {
   
   AC_hat_Delta_stats <- IPD_stats(strategy, data = AC.IPD, ...) 
-  BC_hat_Delta_stats <- ALD_stats(data = BC.IPD) 
+  BC_hat_Delta_stats <- ALD_stats(data = BC.ALD) 
   
   ci_range <- c(0.025, 0.975)
   
