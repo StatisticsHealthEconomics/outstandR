@@ -6,7 +6,7 @@
 
 <!-- badges: end -->
 
-This R package containing code originally written for the paper:
+This R package contains code originally written for the paper:
 > Parametric G-computation for Compatible Indirect Treatment Comparisons with Limited Individual Patient Data \> Antonio Remiro-Azócar, Anna Heath, Gianluca Baio
 
 ### [*remiroantonio\@gmail.com*](mailto:remiroantonio@gmail.com){.email}
