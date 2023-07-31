@@ -4,7 +4,7 @@
 \alias{coverage}
 \title{coverage estimate}
 \usage{
-coverage(theta.hat.low, theta.hat.upp, theta)
+coverage(low, upp, theta)
 }
 \description{
 coverage estimate

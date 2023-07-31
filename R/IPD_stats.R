@@ -1,6 +1,7 @@
 
 # create class for each approach
 
+#
 strategy_maic <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
                           R = 1000,
                           dat_ALD = BC.ALD) {
@@ -10,6 +11,7 @@ strategy_maic <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
   do.call(new_strategy, c(strategy = "maic", args))
 }
 
+#
 strategy_stc <- function(formula =
                            as.formula("y ~ X3 + X4 +
                                    trt*I(X1-BC.ALD$mean.X1) +
@@ -20,6 +22,7 @@ strategy_stc <- function(formula =
   do.call(new_strategy, c(strategy = "stc", args))
 }
 
+#
 strategy_gcomp_ml <- function(formula =
                                 as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
                               R = 1000) {
@@ -29,6 +32,7 @@ strategy_gcomp_ml <- function(formula =
   do.call(new_strategy, c(strategy = "gcomp_ml", args))
 }
 
+#
 strategy_gcomp_stan <- function(formula =
                                   as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")) {
   default_args <- formals()
@@ -37,15 +41,22 @@ strategy_gcomp_stan <- function(formula =
   do.call(new_strategy, c(strategy = "gcomp_stan", args))
 }
 
+#
 new_strategy <- function(strategy, ...) {
   structure(list(...), class = strategy)
 }
 
 
-#' main wrapper
+#' Main wrapper
+#' 
+#' @param AC.IPD 
+#' @param BC.ALD 
+#' @param strategy 
+#' @param ... Additional arguments
+#' @export
 #' 
 hat_Delta_stats <- function(AC.IPD, BC.ALD, strategy, ...) {
-  
+  browser()
   AC_hat_Delta_stats <- IPD_stats(strategy, data = AC.IPD, ...) 
   BC_hat_Delta_stats <- ALD_stats(data = BC.ALD) 
   
@@ -74,8 +85,10 @@ hat_Delta_stats <- function(AC.IPD, BC.ALD, strategy, ...) {
 }
 
 
-#' individual level data statistics
-#'
+#' IPD_stats
+#' Individual level data statistics
+#' @export
+#' 
 IPD_stats <- function(strategy, data, ...)
   UseMethod("IPD_stats", strategy)
 
@@ -85,13 +98,23 @@ IPD_stats.default <- function() {
 }
 
 
+#' IPD_stats.maic
+#' 
 #' marginal A vs C treatment effect estimates
 #' using bootstrapping
 #'
+#' @param strategy 
+#' @param data 
+#'
+#' @export
+#' 
 IPD_stats.maic <- function(strategy,
                            data = AC.IPD) {
-  browser()
-  maic.boot(data = data, indices = 1:nrow(data), formula = strategy$formula, dat_ALD = strategy$dat_ALD)
+  # browser()
+  # maic.boot(data = data,
+  #           indices = 1:nrow(data),
+  #           formula = strategy$formula,
+  #           dat_ALD = strategy$dat_ALD)
   
   maic_boot <- boot::boot(data = data,
                           statistic = maic.boot,
@@ -104,7 +127,12 @@ IPD_stats.maic <- function(strategy,
 }
 
 
-#'
+#' IPD_stats.stc
+#' 
+#' @param strategy 
+#' @param data 
+#' @export
+#' 
 IPD_stats.stc <- function(strategy,
                           data = AC.IPD) {
   
@@ -120,7 +148,14 @@ IPD_stats.stc <- function(strategy,
 }
 
 
-#
+#' IPD_stats.gcomp_ml
+#'
+#' @param strategy 
+#' @param data 
+#'
+#' @return
+#' @export
+#'
 IPD_stats.gcomp_ml <- function(strategy,
                                data = AC.IPD) {
   
@@ -135,7 +170,14 @@ IPD_stats.gcomp_ml <- function(strategy,
 }
 
 
-#
+#' IPD_stats.gcomp_stan
+#'
+#' @param strategy 
+#' @param data 
+#'
+#' @return
+#' @export
+#'
 IPD_stats.gcomp_stan <- function(strategy,
                                  data) {
   
