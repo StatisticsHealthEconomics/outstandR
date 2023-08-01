@@ -2,13 +2,19 @@
 % Please edit documentation in R/maic.R
 \name{maic.boot}
 \alias{maic.boot}
-\title{bootstrap}
+\title{MAIC bootstrap}
 \usage{
-maic.boot(data, indices)
+maic.boot(data, indices, formula, dat_ALD)
+}
+\arguments{
+\item{data}{original data}
+
+\item{indices}{vector of indices, same length as original,
+which define the bootstrap sample}
 }
 \value{
-fitted treatment coefficient is marginal effect for A vs. C
+fitted treatment coefficient is marginal effect for A vs C
 }
 \description{
-bootstrap
+MAIC bootstrap
 }

@@ -2,10 +2,29 @@
 % Please edit documentation in R/gen_data.R
 \name{gen_data}
 \alias{gen_data}
-\title{generate simulated datasets for index and comparator trials}
+\title{Generate simulated datasets for index and comparator trials}
 \usage{
 gen_data(N, b_trt, b_X, b_EM, b_0, meanX, sdX, event_rate, corX, allocation)
 }
+\arguments{
+\item{N}{}
+
+\item{b_trt}{}
+
+\item{b_X}{}
+
+\item{b_EM}{}
+
+\item{b_0}{}
+
+\item{meanX}{}
+
+\item{sdX}{}
+
+\item{event_rate}{}
+
+\item{corX}{}
+}
 \description{
-generate simulated datasets for index and comparator trials
+Generate simulated datasets for index and comparator trials
 }

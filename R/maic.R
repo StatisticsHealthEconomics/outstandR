@@ -46,23 +46,23 @@ maic.boot <- function(data, indices, formula, dat_ALD) {
   
   ##TODO: why is this centering used in maic.boot() and not maic()?
   
-  browser()
   # BC effect modifier means, assumed fixed
   mean_names <- get_mean_names(dat_ALD, effect_modifier_names)
 
   # centre AC effect modifiers on BC means
-  X.EM <- X.EM - dat_ALD[, mean_names]
+  dat_ALD_means <- dat_ALD[, mean_names][rep(1, nrow(X.EM)), ]
+  X.EM <- X.EM - dat_ALD_means
  
   hat_w <- maic_weights(X.EM)
   
   treat_nm <- get_treatment_name(formula)
   formula_treat <- glue::glue("{formula[[2]]} ~ {treat_nm}")
-  
+
   # fit weighted logistic regression model
   fit <- glm(formula_treat,
              family = "quasibinomial",
              weights = hat_w,
-             data = dat)
+             data = cbind(dat, hat_w = hat_w))
   
   coef(fit)[treat_nm]
 }

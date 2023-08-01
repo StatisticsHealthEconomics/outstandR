@@ -4,7 +4,7 @@
 \alias{mcse.estimate}
 \title{Monte Carlo SE of any continuous performance metric}
 \usage{
-mcse.estimate(perf.measure)
+mcse.estimate(pm)
 }
 \description{
 Monte Carlo SE of any continuous performance metric

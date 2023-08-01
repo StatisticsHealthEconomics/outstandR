@@ -2,10 +2,10 @@
 % Please edit documentation in R/performance_measures.R
 \name{Q}
 \alias{Q}
-\title{objective function to be minimized for standard method of moments}
+\title{objective function to minimize for standard method of moments MAIC}
 \usage{
-Q(alpha, X.EM)
+Q(beta, X)
 }
 \description{
-objective function to be minimized for standard method of moments
+objective function to minimize for standard method of moments MAIC
 }

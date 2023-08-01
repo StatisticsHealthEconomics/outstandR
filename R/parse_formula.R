@@ -26,17 +26,19 @@ get_treatment_name <- function(formula) {
 #
 get_mean_names <- function(dat, var_names) {
   dat_names <- names(dat)
-  is_sd_name <- grepl(pattern = "\\.mean", dat_names)
-  is_var_name <- grepl(pattern = var_names, dat_names)
+  # is_sd_name <- grepl(pattern = "\\.mean", dat_names)
+  is_mean_name <- grepl(pattern = "mean\\.", dat_names)
+  is_var_name <- grepl(pattern = paste(var_names, collapse = "|"), dat_names)
   
-  dat_names[is_sd_name & is_var_name]
+  dat_names[is_mean_name & is_var_name]
 }
 
 #
 get_sd_names <- function(dat, var_names) {
   dat_names <- names(dat)
-  is_sd_name <- grepl(pattern = "\\.sd", dat_names)
-  is_var_name <- grepl(pattern = var_names, dat_names)
+  # is_sd_name <- grepl(pattern = "\\.sd", dat_names)
+  is_sd_name <- grepl(pattern = "sd\\.", dat_names)
+  is_var_name <- grepl(pattern = paste(var_names, collapse = "|"), dat_names)
   
   dat_names[is_sd_name & is_var_name]
 }
