@@ -2,8 +2,11 @@
 #'
 gcomp_stan <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
                        dat = AC.IPD) {
+  treat_names <- get_treatment_name(formula)
   cov_names <- get_covariate_names(formula)
-  treat_names <- get_treatment_names(formula)
+  
+  # remove treatment
+  cov_names <- cov_names[cov_names != treat_names]
   
   rho <- cor(AC.IPD[, cov_names])
   
@@ -26,6 +29,8 @@ gcomp_stan <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
                                   list(mean=BC.ALD$mean.X4, sd=BC.ALD$sd.X4)))
   # simulated BC pseudo-population of size 1000
   x_star <- as.data.frame(rMvdc(1000, mvd))
+  
+  browser()
   colnames(x_star) <- cov_names
   
   # outcome logistic regression fitted to IPD using MCMC (Stan)

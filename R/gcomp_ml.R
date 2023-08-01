@@ -27,10 +27,16 @@ gcomp_ml.boot <- function(data, indices,
 #'
 gcomp_ml_log_odds_ratio <- function(formula, dat) {
   
+  treat_name <- get_treatment_name(formula)
   covariate_names <- get_covariate_names(formula)
+  
+  # remove treatment
+  cov_names <- cov_names[cov_names != treat_names]
+  
+  ##TODO: this is a problem because we are only passing
+  ##      the AC.IPD data and not BC.ALD
   mean_names <- get_mean_names(dat, covariate_names)
   sd_names <- get_sd_names(dat, covariate_names)
-  treat_name <- get_treatment_name(formula)
   
   n_covariates <- length(covariate_names)
   rho <- cor(dat[, covariate_names])

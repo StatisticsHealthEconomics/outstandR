@@ -1,6 +1,7 @@
 
 # create class for each approach
 
+#' @rdname strategy
 #' strategy_maic
 #'
 #' @param formula 
@@ -19,13 +20,14 @@ strategy_maic <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
   do.call(new_strategy, c(strategy = "maic", args))
 }
 
+#' @rdname strategy
 #' strategy_stc
 #'
 #' @param formula 
 #'
 #' @return
 #' @export
-#'
+# 
 strategy_stc <- function(formula =
                            as.formula("y ~ X3 + X4 +
                                    trt*I(X1 - mean(X1)) +
@@ -36,7 +38,7 @@ strategy_stc <- function(formula =
   do.call(new_strategy, c(strategy = "stc", args))
 }
 
-
+#' @rdname strategy
 #' strategy_gcomp_ml
 #'
 #' @param formula 
@@ -54,7 +56,7 @@ strategy_gcomp_ml <- function(formula =
   do.call(new_strategy, c(strategy = "gcomp_ml", args))
 }
 
-
+#' @rdname strategy
 #' strategy_gcomp_stan
 #'
 #' @param formula 
@@ -70,16 +72,15 @@ strategy_gcomp_stan <- function(formula =
   do.call(new_strategy, c(strategy = "gcomp_stan", args))
 }
 
-
-#' new_strategy
+#' @name strategy
+#' New_strategy
 #'
 #' @param strategy 
-#' @param ... 
+#' @param ... Additional arguments
 #'
 #' @return
 #' @export
 #'
-#' @examples
 new_strategy <- function(strategy, ...) {
   structure(list(...), class = strategy)
 }
@@ -94,7 +95,7 @@ new_strategy <- function(strategy, ...) {
 #' @export
 #' 
 hat_Delta_stats <- function(AC.IPD, BC.ALD, strategy, ...) {
-
+browser()
   AC_hat_Delta_stats <- IPD_stats(strategy, data = AC.IPD, ...) 
   BC_hat_Delta_stats <- ALD_stats(data = BC.ALD) 
   
