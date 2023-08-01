@@ -39,6 +39,7 @@ maic_weights <- function(X.EM) {
 #' @return fitted treatment coefficient is marginal effect for A vs C
 #' 
 maic.boot <- function(data, indices, formula, dat_ALD) {
+  
   dat <- data[indices, ]  # bootstrap sample
   
   effect_modifier_names <- get_effect_modifiers(formula)

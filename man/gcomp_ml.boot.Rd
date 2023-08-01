@@ -10,6 +10,13 @@ gcomp_ml.boot(
   formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")
 )
 }
+\arguments{
+\item{data}{}
+
+\item{indices}{}
+
+\item{formula}{}
+}
 \value{
 mean difference in expected log-odds
 }

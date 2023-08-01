@@ -2,7 +2,7 @@
 % Please edit documentation in R/IPD_stats.R
 \name{hat_Delta_stats}
 \alias{hat_Delta_stats}
-\title{Main wrapper}
+\title{Main wrapper for hat_Delta_stats}
 \usage{
 hat_Delta_stats(AC.IPD, BC.ALD, strategy, ...)
 }
@@ -16,5 +16,5 @@ hat_Delta_stats(AC.IPD, BC.ALD, strategy, ...)
 \item{...}{Additional arguments}
 }
 \description{
-Main wrapper
+Main wrapper for hat_Delta_stats
 }

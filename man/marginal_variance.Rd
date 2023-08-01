@@ -6,6 +6,11 @@
 \usage{
 marginal_variance(x, trials = list("B", "C"))
 }
+\arguments{
+\item{x}{}
+
+\item{trials}{}
+}
 \description{
 \eqn{\frac{1}{n_C} + \frac{1}{n_{\bar{C}}} + \frac{1}{n_B} + \frac{1}{n_{\bar{B}}}}
 }

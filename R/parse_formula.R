@@ -1,5 +1,11 @@
 
-#
+#' Get effect modifiers
+#'
+#' @param formula 
+#'
+#' @return
+#' @export
+#'
 get_effect_modifiers <- function(formula) {
   
   formula <- as.formula(formula)
@@ -12,7 +18,13 @@ get_effect_modifiers <- function(formula) {
 }
 
 
-#
+#' Get treatment name
+#'
+#' @param formula 
+#'
+#' @return
+#' @export
+#'
 get_treatment_name <- function(formula) {
   formula <- as.formula(formula)
   term.labels <- attr(terms(formula), "term.labels")
@@ -23,7 +35,14 @@ get_treatment_name <- function(formula) {
 }
 
 
-#
+#' Get mean names
+#'
+#' @param dat 
+#' @param var_names 
+#'
+#' @return
+#' @export
+#'
 get_mean_names <- function(dat, var_names) {
   dat_names <- names(dat)
   # is_sd_name <- grepl(pattern = "\\.mean", dat_names)
@@ -33,7 +52,14 @@ get_mean_names <- function(dat, var_names) {
   dat_names[is_mean_name & is_var_name]
 }
 
-#
+#' Get SD names
+#'
+#' @param dat 
+#' @param var_names 
+#'
+#' @return
+#' @export
+#'
 get_sd_names <- function(dat, var_names) {
   dat_names <- names(dat)
   # is_sd_name <- grepl(pattern = "\\.sd", dat_names)
@@ -43,7 +69,13 @@ get_sd_names <- function(dat, var_names) {
   dat_names[is_sd_name & is_var_name]
 }
 
-#
+#' Get covariate names
+#'
+#' @param formula 
+#'
+#' @return
+#' @export
+#'
 get_covariate_names <- function(formula) {
   all.vars(formula)[-1]
 }

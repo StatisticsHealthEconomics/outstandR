@@ -1,6 +1,10 @@
 
 #' G-computation maximum likelihood bootstrap
 #' 
+#' @param data 
+#' @param indices 
+#' @param formula 
+#'
 #' @return mean difference in expected log-odds
 #' 
 gcomp_ml.boot <- function(data, indices,
@@ -10,14 +14,22 @@ gcomp_ml.boot <- function(data, indices,
 }
 
 
+#' gcomp_ml_log_odds_ratio
+#' 
 #' marginal A vs. C log-odds ratio (mean difference in expected log-odds)
 #' estimated by transforming from probability to linear predictor scale
-#
+#'
+#' @param formula 
+#' @param dat 
+#'
+#' @return
+#' @export
+#'
 gcomp_ml_log_odds_ratio <- function(formula, dat) {
   
   covariate_names <- get_covariate_names(formula)
-  mean_names <- get_mean_names(formula, dat)
-  sd_names <- get_sd_names(formula, dat)
+  mean_names <- get_mean_names(dat, covariate_names)
+  sd_names <- get_sd_names(dat, covariate_names)
   treat_name <- get_treatment_name(formula)
   
   n_covariates <- length(covariate_names)
@@ -27,7 +39,7 @@ gcomp_ml_log_odds_ratio <- function(formula, dat) {
   # AC IPD pairwise correlations
   t_rho <- t(rho)  # so extract along rows
   cop <-
-    normalCopula(param = t_rho(lower.tri(t_rho)),
+    normalCopula(param = t_rho[lower.tri(t_rho)],
                  dim = n_covariates,
                  dispstr = "un")
   
@@ -39,6 +51,7 @@ gcomp_ml_log_odds_ratio <- function(formula, dat) {
                               sd = dat[[sd_names[i]]]))
   }
   
+  browser()
   # sample covariates from approximate joint distribution using copula
   mvd <- mvdc(copula = cop,
               margins = rep("norm", n_covariates),  # Gaussian marginals

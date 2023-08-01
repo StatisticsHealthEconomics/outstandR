@@ -2,10 +2,14 @@
 % Please edit documentation in R/gcomp_ml.R
 \name{gcomp_ml_log_odds_ratio}
 \alias{gcomp_ml_log_odds_ratio}
-\title{marginal A vs. C log-odds ratio (mean difference in expected log-odds)
-estimated by transforming from probability to linear predictor scale}
+\title{gcomp_ml_log_odds_ratio}
 \usage{
 gcomp_ml_log_odds_ratio(formula, dat)
+}
+\arguments{
+\item{formula}{}
+
+\item{dat}{}
 }
 \description{
 marginal A vs. C log-odds ratio (mean difference in expected log-odds)
