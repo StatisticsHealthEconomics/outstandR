@@ -2,7 +2,7 @@
 % Please edit documentation in R/gcomp_ml.R
 \name{gcomp_ml_log_odds_ratio}
 \alias{gcomp_ml_log_odds_ratio}
-\title{gcomp_ml_log_odds_ratio}
+\title{G-computation Maximum Likelihood Log-Odds Ratio}
 \usage{
 gcomp_ml_log_odds_ratio(formula, dat)
 }

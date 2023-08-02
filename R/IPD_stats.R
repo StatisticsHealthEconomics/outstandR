@@ -95,7 +95,7 @@ new_strategy <- function(strategy, ...) {
 #' @export
 #' 
 hat_Delta_stats <- function(AC.IPD, BC.ALD, strategy, ...) {
-browser()
+
   AC_hat_Delta_stats <- IPD_stats(strategy, data = AC.IPD, ...) 
   BC_hat_Delta_stats <- ALD_stats(data = BC.ALD) 
   

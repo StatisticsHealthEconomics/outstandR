@@ -6,6 +6,7 @@
 #' @param formula 
 #'
 #' @return mean difference in expected log-odds
+#' @export
 #' 
 gcomp_ml.boot <- function(data, indices,
                           formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")) {
@@ -14,7 +15,7 @@ gcomp_ml.boot <- function(data, indices,
 }
 
 
-#' gcomp_ml_log_odds_ratio
+#' G-computation Maximum Likelihood Log-Odds Ratio
 #' 
 #' marginal A vs. C log-odds ratio (mean difference in expected log-odds)
 #' estimated by transforming from probability to linear predictor scale
@@ -31,7 +32,7 @@ gcomp_ml_log_odds_ratio <- function(formula, dat) {
   covariate_names <- get_covariate_names(formula)
   
   # remove treatment
-  cov_names <- cov_names[cov_names != treat_names]
+  covariate_names <- covariate_names[covariate_names != treat_name]
   
   ##TODO: this is a problem because we are only passing
   ##      the AC.IPD data and not BC.ALD
@@ -43,7 +44,7 @@ gcomp_ml_log_odds_ratio <- function(formula, dat) {
   
   # covariate simulation for BC trial using copula package
   # AC IPD pairwise correlations
-  t_rho <- t(rho)  # so extract along rows
+  t_rho <- t(rho)  # extract along rows
   cop <-
     normalCopula(param = t_rho[lower.tri(t_rho)],
                  dim = n_covariates,
