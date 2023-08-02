@@ -1,4 +1,11 @@
 
+#' gcomp_stan
+#'
+#' @param formula 
+#' @param dat 
+#'
+#' @return
+#' @export
 #'
 gcomp_stan <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
                        dat = AC.IPD) {
@@ -8,19 +15,21 @@ gcomp_stan <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
   # remove treatment
   cov_names <- cov_names[cov_names != treat_names]
   
+  n_covariates <- length(covariate_names)
+  
   rho <- cor(AC.IPD[, cov_names])
   
-  #  covariate simulation for BC trial using copula package
+  # covariate simulation for BC trial using copula package
   cop <-
     normalCopula(param = c(rho[1,2],rho[1,3],rho[1,4],
                                     rho[2,3],rho[2,4],
                                              rho[3,4]),
-                 dim = 4,
-                 dispstr = "un") # AC IPD pairwise correlations
+                 dim = n_covariates,
+                 dispstr = "un")  # AC IPD pairwise correlations
   
   # sample covariates from approximate joint distribution using copula
   mvd <- mvdc(copula = cop,
-              margins = c("norm", "norm", # Gaussian marginals
+              margins = c("norm", "norm",  # Gaussian marginals
                           "norm", "norm"),
               # BC covariate means and standard deviations
               paramMargins = list(list(mean=BC.ALD$mean.X1, sd=BC.ALD$sd.X1),

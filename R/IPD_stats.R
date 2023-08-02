@@ -126,6 +126,7 @@ hat_Delta_stats <- function(AC.IPD, BC.ALD, strategy, ...) {
 
 #' @name IPD_stats
 #' Individual level data statistics
+#' @return mean, variance
 #' @export
 #' 
 IPD_stats <- function(strategy, data, ...)
@@ -164,7 +165,7 @@ IPD_stats.maic <- function(strategy,
                           formula = strategy$formula,
                           dat_ALD = strategy$dat_ALD)
   
-  list(mean =  mean(maic_boot$t),
+  list(mean = mean(maic_boot$t),
        var = var(maic_boot$t))
 }
 

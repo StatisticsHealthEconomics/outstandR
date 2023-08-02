@@ -11,6 +11,9 @@ get_sd_names(dat, var_names)
 
 \item{var_names}{}
 }
+\value{
+SD names
+}
 \description{
 Get SD names
 }

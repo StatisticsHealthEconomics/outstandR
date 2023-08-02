@@ -9,6 +9,9 @@ get_covariate_names(formula)
 \arguments{
 \item{formula}{}
 }
+\value{
+covariate names
+}
 \description{
 Get covariate names
 }

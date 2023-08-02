@@ -9,6 +9,9 @@ get_effect_modifiers(formula)
 \arguments{
 \item{formula}{}
 }
+\value{
+effect modifiers names
+}
 \description{
 Get effect modifiers
 }

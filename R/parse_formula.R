@@ -3,7 +3,7 @@
 #'
 #' @param formula 
 #'
-#' @return
+#' @return effect modifiers names
 #' @export
 #'
 get_effect_modifiers <- function(formula) {
@@ -17,12 +17,11 @@ get_effect_modifiers <- function(formula) {
   modifiers
 }
 
-
 #' Get treatment name
 #'
 #' @param formula 
 #'
-#' @return
+#' @return treatment name
 #' @export
 #'
 get_treatment_name <- function(formula) {
@@ -34,13 +33,12 @@ get_treatment_name <- function(formula) {
   treat_nm
 }
 
-
 #' Get mean names
 #'
 #' @param dat 
 #' @param var_names 
 #'
-#' @return
+#' @return mean names
 #' @export
 #'
 get_mean_names <- function(dat, var_names) {
@@ -57,7 +55,7 @@ get_mean_names <- function(dat, var_names) {
 #' @param dat 
 #' @param var_names 
 #'
-#' @return
+#' @return SD names
 #' @export
 #'
 get_sd_names <- function(dat, var_names) {
@@ -73,7 +71,7 @@ get_sd_names <- function(dat, var_names) {
 #'
 #' @param formula 
 #'
-#' @return
+#' @return covariate names
 #' @export
 #'
 get_covariate_names <- function(formula) {

@@ -9,6 +9,9 @@ get_treatment_name(formula)
 \arguments{
 \item{formula}{}
 }
+\value{
+treatment name
+}
 \description{
 Get treatment name
 }

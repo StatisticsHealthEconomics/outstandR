@@ -11,6 +11,9 @@ get_mean_names(dat, var_names)
 
 \item{var_names}{}
 }
+\value{
+mean names
+}
 \description{
 Get mean names
 }
