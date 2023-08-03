@@ -6,7 +6,7 @@
 #'
 #' @param formula 
 #' @param R 
-#' @param dat_ALD 
+#' @param ald 
 #'
 #' @return
 #' @export
@@ -96,7 +96,7 @@ new_strategy <- function(strategy, ...) {
 #' 
 hat_Delta_stats <- function(AC.IPD, BC.ALD, strategy, ...) {
 
-  AC_hat_Delta_stats <- IPD_stats(strategy, data = AC.IPD, ...) 
+  AC_hat_Delta_stats <- IPD_stats(strategy, ipd = AC.IPD, ald = BC.ALD, ...) 
   BC_hat_Delta_stats <- ALD_stats(data = BC.ALD) 
   
   ci_range <- c(0.025, 0.975)
@@ -129,9 +129,8 @@ hat_Delta_stats <- function(AC.IPD, BC.ALD, strategy, ...) {
 #' @return mean, variance
 #' @export
 #' 
-IPD_stats <- function(strategy, data, ...)
+IPD_stats <- function(strategy, ipd, ald, ...)
   UseMethod("IPD_stats", strategy)
-
 
 
 #' @rdname IPD_stats
@@ -148,22 +147,23 @@ IPD_stats.default <- function() {
 #' using bootstrapping
 #'
 #' @param strategy 
-#' @param data 
+#' @param ipd 
+#' @param ald 
 #'
 #' @export
 #' 
 IPD_stats.maic <- function(strategy,
-                           data = AC.IPD) {
+                           ipd, ald) {
   # maic.boot(data = data,
   #           indices = 1:nrow(data),
   #           formula = strategy$formula,
   #           dat_ALD = strategy$dat_ALD)
   
-  maic_boot <- boot::boot(data = data,
+  maic_boot <- boot::boot(data = ipd,
                           statistic = maic.boot,
                           R = strategy$R,
                           formula = strategy$formula,
-                          dat_ALD = strategy$dat_ALD)
+                          dat_ALD = strategy$dat_ALD)   #TODO: swap ald
   
   list(mean = mean(maic_boot$t),
        var = var(maic_boot$t))
@@ -174,13 +174,14 @@ IPD_stats.maic <- function(strategy,
 #' IPD_stats.stc
 #' 
 #' @param strategy 
-#' @param data 
+#' @param ipd 
+#' @param ald 
 #' @export
 #' 
 IPD_stats.stc <- function(strategy,
-                          data = AC.IPD) {
+                          ipd, ald) {
   fit <- glm(strategy$formula,
-             data = data,
+             data = ipd,
              family = binomial)
   
   treat_nm <- get_treatment_name(strategy$formula)
@@ -195,16 +196,17 @@ IPD_stats.stc <- function(strategy,
 #' IPD_stats.gcomp_ml
 #'
 #' @param strategy 
-#' @param data 
+#' @param ipd 
+#' @param ald 
 #'
 #' @return
 #' @export
 #'
 IPD_stats.gcomp_ml <- function(strategy,
-                               data = AC.IPD) {
+                               ipd, ald) {
 
   # non-parametric bootstrap with 1000 resamples
-  AC_maic_boot <- boot::boot(data = data,
+  AC_maic_boot <- boot::boot(data = ipd,
                              statistic = gcomp_ml.boot,
                              R = strategy$R,
                              formula = strategy$formula)
@@ -218,16 +220,17 @@ IPD_stats.gcomp_ml <- function(strategy,
 #' IPD_stats.gcomp_stan
 #'
 #' @param strategy 
-#' @param data 
+#' @param ipd 
+#' @param ald 
 #'
 #' @return
 #' @export
 #'
 IPD_stats.gcomp_stan <- function(strategy,
-                                 data) {
+                                 ipd, ald) {
   
   ppv <- gcomp_stan(formula = strategy$formula,
-                    dat = data)
+                    dat = ipd)
   
   # compute marginal log-odds ratio for A vs C for each MCMC sample
   # by transforming from probability to linear predictor scale

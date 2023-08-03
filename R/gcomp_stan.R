@@ -1,14 +1,15 @@
 
-#' gcomp_stan
+#' G-computation using Stan
 #'
 #' @param formula 
-#' @param dat 
+#' @param ipd 
+#' @param ald 
 #'
 #' @return
 #' @export
 #'
 gcomp_stan <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
-                       dat = AC.IPD) {
+                       ipd, ald) {
   treat_names <- get_treatment_name(formula)
   cov_names <- get_covariate_names(formula)
   
@@ -17,7 +18,7 @@ gcomp_stan <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
   
   n_covariates <- length(covariate_names)
   
-  rho <- cor(AC.IPD[, cov_names])
+  rho <- cor(ipd[, cov_names])
   
   # covariate simulation for BC trial using copula package
   cop <-
@@ -32,10 +33,10 @@ gcomp_stan <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
               margins = c("norm", "norm",  # Gaussian marginals
                           "norm", "norm"),
               # BC covariate means and standard deviations
-              paramMargins = list(list(mean=BC.ALD$mean.X1, sd=BC.ALD$sd.X1),
-                                  list(mean=BC.ALD$mean.X2, sd=BC.ALD$sd.X2),
-                                  list(mean=BC.ALD$mean.X3, sd=BC.ALD$sd.X3),
-                                  list(mean=BC.ALD$mean.X4, sd=BC.ALD$sd.X4)))
+              paramMargins = list(list(mean=ald$mean.X1, sd=ald$sd.X1),
+                                  list(mean=ald$mean.X2, sd=ald$sd.X2),
+                                  list(mean=ald$mean.X3, sd=ald$sd.X3),
+                                  list(mean=ald$mean.X4, sd=ald$sd.X4)))
   # simulated BC pseudo-population of size 1000
   x_star <- as.data.frame(rMvdc(1000, mvd))
   
@@ -44,7 +45,7 @@ gcomp_stan <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
   
   # outcome logistic regression fitted to IPD using MCMC (Stan)
   outcome.model <- stan_glm(formula,
-                            data = dat,
+                            data = ipd,
                             family = binomial,
                             algorithm = "sampling",
                             iter = 4000, warmup = 2000, chains = 2)
@@ -52,8 +53,8 @@ gcomp_stan <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
   data.trtA <- data.trtC <- x_star
   
   # intervene on treatment while keeping set covariates fixed
-  data.trtA[[treat_names]] <- 1 # everyone receives treatment A
-  data.trtC[[treat_names]] <- 0 # all observations receive C
+  data.trtA[[treat_names]] <- 1  # everyone receives treatment A
+  data.trtC[[treat_names]] <- 0  # all observations receive treatment C
   
   # draw binary responses from posterior predictive distribution
   list(
