@@ -2,15 +2,17 @@
 % Please edit documentation in R/gcomp_stan.R
 \name{gcomp_stan}
 \alias{gcomp_stan}
-\title{gcomp_stan}
+\title{G-computation using Stan}
 \usage{
-gcomp_stan(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"), dat = AC.IPD)
+gcomp_stan(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"), ipd, ald)
 }
 \arguments{
 \item{formula}{}
 
-\item{dat}{}
+\item{ipd}{Individual-level data}
+
+\item{ald}{Aggregate-level data}
 }
 \description{
-gcomp_stan
+G-computation using Stan
 }

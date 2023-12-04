@@ -2,8 +2,8 @@
 #' G-computation using Stan
 #'
 #' @param formula 
-#' @param ipd 
-#' @param ald 
+#' @template args-ipd
+#' @template args-ald
 #'
 #' @return
 #' @export
@@ -15,9 +15,7 @@ gcomp_stan <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
   
   # remove treatment
   cov_names <- cov_names[cov_names != treat_names]
-  
-  n_covariates <- length(covariate_names)
-  
+  n_covariates <- length(cov_names)
   rho <- cor(ipd[, cov_names])
   
   # covariate simulation for BC trial using copula package
@@ -40,7 +38,6 @@ gcomp_stan <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
   # simulated BC pseudo-population of size 1000
   x_star <- as.data.frame(rMvdc(1000, mvd))
   
-  browser()
   colnames(x_star) <- cov_names
   
   # outcome logistic regression fitted to IPD using MCMC (Stan)

@@ -147,8 +147,8 @@ IPD_stats.default <- function() {
 #' using bootstrapping
 #'
 #' @param strategy 
-#' @param ipd 
-#' @param ald 
+#' @template args-ipd
+#' @template args-ald
 #'
 #' @export
 #' 
@@ -174,8 +174,8 @@ IPD_stats.maic <- function(strategy,
 #' IPD_stats.stc
 #' 
 #' @param strategy 
-#' @param ipd 
-#' @param ald 
+#' @template args-ipd
+#' @template args-ald
 #' @export
 #' 
 IPD_stats.stc <- function(strategy,
@@ -196,8 +196,8 @@ IPD_stats.stc <- function(strategy,
 #' IPD_stats.gcomp_ml
 #'
 #' @param strategy 
-#' @param ipd 
-#' @param ald 
+#' @template args-ipd
+#' @template args-ald
 #'
 #' @return
 #' @export
@@ -220,8 +220,8 @@ IPD_stats.gcomp_ml <- function(strategy,
 #' IPD_stats.gcomp_stan
 #'
 #' @param strategy 
-#' @param ipd 
-#' @param ald 
+#' @template args-ipd
+#' @template args-ald
 #'
 #' @return
 #' @export
@@ -230,7 +230,7 @@ IPD_stats.gcomp_stan <- function(strategy,
                                  ipd, ald) {
   
   ppv <- gcomp_stan(formula = strategy$formula,
-                    dat = ipd)
+                    ipd = ipd, ald = ald)
   
   # compute marginal log-odds ratio for A vs C for each MCMC sample
   # by transforming from probability to linear predictor scale
