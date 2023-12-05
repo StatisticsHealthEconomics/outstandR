@@ -14,7 +14,7 @@ This R package contains code originally written for the paper:
 > Antonio Remiro-Azócar, Anna Heath, Gianluca Baio
 
 ## Installation
-Install the [devlopment version from GitHub](https://github.com/StatisticsHealthEconomics/mimR) using `remotes`:
+Install the [development version from GitHub](https://github.com/StatisticsHealthEconomics/mimR) using `remotes`:
 
 ```r
 remotes::install_github("StatisticsHealthEconomics/mimR")
