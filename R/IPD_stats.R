@@ -126,7 +126,7 @@ new_strategy <- function(strategy, ...) {
 #' @param AC.IPD Individual-level patient data. Suppose between studies A and C.
 #' @param BC.ALD Aggregate-level data. Suppose between studies B and C. 
 #' @param strategy Computation strategy function. These can be
-#'    `strategy_maic()`, `strategy_stc`, `strategy_gcomp_ml` and  `strategy_gcomp_stan`
+#'    `strategy_maic()`, `strategy_stc()`, `strategy_gcomp_ml()` and  `strategy_gcomp_stan()`
 #' @param ... Additional arguments
 #' @return List of statistics as a `mimR` class object
 #' @importFrom Rdpack reprompt
