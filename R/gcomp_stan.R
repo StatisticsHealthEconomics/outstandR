@@ -1,11 +1,11 @@
 
 #' G-computation using Stan
 #'
-#' @param formula 
+#' @param formula Linear regression formula object 
 #' @template args-ipd
 #' @template args-ald
 #'
-#' @return
+#' @return A list of `y.star.A` and `y.star.C` posterior predictions
 #' @export
 #'
 gcomp_stan <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),

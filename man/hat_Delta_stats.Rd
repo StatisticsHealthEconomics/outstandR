@@ -2,19 +2,29 @@
 % Please edit documentation in R/IPD_stats.R
 \name{hat_Delta_stats}
 \alias{hat_Delta_stats}
-\title{Main wrapper for hat_Delta_stats}
+\title{Calculate the difference between treatments using all evidence}
 \usage{
 hat_Delta_stats(AC.IPD, BC.ALD, strategy, ...)
 }
 \arguments{
-\item{AC.IPD}{}
+\item{AC.IPD}{Individual-level patient data. Suppose between studies A and C.}
 
-\item{BC.ALD}{}
+\item{BC.ALD}{Aggregate-level data. Suppose between studies B and C.}
 
-\item{strategy}{}
+\item{strategy}{Computation strategy function. These can be
+\code{strategy_maic()}, \code{strategy_stc}, \code{strategy_gcomp_ml} and  \code{strategy_gcomp_stan}}
 
 \item{...}{Additional arguments}
 }
+\value{
+List of statistics as a \code{mimR} class object
+}
 \description{
-Main wrapper for hat_Delta_stats
+This is the main wrapper for \code{hat_Delta_stats()}.
+}
+\details{
+\insertCite{RemiroAzocar2022}{mimR}
+}
+\references{
+\insertRef{RemiroAzocar2022}{mimR}
 }

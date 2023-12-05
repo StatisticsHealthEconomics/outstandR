@@ -7,11 +7,14 @@
 gcomp_stan(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"), ipd, ald)
 }
 \arguments{
-\item{formula}{}
+\item{formula}{Linear regression formula object}
 
 \item{ipd}{Individual-level data}
 
 \item{ald}{Aggregate-level data}
+}
+\value{
+A list of \code{y.star.A} and \code{y.star.C} posterior predictions
 }
 \description{
 G-computation using Stan
