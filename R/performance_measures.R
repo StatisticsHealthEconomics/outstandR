@@ -1,14 +1,18 @@
 
 ## Functions to evaluate performance measures
 
-#' objective function to minimize for standard method of moments MAIC
+#' Objective function to minimize for standard method of moments MAIC
 #'
+#' @param beta Beta
+#' @param X X
 Q <- function(beta, X) {
   sum(exp(X %*% beta))
 }
 
-#' bias estimate
+#' Bias estimate
 #' 
+#' @param theta.hat Theta hat
+#' @param theta Theta
 bias <- function(theta.hat, theta) {
   nsim <- length(theta.hat)
   sum(theta.hat)/nsim - theta
