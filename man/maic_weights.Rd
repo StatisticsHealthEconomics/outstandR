@@ -13,12 +13,8 @@ maic_weights(X.EM)
 Estimated weights for each individual; vector
 }
 \description{
-Estimate MAIC weights
+\insertCite{Signorovitch2010}{mimR}
 }
 \references{
-J. E. Signorovitch et al,
-Comparative Effectiveness Without Head-to-Head Trials:
-A Method for Matching-Adjusted Indirect Comparisons Applied
-to Psoriasis Treatment with Adalimumab or Etanercept,
-Pharmacoeconomics 2010; 28 (10): 935-945
+\insertRef{Signorovitch2010}{mimR}
 }

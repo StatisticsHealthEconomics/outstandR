@@ -11,14 +11,14 @@ gcomp_ml.boot(
 )
 }
 \arguments{
-\item{data}{}
+\item{data}{Data}
 
-\item{indices}{}
+\item{indices}{Indices}
 
-\item{formula}{}
+\item{formula}{Linear regression formula}
 }
 \value{
-mean difference in expected log-odds
+Mean difference in expected log-odds
 }
 \description{
 G-computation maximum likelihood bootstrap

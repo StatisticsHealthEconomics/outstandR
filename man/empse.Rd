@@ -6,6 +6,12 @@
 \usage{
 empse(theta.hat)
 }
+\arguments{
+\item{theta.hat}{Theta}
+}
+\value{
+\eqn{sqrt(tmp/(nsim-1))}
+}
 \description{
 Empirical standard error
 }

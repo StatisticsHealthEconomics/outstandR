@@ -6,6 +6,14 @@
 \usage{
 empse.mcse(empse, nsim)
 }
+\arguments{
+\item{empse}{EMPSE}
+
+\item{nsim}{Number of simulations}
+}
+\value{
+\eqn{empse/(sqrt(2*(nsim-1)))}
+}
 \description{
 EmpSE MCSE
 }

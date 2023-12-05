@@ -6,7 +6,19 @@
 \usage{
 var.ratio.mcse(avg.se, emp.se, var.avg.se, var.emp.se)
 }
+\arguments{
+\item{avg.se}{Average SE}
+
+\item{emp.se}{Emp SE}
+
+\item{var.avg.se}{Variance of average SE}
+
+\item{var.emp.se}{Variance of Emp SE}
+}
 \description{
 Approximation of ratio variance based on independence of avg. se and emp.se
-see Wolter, K., 2007. Introduction to variance estimation.
+see \insertCite{wolter2007}{mimR}
+}
+\references{
+\insertRef{wolter2007}{mimR}
 }

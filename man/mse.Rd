@@ -2,10 +2,18 @@
 % Please edit documentation in R/performance_measures.R
 \name{mse}
 \alias{mse}
-\title{MSE estimate}
+\title{Mean squared error estimate}
 \usage{
 mse(theta.hat, theta)
 }
+\arguments{
+\item{theta.hat}{Theta hat}
+
+\item{theta}{Theta}
+}
+\value{
+\eqn{sum((theta.hat - theta)^2)/nsim}
+}
 \description{
-MSE estimate
+Mean squared error estimate
 }

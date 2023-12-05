@@ -1,11 +1,11 @@
 
 #' G-computation maximum likelihood bootstrap
 #' 
-#' @param data 
-#' @param indices 
-#' @param formula 
+#' @param data Data 
+#' @param indices Indices 
+#' @param formula Linear regression formula 
 #'
-#' @return mean difference in expected log-odds
+#' @return Mean difference in expected log-odds
 #' @export
 #' 
 gcomp_ml.boot <- function(data, indices,
@@ -17,13 +17,13 @@ gcomp_ml.boot <- function(data, indices,
 
 #' G-computation Maximum Likelihood Log-Odds Ratio
 #' 
-#' marginal A vs. C log-odds ratio (mean difference in expected log-odds)
+#' Marginal A vs. C log-odds ratio (mean difference in expected log-odds)
 #' estimated by transforming from probability to linear predictor scale
 #'
-#' @param formula 
-#' @param dat 
+#' @param formula Linear regression formula
+#' @param dat Data
 #'
-#' @return
+#' @return \eqn{log(hat.mu.A/(1-hat.mu.A)) - log(hat.mu.C/(1-hat.mu.C))}
 #' @export
 #'
 gcomp_ml_log_odds_ratio <- function(formula, dat) {

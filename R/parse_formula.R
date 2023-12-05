@@ -1,9 +1,9 @@
 
 #' Get effect modifiers
 #'
-#' @param formula 
+#' @param formula Linear regression formula
 #'
-#' @return effect modifiers names
+#' @return Effect modifiers names
 #' @export
 #'
 get_effect_modifiers <- function(formula) {
@@ -19,9 +19,9 @@ get_effect_modifiers <- function(formula) {
 
 #' Get treatment name
 #'
-#' @param formula 
+#' @param formula Linear regression formula
 #'
-#' @return treatment name
+#' @return Treatment name
 #' @export
 #'
 get_treatment_name <- function(formula) {
@@ -35,10 +35,10 @@ get_treatment_name <- function(formula) {
 
 #' Get mean names
 #'
-#' @param dat 
-#' @param var_names 
+#' @param dat Data
+#' @param var_names Variable names
 #'
-#' @return mean names
+#' @return Mean names
 #' @export
 #'
 get_mean_names <- function(dat, var_names) {
@@ -69,7 +69,7 @@ get_sd_names <- function(dat, var_names) {
 
 #' Get covariate names
 #'
-#' @param formula 
+#' @param formula Linear regression formula
 #'
 #' @return covariate names
 #' @export

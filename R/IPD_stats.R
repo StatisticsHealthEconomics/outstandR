@@ -2,7 +2,9 @@
 # create class for each approach
 
 #' @rdname strategy
-#' Matching-adjusted indirect comparison strategy Used to compare marginal
+#' 
+#' @section Matching-adjusted indirect comparison (MAIC): 
+#' Used to compare marginal
 #' treatment effects where there are cross-trial differences in effect modifiers
 #' and limited patient-level data.
 #'
@@ -28,12 +30,13 @@ strategy_maic <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
 }
 
 #' @rdname strategy
-#' Simulated treatment comparison strategy
-#' outcome regression-based method which targets a conditional treatment effect.
+#' 
+#' @section Simulated treatment comparison (STC): 
+#' Outcome regression-based method which targets a conditional treatment effect.
 #' 
 #' The default formula is
 #' \deqn{
-#'  y = X3 + X4 + trt*I(X1 - mean(X1)) + trt*I(X2 - mean(X2))
+#'  y = X3 + X4 + trt*(X1 - mean(X1)) + trt*(X2 - mean(X2))
 #' }
 #' 
 #' @param formula Linear regression formula object
@@ -52,15 +55,16 @@ strategy_stc <- function(formula =
 }
 
 #' @rdname strategy
-#' G-computation maximum likelihood strategy
+#' 
+#' @section G-computation maximum likelihood:
+#'
+#' The default formula is
+#' \deqn{
+#'  y = X3 + X4 + trt*X1 + trt*X2
+#' }
 #'
 #' @param formula Linear regression formula object
 #' @param R 
-#'
-# The default formula is
-#' \deqn{
-#'  y = X3 + X4 + trt*X1 + trt*X2)
-#' }
 #' 
 #' @return `gcomp_ml` class object
 #' @export
@@ -75,11 +79,12 @@ strategy_gcomp_ml <- function(formula =
 }
 
 #' @rdname strategy
-#' G-computation Bayesian strategy
+#' 
+#' @section G-computation Bayesian:
 #'
 #' The default formula is
 #' \deqn{
-#'  y = X3 + X4 + trt*X1 + trt*X2)
+#'  y = X3 + X4 + trt*X1 + trt*X2
 #' }
 #' 
 #' @param formula Linear regression formula object
@@ -96,14 +101,14 @@ strategy_gcomp_stan <- function(formula =
 }
 
 #' @name strategy
-#' New strategy objects
+#' @title New strategy objects
 #' 
+#' @description
 #' Create class for each approach
 #'
 #' @param strategy Class name
 #' @param ... Additional arguments
 #'
-#' @return
 #' @export
 #'
 new_strategy <- function(strategy, ...) {
@@ -111,8 +116,9 @@ new_strategy <- function(strategy, ...) {
 }
 
 
-#' Calculate the difference between treatments using all evidence
+#' @title Calculate the difference between treatments using all evidence
 #' 
+#' @description
 #' This is the main wrapper for `hat_Delta_stats()`.
 #' 
 #' \insertCite{RemiroAzocar2022}{mimR}
@@ -161,7 +167,7 @@ hat_Delta_stats <- function(AC.IPD, BC.ALD, strategy, ...) {
 
 
 #' @name IPD_stats
-#' Individual level data statistics
+#' @title Individual level data statistics
 #' 
 #' @param strategy A list corresponding to different approaches
 #' @template args-ipd
@@ -183,15 +189,15 @@ IPD_stats.default <- function() {
 
 
 #' @rdname IPD_stats
-#' Matching-adjusted indirect comparison statistics
+#' @title Matching-adjusted indirect comparison statistics
 #' 
-#' marginal A vs C treatment effect estimates
+#' @description
+#' Marginal A vs C treatment effect estimates
 #' using bootstrapping
 #'
 #' @param strategy A list corresponding to different approaches
 #' @template args-ipd
 #' @template args-ald
-#' @return Mean and variance
 #'
 #' @export
 #' 
@@ -214,8 +220,9 @@ IPD_stats.maic <- function(strategy,
 
 
 #' @rdname IPD_stats
-#' Simulated treatment comparison statistics 
+#' @title Simulated treatment comparison statistics 
 #' 
+#' @description
 #' IPD from the AC trial are used to fit a regression model describing the
 #' observed outcomes `y` in terms of the relevant baseline characteristics `x` and
 #' the treatment variable `z`.
@@ -223,7 +230,6 @@ IPD_stats.maic <- function(strategy,
 #' @param strategy A list corresponding to different approaches
 #' @template args-ipd
 #' @template args-ald
-#' @return Mean and variance
 #' @export
 #' 
 IPD_stats.stc <- function(strategy,
@@ -241,13 +247,12 @@ IPD_stats.stc <- function(strategy,
 
 
 #' @rdname IPD_stats
-#' G-computation maximum likelihood statistics
+#' @title G-computation maximum likelihood statistics
 #'
 #' @param strategy A list corresponding to different approaches
 #' @template args-ipd
 #' @template args-ald
 #'
-#' @return Mean and variance
 #' @export
 #'
 IPD_stats.gcomp_ml <- function(strategy,
@@ -265,13 +270,12 @@ IPD_stats.gcomp_ml <- function(strategy,
 
 
 #' @rdname IPD_stats
-#' G-computation Bayesian statistics
+#' @title G-computation Bayesian statistics
 #'
 #' @param strategy A list corresponding to different approaches
 #' @template args-ipd
 #' @template args-ald
 #'
-#' @return Mean and variance
 #' @export
 #'
 IPD_stats.gcomp_stan <- function(strategy,

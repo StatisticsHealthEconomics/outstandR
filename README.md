@@ -3,43 +3,29 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/StatisticsHealthEconomics/mimR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/StatisticsHealthEconomics/mimR/actions/workflows/R-CMD-check.yaml)
-
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
+## Overview
+
 This R package contains code originally written for the paper:
+
 > Parametric G-computation for Compatible Indirect Treatment Comparisons with Limited Individual Patient Data
 > Antonio Remiro-Azócar, Anna Heath, Gianluca Baio
 
-### [*remiroantonio\@gmail.com*](mailto:remiroantonio@gmail.com){.email}
+## Installation
+Install the [devlopment version from GitHub](https://github.com/StatisticsHealthEconomics/mimR) using `remotes`:
 
-### *2021*
+```r
+remotes::install_github("StatisticsHealthEconomics/mimR")
+```
 
-This repository contains the R code used for my paper [Parametric G-computation for Compatible Indirect Treatment Comparisons with Limited Individual Patient Data](https://doi.org/10.1002/jrsm.1565), co-authored with [Prof. Gianluca Baio](http://www.statistica.it/gianluca/) and [Prof. Anna Heath](https://sites.google.com/site/annaheathstats/).
+## License
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-## Utilizing the Scripts
+## Contributing
+Please submit contributions through `Pull Requests`, following the [contributing guidelines](https://github.com/n8thangreen/BCEA/blob/dev/CONTRIBUTING.md).
+To report issues and/or seek support, please file a new ticket in the
+[issue](https://github.com/StatisticsHealthEconomics/mimR/issues) tracker.
 
-In order to use this repository, the user must first download a copy to their local machine. The user must set the working directory to the location where the download was made. To run the pipeline, the user should then open and run the scripts in the following order:
-
-|          Script           | Explanation                                                                                                                                                                                                           |
-|:----------------------:|------------------------------------------------|
-|       `gen_data.R`        | Specifies the settings of the simulation study and saves them in `"./binary_settings.RData"`. Generates the data for the simulation study according to the settings (saving the data to the `"./Data/"` subdirectory) |
-| `population_adjustment.R` | Performs the population-adjusted indirect comparison methods on the simulated data (saving the point estimates and variances to the `"./Results/"` subdirectory)                                                      |
-|       `analysis.R`        | Processes the results of the simulation study and computes and graphs the relevant performance metrics (the analyses are saved to the `"./Analysis/"` subdirectory)                                                   |
-
-In addition, the `functions.R` script contains a user-defined function for weight estimation in MAIC and functions to evaluate the performance measures of interest. The file `./Analysis/scenarios.csv` records the parameter values or settings for each scenario and the key performance measures/results associated with each (as presented in the paper).
-
-The `./Example` subdirectory features example `R` code implementing matching-adjusted indirect comparison (MAIC), conventional simulated treatment comparison (STC), maximum-likelihood parametric G-computation and Bayesian parametric G-computation, as per Appendix D in the Supplementary Material of the article.
-
-The `doSNOW` package is used to parallelize the performance of the methods, distributing the tasks to different cores of the computer.
-
-The code presented here was prepared in `RStudio` using `R` version `3.6.3` in a Windows architecture, with 64-bit operating system. The following packages and version were used:
-
--   `boot 1.3-24` required for use of the non-parametric bootstrap in MAIC and maximum-likelihood parametric G-computation
--   `copula 0.999.20` simulates covariates from a multivariate Gaussian copula for the covariate simulation step of maximum-likelihood parametric G-computation and Bayesian parametric G-computation.
--   `doSNOW 1.0.18` used in combination with `foreach()` to start up local clusters that distribute parallel tasks to different cores
--   `dplyr 1.0.2` for data manipulation
--   `ggplot2 3.3.2` to plot the simulation study results (Figures 2-4 in the article)
--   `gridExtra 2.3` to plot the simulation study results (Figures 2-4 in the article)
--   `MASS 7.3-51.5` to simulate correlated covariates in the data-generating process for the simulation study, drawing from a multivariate normal distribution
--   `parallel 3.6.3` to detect the number of CPU cores
--   `rstanarm 2.21.1` for fitting outcome regressions and drawing outcomes from their posterior predictive distribution in Bayesian parametric G-computation.
+Please note that this project is released with a [Contributor Code of Conduct](https://github.com/n8thangreen/BCEA/blob/dev/CONDUCT.md). By participating in this project you agree to abide by its terms.

@@ -6,6 +6,14 @@
 \usage{
 coverage.mcse(coverage, nsim)
 }
+\arguments{
+\item{coverage}{Coverage}
+
+\item{nsim}{Number of simulations}
+}
+\value{
+\eqn{sqrt((coverage*(1 - coverage))/nsim)}
+}
 \description{
 Monte Carlo SE of coverage estimate
 }

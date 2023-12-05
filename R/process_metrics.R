@@ -1,5 +1,9 @@
 
-#' compute performance metrics for a given method
+#' Compute performance metrics for a given method
+#' 
+#' @param means Mean
+#' @param variances Variances
+#' @param truth Truth
 #' 
 process_metrics <- function(means, variances, truth) {
   # remove NAs (an issue for MAIC in Scenario 7, separation issues)

@@ -7,12 +7,12 @@
 get_mean_names(dat, var_names)
 }
 \arguments{
-\item{dat}{}
+\item{dat}{Data}
 
-\item{var_names}{}
+\item{var_names}{Variable names}
 }
 \value{
-mean names
+Mean names
 }
 \description{
 Get mean names

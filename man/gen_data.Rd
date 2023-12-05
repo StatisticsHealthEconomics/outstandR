@@ -7,23 +7,28 @@
 gen_data(N, b_trt, b_X, b_EM, b_0, meanX, sdX, event_rate, corX, allocation)
 }
 \arguments{
-\item{N}{}
+\item{N}{N}
 
-\item{b_trt}{}
+\item{b_trt}{b treatment}
 
-\item{b_X}{}
+\item{b_X}{b_X}
 
-\item{b_EM}{}
+\item{b_EM}{b_EM}
 
-\item{b_0}{}
+\item{b_0}{b_0}
 
-\item{meanX}{}
+\item{meanX}{mean X}
 
-\item{sdX}{}
+\item{sdX}{sd X}
 
-\item{event_rate}{}
+\item{event_rate}{Event rate}
 
-\item{corX}{}
+\item{corX}{Correlation of X}
+
+\item{allocation}{Allocation}
+}
+\value{
+Data frame of \code{X}, \code{trt} and \code{y}
 }
 \description{
 Generate simulated datasets for index and comparator trials

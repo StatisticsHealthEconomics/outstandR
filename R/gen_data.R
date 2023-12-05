@@ -1,17 +1,17 @@
 
 #' Generate simulated datasets for index and comparator trials
 #' 
-#' @param N 
-#' @param b_trt 
-#' @param b_X 
-#' @param b_EM 
-#' @param b_0 
-#' @param meanX 
-#' @param sdX 
-#' @param event_rate 
-#' @param corX 
-#' @param allocation
-#' @return 
+#' @param N N
+#' @param b_trt b treatment 
+#' @param b_X b_X 
+#' @param b_EM b_EM 
+#' @param b_0 b_0 
+#' @param meanX mean X 
+#' @param sdX sd X 
+#' @param event_rate Event rate 
+#' @param corX Correlation of X 
+#' @param allocation Allocation
+#' @return Data frame of `X`, `trt` and `y`
 #' 
 gen_data <- function(N, b_trt, b_X, b_EM, b_0,
                      meanX, sdX, event_rate, 

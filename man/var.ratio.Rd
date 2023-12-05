@@ -6,6 +6,14 @@
 \usage{
 var.ratio(theta.hat, std.err)
 }
+\arguments{
+\item{theta.hat}{Theta hat}
+
+\item{std.err}{Standard error}
+}
+\value{
+Ratio
+}
 \description{
 Variability ratio
 }

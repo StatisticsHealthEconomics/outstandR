@@ -1,0 +1,59 @@
+url: https://StatisticsHealthEconomics.github.io/mimR/
+  
+news:
+  cran_dates: false
+
+template:
+  bootstrap: 5
+  theme: atom-one-light
+  bslib:
+    font_scale: 1.0
+
+navbar:
+  structure:
+    left:  [intro, reference, articles, tutorials, news]
+    right: [search, github]
+
+reference:
+- title: "Main"
+  desc: "Main functions"
+  contents:
+  # - mimR-package
+  - starts_with("hat_Delta_stats")
+- title: "Helpers"
+  desc: "Helper functions"
+  contents:
+  - ALD_stats
+  - bias.mcse
+  - bias
+  - cor2cov
+  - coverage.mcse
+  - coverage
+  - empse.mcse
+  - empse
+  - gcomp_ml.boot
+  - gcomp_ml_log_odds_ratio
+  - gcomp_stan
+  - gen_data
+  - get_covariate_names
+  - get_effect_modifiers
+  - get_mean_names
+  - get_sd_names
+  - get_treatment_name
+  - IPD_stats
+  - mae
+  - maic.boot
+  - maic_weights
+  - marginal_treatment_effect
+  - marginal_variance
+  - mcse.estimate
+  - mse.mcse
+  - mse
+  - process_metrics
+  - Q
+  - strategy_maic
+  - trial_treatment_effect
+  - trial_variance
+  - var.ratio.mcse
+  - var.ratio
+  

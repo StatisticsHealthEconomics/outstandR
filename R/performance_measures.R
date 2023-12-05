@@ -15,15 +15,20 @@ bias <- function(theta.hat, theta) {
 }
 
 #' Monte Carlo SE of bias estimate
-#' 
+#' @param theta.hat theta hat
+#' @return \eqn{sqrt(1/(nsim*(nsim-1))*tmp)}
 bias.mcse <- function(theta.hat) {
   nsim <- length(theta.hat)
   tmp <- sum((theta.hat - mean(theta.hat))^2)
   sqrt(1/(nsim*(nsim-1))*tmp)
 }
 
-#' coverage estimate
+#' Coverage estimate
 #' 
+#' @param low Low
+#' @param upp Upper
+#' @param theta Theta
+#' @return \eqn{sum(in_range)/nsim}
 coverage <- function(low, upp, theta) {
   nsim <- length(low)
   theta_inside_range <- theta >= low & theta <= upp
@@ -33,12 +38,18 @@ coverage <- function(low, upp, theta) {
 
 #' Monte Carlo SE of coverage estimate
 #' 
+#' @param coverage Coverage
+#' @param nsim Number of simulations
+#' @return \eqn{sqrt((coverage*(1 - coverage))/nsim)}
 coverage.mcse <- function(coverage, nsim) {
   sqrt((coverage*(1 - coverage))/nsim)
 }
 
-#' MSE estimate
+#' Mean squared error estimate
 #'
+#' @param theta.hat Theta hat
+#' @param theta Theta
+#' @return \eqn{sum((theta.hat - theta)^2)/nsim}
 mse <- function(theta.hat, theta) {
   nsim <- length(theta.hat)
   sum((theta.hat - theta)^2)/nsim
@@ -46,6 +57,9 @@ mse <- function(theta.hat, theta) {
 
 #' Monte Carlo SE of MSE estimate
 #' 
+#' @param theta.hat Theta hat
+#' @param theta Theta
+#' @return \eqn{sqrt(sum((tmp - mse.est)^2)/(nsim*(nsim-1)))}
 mse.mcse <- function(theta.hat, theta) {
   nsim <- length(theta.hat)
   tmp <- (theta.hat - theta)^2
@@ -53,8 +67,11 @@ mse.mcse <- function(theta.hat, theta) {
   sqrt(sum((tmp - mse.est)^2)/(nsim*(nsim-1)))
 }
 
-#' MAE estimate
+#' Mean absolute error estimate
 #' 
+#' @param theta.hat Theta hat
+#' @param theta Theta
+#' @return \eqn{sum(abs(theta.hat - theta))/nsim}
 mae <- function(theta.hat, theta) {
   nsim <- length(theta.hat)
   sum(abs(theta.hat - theta))/nsim
@@ -62,6 +79,8 @@ mae <- function(theta.hat, theta) {
 
 #' Monte Carlo SE of any continuous performance metric
 #' 
+#' @param pm pm
+#' @return \eqn{sqrt(sum((pm - pm_mean)^2)/(nsim*(nsim-1)))}
 mcse.estimate <- function(pm) {
   nsim <- length(pm)
   pm_mean <- sum(pm)/nsim
@@ -70,6 +89,8 @@ mcse.estimate <- function(pm) {
 
 #' Empirical standard error 
 #' 
+#' @param theta.hat Theta
+#' @return \eqn{sqrt(tmp/(nsim-1))}
 empse <- function(theta.hat) {
   nsim <- length(theta.hat)
   tmp <- sum((theta.hat - mean(theta.hat))^2)
@@ -78,12 +99,18 @@ empse <- function(theta.hat) {
 
 #' EmpSE MCSE
 #' 
+#' @param empse EMPSE
+#' @param nsim Number of simulations
+#' @return \eqn{empse/(sqrt(2*(nsim-1)))}
 empse.mcse <- function(empse, nsim) {
   empse/(sqrt(2*(nsim-1)))
 } 
 
 #' Variability ratio
 #' 
+#' @param theta.hat Theta hat
+#' @param std.err Standard error
+#' @return Ratio
 var.ratio <- function(theta.hat, std.err) {
   nsim <- length(theta.hat)
   num <- sum(std.err)/nsim
@@ -94,8 +121,16 @@ var.ratio <- function(theta.hat, std.err) {
 #' Variability ratio MCSE
 #' 
 #' Approximation of ratio variance based on independence of avg. se and emp.se
-#' see Wolter, K., 2007. Introduction to variance estimation. 
+#' see \insertCite{wolter2007}{mimR}
 #'
+#' @param avg.se Average SE
+#' @param emp.se Emp SE
+#' @param var.avg.se Variance of average SE
+#' @param var.emp.se Variance of Emp SE
+#' 
+#' @references
+#' \insertRef{wolter2007}{mimR}
+#' 
 var.ratio.mcse <- function(avg.se, emp.se, var.avg.se, var.emp.se) {
 
   sqrt((1/emp.se^2)*var.avg.se + (((avg.se^2)/(emp.se^4))*var.emp.se))

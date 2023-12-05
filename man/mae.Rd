@@ -2,10 +2,18 @@
 % Please edit documentation in R/performance_measures.R
 \name{mae}
 \alias{mae}
-\title{MAE estimate}
+\title{Mean absolute error estimate}
 \usage{
 mae(theta.hat, theta)
 }
+\arguments{
+\item{theta.hat}{Theta hat}
+
+\item{theta}{Theta}
+}
+\value{
+\eqn{sum(abs(theta.hat - theta))/nsim}
+}
 \description{
-MAE estimate
+Mean absolute error estimate
 }

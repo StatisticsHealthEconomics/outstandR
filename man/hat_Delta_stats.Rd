@@ -21,8 +21,7 @@ List of statistics as a \code{mimR} class object
 }
 \description{
 This is the main wrapper for \code{hat_Delta_stats()}.
-}
-\details{
+
 \insertCite{RemiroAzocar2022}{mimR}
 }
 \references{

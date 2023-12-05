@@ -7,7 +7,7 @@
 get_covariate_names(formula)
 }
 \arguments{
-\item{formula}{}
+\item{formula}{Linear regression formula}
 }
 \value{
 covariate names

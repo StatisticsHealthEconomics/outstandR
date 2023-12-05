@@ -2,15 +2,18 @@
 % Please edit documentation in R/marginal_stats.R
 \name{ALD_stats}
 \alias{ALD_stats}
-\title{ALD_stats}
+\title{Aggregate-level data statistics}
 \usage{
 ALD_stats(data, trials = list("B", "C"))
 }
 \arguments{
-\item{data}{}
+\item{data}{Data}
 
-\item{trials}{}
+\item{trials}{Trial labels; default \code{B}, \code{C}}
+}
+\value{
+List of marginal treatment effect and variance
 }
 \description{
-ALD_stats
+Aggregate-level data statistics
 }

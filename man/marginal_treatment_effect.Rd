@@ -7,8 +7,13 @@
 marginal_treatment_effect(x, trials = list("B", "C"))
 }
 \arguments{
-\item{x}{}
+\item{x}{x}
+
+\item{trials}{Trial labels}
+}
+\value{
+Trial effect difference
 }
 \description{
-\leqn{\log(n_B n_{\bar{C}})  -log(n_C n_{\bar{B}})}
+\deqn{\log(n_B n_{\bar{C}})  -log(n_C n_{\bar{B}})}
 }

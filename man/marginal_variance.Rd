@@ -7,10 +7,10 @@
 marginal_variance(x, trials = list("B", "C"))
 }
 \arguments{
-\item{x}{}
+\item{x}{x}
 
-\item{trials}{}
+\item{trials}{Trial labels}
 }
 \description{
-\eqn{\frac{1}{n_C} + \frac{1}{n_{\bar{C}}} + \frac{1}{n_B} + \frac{1}{n_{\bar{B}}}}
+\deqn{\frac{1}{n_C} + \frac{1}{n_{\bar{C}}} + \frac{1}{n_B} + \frac{1}{n_{\bar{B}}}}
 }

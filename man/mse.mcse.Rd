@@ -6,6 +6,14 @@
 \usage{
 mse.mcse(theta.hat, theta)
 }
+\arguments{
+\item{theta.hat}{Theta hat}
+
+\item{theta}{Theta}
+}
+\value{
+\eqn{sqrt(sum((tmp - mse.est)^2)/(nsim*(nsim-1)))}
+}
 \description{
 Monte Carlo SE of MSE estimate
 }

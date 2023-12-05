@@ -2,15 +2,18 @@
 % Please edit documentation in R/marginal_stats.R
 \name{trial_variance}
 \alias{trial_variance}
-\title{trial_variance}
+\title{Trial variance}
 \usage{
 trial_variance(x, k)
 }
 \arguments{
-\item{x}{}
+\item{x}{x}
 
-\item{k}{}
+\item{k}{k}
+}
+\value{
+Value
 }
 \description{
-trial_variance
+Trial variance
 }

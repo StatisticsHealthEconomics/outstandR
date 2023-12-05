@@ -7,11 +7,14 @@
 gcomp_ml_log_odds_ratio(formula, dat)
 }
 \arguments{
-\item{formula}{}
+\item{formula}{Linear regression formula}
 
-\item{dat}{}
+\item{dat}{Data}
+}
+\value{
+\eqn{log(hat.mu.A/(1-hat.mu.A)) - log(hat.mu.C/(1-hat.mu.C))}
 }
 \description{
-marginal A vs. C log-odds ratio (mean difference in expected log-odds)
+Marginal A vs. C log-odds ratio (mean difference in expected log-odds)
 estimated by transforming from probability to linear predictor scale
 }

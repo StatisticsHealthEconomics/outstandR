@@ -1,14 +1,14 @@
 
 #' Estimate MAIC weights 
 #' 
-#' @references J. E. Signorovitch et al,
-#' Comparative Effectiveness Without Head-to-Head Trials:
-#' A Method for Matching-Adjusted Indirect Comparisons Applied
-#' to Psoriasis Treatment with Adalimumab or Etanercept,
-#' Pharmacoeconomics 2010; 28 (10): 935-945
+#' \insertCite{Signorovitch2010}{mimR}
+#' 
 #' 
 #' @param X.EM Centred S=1 effect modifiers; matrix or data frame
 #' @return Estimated weights for each individual; vector
+#' 
+#' @references
+#' \insertRef{Signorovitch2010}{mimR}
 #' 
 maic_weights <- function(X.EM) {
   X.EM <- as.matrix(X.EM)
@@ -33,10 +33,12 @@ maic_weights <- function(X.EM) {
 
 #' MAIC bootstrap
 #' 
-#' @param data original data
-#' @param indices vector of indices, same length as original,
+#' @param data Original data
+#' @param indices Vector of indices, same length as original,
 #'   which define the bootstrap sample
-#' @return fitted treatment coefficient is marginal effect for A vs C
+#' @param formula Linear regression formula
+#' @param dat_ALD Aggregate-level data
+#' @return Fitted treatment coefficient is marginal effect for A vs C
 #' 
 maic.boot <- function(data, indices, formula, dat_ALD) {
   

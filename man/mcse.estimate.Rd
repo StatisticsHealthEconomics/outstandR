@@ -6,6 +6,12 @@
 \usage{
 mcse.estimate(pm)
 }
+\arguments{
+\item{pm}{pm}
+}
+\value{
+\eqn{sqrt(sum((pm - pm_mean)^2)/(nsim*(nsim-1)))}
+}
 \description{
 Monte Carlo SE of any continuous performance metric
 }

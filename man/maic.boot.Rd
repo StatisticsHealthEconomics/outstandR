@@ -7,13 +7,17 @@
 maic.boot(data, indices, formula, dat_ALD)
 }
 \arguments{
-\item{data}{original data}
+\item{data}{Original data}
 
-\item{indices}{vector of indices, same length as original,
+\item{indices}{Vector of indices, same length as original,
 which define the bootstrap sample}
+
+\item{formula}{Linear regression formula}
+
+\item{dat_ALD}{Aggregate-level data}
 }
 \value{
-fitted treatment coefficient is marginal effect for A vs C
+Fitted treatment coefficient is marginal effect for A vs C
 }
 \description{
 MAIC bootstrap

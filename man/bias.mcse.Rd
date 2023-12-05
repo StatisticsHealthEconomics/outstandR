@@ -6,6 +6,12 @@
 \usage{
 bias.mcse(theta.hat)
 }
+\arguments{
+\item{theta.hat}{theta hat}
+}
+\value{
+\eqn{sqrt(1/(nsim*(nsim-1))*tmp)}
+}
 \description{
 Monte Carlo SE of bias estimate
 }

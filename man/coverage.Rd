@@ -2,10 +2,20 @@
 % Please edit documentation in R/performance_measures.R
 \name{coverage}
 \alias{coverage}
-\title{coverage estimate}
+\title{Coverage estimate}
 \usage{
 coverage(low, upp, theta)
 }
+\arguments{
+\item{low}{Low}
+
+\item{upp}{Upper}
+
+\item{theta}{Theta}
+}
+\value{
+\eqn{sum(in_range)/nsim}
+}
 \description{
-coverage estimate
+Coverage estimate
 }

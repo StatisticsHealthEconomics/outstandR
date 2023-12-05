@@ -2,15 +2,18 @@
 % Please edit documentation in R/marginal_stats.R
 \name{trial_treatment_effect}
 \alias{trial_treatment_effect}
-\title{trial_treatment_effect}
+\title{Trial treatment effect}
 \usage{
 trial_treatment_effect(x, k)
 }
 \arguments{
-\item{x}{}
+\item{x}{x}
 
-\item{k}{}
+\item{k}{k}
+}
+\value{
+Value
 }
 \description{
-trial_treatment_effect
+Trial treatment effect
 }

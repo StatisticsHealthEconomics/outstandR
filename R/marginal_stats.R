@@ -1,10 +1,10 @@
 
 #' marginal effect variance using the delta method
 #'
-#' \eqn{\frac{1}{n_C} + \frac{1}{n_{\bar{C}}} + \frac{1}{n_B} + \frac{1}{n_{\bar{B}}}}
+#' \deqn{\frac{1}{n_C} + \frac{1}{n_{\bar{C}}} + \frac{1}{n_B} + \frac{1}{n_{\bar{B}}}}
 #'
-#' @param x 
-#' @param trials 
+#' @param x x
+#' @param trials Trial labels
 #' @export
 #' 
 marginal_variance <- function(x, trials = list("B", "C")) {
@@ -16,10 +16,11 @@ marginal_variance <- function(x, trials = list("B", "C")) {
 
 #' B vs C marginal treatment effect from reported event counts
 #'
-#' \leqn{\log(n_B n_{\bar{C}})  -log(n_C n_{\bar{B}})}
+#' \deqn{\log(n_B n_{\bar{C}})  -log(n_C n_{\bar{B}})}
 #'
-#' @param x 
-#' @param trials
+#' @param x x
+#' @param trials Trial labels
+#' @return Trial effect difference
 #' @export
 #' 
 marginal_treatment_effect <- function(x, trials = list("B", "C")) {
@@ -28,12 +29,12 @@ marginal_treatment_effect <- function(x, trials = list("B", "C")) {
 }
 
 
-#' trial_variance
+#' Trial variance
 #'
-#' @param x 
-#' @param k 
+#' @param x x
+#' @param k k
 #'
-#' @return
+#' @return Value
 #' @export
 #'
 trial_variance <- function(x, k) {
@@ -42,12 +43,12 @@ trial_variance <- function(x, k) {
 }
 
 
-#' trial_treatment_effect
+#' Trial treatment effect
 #'
-#' @param x 
-#' @param k 
+#' @param x x
+#' @param k k
 #'
-#' @return
+#' @return Value
 #' @export
 #'
 trial_treatment_effect <- function(x, k) {
@@ -56,12 +57,12 @@ trial_treatment_effect <- function(x, k) {
 }
 
   
-#' ALD_stats
+#' Aggregate-level data statistics
 #'
-#' @param data 
-#' @param trials 
+#' @param data Data
+#' @param trials Trial labels; default `B`, `C`
 #'
-#' @return
+#' @return List of marginal treatment effect and variance
 #' @export
 #'
 ALD_stats <- function(data, trials = list("B", "C")) {

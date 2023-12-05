@@ -2,10 +2,17 @@
 % Please edit documentation in R/process_metrics.R
 \name{process_metrics}
 \alias{process_metrics}
-\title{compute performance metrics for a given method}
+\title{Compute performance metrics for a given method}
 \usage{
 process_metrics(means, variances, truth)
 }
+\arguments{
+\item{means}{Mean}
+
+\item{variances}{Variances}
+
+\item{truth}{Truth}
+}
 \description{
-compute performance metrics for a given method
+Compute performance metrics for a given method
 }
