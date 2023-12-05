@@ -154,9 +154,9 @@ hat_Delta_stats <- function(AC.IPD, BC.ALD, strategy, ...) {
     BC = BC_hat_Delta_stats$var)
   
   contrast_ci <- list(
-    AB = contrasts$AB + qnorm(ci_range)*sqrt(contrast_variances$AB),
-    AC = contrasts$AC + qnorm(ci_range)*sqrt(contrast_variances$AC),
-    BC = contrasts$BC + qnorm(ci_range)*sqrt(contrast_variances$BC))
+    AB = contrasts$AB + qnorm(ci_range)*as.vector(sqrt(contrast_variances$AB)),
+    AC = contrasts$AC + qnorm(ci_range)*as.vector(sqrt(contrast_variances$AC)),
+    BC = contrasts$BC + qnorm(ci_range)*as.vector(sqrt(contrast_variances$BC)))
   
   stats <- list(contrasts,
                 contrast_variances,
