@@ -5,6 +5,8 @@
 #' @param variances Variances
 #' @param truth Truth
 #' 
+#' @keywords internal
+#' 
 process_metrics <- function(means, variances, truth) {
   # remove NAs (an issue for MAIC in Scenario 7, separation issues)
   NAs <- is.na(means)

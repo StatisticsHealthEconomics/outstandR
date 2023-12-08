@@ -5,6 +5,8 @@
 #'
 #' @param beta Beta
 #' @param X X
+#' @keywords internal
+#' 
 Q <- function(beta, X) {
   sum(exp(X %*% beta))
 }
@@ -13,6 +15,8 @@ Q <- function(beta, X) {
 #' 
 #' @param theta.hat Theta hat
 #' @param theta Theta
+#' @keywords internal
+#' 
 bias <- function(theta.hat, theta) {
   nsim <- length(theta.hat)
   sum(theta.hat)/nsim - theta
@@ -21,6 +25,8 @@ bias <- function(theta.hat, theta) {
 #' Monte Carlo SE of bias estimate
 #' @param theta.hat theta hat
 #' @return \eqn{sqrt(1/(nsim*(nsim-1))*tmp)}
+#' @keywords internal
+#' 
 bias.mcse <- function(theta.hat) {
   nsim <- length(theta.hat)
   tmp <- sum((theta.hat - mean(theta.hat))^2)
@@ -33,6 +39,8 @@ bias.mcse <- function(theta.hat) {
 #' @param upp Upper
 #' @param theta Theta
 #' @return \eqn{sum(in_range)/nsim}
+#' @keywords internal
+#' 
 coverage <- function(low, upp, theta) {
   nsim <- length(low)
   theta_inside_range <- theta >= low & theta <= upp
@@ -45,6 +53,8 @@ coverage <- function(low, upp, theta) {
 #' @param coverage Coverage
 #' @param nsim Number of simulations
 #' @return \eqn{sqrt((coverage*(1 - coverage))/nsim)}
+#' @keywords internal
+#' 
 coverage.mcse <- function(coverage, nsim) {
   sqrt((coverage*(1 - coverage))/nsim)
 }
@@ -54,6 +64,8 @@ coverage.mcse <- function(coverage, nsim) {
 #' @param theta.hat Theta hat
 #' @param theta Theta
 #' @return \eqn{sum((theta.hat - theta)^2)/nsim}
+#' @keywords internal
+#' 
 mse <- function(theta.hat, theta) {
   nsim <- length(theta.hat)
   sum((theta.hat - theta)^2)/nsim
@@ -64,6 +76,8 @@ mse <- function(theta.hat, theta) {
 #' @param theta.hat Theta hat
 #' @param theta Theta
 #' @return \eqn{sqrt(sum((tmp - mse.est)^2)/(nsim*(nsim-1)))}
+#' @keywords internal
+#' 
 mse.mcse <- function(theta.hat, theta) {
   nsim <- length(theta.hat)
   tmp <- (theta.hat - theta)^2
@@ -76,6 +90,8 @@ mse.mcse <- function(theta.hat, theta) {
 #' @param theta.hat Theta hat
 #' @param theta Theta
 #' @return \eqn{sum(abs(theta.hat - theta))/nsim}
+#' @keywords internal
+#' 
 mae <- function(theta.hat, theta) {
   nsim <- length(theta.hat)
   sum(abs(theta.hat - theta))/nsim
@@ -85,6 +101,8 @@ mae <- function(theta.hat, theta) {
 #' 
 #' @param pm pm
 #' @return \eqn{sqrt(sum((pm - pm_mean)^2)/(nsim*(nsim-1)))}
+#' @keywords internal
+#' 
 mcse.estimate <- function(pm) {
   nsim <- length(pm)
   pm_mean <- sum(pm)/nsim
@@ -95,6 +113,8 @@ mcse.estimate <- function(pm) {
 #' 
 #' @param theta.hat Theta
 #' @return \eqn{sqrt(tmp/(nsim-1))}
+#' @keywords internal
+#' 
 empse <- function(theta.hat) {
   nsim <- length(theta.hat)
   tmp <- sum((theta.hat - mean(theta.hat))^2)
@@ -106,6 +126,8 @@ empse <- function(theta.hat) {
 #' @param empse EMPSE
 #' @param nsim Number of simulations
 #' @return \eqn{empse/(sqrt(2*(nsim-1)))}
+#' @keywords internal
+#' 
 empse.mcse <- function(empse, nsim) {
   empse/(sqrt(2*(nsim-1)))
 } 
@@ -115,6 +137,8 @@ empse.mcse <- function(empse, nsim) {
 #' @param theta.hat Theta hat
 #' @param std.err Standard error
 #' @return Ratio
+#' @keywords internal
+#' 
 var.ratio <- function(theta.hat, std.err) {
   nsim <- length(theta.hat)
   num <- sum(std.err)/nsim
@@ -134,6 +158,8 @@ var.ratio <- function(theta.hat, std.err) {
 #' 
 #' @references
 #' \insertRef{wolter2007}{mimR}
+#' 
+#' @keywords internal
 #' 
 var.ratio.mcse <- function(avg.se, emp.se, var.avg.se, var.emp.se) {
 

@@ -2,10 +2,16 @@
 % Please edit documentation in R/performance_measures.R
 \name{bias}
 \alias{bias}
-\title{bias estimate}
+\title{Bias estimate}
 \usage{
 bias(theta.hat, theta)
 }
-\description{
-bias estimate
+\arguments{
+\item{theta.hat}{Theta hat}
+
+\item{theta}{Theta}
 }
+\description{
+Bias estimate
+}
+\keyword{internal}

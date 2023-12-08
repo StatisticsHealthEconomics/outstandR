@@ -12,7 +12,7 @@ hat_Delta_stats(AC.IPD, BC.ALD, strategy, ...)
 \item{BC.ALD}{Aggregate-level data. Suppose between studies B and C.}
 
 \item{strategy}{Computation strategy function. These can be
-\code{strategy_maic()}, \code{strategy_stc}, \code{strategy_gcomp_ml} and  \code{strategy_gcomp_stan}}
+\code{strategy_maic()}, \code{strategy_stc()}, \code{strategy_gcomp_ml()} and  \code{strategy_gcomp_stan()}}
 
 \item{...}{Additional arguments}
 }

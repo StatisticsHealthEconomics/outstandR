@@ -17,3 +17,4 @@ mse.mcse(theta.hat, theta)
 \description{
 Monte Carlo SE of MSE estimate
 }
+\keyword{internal}

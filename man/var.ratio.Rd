@@ -17,3 +17,4 @@ Ratio
 \description{
 Variability ratio
 }
+\keyword{internal}

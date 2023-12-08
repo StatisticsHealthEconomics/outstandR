@@ -15,3 +15,4 @@ bias.mcse(theta.hat)
 \description{
 Monte Carlo SE of bias estimate
 }
+\keyword{internal}

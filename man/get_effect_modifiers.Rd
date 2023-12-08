@@ -15,3 +15,4 @@ Effect modifiers names
 \description{
 Get effect modifiers
 }
+\keyword{internal}

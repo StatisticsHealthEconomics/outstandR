@@ -16,3 +16,4 @@ process_metrics(means, variances, truth)
 \description{
 Compute performance metrics for a given method
 }
+\keyword{internal}

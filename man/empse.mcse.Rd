@@ -17,3 +17,4 @@ empse.mcse(empse, nsim)
 \description{
 EmpSE MCSE
 }
+\keyword{internal}

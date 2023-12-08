@@ -17,3 +17,4 @@ mse(theta.hat, theta)
 \description{
 Mean squared error estimate
 }
+\keyword{internal}

@@ -17,3 +17,4 @@ SD names
 \description{
 Get SD names
 }
+\keyword{internal}
