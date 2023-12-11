@@ -122,7 +122,8 @@ The returned object is of class `mimR`.
 hat_Delta_stats_maic
 ```
 
-We see that this is a list object with 3 parts, each containing statistics between each pair of treatments. These are the mean contrasts, variances and confidence intervals, respectively.
+We see that this is a list object with 3 parts, each containing statistics between each pair of treatments. These are the mean contrasts, variances and confidence intervals (CI), respectively.
+The default CI is for 95% but can be altered in `hat_Delta_stats` with the `CI` argument.
 
 
 ### STC

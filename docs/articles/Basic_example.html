@@ -8,8 +8,8 @@
 <meta name="description" content="mimR">
 <title>Basic Example • mimR</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Basic Example">
 <meta property="og:description" content="mimR">
@@ -83,69 +83,99 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>Population adjustment methods such as matching-adjusted indirect
-comparison (MAIC) are increasingly used to compare marginal treatment
-effects when there are cross-trial differences in effect modifiers and
-limited patient-level data. MAIC is based on propensity score weighting,
-which is sensitive to poor covariate over- lap and cannot extrapolate
-beyond the observed covariate space. Current out- come regression-based
-alternatives can extrapolate but target a conditional treatment effect
-that is incompatible in the indirect comparison. When adjusting for
-covariates, one must integrate or average the conditional estimate over
-the rel- evant population to recover a compatible marginal treatment
-effect. We propose a marginalization method based on parametric
-G-computation that can be easily applied where the outcome regression is
-a generalized linear model or a Cox model. The approach views the
-covariate adjustment regression as a nuisance model and separates its
-estimation from the evaluation of the marginal treatment effect of
-interest. The method can accommodate a Bayesian statistical framework,
-which naturally integrates the analysis into a probabilistic framework.
-A simula- tion study provides proof-of-principle and benchmarks the
-method’s performance against MAIC and the conventional outcome
-regression. Parametric G- computation achieves more precise and more
-accurate estimates than MAIC, par- ticularly when covariate overlap is
+<p>Population adjustment methods such as <em>matching-adjusted indirect
+comparison</em> (MAIC) are increasingly used to compare marginal
+treatment effects when there are cross-trial differences in effect
+modifiers and limited patient-level data. MAIC is based on propensity
+score weighting, which is sensitive to poor covariate overlap and cannot
+extrapolate beyond the observed covariate space. Current outcome
+regression-based alternatives can extrapolate but target a conditional
+treatment effect that is incompatible in the indirect comparison. When
+adjusting for covariates, one must integrate or average the conditional
+estimate over the relevant population to recover a compatible marginal
+treatment effect.</p>
+<p>We propose a marginalization method based on <em>parametric
+G-computation</em> that can be easily applied where the outcome
+regression is a generalized linear model or a Cox model. The approach
+views the covariate adjustment regression as a nuisance model and
+separates its estimation from the evaluation of the marginal treatment
+effect of interest. The method can accommodate a Bayesian statistical
+framework, which naturally integrates the analysis into a probabilistic
+framework. A simulation study provides proof-of-principle and benchmarks
+the method’s performance against MAIC and the conventional outcome
+regression. Parametric G-computation achieves more precise and more
+accurate estimates than MAIC, particularly when covariate overlap is
 poor, and yields unbiased marginal treatment effect estimates under no
 failures of assumptions. Furthermore, the marginalized
 regression-adjusted estimates provide greater precision and accuracy
 than the conditional estimates produced by the conventional outcome
-regression, which are</p>
+regression.</p>
 </div>
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
+<p>First, let us load necessary packages.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span>      <span class="co"># non-parametric bootstrap in MAIC and ML G-computation</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://copula.r-forge.r-project.org/" class="external-link">copula</a></span><span class="op">)</span>    <span class="co"># simulating BC covariates from Gaussian copula</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mc-stan.org/rstanarm/" class="external-link">rstanarm</a></span><span class="op">)</span>  <span class="co"># fit outcome regression, draw outcomes in Bayesian G-computation</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/StatisticsHealthEconomics/mimR/" class="external-link">mimR</a></span><span class="op">)</span></span></code></pre></div>
-<p>Implementing for MAIC, STC, G-computation methods on a simulated
-example.</p>
+<div class="section level3">
+<h3 id="data">Data<a class="anchor" aria-label="anchor" href="#data"></a>
+</h3>
+<p>Next, we load the data to use in the analysis. The data comes from a
+simulation study in Remiro‐Azócar A, Heath A, Baio G (2020). We consider
+binary outcomes using the log-odds ratio as the measure of effect. The
+binary outcome may be response to treatment or the occurrence of an
+adverse event. For trials <em>AC</em> and <em>BC</em>, outcome <span class="math inline">\(y_n\)</span> for subject <span class="math inline">\(n\)</span> is simulated from a Bernoulli
+distribution with probabilities of success generated from logistic
+regression.</p>
+<p>For the <em>BC</em> trial, the individual-level covariates and
+outcomes are aggregated to obtain summaries. The continuous covariates
+are summarized as means and standard deviations, which would be
+available to the analyst in the published study in a table of baseline
+characteristics in the RCT publication. The binary outcomes are
+summarized as overall event table. Typically, the published study only
+provides aggregate information to the analyst.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">555</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">AC.IPD</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"AC_IPD.csv"</span><span class="op">)</span><span class="op">)</span>  <span class="co"># AC patient-level data</span></span>
 <span><span class="va">BC.ALD</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"BC_ALD.csv"</span><span class="op">)</span><span class="op">)</span>  <span class="co"># BC aggregate-level data</span></span></code></pre></div>
-<p>This data consists of the following.</p>
-<p><code>AC.IPD</code></p>
+<p>This general format of data sets consist of the following.</p>
+<div class="section level4">
+<h4 id="ac-ipd-individual-patient-data">
+<code>AC.IPD</code>: Individual patient data<a class="anchor" aria-label="anchor" href="#ac-ipd-individual-patient-data"></a>
+</h4>
 <ul>
 <li>
 <code>X*</code>: patient measurements</li>
 <li>
 <code>trt</code>: treatment ID</li>
 <li>
-<code>y</code>: indicator of whether event was observed</li>
+<code>y</code>: (logical) indicator of whether event was
+observed</li>
 </ul>
-<p><code>BC.ALD</code></p>
+</div>
+<div class="section level4">
+<h4 id="bc-ald-aggregate-level-data">
+<code>BC.ALD</code>: Aggregate-level data<a class="anchor" aria-label="anchor" href="#bc-ald-aggregate-level-data"></a>
+</h4>
 <ul>
 <li>
-<code>mean.X*</code>: mean</li>
+<code>mean.X*</code>: mean patient measurement</li>
 <li>
-<code>sd.X*</code>: standard deviation</li>
+<code>sd.X*</code>: standard deviation of patient measurement</li>
 <li>
 <code>y.*.sum</code>: total number of events</li>
 <li>
+<code>y.*.bar</code>: total number of events</li>
+<li>
 <code>N.*</code>: total number of individuals</li>
 </ul>
+<p>Note that the wildcard <code>*</code> here is usually an integer from
+1 or the trial identifier <em>B</em>, <em>C</em>.</p>
+<p>Our data looks like the following.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">AC.IPD</span><span class="op">)</span></span>
 <span><span class="co">#&gt;            X1        X2          X3          X4 trt y</span></span>
@@ -154,142 +184,229 @@ example.</p>
 <span><span class="co">#&gt; 3 -0.08048882 0.6843784  0.93147222 -0.11419716   1 0</span></span>
 <span><span class="co">#&gt; 4 -0.38580926 0.5716644 -0.32252212  0.02551808   1 0</span></span>
 <span><span class="co">#&gt; 5  1.00755116 0.8220826  0.92735892  0.84414221   1 1</span></span>
-<span><span class="co">#&gt; 6  0.19443956 0.2031329  0.34990179  0.15633009   1 0</span></span>
-<span><span class="va">BC.ALD</span></span>
+<span><span class="co">#&gt; 6  0.19443956 0.2031329  0.34990179  0.15633009   1 0</span></span></code></pre></div>
+<p>There are 4 correlated continuous covariates generated per subject,
+simulated from a multivariate normal distribution.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">BC.ALD</span></span>
 <span><span class="co">#&gt;     mean.X1   mean.X2   mean.X3   mean.X4     sd.X1     sd.X2     sd.X3</span></span>
 <span><span class="co">#&gt; 1 0.5908996 0.6414179 0.5856529 0.6023671 0.3863145 0.4033615 0.4076097</span></span>
 <span><span class="co">#&gt;      sd.X4 y.B.sum y.B.bar N.B y.C.sum y.C.bar N.C</span></span>
 <span><span class="co">#&gt; 1 0.395132     182   0.455 400     149   0.745 200</span></span></code></pre></div>
-<p>We will create some function for the marginal variance, defined
-as</p>
+<p>In this case, we have 4 covariate mean and standard deviation values;
+and the event total, average and sample size for each treatment
+<em>B</em>, and <em>C</em>.</p>
+</div>
+</div>
+<div class="section level3">
+<h3 id="output-statistics">Output statistics<a class="anchor" aria-label="anchor" href="#output-statistics"></a>
+</h3>
+<p>We will implement for MAIC, STC, and G-computation methods to obtain
+the <em>marginal variance</em>, defined as</p>
 <p><span class="math display">\[
 \frac{1}{n_C} + \frac{1}{n_{\bar{C}}} + \frac{1}{n_B} +
 \frac{1}{n_{\bar{B}}}
 \]</span></p>
-<p>and the marginal treatment effect, defined as</p>
+<p>and the <em>marginal treatment effect</em>, defined as</p>
 <p><span class="math display">\[
 \log(n_B n_{\bar{C}}) - log(n_C n_{\bar{B}})
 \]</span></p>
 </div>
+</div>
 <div class="section level2">
-<h2 id="maic">MAIC<a class="anchor" aria-label="anchor" href="#maic"></a>
+<h2 id="model-fitting-in-r">Model fitting in R<a class="anchor" aria-label="anchor" href="#model-fitting-in-r"></a>
 </h2>
-<p>Using the individual level data firstly perform non-parametric
-bootstrap of the <code>maic.boot</code> function with <code>R</code> =
-1000 replicates. This function fits treatment coefficient for the
-marginal effect for <span class="math inline">\(A\)</span> vs <span class="math inline">\(C\)</span>. The returned value is an object of
-class <code>boot</code>. Then calculate the bootstrap mean and variance
-in the wrapper function <code>maic_boot_stats</code>.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">hat_Delta_stats_maic</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hat_Delta_stats.html">hat_Delta_stats</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>, strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_maic</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">hat_Delta_stats_maic</span></span>
-<span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [[1]]$AB</span></span>
+<p>The <a href="https://github.com/StatisticsHealthEconomics/mimR/" class="external-link">mimR</a> package has been written to be easy to use
+and essential consists of a single function,
+<code><a href="../reference/hat_Delta_stats.html">hat_Delta_stats()</a></code>. This can be used to run all of the
+different types of model, which we will call <em>strategies</em>. The
+first two arguments of <code><a href="../reference/hat_Delta_stats.html">hat_Delta_stats()</a></code> are the individual
+and aggregate-level data, respectively.</p>
+<p>A <code>strategy</code> argument of <code>hat_Delta_stats</code>
+takes functions called <code>strategy_*()</code>, where the wildcard
+<code>*</code> is replaced by the name of the particular method
+required, e.g. <code><a href="../reference/strategy.html">strategy_maic()</a></code> for MAIC. Each specific
+example is provided below.</p>
+<div class="section level3">
+<h3 id="maic">MAIC<a class="anchor" aria-label="anchor" href="#maic"></a>
+</h3>
+<p>Using the individual level data for <em>AC</em> firstly we perform
+non-parametric bootstrap of the <code>maic.boot</code> function with
+<code>R</code> = 1000 replicates. This function fits treatment
+coefficient for the marginal effect for <em>A</em> vs <em>C</em>. The
+returned value is an object of class <code>boot</code> from the
+<code>{boot}</code> package. We then calculate the bootstrap mean and
+variance in the wrapper function <code>maic_boot_stats</code>.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">hat_Delta_stats_maic</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hat_Delta_stats.html">hat_Delta_stats</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>, strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_maic</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>The returned object is of class <code>mimR</code>.</p>
+<!-- Wald-type normal distribution-based 95\% confidence interval are also returned. -->
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">hat_Delta_stats_maic</span></span>
+<span><span class="co">#&gt; $contrasts</span></span>
+<span><span class="co">#&gt; $contrasts$AB</span></span>
 <span><span class="co">#&gt; [1] 0.5008915</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[1]]$AC</span></span>
+<span><span class="co">#&gt; $contrasts$AC</span></span>
 <span><span class="co">#&gt; [1] -1.151838</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[1]]$BC</span></span>
+<span><span class="co">#&gt; $contrasts$BC</span></span>
 <span><span class="co">#&gt; [1] -1.65273</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [[2]]$AB</span></span>
+<span><span class="co">#&gt; $variances</span></span>
+<span><span class="co">#&gt; $variances$AB</span></span>
 <span><span class="co">#&gt;           [,1]</span></span>
 <span><span class="co">#&gt; [1,] 0.1732497</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[2]]$AC</span></span>
+<span><span class="co">#&gt; $variances$AC</span></span>
 <span><span class="co">#&gt;           [,1]</span></span>
 <span><span class="co">#&gt; [1,] 0.1368488</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[2]]$BC</span></span>
+<span><span class="co">#&gt; $variances$BC</span></span>
 <span><span class="co">#&gt; [1] 0.03640091</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[3]]</span></span>
-<span><span class="co">#&gt; [[3]]$AB</span></span>
+<span><span class="co">#&gt; $CI</span></span>
+<span><span class="co">#&gt; $CI$AB</span></span>
 <span><span class="co">#&gt; [1] -0.3149097  1.3166927</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[3]]$AC</span></span>
+<span><span class="co">#&gt; $CI$AC</span></span>
 <span><span class="co">#&gt; [1] -1.8768893 -0.4267873</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[3]]$BC</span></span>
+<span><span class="co">#&gt; $CI$BC</span></span>
 <span><span class="co">#&gt; [1] -2.026672 -1.278788</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; attr(,"CI")</span></span>
+<span><span class="co">#&gt; [1] 0.95</span></span>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "mimR" "list"</span></span></code></pre></div>
-<p>Construct Wald-type normal distribution-based 95% confidence
-interval.</p>
+<p>We see that this is a list object with 3 parts, each containing
+statistics between each pair of treatments. These are the mean
+contrasts, variances and confidence intervals (CI), respectively. The
+default CI is for 95% but can be altered in <code>hat_Delta_stats</code>
+with the <code>CI</code> argument.</p>
 </div>
-<div class="section level2">
-<h2 id="stc-conventional-outcome-regression">STC (conventional outcome regression)<a class="anchor" aria-label="anchor" href="#stc-conventional-outcome-regression"></a>
-</h2>
-<p>Fit regression model of outcome on treatment and covariates IPD
-effect modifiers centred at the mean BC values purely prognostic
-variables are included but not centred.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="section level3">
+<h3 id="stc">STC<a class="anchor" aria-label="anchor" href="#stc"></a>
+</h3>
+<p>STC is the conventional outcome regression method. It involves
+fitting a regression model of outcome on treatment and covariates to the
+IPD. IPD effect modifiers are centred at the mean <em>BC</em>
+values.</p>
+<p><span class="math display">\[
+g(\mu_n) = \beta_0 + (\boldsymbol{x}_n - \boldsymbol{\theta}) \beta_1 +
+(\beta_z + (\boldsymbol{x_n^{EM}} - \boldsymbol{\theta^{EM}})
+\boldsymbol{\beta_2}) \mbox{I}(z_n=1)
+\]</span></p>
+<p>As already mentioned, running the STC analysis is almost identical to
+the previous analysis but we now use the <code><a href="../reference/strategy.html">strategy_stc()</a></code>
+strategy function instead.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hat_Delta_stats_stc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hat_Delta_stats.html">hat_Delta_stats</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>, strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_stc</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">hat_Delta_stats_stc</span></span>
-<span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [[1]]$AB</span></span>
+<span><span class="co">#&gt; $contrasts</span></span>
+<span><span class="co">#&gt; $contrasts$AB</span></span>
 <span><span class="co">#&gt;     trt </span></span>
 <span><span class="co">#&gt; 0.22425 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[1]]$AC</span></span>
+<span><span class="co">#&gt; $contrasts$AC</span></span>
 <span><span class="co">#&gt;      trt </span></span>
 <span><span class="co">#&gt; -1.42848 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[1]]$BC</span></span>
+<span><span class="co">#&gt; $contrasts$BC</span></span>
 <span><span class="co">#&gt; [1] -1.65273</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [[2]]$AB</span></span>
+<span><span class="co">#&gt; $variances</span></span>
+<span><span class="co">#&gt; $variances$AB</span></span>
 <span><span class="co">#&gt; [1] 0.1690646</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[2]]$AC</span></span>
+<span><span class="co">#&gt; $variances$AC</span></span>
 <span><span class="co">#&gt; [1] 0.1326637</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[2]]$BC</span></span>
+<span><span class="co">#&gt; $variances$BC</span></span>
 <span><span class="co">#&gt; [1] 0.03640091</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[3]]</span></span>
-<span><span class="co">#&gt; [[3]]$AB</span></span>
+<span><span class="co">#&gt; $CI</span></span>
+<span><span class="co">#&gt; $CI$AB</span></span>
 <span><span class="co">#&gt; [1] -0.5816375  1.0301375</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[3]]$AC</span></span>
+<span><span class="co">#&gt; $CI$AC</span></span>
 <span><span class="co">#&gt; [1] -2.1423580 -0.7146016</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[3]]$BC</span></span>
+<span><span class="co">#&gt; $CI$BC</span></span>
 <span><span class="co">#&gt; [1] -2.026672 -1.278788</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; attr(,"CI")</span></span>
+<span><span class="co">#&gt; [1] 0.95</span></span>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "mimR" "list"</span></span></code></pre></div>
-<p>Next we perform G-computation firstly with a frequentist MLE approach
-and then a Bayesian approach.</p>
+<p>For the last two approaches, we perform G-computation firstly with a
+frequentist MLE approach and then a Bayesian approach.</p>
 </div>
-<div class="section level2">
-<h2 id="parametric-g-computation-with-maximum-likelihood-estimation">Parametric G-computation with maximum-likelihood estimation<a class="anchor" aria-label="anchor" href="#parametric-g-computation-with-maximum-likelihood-estimation"></a>
-</h2>
-<p>Matrix of pairwise correlations between IPD covariates.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="section level3">
+<h3 id="parametric-g-computation-with-maximum-likelihood-estimation">Parametric G-computation with maximum-likelihood estimation<a class="anchor" aria-label="anchor" href="#parametric-g-computation-with-maximum-likelihood-estimation"></a>
+</h3>
+<p>G-computation marginalizes the conditional estimates by separating
+the regression modelling from the estimation of the marginal treatment
+effect for <em>A</em> versus <em>C</em>. First, a regression model of
+the observed outcome <span class="math inline">\(y\)</span> on the
+covariates <span class="math inline">\(x\)</span> and treatment <span class="math inline">\(z\)</span> is fitted to the <em>AC</em> IPD:</p>
+<p><span class="math display">\[
+g(\mu_n) = \beta_0 + \boldsymbol{x}_n \boldsymbol{\beta_1} + (\beta_z +
+\boldsymbol{x_n^{EM}} \boldsymbol{\beta_2}) \mbox{I}(z_n=1)
+\]</span> In the context of G-computation, this regression model is
+often called the “Q-model.” Having fitted the Q-model, the regression
+coefficients are treated as nuisance parameters. The parameters are
+applied to the simulated covariates <span class="math inline">\(x*\)</span> to predict hypothetical outcomes for
+each subject under both possible treatments. Namely, a pair of predicted
+outcomes, also called potential outcomes, under <em>A</em> and under
+<em>C</em>, is generated for each subject.</p>
+<p>By plugging treatment <em>C</em> into the regression fit for every
+simulated observation, we predict the marginal outcome mean in the
+hypothetical scenario in which all units are under treatment
+<em>C</em>:</p>
+<p><span class="math display">\[
+\hat{\mu}_0 = \int_{x^*} g^{-1} (\hat{\beta}_0 + x^* \hat{\beta}_1 )
+p(x^*) dx^*
+\]</span> To estimate the marginal or population-average treatment
+effect for A versus C in the linear predictor scale, one back-transforms
+to this scale the average predictions, taken over all subjects on the
+natural outcome scale, and calculates the difference between the average
+linear predictions:</p>
+<p><span class="math display">\[
+\hat{\Delta}^{(2)}_{10} = g(\hat{\mu}_1) - g(\hat{\mu}_0)
+\]</span></p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># hat_Delta_stats_gcomp_ml &lt;- hat_Delta_stats(AC.IPD, BC.ALD, strategy = strategy_gcomp_ml())</span></span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="bayesian-g-computation-with-mcmc">Bayesian G-computation with MCMC<a class="anchor" aria-label="anchor" href="#bayesian-g-computation-with-mcmc"></a>
-</h2>
-<p>Matrix of pairwise correlations between IPD covariates.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="section level3">
+<h3 id="bayesian-g-computation-with-mcmc">Bayesian G-computation with MCMC<a class="anchor" aria-label="anchor" href="#bayesian-g-computation-with-mcmc"></a>
+</h3>
+<p>The difference between Bayesian G-computation and its
+maximum-likelihood counterpart is in the estimated distribution of the
+predicted outcomes. The Bayesian approach also marginalizes, integrates
+or standardizes over the joint posterior distribution of the conditional
+nuisance parameters of the outcome regression, as well as the joint
+covariate distribution.</p>
+<p>The average, variance and interval estimates of the marginal
+treatment effect can be derived empirically from draws of the posterior
+density.</p>
+<p>We draw a vector of size <span class="math inline">\(N*\)</span> of
+predicted outcomes <span class="math inline">\(y^*_z\)</span> under each
+set intervention <span class="math inline">\(z*\)</span> from its
+posterior predictive distribution under the specific treatment.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hat_Delta_stats_gcomp_stan</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hat_Delta_stats.html">hat_Delta_stats</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>, strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_stan</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 1).</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1: Gradient evaluation took 4.2e-05 seconds</span></span>
-<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.42 seconds.</span></span>
+<span><span class="co">#&gt; Chain 1: Gradient evaluation took 3.6e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.36 seconds.</span></span>
 <span><span class="co">#&gt; Chain 1: Adjust your expectations accordingly!</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
@@ -306,15 +423,15 @@ and then a Bayesian approach.</p>
 <span><span class="co">#&gt; Chain 1: Iteration: 3600 / 4000 [ 90%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 1: Iteration: 4000 / 4000 [100%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.43 seconds (Warm-up)</span></span>
-<span><span class="co">#&gt; Chain 1:                0.495 seconds (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1:                0.925 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.483 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 1:                0.55 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1:                1.033 seconds (Total)</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 2).</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
-<span><span class="co">#&gt; Chain 2: Gradient evaluation took 1.3e-05 seconds</span></span>
-<span><span class="co">#&gt; Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.13 seconds.</span></span>
+<span><span class="co">#&gt; Chain 2: Gradient evaluation took 1.6e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.16 seconds.</span></span>
 <span><span class="co">#&gt; Chain 2: Adjust your expectations accordingly!</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
@@ -331,46 +448,49 @@ and then a Bayesian approach.</p>
 <span><span class="co">#&gt; Chain 2: Iteration: 3600 / 4000 [ 90%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 2: Iteration: 4000 / 4000 [100%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
-<span><span class="co">#&gt; Chain 2:  Elapsed Time: 0.427 seconds (Warm-up)</span></span>
-<span><span class="co">#&gt; Chain 2:                0.468 seconds (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2:                0.895 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 2:  Elapsed Time: 0.478 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 2:                0.515 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2:                0.993 seconds (Total)</span></span>
 <span><span class="co">#&gt; Chain 2:</span></span>
 <span><span class="va">hat_Delta_stats_gcomp_stan</span></span>
-<span><span class="co">#&gt; [[1]]</span></span>
-<span><span class="co">#&gt; [[1]]$AB</span></span>
+<span><span class="co">#&gt; $contrasts</span></span>
+<span><span class="co">#&gt; $contrasts$AB</span></span>
 <span><span class="co">#&gt; [1] 0.5567315</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[1]]$AC</span></span>
+<span><span class="co">#&gt; $contrasts$AC</span></span>
 <span><span class="co">#&gt; [1] -1.095998</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[1]]$BC</span></span>
+<span><span class="co">#&gt; $contrasts$BC</span></span>
 <span><span class="co">#&gt; [1] -1.65273</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[2]]</span></span>
-<span><span class="co">#&gt; [[2]]$AB</span></span>
+<span><span class="co">#&gt; $variances</span></span>
+<span><span class="co">#&gt; $variances$AB</span></span>
 <span><span class="co">#&gt; [1] 0.1402647</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[2]]$AC</span></span>
+<span><span class="co">#&gt; $variances$AC</span></span>
 <span><span class="co">#&gt; [1] 0.1038638</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[2]]$BC</span></span>
+<span><span class="co">#&gt; $variances$BC</span></span>
 <span><span class="co">#&gt; [1] 0.03640091</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[3]]</span></span>
-<span><span class="co">#&gt; [[3]]$AB</span></span>
+<span><span class="co">#&gt; $CI</span></span>
+<span><span class="co">#&gt; $CI$AB</span></span>
 <span><span class="co">#&gt; [1] -0.1773129  1.2907759</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[3]]$AC</span></span>
+<span><span class="co">#&gt; $CI$AC</span></span>
 <span><span class="co">#&gt; [1] -1.7276538 -0.4643429</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; [[3]]$BC</span></span>
+<span><span class="co">#&gt; $CI$BC</span></span>
 <span><span class="co">#&gt; [1] -2.026672 -1.278788</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; attr(,"CI")</span></span>
+<span><span class="co">#&gt; [1] 0.95</span></span>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "mimR" "list"</span></span></code></pre></div>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

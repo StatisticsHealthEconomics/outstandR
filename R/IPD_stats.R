@@ -125,6 +125,7 @@ new_strategy <- function(strategy, ...) {
 #' @param BC.ALD Aggregate-level data. Suppose between studies B and C. 
 #' @param strategy Computation strategy function. These can be
 #'    `strategy_maic()`, `strategy_stc()`, `strategy_gcomp_ml()` and  `strategy_gcomp_stan()`
+#' @param CI Confidence interval; between 0,1
 #' @param ... Additional arguments
 #' @return List of length 3 of statistics as a `mimR` class object.
 #'   Containing statistics between each pair of treatments.
@@ -137,12 +138,13 @@ new_strategy <- function(strategy, ...) {
 #' 
 #' @export
 #' 
-hat_Delta_stats <- function(AC.IPD, BC.ALD, strategy, ...) {
+hat_Delta_stats <- function(AC.IPD, BC.ALD, strategy, CI = 0.95, ...) {
 
   AC_hat_Delta_stats <- IPD_stats(strategy, ipd = AC.IPD, ald = BC.ALD, ...) 
   BC_hat_Delta_stats <- ALD_stats(data = BC.ALD) 
   
-  ci_range <- c(0.025, 0.975)
+  upper <- 0.5 + CI/2
+  ci_range <- c(1-upper, upper)
   
   contrasts <- list(
     AB = AC_hat_Delta_stats$mean - BC_hat_Delta_stats$mean,
@@ -163,7 +165,9 @@ hat_Delta_stats <- function(AC.IPD, BC.ALD, strategy, ...) {
                 variances = contrast_variances,
                 CI = contrast_ci)
   
-  structure(stats, class = c("mimR", class(stats)))
+  structure(stats,
+            CI = CI,
+            class = c("mimR", class(stats)))
 }
 
 
