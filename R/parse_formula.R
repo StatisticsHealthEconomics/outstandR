@@ -4,7 +4,7 @@
 #' @param formula Linear regression formula
 #'
 #' @return Effect modifiers names
-#' @export
+#' @keywords internal
 #'
 get_effect_modifiers <- function(formula) {
   
@@ -22,7 +22,7 @@ get_effect_modifiers <- function(formula) {
 #' @param formula Linear regression formula
 #'
 #' @return Treatment name
-#' @export
+#' @keywords internal
 #'
 get_treatment_name <- function(formula) {
   formula <- as.formula(formula)
@@ -39,7 +39,7 @@ get_treatment_name <- function(formula) {
 #' @param var_names Variable names
 #'
 #' @return Mean names
-#' @export
+#' @keywords internal
 #'
 get_mean_names <- function(dat, var_names) {
   dat_names <- names(dat)
@@ -56,7 +56,7 @@ get_mean_names <- function(dat, var_names) {
 #' @param var_names 
 #'
 #' @return SD names
-#' @export
+#' @keywords internal
 #'
 get_sd_names <- function(dat, var_names) {
   dat_names <- names(dat)
@@ -72,7 +72,7 @@ get_sd_names <- function(dat, var_names) {
 #' @param formula Linear regression formula
 #'
 #' @return covariate names
-#' @export
+#' @keywords internal
 #'
 get_covariate_names <- function(formula) {
   all.vars(formula)[-1]

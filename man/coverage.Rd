@@ -19,3 +19,4 @@ coverage(low, upp, theta)
 \description{
 Coverage estimate
 }
+\keyword{internal}

@@ -2,10 +2,16 @@
 % Please edit documentation in R/performance_measures.R
 \name{Q}
 \alias{Q}
-\title{objective function to minimize for standard method of moments MAIC}
+\title{Objective function to minimize for standard method of moments MAIC}
 \usage{
 Q(beta, X)
 }
-\description{
-objective function to minimize for standard method of moments MAIC
+\arguments{
+\item{beta}{Beta}
+
+\item{X}{X}
 }
+\description{
+Objective function to minimize for standard method of moments MAIC
+}
+\keyword{internal}

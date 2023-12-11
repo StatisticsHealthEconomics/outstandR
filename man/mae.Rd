@@ -17,3 +17,4 @@ mae(theta.hat, theta)
 \description{
 Mean absolute error estimate
 }
+\keyword{internal}

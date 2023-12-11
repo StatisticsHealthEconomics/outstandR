@@ -15,3 +15,4 @@ covariate names
 \description{
 Get covariate names
 }
+\keyword{internal}

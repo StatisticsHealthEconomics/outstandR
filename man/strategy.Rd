@@ -16,8 +16,7 @@ strategy_maic(
 )
 
 strategy_stc(
-  formula =
-    as.formula("y ~ X3 + X4 +\\n                                   trt*I(X1 - mean(X1)) +\\n                                   trt*I(X2 - mean(X2))")
+  formula = as.formula("y ~ X3 + X4 + trt*I(X1 - mean(X1)) + trt*I(X2 - mean(X2))")
 )
 
 strategy_gcomp_ml(
@@ -32,7 +31,7 @@ new_strategy(strategy, ...)
 \arguments{
 \item{formula}{Linear regression formula object}
 
-\item{R}{}
+\item{R}{The number of resamples used for the non-parametric bootstrap}
 
 \item{strategy}{Class name}
 

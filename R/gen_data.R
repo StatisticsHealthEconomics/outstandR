@@ -13,6 +13,8 @@
 #' @param allocation Allocation
 #' @return Data frame of `X`, `trt` and `y`
 #' 
+#' @keywords internal
+#' 
 gen_data <- function(N, b_trt, b_X, b_EM, b_0,
                      meanX, sdX, event_rate, 
                      corX, allocation) {

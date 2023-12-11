@@ -17,3 +17,4 @@ Required input for \code{mvrnorm}.
 \description{
 Compute covariance matrix
 }
+\keyword{internal}

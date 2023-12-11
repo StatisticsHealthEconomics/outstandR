@@ -33,3 +33,4 @@ Data frame of \code{X}, \code{trt} and \code{y}
 \description{
 Generate simulated datasets for index and comparator trials
 }
+\keyword{internal}

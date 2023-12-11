@@ -15,3 +15,4 @@ mcse.estimate(pm)
 \description{
 Monte Carlo SE of any continuous performance metric
 }
+\keyword{internal}

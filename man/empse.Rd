@@ -15,3 +15,4 @@ empse(theta.hat)
 \description{
 Empirical standard error
 }
+\keyword{internal}

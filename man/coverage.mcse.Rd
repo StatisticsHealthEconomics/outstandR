@@ -17,3 +17,4 @@ coverage.mcse(coverage, nsim)
 \description{
 Monte Carlo SE of coverage estimate
 }
+\keyword{internal}

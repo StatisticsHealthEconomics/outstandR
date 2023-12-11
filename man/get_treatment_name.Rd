@@ -15,3 +15,4 @@ Treatment name
 \description{
 Get treatment name
 }
+\keyword{internal}

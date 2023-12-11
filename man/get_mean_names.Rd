@@ -17,3 +17,4 @@ Mean names
 \description{
 Get mean names
 }
+\keyword{internal}

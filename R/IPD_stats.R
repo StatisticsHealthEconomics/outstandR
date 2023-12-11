@@ -14,7 +14,7 @@
 #' }
 #' 
 #' @param formula Linear regression formula object 
-#' @param R 
+#' @param R The number of resamples used for the non-parametric bootstrap
 #' @param ald Aggregate-level data 
 #'
 #' @return `maic` class object
@@ -45,9 +45,7 @@ strategy_maic <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
 #' @export
 # 
 strategy_stc <- function(formula =
-                           as.formula("y ~ X3 + X4 +
-                                   trt*I(X1 - mean(X1)) +
-                                   trt*I(X2 - mean(X2))")) {
+                           as.formula("y ~ X3 + X4 + trt*I(X1 - mean(X1)) + trt*I(X2 - mean(X2))")) {
   default_args <- formals()
   args <- as.list(match.call())[-1]
   args <- modifyList(default_args, args)
@@ -64,7 +62,7 @@ strategy_stc <- function(formula =
 #' }
 #'
 #' @param formula Linear regression formula object
-#' @param R 
+#' @param R The number of resamples used for the non-parametric bootstrap
 #' 
 #' @return `gcomp_ml` class object
 #' @export
