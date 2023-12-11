@@ -128,7 +128,10 @@ new_strategy <- function(strategy, ...) {
 #' @param strategy Computation strategy function. These can be
 #'    `strategy_maic()`, `strategy_stc()`, `strategy_gcomp_ml()` and  `strategy_gcomp_stan()`
 #' @param ... Additional arguments
-#' @return List of statistics as a `mimR` class object
+#' @return List of length 3 of statistics as a `mimR` class object.
+#'   Containing statistics between each pair of treatments.
+#'   These are the mean contrasts, variances and confidence intervals,
+#'   respectively.
 #' @importFrom Rdpack reprompt
 #' 
 #' @references
@@ -158,9 +161,9 @@ hat_Delta_stats <- function(AC.IPD, BC.ALD, strategy, ...) {
     AC = contrasts$AC + qnorm(ci_range)*as.vector(sqrt(contrast_variances$AC)),
     BC = contrasts$BC + qnorm(ci_range)*as.vector(sqrt(contrast_variances$BC)))
   
-  stats <- list(contrasts,
-                contrast_variances,
-                contrast_ci)
+  stats <- list(contrasts = contrasts,
+                variances = contrast_variances,
+                CI = contrast_ci)
   
   structure(stats, class = c("mimR", class(stats)))
 }

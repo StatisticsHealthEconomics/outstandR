@@ -19,9 +19,13 @@ knitr::opts_chunk$set(
 
 ## Introduction
 
-Population adjustment methods such as matching-adjusted indirect comparison (MAIC) are increasingly used to compare marginal treatment effects when there are cross-trial differences in effect modifiers and limited patient-level data. MAIC is based on propensity score weighting, which is sensitive to poor covariate over- lap and cannot extrapolate beyond the observed covariate space. Current out- come regression-based alternatives can extrapolate but target a conditional treatment effect that is incompatible in the indirect comparison. When adjusting for covariates, one must integrate or average the conditional estimate over the rel- evant population to recover a compatible marginal treatment effect. We propose a marginalization method based on parametric G-computation that can be easily applied where the outcome regression is a generalized linear model or a Cox model. The approach views the covariate adjustment regression as a nuisance model and separates its estimation from the evaluation of the marginal treatment effect of interest. The method can accommodate a Bayesian statistical framework, which naturally integrates the analysis into a probabilistic framework. A simula- tion study provides proof-of-principle and benchmarks the method's performance against MAIC and the conventional outcome regression. Parametric G- computation achieves more precise and more accurate estimates than MAIC, par- ticularly when covariate overlap is poor, and yields unbiased marginal treatment effect estimates under no failures of assumptions. Furthermore, the marginalized regression-adjusted estimates provide greater precision and accuracy than the conditional estimates produced by the conventional outcome regression, which are
+Population adjustment methods such as _matching-adjusted indirect comparison_ (MAIC) are increasingly used to compare marginal treatment effects when there are cross-trial differences in effect modifiers and limited patient-level data. MAIC is based on propensity score weighting, which is sensitive to poor covariate overlap and cannot extrapolate beyond the observed covariate space. Current outcome regression-based alternatives can extrapolate but target a conditional treatment effect that is incompatible in the indirect comparison. When adjusting for covariates, one must integrate or average the conditional estimate over the relevant population to recover a compatible marginal treatment effect.
+
+We propose a marginalization method based on _parametric G-computation_ that can be easily applied where the outcome regression is a generalized linear model or a Cox model. The approach views the covariate adjustment regression as a nuisance model and separates its estimation from the evaluation of the marginal treatment effect of interest. The method can accommodate a Bayesian statistical framework, which naturally integrates the analysis into a probabilistic framework. A simulation study provides proof-of-principle and benchmarks the method's performance against MAIC and the conventional outcome regression. Parametric G-computation achieves more precise and more accurate estimates than MAIC, particularly when covariate overlap is poor, and yields unbiased marginal treatment effect estimates under no failures of assumptions. Furthermore, the marginalized regression-adjusted estimates provide greater precision and accuracy than the conditional estimates produced by the conventional outcome regression.
 
 ## Example
+
+First, let us load necessary packages.
 
 ```{r setup, warning=FALSE, message=FALSE}
 library(boot)      # non-parametric bootstrap in MAIC and ML G-computation
@@ -30,7 +34,14 @@ library(rstanarm)  # fit outcome regression, draw outcomes in Bayesian G-computa
 library(mimR)
 ```
 
-Implementing for MAIC, STC, G-computation methods on a simulated example.
+### Data
+
+Next, we load the data to use in the analysis.
+The data comes from a simulation study in Remiro‐Azócar A, Heath A, Baio G (2020).
+We consider binary outcomes using the log-odds ratio as the measure of effect. The binary outcome may be response to treatment or the occurrence of an adverse event.
+For trials _AC_ and _BC_, outcome $y_n$ for subject $n$ is simulated from a Bernoulli distribution with probabilities of success generated from logistic regression.
+
+For the _BC_ trial, the individual-level covariates and outcomes are aggregated to obtain summaries. The continuous covariates are summarized as means and standard deviations, which would be available to the analyst in the published study in a table of baseline characteristics in the RCT publication. The binary outcomes are summarized as overall event table. Typically, the published study only provides aggregate information to the analyst.
 
 ```{r load-data}
 set.seed(555)
@@ -39,79 +50,134 @@ AC.IPD <- read.csv(here::here("data", "AC_IPD.csv"))  # AC patient-level data
 BC.ALD <- read.csv(here::here("data", "BC_ALD.csv"))  # BC aggregate-level data
 ```
 
-This data consists of the following.
+This general format of data sets consist of the following.
 
-`AC.IPD`
+#### `AC.IPD`: Individual patient data
 
 -   `X*`: patient measurements
 -   `trt`: treatment ID
--   `y`: indicator of whether event was observed
+-   `y`: (logical) indicator of whether event was observed
 
-`BC.ALD`
+#### `BC.ALD`: Aggregate-level data
 
--   `mean.X*`: mean
--   `sd.X*`: standard deviation
+-   `mean.X*`: mean patient measurement
+-   `sd.X*`: standard deviation of patient measurement
 -   `y.*.sum`: total number of events
+-   `y.*.bar`: total number of events
 -   `N.*`: total number of individuals
+
+Note that the wildcard `*` here is usually an integer from 1 or the trial identifier _B_, _C_.
+
+Our data looks like the following.
 
 ```{r}
 head(AC.IPD)
+```
+
+There are 4 correlated continuous covariates generated per subject, simulated from a multivariate normal distribution.
+
+```{r}
 BC.ALD
 ```
 
-We will create some function for the marginal variance, defined as
+In this case, we have 4 covariate mean and standard deviation values; and the event total, average and sample size for each treatment _B_, and _C_.
+
+### Output statistics
+
+We will implement for MAIC, STC, and G-computation methods to obtain the _marginal variance_, defined as
 
 $$
 \frac{1}{n_C} + \frac{1}{n_{\bar{C}}} + \frac{1}{n_B} + \frac{1}{n_{\bar{B}}}
 $$
 
-and the marginal treatment effect, defined as
+and the _marginal treatment effect_, defined as
 
 $$
 \log(n_B n_{\bar{C}}) - log(n_C n_{\bar{B}})
 $$
 
+## Model fitting in R
 
-## MAIC
+The `{mimR}` package has been written to be easy to use and essential consists of a single function, `hat_Delta_stats()`.
+This can be used to run all of the different types of model, which we will call _strategies_. The first two arguments of `hat_Delta_stats()` are the individual and aggregate-level data, respectively.
 
-Using the individual level data firstly perform non-parametric bootstrap
+A `strategy` argument of `hat_Delta_stats` takes functions called `strategy_*()`, where the wildcard `*` is replaced by the name of the particular method required, e.g. `strategy_maic()` for MAIC. Each specific example is provided below.
+
+### MAIC
+
+Using the individual level data for _AC_ firstly we perform non-parametric bootstrap
 of the `maic.boot` function with `R` = 1000 replicates. This function
-fits treatment coefficient for the marginal effect for $A$ vs $C$.
-The returned value is an object of class `boot`. Then calculate the bootstrap mean and variance
-in the wrapper function `maic_boot_stats`.
+fits treatment coefficient for the marginal effect for _A_ vs _C_.
+The returned value is an object of class `boot` from the `{boot}` package. We then calculate the bootstrap mean and variance in the wrapper function `maic_boot_stats`.
 
 ```{r hat_Delta_stats_maic}
 hat_Delta_stats_maic <- hat_Delta_stats(AC.IPD, BC.ALD, strategy = strategy_maic())
+```
+
+The returned object is of class `mimR`.
+
+<!-- Wald-type normal distribution-based 95\% confidence interval are also returned. -->
+
+```{r hat_Delta_stats_maic-print}
 hat_Delta_stats_maic
 ```
 
-Construct Wald-type normal distribution-based 95\% confidence interval.
+We see that this is a list object with 3 parts, each containing statistics between each pair of treatments. These are the mean contrasts, variances and confidence intervals, respectively.
 
-## STC (conventional outcome regression)
 
-Fit regression model of outcome on treatment and covariates
-IPD effect modifiers centred at the mean BC values
-purely prognostic variables are included but not centred.
+### STC
+
+STC is the conventional outcome regression method.
+It involves fitting a regression model of outcome on treatment and covariates to the IPD.
+IPD effect modifiers are centred at the mean _BC_ values.
+
+$$
+g(\mu_n) = \beta_0 + (\boldsymbol{x}_n - \boldsymbol{\theta}) \beta_1 + (\beta_z + (\boldsymbol{x_n^{EM}} - \boldsymbol{\theta^{EM}}) \boldsymbol{\beta_2}) \mbox{I}(z_n=1)
+$$
+
+As already mentioned, running the STC analysis is almost identical to the previous analysis but we now use the `strategy_stc()` strategy function instead.
 
 ```{r hat_Delta_stats_stc}
 hat_Delta_stats_stc <- hat_Delta_stats(AC.IPD, BC.ALD, strategy = strategy_stc())
 hat_Delta_stats_stc
 ```
 
-Next we perform G-computation firstly with a frequentist MLE approach and then a Bayesian approach.
+For the last two approaches, we perform G-computation firstly with a frequentist MLE approach and then a Bayesian approach.
 
-## Parametric G-computation with maximum-likelihood estimation 
+### Parametric G-computation with maximum-likelihood estimation 
 
-Matrix of pairwise correlations between IPD covariates.
+G-computation marginalizes the conditional estimates by separating the regression modelling from the estimation of the marginal treatment effect for _A_ versus _C_. First, a regression model of the observed outcome $y$ on the covariates $x$ and treatment $z$ is fitted to the _AC_ IPD:
+
+$$
+g(\mu_n) = \beta_0 + \boldsymbol{x}_n \boldsymbol{\beta_1} + (\beta_z + \boldsymbol{x_n^{EM}} \boldsymbol{\beta_2}) \mbox{I}(z_n=1)
+$$
+In the context of G-computation, this regression model is often called the “Q-model.”
+Having fitted the Q-model, the regression coefficients are treated as nuisance parameters. The parameters are applied to the simulated covariates $x*$ to predict hypothetical outcomes for each subject under both possible treatments. Namely, a pair of predicted outcomes, also called potential outcomes, under _A_ and under _C_, is generated for each subject.
+
+By plugging treatment _C_ into the regression fit for every simulated observation, we predict the marginal outcome mean in the hypothetical scenario in which all units are under treatment _C_:
+
+$$
+\hat{\mu}_0 = \int_{x^*} g^{-1} (\hat{\beta}_0 + x^* \hat{\beta}_1 ) p(x^*) dx^*
+$$
+To estimate the marginal or population-average treatment effect for A versus C in the linear predictor scale, one back-transforms to this scale the average predictions, taken over all subjects on the natural outcome scale, and calculates the difference between the average linear predictions:
+
+$$
+\hat{\Delta}^{(2)}_{10} = g(\hat{\mu}_1) - g(\hat{\mu}_0)
+$$
+
 
 ```{r hat_Delta_stats_gcomp_ml}
 # hat_Delta_stats_gcomp_ml <- hat_Delta_stats(AC.IPD, BC.ALD, strategy = strategy_gcomp_ml())
 ```
 
 
-## Bayesian G-computation with MCMC 
+### Bayesian G-computation with MCMC 
 
-Matrix of pairwise correlations between IPD covariates.
+The difference between Bayesian G-computation and its maximum-likelihood counterpart is in the estimated distribution of the predicted outcomes. The Bayesian approach also marginalizes, integrates or standardizes over the joint posterior distribution of the conditional nuisance parameters of the outcome regression, as well as the joint covariate distribution.
+
+The average, variance and interval estimates of the marginal treatment effect can be derived empirically from draws of the posterior density.
+
+We draw a vector of size $N*$ of predicted outcomes $y^*_z$ under each set intervention $z*$ from its posterior predictive distribution under the specific treatment.
 
 ```{r hat_Delta_stats_gcomp_stan}
 hat_Delta_stats_gcomp_stan <- hat_Delta_stats(AC.IPD, BC.ALD, strategy = strategy_gcomp_stan())
