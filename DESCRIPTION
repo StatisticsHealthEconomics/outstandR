@@ -25,6 +25,7 @@ Imports:
     rstanarm,
     Rdpack (>= 0.7)
 Suggests:
+    doSNOW,
     dplyr,
     ggplot2,
     gridExtra,
@@ -33,7 +34,6 @@ Suggests:
     MASS,
     parallel,
     rmarkdown,
-    doSNOW,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Config/testthat/edition: 3
