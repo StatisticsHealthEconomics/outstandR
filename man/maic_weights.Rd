@@ -4,16 +4,17 @@
 \alias{maic_weights}
 \title{Estimate MAIC weights}
 \usage{
-maic_weights(X.EM)
+maic_weights(X_EM)
 }
 \arguments{
-\item{X.EM}{Centred S=1 effect modifiers; matrix or data frame}
+\item{X_EM}{Centred \eqn{S=1} effect modifiers; matrix or data frame}
 }
 \value{
 Estimated weights for each individual; vector
 }
 \description{
-\insertCite{Signorovitch2010}{mimR}
+Method is taken from
+\insertCite{Signorovitch2010}{mimR}.
 }
 \references{
 \insertRef{Signorovitch2010}{mimR}

@@ -15,11 +15,11 @@ gcomp_ml.boot(
 
 \item{indices}{Indices sampled from rows of \code{data}}
 
-\item{formula}{Linear regression formula; default \eqn{y = X_3 + X_4 + \beta_t X_1 + \beta_t X_2"}}
+\item{formula}{Linear regression formula; default \eqn{y = X_3 + X_4 + \beta_t X_1 + \beta_t X_2}}
 }
 \value{
 Mean difference in expected log-odds
 }
 \description{
-Using bootstrap resampling, calculates the log odds ratio
+Using bootstrap resampling, calculates the log odds ratio.
 }

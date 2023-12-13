@@ -164,7 +164,7 @@ new_strategy <- function(strategy, ...) {
 hat_Delta_stats <- function(AC.IPD, BC.ALD, strategy, CI = 0.95, ...) {
 
   AC_hat_Delta_stats <- IPD_stats(strategy, ipd = AC.IPD, ald = BC.ALD, ...) 
-  BC_hat_Delta_stats <- ALD_stats(data = BC.ALD) 
+  BC_hat_Delta_stats <- ALD_stats(ald = BC.ALD) 
   
   upper <- 0.5 + CI/2
   ci_range <- c(1-upper, upper)
@@ -238,7 +238,7 @@ IPD_stats.maic <- function(strategy,
                           statistic = maic.boot,
                           R = strategy$R,
                           formula = strategy$formula,
-                          dat_ALD = strategy$dat_ALD)   #TODO: swap ald
+                          ald = strategy$dat_ALD)
   
   list(mean = mean(maic_boot$t),
        var = var(maic_boot$t))

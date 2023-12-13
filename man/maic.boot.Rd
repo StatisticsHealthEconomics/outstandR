@@ -4,20 +4,20 @@
 \alias{maic.boot}
 \title{MAIC bootstrap}
 \usage{
-maic.boot(data, indices, formula, dat_ALD)
+maic.boot(ipd, indices, formula, ald)
 }
 \arguments{
-\item{data}{Original data}
+\item{ipd}{Individual-level data}
 
 \item{indices}{Vector of indices, same length as original,
 which define the bootstrap sample}
 
 \item{formula}{Linear regression formula}
 
-\item{dat_ALD}{Aggregate-level data}
+\item{ald}{Aggregate-level data}
 }
 \value{
-Fitted treatment coefficient is marginal effect for A vs C
+Fitted treatment coefficient is marginal effect for \emph{A} vs \emph{C}
 }
 \description{
 MAIC bootstrap

@@ -2,18 +2,19 @@
 % Please edit documentation in R/marginal_stats.R
 \name{trial_treatment_effect}
 \alias{trial_treatment_effect}
-\title{Trial treatment effect}
+\title{Trial treatment effect with aggregate data}
 \usage{
-trial_treatment_effect(x, k)
+trial_treatment_effect(ald, tid)
 }
 \arguments{
-\item{x}{x}
+\item{ald}{Aggregate-level data}
 
-\item{k}{k}
+\item{tid}{Treatment label}
 }
 \value{
 Value
 }
 \description{
-Trial treatment effect
+Calculate
+\deqn{\log(\sum y_k (N_k - \sum y_k))}.
 }

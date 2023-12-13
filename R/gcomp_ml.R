@@ -1,11 +1,11 @@
 
 #' G-computation maximum likelihood bootstrap
 #' 
-#' Using bootstrap resampling, calculates the log odds ratio
+#' Using bootstrap resampling, calculates the log odds ratio.
 #' 
 #' @param data Trial data 
 #' @param indices Indices sampled from rows of `data`
-#' @param formula Linear regression formula; default \eqn{y = X_3 + X_4 + \beta_t X_1 + \beta_t X_2"} 
+#' @param formula Linear regression formula; default \eqn{y = X_3 + X_4 + \beta_t X_1 + \beta_t X_2} 
 #'
 #' @return Mean difference in expected log-odds
 #' @export
