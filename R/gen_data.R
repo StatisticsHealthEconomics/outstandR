@@ -1,13 +1,13 @@
 
 #' Generate simulated datasets for index and comparator trials
 #' 
-#' @param N N
-#' @param b_trt b treatment 
-#' @param b_X b_X 
-#' @param b_EM b_EM 
-#' @param b_0 b_0 
+#' @param N Size
+#' @param b_trt b coefficient for treatment 
+#' @param b_X b coefficients for X 
+#' @param b_EM b coefficients effect modifiers
+#' @param b_0 Intercept coefficient
 #' @param meanX mean X 
-#' @param sdX sd X 
+#' @param sdX standard deviation X 
 #' @param event_rate Event rate 
 #' @param corX Correlation of X 
 #' @param allocation Allocation
