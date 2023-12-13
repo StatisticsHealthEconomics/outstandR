@@ -28,6 +28,7 @@ Suggests:
     dplyr,
     ggplot2,
     gridExtra,
+    here,
     knitr,
     MASS,
     parallel,
