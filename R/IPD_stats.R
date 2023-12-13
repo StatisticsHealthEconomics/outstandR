@@ -3,19 +3,33 @@
 
 #' @rdname strategy
 #' 
-#' @section Matching-adjusted indirect comparison (MAIC): 
+#' @section Matching-adjusted indirect comparison (MAIC):
+#' 
+#' MAIC is a form of non-parametric likelihood reweighting method
+#' which allows the propensity score logistic 
+#' regression model to be estimated without IPD in the _AC_ population.
+#' The mean outcomes \eqn{\mu_{t(AC)}} on treatment \eqn{t = A,B} in the _AC_
+#' target population are estimated by taking a weighted average of the
+#' outcomes \eqn{Y} of the \eqn{N} individuals in arm \eqn{t} of the _AB_ population
+#' 
 #' Used to compare marginal
 #' treatment effects where there are cross-trial differences in effect modifiers
 #' and limited patient-level data.
+#' 
+#' \deqn{
+#' \hat{Y}_{} = \frac{\sum_{i=1}^{N} Y_{it(AB)} w_{it}}{\sum _{i=1}^{N} w_{it}}
+#' }
+#' where the weight \eqn{w_{it}} assigned to the \eqn{i}-th individual receiving treatment
+#' \eqn{t} is equal to the odds of being enrolled in the _AC_ trial vs the _AB_ trial.
+#'
 #'
 #' The default formula is
 #' \deqn{
-#'  y = X3 + X4 + trt*X1 + trt*X2
+#'  y = X_3 + X_4 + \beta_{t}X_1 + \beta_{t}X_2
 #' }
 #' 
-#' @param formula Linear regression formula object 
 #' @param R The number of resamples used for the non-parametric bootstrap
-#' @param ald Aggregate-level data 
+#' @param dat_ALD Aggregate-level data 
 #'
 #' @return `maic` class object
 #' @export
@@ -31,16 +45,27 @@ strategy_maic <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
 
 #' @rdname strategy
 #' 
-#' @section Simulated treatment comparison (STC): 
+#' @section Simulated treatment comparison (STC):
 #' Outcome regression-based method which targets a conditional treatment effect.
+#' STC is a modification of the covariate adjustment method.
+#' An outcome model is fitted using IPD in the _AB_ trial
+#' 
+#' \deqn{
+#' g(\mu_{t(AB)}(X)) = \beta_0 + \beta_1^T X + (\beta_B + \beta_2^T X^{EM}) I(t=B)
+#' }
+#' where \eqn{\beta_0} is an intercept term, \eqn{\beta_1} is a vector of coefficients for
+#' prognostic variables, \eqn{\beta_B} is the relative effect of treatment _B_ compared
+#' to _A_ at \eqn{X=0}, \eqn{\beta_2} is a vector of coefficients for effect
+#' modifiers \eqn{X^{EM}} subvector of the full covariate vector \eqn{X}), and
+#' \eqn{\mu_{t(AB)}(X)} is the expected outcome of an individual assigned
+#' treatment \eqn{t} with covariate values \eqn{X} which is transformed onto a
+#' chosen linear predictor scale with link function \eqn{g(\cdot)}.
 #' 
 #' The default formula is
 #' \deqn{
-#'  y = X3 + X4 + trt*(X1 - mean(X1)) + trt*(X2 - mean(X2))
+#'  y = X_3 + X_4 + \beta_t(X_1 - \bar{X_1}) + \beta_t(X_2 - \bar{X2})
 #' }
 #' 
-#' @param formula Linear regression formula object
-#'
 #' @return `stc` class object
 #' @export
 # 
@@ -58,10 +83,9 @@ strategy_stc <- function(formula =
 #'
 #' The default formula is
 #' \deqn{
-#'  y = X3 + X4 + trt*X1 + trt*X2
+#'  y = X_3 + X_4 + \beta_{t}X_1 + \beta_{t}X_2
 #' }
 #'
-#' @param formula Linear regression formula object
 #' @param R The number of resamples used for the non-parametric bootstrap
 #' 
 #' @return `gcomp_ml` class object
@@ -82,10 +106,8 @@ strategy_gcomp_ml <- function(formula =
 #'
 #' The default formula is
 #' \deqn{
-#'  y = X3 + X4 + trt*X1 + trt*X2
+#'  y = X_3 + X_4 + \beta_{t}X_1 + \beta_{t}X_2
 #' }
-#' 
-#' @param formula Linear regression formula object
 #'
 #' @return `gcomp_stan` class object
 #' @export
@@ -102,9 +124,10 @@ strategy_gcomp_stan <- function(formula =
 #' @title New strategy objects
 #' 
 #' @description
-#' Create class for each approach
+#' Create a type of strategy class for each modelling approach.
 #'
-#' @param strategy Class name
+#' @param strategy Class name from `strategy_maic`, `strategy_stc`, `strategy_gcomp_ml`, `strategy_gcomp_stan`
+#' @param formula Linear regression `formula` object
 #' @param ... Additional arguments
 #'
 #' @export
@@ -117,7 +140,7 @@ new_strategy <- function(strategy, ...) {
 #' @title Calculate the difference between treatments using all evidence
 #' 
 #' @description
-#' This is the main wrapper for `hat_Delta_stats()`.
+#' This is the main, top-level wrapper for `hat_Delta_stats()`.
 #' 
 #' \insertCite{RemiroAzocar2022}{mimR}
 #' 
@@ -172,14 +195,18 @@ hat_Delta_stats <- function(AC.IPD, BC.ALD, strategy, CI = 0.95, ...) {
 
 
 #' @name IPD_stats
-#' @title Individual level data statistics
+#' @title Calculate individual-level patient data statistics
+#' 
+#' @description
+#' Separate methods for each approach
+#' MAIC, STC, G-computation via MLE or Bayesian inference.
 #' 
 #' @param strategy A list corresponding to different approaches
 #' @template args-ipd
 #' @template args-ald
 #' @param ... Additional arguments
 #' 
-#' @return Mean and variance
+#' @return Mean and variance values
 #' @export
 #' 
 IPD_stats <- function(strategy, ipd, ald, ...)
@@ -194,15 +221,9 @@ IPD_stats.default <- function() {
 
 
 #' @rdname IPD_stats
-#' @title Matching-adjusted indirect comparison statistics
-#' 
-#' @description
-#' Marginal A vs C treatment effect estimates
-#' using bootstrapping
-#'
-#' @param strategy A list corresponding to different approaches
-#' @template args-ipd
-#' @template args-ald
+#' @section Matching-adjusted indirect comparison statistics:
+#' Marginal _A_ vs _C_ treatment effect estimates
+#' using bootstrapping sampling.
 #'
 #' @export
 #' 
@@ -225,16 +246,11 @@ IPD_stats.maic <- function(strategy,
 
 
 #' @rdname IPD_stats
-#' @title Simulated treatment comparison statistics 
+#' @section Simulated treatment comparison statistics: 
+#' IPD from the _AC_ trial are used to fit a regression model describing the
+#' observed outcomes \eqn{y} in terms of the relevant baseline characteristics `x` and
+#' the treatment variable \eqn{z}.
 #' 
-#' @description
-#' IPD from the AC trial are used to fit a regression model describing the
-#' observed outcomes `y` in terms of the relevant baseline characteristics `x` and
-#' the treatment variable `z`.
-#' 
-#' @param strategy A list corresponding to different approaches
-#' @template args-ipd
-#' @template args-ald
 #' @export
 #' 
 IPD_stats.stc <- function(strategy,
@@ -252,18 +268,14 @@ IPD_stats.stc <- function(strategy,
 
 
 #' @rdname IPD_stats
-#' @title G-computation maximum likelihood statistics
-#'
-#' @param strategy A list corresponding to different approaches
-#' @template args-ipd
-#' @template args-ald
+#' @section G-computation maximum likelihood statistics:
+#' Compute a non-parametric bootstrap with \eqn{R=1000} resamples.
 #'
 #' @export
 #'
 IPD_stats.gcomp_ml <- function(strategy,
                                ipd, ald) {
 
-  # non-parametric bootstrap with 1000 resamples
   AC_maic_boot <- boot::boot(data = ipd,
                              statistic = gcomp_ml.boot,
                              R = strategy$R,
@@ -275,11 +287,9 @@ IPD_stats.gcomp_ml <- function(strategy,
 
 
 #' @rdname IPD_stats
-#' @title G-computation Bayesian statistics
-#'
-#' @param strategy A list corresponding to different approaches
-#' @template args-ipd
-#' @template args-ald
+#' @section G-computation Bayesian statistics:
+#' Using Stan, compute marginal log-odds ratio for _A_ vs _C_ for each MCMC sample
+#' by transforming from probability to linear predictor scale
 #'
 #' @export
 #'
@@ -289,8 +299,6 @@ IPD_stats.gcomp_stan <- function(strategy,
   ppv <- gcomp_stan(formula = strategy$formula,
                     ipd = ipd, ald = ald)
   
-  # compute marginal log-odds ratio for A vs C for each MCMC sample
-  # by transforming from probability to linear predictor scale
   hat.delta.AC <-
     qlogis(rowMeans(ppv$y.star.A)) - qlogis(rowMeans(ppv$y.star.C))
   

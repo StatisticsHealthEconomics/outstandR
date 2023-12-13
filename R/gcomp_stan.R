@@ -1,11 +1,14 @@
 
 #' G-computation using Stan
 #'
-#' @param formula Linear regression formula object 
+#' Calculate draws of binary responses from posterior predictive distribution
+#' from the Bayesian G-computation method and Hamiltonian Monte-Carlo.
+#' 
+#' @param formula Linear regression formula object; default \eqn{y = X_3 + X_4 + \beta_t X_1 + \beta_t X_2} 
 #' @template args-ipd
 #' @template args-ald
 #'
-#' @return A list of `y.star.A` and `y.star.C` posterior predictions
+#' @return A list of \eqn{y^*_A} and \eqn{y^*_C} posterior predictions
 #' @export
 #'
 gcomp_stan <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),

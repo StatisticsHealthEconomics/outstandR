@@ -4,7 +4,7 @@
 \alias{hat_Delta_stats}
 \title{Calculate the difference between treatments using all evidence}
 \usage{
-hat_Delta_stats(AC.IPD, BC.ALD, strategy, ...)
+hat_Delta_stats(AC.IPD, BC.ALD, strategy, CI = 0.95, ...)
 }
 \arguments{
 \item{AC.IPD}{Individual-level patient data. Suppose between studies A and C.}
@@ -14,13 +14,18 @@ hat_Delta_stats(AC.IPD, BC.ALD, strategy, ...)
 \item{strategy}{Computation strategy function. These can be
 \code{strategy_maic()}, \code{strategy_stc()}, \code{strategy_gcomp_ml()} and  \code{strategy_gcomp_stan()}}
 
+\item{CI}{Confidence interval; between 0,1}
+
 \item{...}{Additional arguments}
 }
 \value{
-List of statistics as a \code{mimR} class object
+List of length 3 of statistics as a \code{mimR} class object.
+Containing statistics between each pair of treatments.
+These are the mean contrasts, variances and confidence intervals,
+respectively.
 }
 \description{
-This is the main wrapper for \code{hat_Delta_stats()}.
+This is the main, top-level wrapper for \code{hat_Delta_stats()}.
 
 \insertCite{RemiroAzocar2022}{mimR}
 }

@@ -7,7 +7,7 @@
 \alias{IPD_stats.stc}
 \alias{IPD_stats.gcomp_ml}
 \alias{IPD_stats.gcomp_stan}
-\title{Individual level data statistics}
+\title{Calculate individual-level patient data statistics}
 \usage{
 IPD_stats(strategy, ipd, ald, ...)
 
@@ -31,13 +31,33 @@ IPD_stats(strategy, ipd, ald, ...)
 \item{...}{Additional arguments}
 }
 \value{
-Mean and variance
+Mean and variance values
 }
 \description{
-Marginal A vs C treatment effect estimates
-using bootstrapping
-
-IPD from the AC trial are used to fit a regression model describing the
-observed outcomes \code{y} in terms of the relevant baseline characteristics \code{x} and
-the treatment variable \code{z}.
+Separate methods for each approach
+MAIC, STC, G-computation via MLE or Bayesian inference.
 }
+\section{Matching-adjusted indirect comparison statistics}{
+
+Marginal \emph{A} vs \emph{C} treatment effect estimates
+using bootstrapping sampling.
+}
+
+\section{Simulated treatment comparison statistics}{
+
+IPD from the \emph{AC} trial are used to fit a regression model describing the
+observed outcomes \eqn{y} in terms of the relevant baseline characteristics \code{x} and
+the treatment variable \eqn{z}.
+}
+
+\section{G-computation maximum likelihood statistics}{
+
+Compute a non-parametric bootstrap with \eqn{R=1000} resamples.
+}
+
+\section{G-computation Bayesian statistics}{
+
+Using Stan, compute marginal log-odds ratio for \emph{A} vs \emph{C} for each MCMC sample
+by transforming from probability to linear predictor scale
+}
+

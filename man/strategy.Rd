@@ -29,15 +29,15 @@ strategy_gcomp_stan(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"))
 new_strategy(strategy, ...)
 }
 \arguments{
-\item{formula}{Linear regression formula object}
+\item{formula}{Linear regression \code{formula} object}
 
 \item{R}{The number of resamples used for the non-parametric bootstrap}
 
-\item{strategy}{Class name}
+\item{dat_ALD}{Aggregate-level data}
+
+\item{strategy}{Class name from \code{strategy_maic}, \code{strategy_stc}, \code{strategy_gcomp_ml}, \code{strategy_gcomp_stan}}
 
 \item{...}{Additional arguments}
-
-\item{ald}{Aggregate-level data}
 }
 \value{
 \code{maic} class object
@@ -49,27 +49,54 @@ new_strategy(strategy, ...)
 \code{gcomp_stan} class object
 }
 \description{
-Create class for each approach
+Create a type of strategy class for each modelling approach.
 }
 \section{Matching-adjusted indirect comparison (MAIC)}{
+
+
+MAIC is a form of non-parametric likelihood reweighting method
+which allows the propensity score logistic
+regression model to be estimated without IPD in the \emph{AC} population.
+The mean outcomes \eqn{\mu_{t(AC)}} on treatment \eqn{t = A,B} in the \emph{AC}
+target population are estimated by taking a weighted average of the
+outcomes \eqn{Y} of the \eqn{N} individuals in arm \eqn{t} of the \emph{AB} population
 
 Used to compare marginal
 treatment effects where there are cross-trial differences in effect modifiers
 and limited patient-level data.
 
+\deqn{
+\hat{Y}_{} = \frac{\sum_{i=1}^{N} Y_{it(AB)} w_{it}}{\sum _{i=1}^{N} w_{it}}
+}
+where the weight \eqn{w_{it}} assigned to the \eqn{i}-th individual receiving treatment
+\eqn{t} is equal to the odds of being enrolled in the \emph{AC} trial vs the \emph{AB} trial.
+
 The default formula is
 \deqn{
- y = X3 + X4 + trt*X1 + trt*X2
+ y = X_3 + X_4 + \beta_{t}X_1 + \beta_{t}X_2
 }
 }
 
 \section{Simulated treatment comparison (STC)}{
 
 Outcome regression-based method which targets a conditional treatment effect.
+STC is a modification of the covariate adjustment method.
+An outcome model is fitted using IPD in the \emph{AB} trial
+
+\deqn{
+g(\mu_{t(AB)}(X)) = \beta_0 + \beta_1^T X + (\beta_B + \beta_2^T X^{EM}) I(t=B)
+}
+where \eqn{\beta_0} is an intercept term, \eqn{\beta_1} is a vector of coefficients for
+prognostic variables, \eqn{\beta_B} is the relative effect of treatment \emph{B} compared
+to \emph{A} at \eqn{X=0}, \eqn{\beta_2} is a vector of coefficients for effect
+modifiers \eqn{X^{EM}} subvector of the full covariate vector \eqn{X}), and
+\eqn{\mu_{t(AB)}(X)} is the expected outcome of an individual assigned
+treatment \eqn{t} with covariate values \eqn{X} which is transformed onto a
+chosen linear predictor scale with link function \eqn{g(\cdot)}.
 
 The default formula is
 \deqn{
- y = X3 + X4 + trt*(X1 - mean(X1)) + trt*(X2 - mean(X2))
+ y = X_3 + X_4 + \beta_t(X_1 - \bar{X_1}) + \beta_t(X_2 - \bar{X2})
 }
 }
 
@@ -78,7 +105,7 @@ The default formula is
 
 The default formula is
 \deqn{
- y = X3 + X4 + trt*X1 + trt*X2
+ y = X_3 + X_4 + \beta_{t}X_1 + \beta_{t}X_2
 }
 }
 
@@ -87,7 +114,7 @@ The default formula is
 
 The default formula is
 \deqn{
- y = X3 + X4 + trt*X1 + trt*X2
+ y = X_3 + X_4 + \beta_{t}X_1 + \beta_{t}X_2
 }
 }
 
