@@ -11,7 +11,7 @@
 \usage{
 IPD_stats(strategy, ipd, ald, ...)
 
-\method{IPD_stats}{default}()
+\method{IPD_stats}{default}(...)
 
 \method{IPD_stats}{maic}(strategy, ipd, ald)
 

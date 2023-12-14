@@ -13,6 +13,9 @@ process_metrics(means, variances, truth)
 
 \item{truth}{Truth}
 }
+\value{
+Named list
+}
 \description{
 Compute performance metrics for a given method
 }

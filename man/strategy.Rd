@@ -12,7 +12,7 @@
 strategy_maic(
   formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
   R = 1000,
-  dat_ALD = BC.ALD
+  ald
 )
 
 strategy_stc(
@@ -33,7 +33,7 @@ new_strategy(strategy, ...)
 
 \item{R}{The number of resamples used for the non-parametric bootstrap}
 
-\item{dat_ALD}{Aggregate-level data}
+\item{ald}{Aggregate-level data}
 
 \item{strategy}{Class name from \code{strategy_maic}, \code{strategy_stc}, \code{strategy_gcomp_ml}, \code{strategy_gcomp_stan}}
 
@@ -111,7 +111,7 @@ g(\mu_n) = \beta_0 + \boldsymbol{x}_n \boldsymbol{\beta_1} + (\beta_z + \boldsym
 }
 In the context of G-computation, this regression model is often called the “Q-model.”
 Having fitted the Q-model, the regression coefficients are treated as nuisance parameters.
-The parameters are applied to the simulated covariates $x*$ to predict hypothetical outcomes
+The parameters are applied to the simulated covariates \eqn{x*} to predict hypothetical outcomes
 for each subject under both possible treatments. Namely, a pair of predicted outcomes,
 also called potential outcomes, under \emph{A} and under \emph{C}, is generated for each subject.
 
@@ -146,8 +146,7 @@ outcome regression, as well as the joint covariate distribution.
 Draw a vector of size \eqn{N*} of predicted outcomes \eqn{y*z} under each set
 intervention \eqn{z* \in \{0, 1\}} from its posterior predictive distribution
 under the specific treatment. This is defined as \eqn{p(y*_{z*} |
-\mathcal{D}_{AC}) = \int_{\beta} p(y*_{z*} | \beta) p(\beta |
-\mathcal{D}_{AC}) d\beta}
+\mathcal{D}_{AC}) = \int_{\beta} p(y*_{z*} | \beta) p(\beta | \mathcal{D}_{AC}) d\beta}
 where \eqn{p(\beta | \mathcal{D}_{AC})} is the
 posterior distribution of the outcome regression coefficients \eqn{\beta},
 which encode the predictor-outcome relationships observed in the \emph{AC} trial IPD.

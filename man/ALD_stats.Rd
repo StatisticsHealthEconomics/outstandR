@@ -9,7 +9,7 @@ ALD_stats(ald, treatments = list("B", "C"))
 \arguments{
 \item{ald}{Aggregate-level trial data}
 
-\item{treatments}{Treatment labels; default \code{B}, \code{C}}
+\item{treatments}{Treatment labels list; default \code{B}, \code{C}}
 }
 \value{
 List of marginal treatment effect mean and variance

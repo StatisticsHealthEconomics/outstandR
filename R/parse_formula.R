@@ -1,7 +1,7 @@
 
 #' Get effect modifiers
 #'
-#' @param formula Linear regression formula
+#' @param formula Linear regression formula string
 #'
 #' @return Effect modifiers names
 #' @keywords internal
@@ -19,7 +19,7 @@ get_effect_modifiers <- function(formula) {
 
 #' Get treatment name
 #'
-#' @param formula Linear regression formula
+#' @param formula Linear regression formula string
 #'
 #' @return Treatment name
 #' @keywords internal
@@ -36,7 +36,7 @@ get_treatment_name <- function(formula) {
 #' Get mean names
 #'
 #' @template args-ald
-#' @param var_names Variable names
+#' @param var_names Variable names character vector
 #'
 #' @return Mean names vector
 #' @keywords internal
@@ -53,7 +53,7 @@ get_mean_names <- function(ald, var_names) {
 #' Get standard deviation names
 #'
 #' @template args-ald
-#' @param var_names 
+#' @param var_names Variable names character vector
 #'
 #' @return Standard deviation names vector
 #' @keywords internal
@@ -69,11 +69,15 @@ get_sd_names <- function(ald, var_names) {
 
 #' Get covariate names
 #'
-#' @param formula Linear regression formula
+#' @param formula Linear regression formula object
 #'
 #' @return covariate names vector
 #' @keywords internal
 #'
 get_covariate_names <- function(formula) {
+  
+  if (class(formula) != "formula")
+    stop("formula argument must be of formula class.")
+  
   all.vars(formula)[-1]
 }

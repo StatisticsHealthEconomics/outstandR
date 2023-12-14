@@ -7,9 +7,9 @@
 hat_Delta_stats(AC.IPD, BC.ALD, strategy, CI = 0.95, ...)
 }
 \arguments{
-\item{AC.IPD}{Individual-level patient data. Suppose between studies A and C.}
+\item{AC.IPD}{Individual-level patient data. Suppose between studies \emph{A} and \emph{C}.}
 
-\item{BC.ALD}{Aggregate-level data. Suppose between studies B and C.}
+\item{BC.ALD}{Aggregate-level data. Suppose between studies \emph{B} and \emph{C}.}
 
 \item{strategy}{Computation strategy function. These can be
 \code{strategy_maic()}, \code{strategy_stc()}, \code{strategy_gcomp_ml()} and  \code{strategy_gcomp_stan()}}

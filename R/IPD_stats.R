@@ -28,14 +28,18 @@
 #' }
 #' 
 #' @param R The number of resamples used for the non-parametric bootstrap
-#' @param dat_ALD Aggregate-level data 
+#' @template args-ald
 #'
 #' @return `maic` class object
 #' @export
 #'
 strategy_maic <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
                           R = 1000,
-                          dat_ALD = BC.ALD) {
+                          ald) {
+  
+  if (class(formula) != "formula")
+    stop("formula argument must be of formula class.")
+  
   default_args <- formals()
   args <- as.list(match.call())[-1]
   args <- modifyList(default_args, args)
@@ -70,6 +74,10 @@ strategy_maic <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
 # 
 strategy_stc <- function(formula =
                            as.formula("y ~ X3 + X4 + trt*I(X1 - mean(X1)) + trt*I(X2 - mean(X2))")) {
+  
+  if (class(formula) != "formula")
+    stop("formula argument must be of formula class.")
+  
   default_args <- formals()
   args <- as.list(match.call())[-1]
   args <- modifyList(default_args, args)
@@ -120,6 +128,10 @@ strategy_stc <- function(formula =
 strategy_gcomp_ml <- function(formula =
                                 as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
                               R = 1000) {
+  
+  if (class(formula) != "formula")
+    stop("formula argument must be of formula class.")
+  
   default_args <- formals()
   args <- as.list(match.call())[-1]
   args <- modifyList(default_args, args)
@@ -165,6 +177,10 @@ strategy_gcomp_ml <- function(formula =
 #'
 strategy_gcomp_stan <- function(formula =
                                   as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")) {
+  
+  if (class(formula) != "formula")
+    stop("formula argument must be of formula class.")
+  
   default_args <- formals()
   args <- as.list(match.call())[-1]
   args <- modifyList(default_args, args)
@@ -184,7 +200,7 @@ strategy_gcomp_stan <- function(formula =
 #' @export
 #'
 new_strategy <- function(strategy, ...) {
-  structure(list(...), class = strategy)
+  structure(list(...), class = c(strategy, "strategy", "list"))
 }
 
 
@@ -230,6 +246,12 @@ new_strategy <- function(strategy, ...) {
 #' 
 hat_Delta_stats <- function(AC.IPD, BC.ALD, strategy, CI = 0.95, ...) {
 
+  if (CI <= 0 || CI >= 1) stop("CI argument must be between 0 and 1.")
+  
+  ##TODO: as method instead?
+  if (!inherits(strategy, "strategy"))
+    stop("strategy argument must be of a class strategy.")
+  
   AC_hat_Delta_stats <- IPD_stats(strategy, ipd = AC.IPD, ald = BC.ALD, ...) 
   BC_hat_Delta_stats <- ALD_stats(ald = BC.ALD) 
   
@@ -281,9 +303,11 @@ IPD_stats <- function(strategy, ipd, ald, ...)
 
 
 #' @rdname IPD_stats
-#' 
-IPD_stats.default <- function() {
-  stop("strategy not available.")
+#' @export
+IPD_stats.default <- function(...) {
+  strategy_classes <- sub("IPD_stats\\.", "", methods(IPD_stats)[-1])
+  avail_strategies <- paste0("strategy_", strategy_classes, "()", collapse = ", ")
+  stop(paste0("strategy not available. Select from ", avail_strategies))
 }
 
 

@@ -9,7 +9,7 @@ get_mean_names(ald, var_names)
 \arguments{
 \item{ald}{Aggregate-level data}
 
-\item{var_names}{Variable names}
+\item{var_names}{Variable names character vector}
 }
 \value{
 Mean names vector

@@ -7,7 +7,7 @@
 get_treatment_name(formula)
 }
 \arguments{
-\item{formula}{Linear regression formula}
+\item{formula}{Linear regression formula string}
 }
 \value{
 Treatment name

@@ -5,7 +5,7 @@
 #' \deqn{\frac{1}{n_C} + \frac{1}{n_{\bar{C}}} + \frac{1}{n_B} + \frac{1}{n_{\bar{B}}}}.
 #'
 #' @param ald Aggregate-level data
-#' @param treatments Treatment labels; default _B_ vs _C_
+#' @param treatments Treatment labels list; default _B_ vs _C_
 #' @return Sum of variances
 #' @export
 #' 
@@ -25,7 +25,7 @@ marginal_variance <- function(ald, treatments = list("B", "C")) {
 #' so e.g. \eqn{n_{\bar{C}} = N_C - n_c}.
 #'
 #' @param ald Aggregate-level data
-#' @param treatments Treatment labels; default _B_ vs _C_
+#' @param treatments Treatment labels list; default _B_ vs _C_
 #' @return Trial effect difference
 #' @export
 #' 
@@ -72,7 +72,7 @@ trial_treatment_effect <- function(ald, tid) {
 #' Aggregate-level data mean and variance statistics
 #'
 #' @param ald Aggregate-level trial data
-#' @param treatments Treatment labels; default `B`, `C`
+#' @param treatments Treatment labels list; default `B`, `C`
 #'
 #' @return List of marginal treatment effect mean and variance
 #' @seealso [marginal_treatment_effect()], [marginal_variance()]
