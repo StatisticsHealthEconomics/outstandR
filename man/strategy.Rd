@@ -61,9 +61,8 @@ The mean outcomes \eqn{\mu_{t(AC)}} on treatment \eqn{t = A,B} in the \emph{AC}
 target population are estimated by taking a weighted average of the
 outcomes \eqn{Y} of the \eqn{N} individuals in arm \eqn{t} of the \emph{AB} population
 
-Used to compare marginal
-treatment effects where there are cross-trial differences in effect modifiers
-and limited patient-level data.
+Used to compare marginal treatment effects where there are cross-trial
+differences in effect modifiers and limited patient-level data.
 
 \deqn{
 \hat{Y}_{} = \frac{\sum_{i=1}^{N} Y_{it(AB)} w_{it}}{\sum _{i=1}^{N} w_{it}}
@@ -103,6 +102,33 @@ The default formula is
 \section{G-computation maximum likelihood}{
 
 
+G-computation marginalizes the conditional estimates by separating the regression modelling
+from the estimation of the marginal treatment effect for \emph{A} versus \emph{C}.
+First, a regression model of the observed outcome \eqn{y} on the covariates \eqn{x} and treatment \eqn{z} is fitted to the \emph{AC} IPD:
+
+\deqn{
+g(\mu_n) = \beta_0 + \boldsymbol{x}_n \boldsymbol{\beta_1} + (\beta_z + \boldsymbol{x_n^{EM}} \boldsymbol{\beta_2}) \mbox{I}(z_n=1)
+}
+In the context of G-computation, this regression model is often called the “Q-model.”
+Having fitted the Q-model, the regression coefficients are treated as nuisance parameters.
+The parameters are applied to the simulated covariates $x*$ to predict hypothetical outcomes
+for each subject under both possible treatments. Namely, a pair of predicted outcomes,
+also called potential outcomes, under \emph{A} and under \emph{C}, is generated for each subject.
+
+By plugging treatment \emph{C} into the regression fit for every simulated observation,
+we predict the marginal outcome mean in the hypothetical scenario in which all units are under treatment \emph{C}:
+
+\deqn{
+\hat{\mu}_0 = \int_{x^*} g^{-1} (\hat{\beta}_0 + x^* \hat{\beta}_1 ) p(x^*) dx^*
+}
+To estimate the marginal or population-average treatment effect for A versus C in the linear predictor scale,
+one back-transforms to this scale the average predictions, taken over all subjects on the natural outcome scale,
+and calculates the difference between the average linear predictions:
+
+\deqn{
+\hat{\Delta}^{(2)}_{10} = g(\hat{\mu}_1) - g(\hat{\mu}_0)
+}
+
 The default formula is
 \deqn{
  y = X_3 + X_4 + \beta_{t}X_1 + \beta_{t}X_2
@@ -111,6 +137,32 @@ The default formula is
 
 \section{G-computation Bayesian}{
 
+The difference between Bayesian G-computation and its maximum-likelihood
+counterpart is in the estimated distribution of the predicted outcomes. The
+Bayesian approach also marginalizes, integrates or standardizes over the
+joint posterior distribution of the conditional nuisance parameters of the
+outcome regression, as well as the joint covariate distribution.
+
+Draw a vector of size \eqn{N*} of predicted outcomes \eqn{y*z} under each set
+intervention \eqn{z* \in \{0, 1\}} from its posterior predictive distribution
+under the specific treatment. This is defined as \eqn{p(y*_{z*} |
+\mathcal{D}_{AC}) = \int_{\beta} p(y*_{z*} | \beta) p(\beta |
+\mathcal{D}_{AC}) d\beta}
+where \eqn{p(\beta | \mathcal{D}_{AC})} is the
+posterior distribution of the outcome regression coefficients \eqn{\beta},
+which encode the predictor-outcome relationships observed in the \emph{AC} trial IPD.
+
+This is given by:
+
+\deqn{
+p(y*_{z*} | \mathcal{D}_{AC}) = \int_{x*} p(y* | z*, x*, \mathcal{D}_{AC}) p(x* | \mathcal{D}_{AC}) dx*
+}
+
+\deqn{
+= \int_{x*} \int_{\beta} p(y* | z*, x*, \beta) p(x* | \beta) p(\beta | \mathcal{D}_{AC}) d\beta dx*
+}
+In practice, the integrals above can be approximated numerically, using full Bayesian
+estimation via Markov chain Monte Carlo (MCMC) sampling.
 
 The default formula is
 \deqn{

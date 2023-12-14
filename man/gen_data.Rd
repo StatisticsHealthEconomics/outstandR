@@ -7,19 +7,19 @@
 gen_data(N, b_trt, b_X, b_EM, b_0, meanX, sdX, event_rate, corX, allocation)
 }
 \arguments{
-\item{N}{N}
+\item{N}{Size}
 
-\item{b_trt}{b treatment}
+\item{b_trt}{b coefficient for treatment}
 
-\item{b_X}{b_X}
+\item{b_X}{b coefficients for X}
 
-\item{b_EM}{b_EM}
+\item{b_EM}{b coefficients effect modifiers}
 
-\item{b_0}{b_0}
+\item{b_0}{Intercept coefficient}
 
 \item{meanX}{mean X}
 
-\item{sdX}{sd X}
+\item{sdX}{standard deviation X}
 
 \item{event_rate}{Event rate}
 

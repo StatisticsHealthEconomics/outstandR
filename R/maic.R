@@ -1,6 +1,7 @@
 
 #' Estimate MAIC weights 
 #' 
+#' Matching-adjusted indirect comparison weights.
 #' Method is taken from
 #' \insertCite{Signorovitch2010}{mimR}.
 #' 
@@ -31,7 +32,9 @@ maic_weights <- function(X_EM) {
 }
 
 
-#' MAIC bootstrap
+#' MAIC bootstrap sample
+#' 
+#' Matching-adjusted indirect comparison bootstrap sampling.
 #' 
 #' @template args-ipd
 #' @param indices Vector of indices, same length as original,
@@ -39,6 +42,7 @@ maic_weights <- function(X_EM) {
 #' @param formula Linear regression formula
 #' @template args-ald
 #' @return Fitted treatment coefficient is marginal effect for _A_ vs _C_
+#' @seealso [IPD_stats.maic()]
 #' 
 maic.boot <- function(ipd, indices, formula, ald) {
   

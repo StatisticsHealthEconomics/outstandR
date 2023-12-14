@@ -2,7 +2,7 @@
 % Please edit documentation in R/maic.R
 \name{maic.boot}
 \alias{maic.boot}
-\title{MAIC bootstrap}
+\title{MAIC bootstrap sample}
 \usage{
 maic.boot(ipd, indices, formula, ald)
 }
@@ -20,5 +20,8 @@ which define the bootstrap sample}
 Fitted treatment coefficient is marginal effect for \emph{A} vs \emph{C}
 }
 \description{
-MAIC bootstrap
+Matching-adjusted indirect comparison bootstrap sampling.
+}
+\seealso{
+\code{\link[=IPD_stats.maic]{IPD_stats.maic()}}
 }

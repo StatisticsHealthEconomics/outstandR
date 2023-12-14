@@ -13,6 +13,7 @@ maic_weights(X_EM)
 Estimated weights for each individual; vector
 }
 \description{
+Matching-adjusted indirect comparison weights.
 Method is taken from
 \insertCite{Signorovitch2010}{mimR}.
 }

@@ -23,3 +23,6 @@ Mean difference in expected log-odds
 \description{
 Using bootstrap resampling, calculates the log odds ratio.
 }
+\seealso{
+\code{\link[=strategy_gcomp_ml]{strategy_gcomp_ml()}}, \code{\link[=gcomp_ml_log_odds_ratio]{gcomp_ml_log_odds_ratio()}}
+}

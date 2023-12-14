@@ -2,12 +2,13 @@
 #' G-computation maximum likelihood bootstrap
 #' 
 #' Using bootstrap resampling, calculates the log odds ratio.
-#' 
+#'     
 #' @param data Trial data 
 #' @param indices Indices sampled from rows of `data`
 #' @param formula Linear regression formula; default \eqn{y = X_3 + X_4 + \beta_t X_1 + \beta_t X_2} 
 #'
 #' @return Mean difference in expected log-odds
+#' @seealso [strategy_gcomp_ml()], [gcomp_ml_log_odds_ratio()]
 #' @export
 #' 
 gcomp_ml.boot <- function(data, indices,
@@ -24,13 +25,15 @@ gcomp_ml.boot <- function(data, indices,
 #'
 #' \eqn{\log(\hat{\mu}_A/(1 - \hat{\mu}_A)) - \log(\hat{\mu}_C/(1 - \hat{\mu}_C))}
 #'
-#' @param formula Linear regression formula
+#' @param formula Linear regression `formula` object
 #' @param dat Trial data
 #'
 #' @return Difference of log-odds 
+#' @seealso [strategy_gcomp_ml()], [gcomp_ml.boot()]
 #' @export
 #'
 gcomp_ml_log_odds_ratio <- function(formula, dat) {
+  browser()  ## what is type of data?...
   
   treat_name <- get_treatment_name(formula)
   covariate_names <- get_covariate_names(formula)
@@ -62,7 +65,6 @@ gcomp_ml_log_odds_ratio <- function(formula, dat) {
                               sd = dat[[sd_names[i]]]))
   }
   
-  browser()
   # sample covariates from approximate joint distribution using copula
   mvd <- mvdc(copula = cop,
               margins = rep("norm", n_covariates),  # Gaussian marginals

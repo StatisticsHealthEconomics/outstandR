@@ -7,7 +7,7 @@
 gcomp_ml_log_odds_ratio(formula, dat)
 }
 \arguments{
-\item{formula}{Linear regression formula}
+\item{formula}{Linear regression \code{formula} object}
 
 \item{dat}{Trial data}
 }
@@ -20,4 +20,7 @@ estimated by transforming from probability to linear predictor scale.
 }
 \details{
 \eqn{\log(\hat{\mu}_A/(1 - \hat{\mu}_A)) - \log(\hat{\mu}_C/(1 - \hat{\mu}_C))}
+}
+\seealso{
+\code{\link[=strategy_gcomp_ml]{strategy_gcomp_ml()}}, \code{\link[=gcomp_ml.boot]{gcomp_ml.boot()}}
 }

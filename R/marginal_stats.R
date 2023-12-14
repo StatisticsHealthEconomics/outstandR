@@ -18,7 +18,11 @@ marginal_variance <- function(ald, treatments = list("B", "C")) {
 #' Marginal treatment effect from reported event counts
 #' 
 #' Calculate
-#' \deqn{\log(n_B n_{\bar{C}}) - log(n_C n_{\bar{B}})}.
+#' \deqn{
+#' \log\left( \frac{n_B/(N_B-n_B)}{n_C/(N_B-n_{B})} \right) = \log(n_B n_{\bar{C}}) - log(n_C n_{\bar{B}})
+#' }
+#' where \eqn{\bar{C}} is the compliment of \eqn{C}
+#' so e.g. \eqn{n_{\bar{C}} = N_C - n_c}.
 #'
 #' @param ald Aggregate-level data
 #' @param treatments Treatment labels; default _B_ vs _C_
