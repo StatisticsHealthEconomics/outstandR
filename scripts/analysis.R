@@ -5,7 +5,7 @@
 library(ggplot2)
 library(gridExtra)
 
-load(file=here::here("data", "binary_settings.RData"))
+load(file=here::here("data", "binary_settings_input_params.RData"))
 
 n_scenarios <- nrow(pc)
 

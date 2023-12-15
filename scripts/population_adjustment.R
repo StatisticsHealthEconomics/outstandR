@@ -1,16 +1,13 @@
 # perform the indirect comparison methods on the simulated data
 
 # load sim. study parameter combinations
-load(here::here("data", "binary_settings.RData")) 
+load(here::here("data", "binary_settings_input_params.RData")) 
 
 library(parallel)
 library(doSNOW)
-# fitting outcome regression and drawing predicted outcomes from posterior in Bayes G-comp
-library(rstanarm)
-# non-parametric bootstrap in ML G-computation and MAIC
-library(boot)
-# simulating BC trial covariates from multivariate Gaussian copula
-library(copula)
+library(rstanarm)  # fit outcome regression and draw predicted outcomes from posterior in Bayes G-comp
+library(boot)      # non-parametric bootstrap in ML G-computation and MAIC
+library(copula)    # simulate BC trial covariates from multivariate Gaussian copula
 
 set.seed(444)
 n_scenarios <- nrow(pc) # number of simulation scenarios
@@ -31,8 +28,8 @@ ALD.BC.all <- vector(mode="list", n_scenarios)
 # load data
 for (i in seq_len(n_scenarios)) {
   file_id <- paste0("N_AC", pc$N_AC[i], "meanX_AC", pc$meanX_AC[i]) 
-  load(paste0("Data/IPD_AC_", file_id, ".RData"))  # AC patient-level data
-  load(paste0("Data/ALD_BC_", file_id, ".RData"))  # BC aggregate-level data
+  load(paste0("data/IPD_AC_", file_id, ".RData"))  # AC patient-level data
+  load(paste0("data/ALD_BC_", file_id, ".RData"))  # BC aggregate-level data
   IPD.AC.all[[i]] <- IPD.AC
   ALD.BC.all[[i]] <- ALD.BC
 }
