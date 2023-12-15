@@ -12,7 +12,7 @@ Authors@R: c(
             comment = c(ORCID = "0000-0002-7263-4251")))
 Description:
     Multiple Imputation Marginalisation with several different computation approaches.
-    See Remiro‐Azócar A, Heath A, Baio G (2022). Parametric G‐computation for compatibl
+    See Remiro‐Azócar A, Heath A, Baio G (2022). Parametric G‐computation for compatible
     indirect treatment comparisons with limited individual patient data. 
     Res. Synth. Methods, 1–31. ISSN 1759-2879, <doi:10.1002/jrsm.1565, 2108.12208>.
 License: GPL (>= 3)
@@ -33,6 +33,7 @@ Suggests:
     knitr,
     MASS,
     parallel,
+    purrr,
     rmarkdown,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
