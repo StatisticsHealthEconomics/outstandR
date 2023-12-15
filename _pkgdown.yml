@@ -19,7 +19,7 @@ reference:
   desc: "Main functions"
   contents:
   # - mimR-package
-  - starts_with("hat_Delta_stats")
+  - starts_with("mimR")
 - title: "Helpers"
   desc: "Helper functions"
   contents:
