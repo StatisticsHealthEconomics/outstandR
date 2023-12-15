@@ -4,25 +4,48 @@
 \alias{hat_Delta_stats}
 \title{Calculate the difference between treatments using all evidence}
 \usage{
-hat_Delta_stats(AC.IPD, BC.ALD, strategy, ...)
+hat_Delta_stats(AC.IPD, BC.ALD, strategy, CI = 0.95, ...)
 }
 \arguments{
-\item{AC.IPD}{Individual-level patient data. Suppose between studies A and C.}
+\item{AC.IPD}{Individual-level patient data. Suppose between studies \emph{A} and \emph{C}.}
 
-\item{BC.ALD}{Aggregate-level data. Suppose between studies B and C.}
+\item{BC.ALD}{Aggregate-level data. Suppose between studies \emph{B} and \emph{C}.}
 
 \item{strategy}{Computation strategy function. These can be
 \code{strategy_maic()}, \code{strategy_stc()}, \code{strategy_gcomp_ml()} and  \code{strategy_gcomp_stan()}}
 
+\item{CI}{Confidence interval; between 0,1}
+
 \item{...}{Additional arguments}
 }
 \value{
-List of statistics as a \code{mimR} class object
+List of length 3 of statistics as a \code{mimR} class object.
+Containing statistics between each pair of treatments.
+These are the mean contrasts, variances and confidence intervals,
+respectively.
 }
 \description{
-This is the main wrapper for \code{hat_Delta_stats()}.
+This is the main, top-level wrapper for \code{hat_Delta_stats()}.
+Methods taken from
+\insertCite{RemiroAzocar2022}{mimR}.
+}
+\examples{
 
-\insertCite{RemiroAzocar2022}{mimR}
+data(AC_IPD)  # AC patient-level data
+data(BC_ALD)  # BC aggregate-level data
+
+# matching-adjusted indirect comparison
+hat_Delta_stats_maic <- hat_Delta_stats(AC_IPD, BC_ALD, strategy = strategy_maic())
+
+# simulated treatment comparison
+hat_Delta_stats_stc <- hat_Delta_stats(AC_IPD, BC_ALD, strategy = strategy_stc())
+
+# G-computation with maximum likelihood
+# hat_Delta_stats_gcomp_ml <- hat_Delta_stats(AC_IPD, BC_ALD, strategy = strategy_gcomp_ml())
+
+# G-computation with Bayesian inference
+hat_Delta_stats_gcomp_stan <- hat_Delta_stats(AC_IPD, BC_ALD, strategy = strategy_gcomp_stan())
+
 }
 \references{
 \insertRef{RemiroAzocar2022}{mimR}

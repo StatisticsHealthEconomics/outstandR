@@ -2,19 +2,19 @@
 % Please edit documentation in R/parse_formula.R
 \name{get_sd_names}
 \alias{get_sd_names}
-\title{Get SD names}
+\title{Get standard deviation names}
 \usage{
-get_sd_names(dat, var_names)
+get_sd_names(ald, var_names)
 }
 \arguments{
-\item{dat}{}
+\item{ald}{Aggregate-level data}
 
-\item{var_names}{}
+\item{var_names}{Variable names character vector}
 }
 \value{
-SD names
+Standard deviation names vector
 }
 \description{
-Get SD names
+Get standard deviation names
 }
 \keyword{internal}

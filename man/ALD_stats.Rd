@@ -2,18 +2,21 @@
 % Please edit documentation in R/marginal_stats.R
 \name{ALD_stats}
 \alias{ALD_stats}
-\title{Aggregate-level data statistics}
+\title{Aggregate-level data mean and variance statistics}
 \usage{
-ALD_stats(data, trials = list("B", "C"))
+ALD_stats(ald, treatments = list("B", "C"))
 }
 \arguments{
-\item{data}{Data}
+\item{ald}{Aggregate-level trial data}
 
-\item{trials}{Trial labels; default \code{B}, \code{C}}
+\item{treatments}{Treatment labels list; default \code{B}, \code{C}}
 }
 \value{
-List of marginal treatment effect and variance
+List of marginal treatment effect mean and variance
 }
 \description{
-Aggregate-level data statistics
+Aggregate-level data mean and variance statistics
+}
+\seealso{
+\code{\link[=marginal_treatment_effect]{marginal_treatment_effect()}}, \code{\link[=marginal_variance]{marginal_variance()}}
 }

@@ -1,11 +1,14 @@
 
 #' G-computation maximum likelihood bootstrap
 #' 
-#' @param data Data 
-#' @param indices Indices 
-#' @param formula Linear regression formula 
+#' Using bootstrap resampling, calculates the log odds ratio.
+#'     
+#' @param data Trial data 
+#' @param indices Indices sampled from rows of `data`
+#' @param formula Linear regression formula; default \eqn{y = X_3 + X_4 + \beta_t X_1 + \beta_t X_2} 
 #'
 #' @return Mean difference in expected log-odds
+#' @seealso [strategy_gcomp_ml()], [gcomp_ml_log_odds_ratio()]
 #' @export
 #' 
 gcomp_ml.boot <- function(data, indices,
@@ -17,16 +20,23 @@ gcomp_ml.boot <- function(data, indices,
 
 #' G-computation Maximum Likelihood Log-Odds Ratio
 #' 
-#' Marginal A vs. C log-odds ratio (mean difference in expected log-odds)
-#' estimated by transforming from probability to linear predictor scale
+#' Marginal _A_ vs _C_ log-odds ratio (mean difference in expected log-odds)
+#' estimated by transforming from probability to linear predictor scale.
 #'
-#' @param formula Linear regression formula
-#' @param dat Data
+#' \eqn{\log(\hat{\mu}_A/(1 - \hat{\mu}_A)) - \log(\hat{\mu}_C/(1 - \hat{\mu}_C))}
 #'
-#' @return \eqn{log(hat.mu.A/(1-hat.mu.A)) - log(hat.mu.C/(1-hat.mu.C))}
+#' @param formula Linear regression `formula` object
+#' @param dat Trial data
+#'
+#' @return Difference of log-odds 
+#' @seealso [strategy_gcomp_ml()], [gcomp_ml.boot()]
 #' @export
 #'
 gcomp_ml_log_odds_ratio <- function(formula, dat) {
+  browser()  ## what is type of data?...
+  
+  if (class(formula) != "formula")
+    stop("formula argument must be of formula class.")
   
   treat_name <- get_treatment_name(formula)
   covariate_names <- get_covariate_names(formula)
@@ -58,7 +68,6 @@ gcomp_ml_log_odds_ratio <- function(formula, dat) {
                               sd = dat[[sd_names[i]]]))
   }
   
-  browser()
   # sample covariates from approximate joint distribution using copula
   mvd <- mvdc(copula = cop,
               margins = rep("norm", n_covariates),  # Gaussian marginals
@@ -77,8 +86,8 @@ gcomp_ml_log_odds_ratio <- function(formula, dat) {
   data.trtA <- data.trtC <- x_star
   
   # intervene on treatment while keeping set covariates fixed
-  data.trtA[[treat_name]] <- 1 # dataset where everyone receives treatment A
-  data.trtC[[treat_name]] <- 0 # dataset where all observations receive C
+  data.trtA[[treat_name]] <- 1 # dataset where all receive A
+  data.trtC[[treat_name]] <- 0 # dataset where all receive C
   
   # predict counterfactual event probs, conditional on treatment/covariates
   hat.mu.A.i <- predict(fit, type="response", newdata=data.trtA)

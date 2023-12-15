@@ -4,7 +4,8 @@
 #' @param means Mean
 #' @param variances Variances
 #' @param truth Truth
-#' 
+#' @return Named list
+#'
 #' @keywords internal
 #' 
 process_metrics <- function(means, variances, truth) {

@@ -11,15 +11,18 @@ gcomp_ml.boot(
 )
 }
 \arguments{
-\item{data}{Data}
+\item{data}{Trial data}
 
-\item{indices}{Indices}
+\item{indices}{Indices sampled from rows of \code{data}}
 
-\item{formula}{Linear regression formula}
+\item{formula}{Linear regression formula; default \eqn{y = X_3 + X_4 + \beta_t X_1 + \beta_t X_2}}
 }
 \value{
 Mean difference in expected log-odds
 }
 \description{
-G-computation maximum likelihood bootstrap
+Using bootstrap resampling, calculates the log odds ratio.
+}
+\seealso{
+\code{\link[=strategy_gcomp_ml]{strategy_gcomp_ml()}}, \code{\link[=gcomp_ml_log_odds_ratio]{gcomp_ml_log_odds_ratio()}}
 }

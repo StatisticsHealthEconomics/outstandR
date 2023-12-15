@@ -2,15 +2,19 @@
 % Please edit documentation in R/marginal_stats.R
 \name{marginal_variance}
 \alias{marginal_variance}
-\title{marginal effect variance using the delta method}
+\title{Marginal effect variance using the delta method}
 \usage{
-marginal_variance(x, trials = list("B", "C"))
+marginal_variance(ald, treatments = list("B", "C"))
 }
 \arguments{
-\item{x}{x}
+\item{ald}{Aggregate-level data}
 
-\item{trials}{Trial labels}
+\item{treatments}{Treatment labels list; default \emph{B} vs \emph{C}}
+}
+\value{
+Sum of variances
 }
 \description{
-\deqn{\frac{1}{n_C} + \frac{1}{n_{\bar{C}}} + \frac{1}{n_B} + \frac{1}{n_{\bar{B}}}}
+Calculate
+\deqn{\frac{1}{n_C} + \frac{1}{n_{\bar{C}}} + \frac{1}{n_B} + \frac{1}{n_{\bar{B}}}}.
 }

@@ -2,18 +2,23 @@
 % Please edit documentation in R/marginal_stats.R
 \name{marginal_treatment_effect}
 \alias{marginal_treatment_effect}
-\title{B vs C marginal treatment effect from reported event counts}
+\title{Marginal treatment effect from reported event counts}
 \usage{
-marginal_treatment_effect(x, trials = list("B", "C"))
+marginal_treatment_effect(ald, treatments = list("B", "C"))
 }
 \arguments{
-\item{x}{x}
+\item{ald}{Aggregate-level data}
 
-\item{trials}{Trial labels}
+\item{treatments}{Treatment labels list; default \emph{B} vs \emph{C}}
 }
 \value{
 Trial effect difference
 }
 \description{
-\deqn{\log(n_B n_{\bar{C}})  -log(n_C n_{\bar{B}})}
+Calculate
+\deqn{
+\log\left( \frac{n_B/(N_B-n_B)}{n_C/(N_B-n_{B})} \right) = \log(n_B n_{\bar{C}}) - log(n_C n_{\bar{B}})
+}
+where \eqn{\bar{C}} is the compliment of \eqn{C}
+so e.g. \eqn{n_{\bar{C}} = N_C - n_c}.
 }

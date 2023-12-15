@@ -7,7 +7,7 @@
 get_effect_modifiers(formula)
 }
 \arguments{
-\item{formula}{Linear regression formula}
+\item{formula}{Linear regression formula string}
 }
 \value{
 Effect modifiers names

@@ -2,18 +2,19 @@
 % Please edit documentation in R/marginal_stats.R
 \name{trial_variance}
 \alias{trial_variance}
-\title{Trial variance}
+\title{Trial variance with aggregate data}
 \usage{
-trial_variance(x, k)
+trial_variance(ald, tid)
 }
 \arguments{
-\item{x}{x}
+\item{ald}{Aggregate-level data}
 
-\item{k}{k}
+\item{tid}{Treatment label}
 }
 \value{
 Value
 }
 \description{
-Trial variance
+Calculate
+\deqn{1/(\sum y_k) + 1/(N_k - \sum y_k)}.
 }

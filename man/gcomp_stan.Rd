@@ -7,15 +7,16 @@
 gcomp_stan(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"), ipd, ald)
 }
 \arguments{
-\item{formula}{Linear regression formula object}
+\item{formula}{Linear regression formula object; default \eqn{y = X_3 + X_4 + \beta_t X_1 + \beta_t X_2}}
 
 \item{ipd}{Individual-level data}
 
 \item{ald}{Aggregate-level data}
 }
 \value{
-A list of \code{y.star.A} and \code{y.star.C} posterior predictions
+A list of \eqn{y^*_A} and \eqn{y^*_C} posterior predictions
 }
 \description{
-G-computation using Stan
+Calculate draws of binary responses from posterior predictive distribution
+from the Bayesian G-computation method and Hamiltonian Monte-Carlo.
 }
