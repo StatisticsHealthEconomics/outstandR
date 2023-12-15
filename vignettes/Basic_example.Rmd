@@ -23,7 +23,18 @@ Population adjustment methods such as _matching-adjusted indirect comparison_ (M
 
 We propose a marginalization method based on _parametric G-computation_ that can be easily applied where the outcome regression is a generalized linear model or a Cox model. The approach views the covariate adjustment regression as a nuisance model and separates its estimation from the evaluation of the marginal treatment effect of interest. The method can accommodate a Bayesian statistical framework, which naturally integrates the analysis into a probabilistic framework. A simulation study provides proof-of-principle and benchmarks the method's performance against MAIC and the conventional outcome regression. Parametric G-computation achieves more precise and more accurate estimates than MAIC, particularly when covariate overlap is poor, and yields unbiased marginal treatment effect estimates under no failures of assumptions. Furthermore, the marginalized regression-adjusted estimates provide greater precision and accuracy than the conditional estimates produced by the conventional outcome regression.
 
-## Example
+## General problem
+
+Consider one _AB_ trial, for which the company has IPD, and one _AC_ trial, for which only published aggregate data are available. We wish to estimate a comparison of the effects of treatments _B_ and _C_ on an appropriate scale in some target
+population _P_, denoted by the parameter $d_{BC(P)}$. We make use of bracketed subscripts to denote a specific population. Within the _AB_ population there are parameters $\mu_{A( AB)}$, $\mu_{B(AB)}$ and $\mu_{C(AB)}$ representing the expected outcome on each treatment (including parameters for treatments not studied in the _AB_ trial, e.g. treatment _C_). The _AB_ trial provides estimators $\bar{Y}_{A( AB)$ and $\bar{Y}_{B( AB)$ of $\mu_{A( AB)}$, $\mu_{B(AB)}$, respectively, which are the summary outcomes. It the same situation for the _AC_ trial.
+
+For a suitable scale, for example a logit, or risk difference, we form estimators $\Delta_{AB(AB)}$ and $\Delta_{AC(AC)}$ of the trial level (or marginal) relative treatment effects.
+
+$$
+\Delta_{AB(AB)} = g(\bar{Y}_{B{(AB)}}) - g(\bar{Y}_{A{(AB)}})
+$$
+
+## Example analysis
 
 First, let us load necessary packages.
 
