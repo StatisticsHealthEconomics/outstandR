@@ -9,7 +9,7 @@
 #'
 #' @return Mean difference in expected log-odds
 #' @seealso [strategy_gcomp_ml()], [gcomp_ml_log_odds_ratio()]
-#' @export
+#' @keywords internal
 #' 
 gcomp_ml.boot <- function(data, indices,
                           formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")) {
@@ -31,7 +31,7 @@ gcomp_ml.boot <- function(data, indices,
 #' @return Difference of log-odds 
 #' @seealso [strategy_gcomp_ml()], [gcomp_ml.boot()]
 #' @importFrom copula normalCopula mvdc rMvdc
-#' @export
+#' @keywords internal
 #'
 gcomp_ml_log_odds_ratio <- function(formula, dat) {
   browser()  ## what is type of data?...

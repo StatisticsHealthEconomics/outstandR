@@ -16,23 +16,18 @@ navbar:
 
 reference:
 - title: "Main"
-  desc: "Main functions"
+  desc: "Main analysis functions."
   contents:
   # - mimR-package
   - starts_with("mimR")
-- title: "Helpers"
-  desc: "Helper functions"
+  - strategy
+- title: "Constituent statistics"
+  desc: "Helper functions used by the main functions."
   contents:
   - ALD_stats
-  - gcomp_ml.boot
-  - gcomp_ml_log_odds_ratio
-  - gcomp_stan
   - IPD_stats
-  - maic.boot
-  - maic_weights
   - marginal_treatment_effect
   - marginal_variance
-  - strategy_maic
   - trial_treatment_effect
   - trial_variance
   

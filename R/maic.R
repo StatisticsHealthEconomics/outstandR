@@ -10,6 +10,7 @@
 #' 
 #' @references
 #' \insertRef{Signorovitch2010}{mimR}
+#' @keywords internal
 #' 
 maic_weights <- function(X_EM) {
   X_EM <- as.matrix(X_EM)
@@ -43,6 +44,7 @@ maic_weights <- function(X_EM) {
 #' @template args-ald
 #' @return Fitted treatment coefficient is marginal effect for _A_ vs _C_
 #' @seealso [IPD_stats.maic()]
+#' @keywords internal
 #' 
 maic.boot <- function(ipd, indices, formula, ald) {
   

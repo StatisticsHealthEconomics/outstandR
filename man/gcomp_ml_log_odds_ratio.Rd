@@ -24,3 +24,4 @@ estimated by transforming from probability to linear predictor scale.
 \seealso{
 \code{\link[=strategy_gcomp_ml]{strategy_gcomp_ml()}}, \code{\link[=gcomp_ml.boot]{gcomp_ml.boot()}}
 }
+\keyword{internal}

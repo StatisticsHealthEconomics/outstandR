@@ -20,3 +20,4 @@ Method is taken from
 \references{
 \insertRef{Signorovitch2010}{mimR}
 }
+\keyword{internal}

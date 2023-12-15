@@ -11,7 +11,7 @@
 #' @return A list of \eqn{y^*_A} and \eqn{y^*_C} posterior predictions
 #' @importFrom copula normalCopula mvdc rMvdc
 #' @importFrom rstanarm stan_glm posterior_predict
-#' @export
+#' @keywords internal
 #'
 gcomp_stan <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
                        ipd, ald) {
