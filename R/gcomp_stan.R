@@ -2,7 +2,7 @@
 #' G-computation using Stan
 #'
 #' Calculate draws of binary responses from posterior predictive distribution
-#' from the Bayesian G-computation method and Hamiltonian Monte-Carlo.
+#' from the Bayesian G-computation method using Hamiltonian Monte Carlo.
 #' 
 #' @param formula Linear regression formula object; default \eqn{y = X_3 + X_4 + \beta_t X_1 + \beta_t X_2} 
 #' @template args-ipd
