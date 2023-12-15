@@ -2,7 +2,7 @@
 % Please edit documentation in R/gen_data.R
 \name{gen_data}
 \alias{gen_data}
-\title{Generate simulated datasets for index and comparator trials}
+\title{Generate simulated datasets of IPD covariates and outcome for a trial}
 \usage{
 gen_data(N, b_trt, b_X, b_EM, b_0, meanX, sdX, event_rate, corX, allocation)
 }
@@ -31,21 +31,23 @@ gen_data(N, b_trt, b_X, b_EM, b_0, meanX, sdX, event_rate, corX, allocation)
 Data frame of \code{X}, \code{trt} and \code{y}
 }
 \description{
-Generate simulated datasets for index and comparator trials
+Generate simulated datasets of IPD covariates and outcome for a trial
 }
 \examples{
 
-gen_data(
+x <- gen_data(
  N = 100,
  b_trt = log(0.17),
  b_X = -log(0.5),
  b_EM = -log(0.67),
- b_0 = ,
+ b_0 = -0.62,
  meanX = 0.6,
  sdX = 0.4,
  event_rate = 0.35, 
  corX = 0.2,
  allocation = 2/3) 
+
+head(x)
 
 }
 \keyword{internal}
