@@ -112,7 +112,31 @@ than the conditional estimates produced by the conventional outcome
 regression.</p>
 </div>
 <div class="section level2">
-<h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
+<h2 id="general-problem">General problem<a class="anchor" aria-label="anchor" href="#general-problem"></a>
+</h2>
+<p>Consider one <em>AB</em> trial, for which the company has IPD, and
+one <em>AC</em> trial, for which only published aggregate data are
+available. We wish to estimate a comparison of the effects of treatments
+<em>B</em> and <em>C</em> on an appropriate scale in some target
+population <em>P</em>, denoted by the parameter <span class="math inline">\(d_{BC(P)}\)</span>. We make use of bracketed
+subscripts to denote a specific population. Within the <em>AB</em>
+population there are parameters <span class="math inline">\(\mu_{A(
+AB)}\)</span>, <span class="math inline">\(\mu_{B(AB)}\)</span> and
+<span class="math inline">\(\mu_{C(AB)}\)</span> representing the
+expected outcome on each treatment (including parameters for treatments
+not studied in the <em>AB</em> trial, e.g. treatment <em>C</em>). The
+<em>AB</em> trial provides estimators <span class="math inline">\(\bar{Y}_{A(AB)}\)</span> and <span class="math inline">\(\bar{Y}_{B(AB)}\)</span> of <span class="math inline">\(\mu_{A( AB)}\)</span>, <span class="math inline">\(\mu_{B(AB)}\)</span>, respectively, which are the
+summary outcomes. It the same situation for the <em>AC</em> trial.</p>
+<p>For a suitable scale, for example a logit, or risk difference, we
+form estimators <span class="math inline">\(\Delta_{AB(AB)}\)</span> and
+<span class="math inline">\(\Delta_{AC(AC)}\)</span> of the trial level
+(or marginal) relative treatment effects.</p>
+<p><span class="math display">\[
+\Delta_{AB(AB)} = g(\bar{Y}_{B{(AB)}}) - g(\bar{Y}_{A{(AB)}})
+\]</span></p>
+</div>
+<div class="section level2">
+<h2 id="example-analysis">Example analysis<a class="anchor" aria-label="anchor" href="#example-analysis"></a>
 </h2>
 <p>First, let us load necessary packages.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -140,8 +164,8 @@ provides aggregate information to the analyst.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">555</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">AC.IPD</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"AC_IPD.csv"</span><span class="op">)</span><span class="op">)</span>  <span class="co"># AC patient-level data</span></span>
-<span><span class="va">BC.ALD</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"BC_ALD.csv"</span><span class="op">)</span><span class="op">)</span>  <span class="co"># BC aggregate-level data</span></span></code></pre></div>
+<span><span class="va">AC.IPD</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"raw-data"</span>, <span class="st">"AC_IPD.csv"</span><span class="op">)</span><span class="op">)</span>  <span class="co"># AC patient-level data</span></span>
+<span><span class="va">BC.ALD</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="st">"raw-data"</span>, <span class="st">"BC_ALD.csv"</span><span class="op">)</span><span class="op">)</span>  <span class="co"># BC aggregate-level data</span></span></code></pre></div>
 <p>This general format of data sets consist of the following.</p>
 <div class="section level4">
 <h4 id="ac-ipd-individual-patient-data">
@@ -209,8 +233,10 @@ the <em>marginal variance</em>, defined as</p>
 \]</span></p>
 <p>and the <em>marginal treatment effect</em>, defined as</p>
 <p><span class="math display">\[
-\log(n_B n_{\bar{C}}) - log(n_C n_{\bar{B}})
-\]</span></p>
+\log\left( \frac{n_B/(N_B-n_B)}{n_C/(N_B-n_{B})} \right) = \log(n_B
+n_{\bar{C}}) - log(n_C n_{\bar{B}})
+\]</span> where <span class="math inline">\(\bar{C}\)</span> is the
+compliment of <span class="math inline">\(C\)</span> so e.g. <span class="math inline">\(n_{\bar{C}} = N_C - n_c\)</span>.</p>
 </div>
 </div>
 <div class="section level2">
@@ -299,7 +325,12 @@ values.</p>
 g(\mu_n) = \beta_0 + (\boldsymbol{x}_n - \boldsymbol{\theta}) \beta_1 +
 (\beta_z + (\boldsymbol{x_n^{EM}} - \boldsymbol{\theta^{EM}})
 \boldsymbol{\beta_2}) \mbox{I}(z_n=1)
-\]</span></p>
+\]</span> where <span class="math inline">\(\beta_0\)</span> is the
+intercept, <span class="math inline">\(\beta_1\)</span> are the
+covariate coefficients, <span class="math inline">\(\beta_z\)</span> and
+<span class="math inline">\(\beta_2\)</span> are the effect modifier
+coefficients, <span class="math inline">\(z_n\)</span> are the indicator
+variables of effect alternative treatment. <span class="math inline">\(g(\cdot)\)</span> is the link function e.g. <span class="math inline">\(\log\)</span>.</p>
 <p>As already mentioned, running the STC analysis is almost identical to
 the previous analysis but we now use the <code><a href="../reference/strategy.html">strategy_stc()</a></code>
 strategy function instead.</p>
@@ -372,7 +403,7 @@ hypothetical scenario in which all units are under treatment
 <em>C</em>:</p>
 <p><span class="math display">\[
 \hat{\mu}_0 = \int_{x^*} g^{-1} (\hat{\beta}_0 + x^* \hat{\beta}_1 )
-p(x^*) dx^*
+p(x^*) \; dx^*
 \]</span> To estimate the marginal or population-average treatment
 effect for A versus C in the linear predictor scale, one back-transforms
 to this scale the average predictions, taken over all subjects on the
@@ -393,20 +424,38 @@ predicted outcomes. The Bayesian approach also marginalizes, integrates
 or standardizes over the joint posterior distribution of the conditional
 nuisance parameters of the outcome regression, as well as the joint
 covariate distribution.</p>
+<p>Draw a vector of size <span class="math inline">\(N*\)</span> of
+predicted outcomes <span class="math inline">\(y*z\)</span> under each
+set intervention <span class="math inline">\(z* \in \{0, 1\}\)</span>
+from its posterior predictive distribution under the specific treatment.
+This is defined as $ p(y<em><em>{z<em>} | <em>{AC}) = </em>{}
+p(y</em></em>{z</em>} | ) p(| _{AC}) d$ where <span class="math inline">\(p(\beta | \mathcal{D}_{AC})\)</span> is the
+posterior distribution of the outcome regression coefficients <span class="math inline">\(\beta\)</span>, which encode the predictor-outcome
+relationships observed in the <em>AC</em> trial IPD. This is given
+by:</p>
+<p><span class="math display">\[
+p(y*_{z*} \mid \mathcal{D}_{AC}) = \int_{x*} p(y* \mid z*, x*,
+\mathcal{D}_{AC}) p(x* \mid \mathcal{D}_{AC})\;  dx*
+\]</span> <span class="math display">\[
+= \int_{x*} \int_{\beta} p(y* \mid z*, x*, \beta) p(x* \mid \beta)
+p(\beta \mid \mathcal{D}_{AC})\; d\beta \; dx*
+\]</span> In practice, the integrals above can be approximated
+numerically, using full Bayesian estimation via Markov chain Monte Carlo
+(MCMC) sampling.</p>
 <p>The average, variance and interval estimates of the marginal
 treatment effect can be derived empirically from draws of the posterior
 density.</p>
-<p>We draw a vector of size <span class="math inline">\(N*\)</span> of
-predicted outcomes <span class="math inline">\(y^*_z\)</span> under each
-set intervention <span class="math inline">\(z*\)</span> from its
+<p>We can draw a vector of size <span class="math inline">\(N*\)</span>
+of predicted outcomes <span class="math inline">\(y^*_z\)</span> under
+each set intervention <span class="math inline">\(z*\)</span> from its
 posterior predictive distribution under the specific treatment.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hat_Delta_stats_gcomp_stan</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hat_Delta_stats.html">hat_Delta_stats</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>, strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_stan</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 1).</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1: Gradient evaluation took 3.6e-05 seconds</span></span>
-<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.36 seconds.</span></span>
+<span><span class="co">#&gt; Chain 1: Gradient evaluation took 3.8e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.38 seconds.</span></span>
 <span><span class="co">#&gt; Chain 1: Adjust your expectations accordingly!</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
@@ -423,15 +472,15 @@ posterior predictive distribution under the specific treatment.</p>
 <span><span class="co">#&gt; Chain 1: Iteration: 3600 / 4000 [ 90%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 1: Iteration: 4000 / 4000 [100%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.483 seconds (Warm-up)</span></span>
-<span><span class="co">#&gt; Chain 1:                0.55 seconds (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1:                1.033 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.498 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 1:                0.546 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1:                1.044 seconds (Total)</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 2).</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
-<span><span class="co">#&gt; Chain 2: Gradient evaluation took 1.6e-05 seconds</span></span>
-<span><span class="co">#&gt; Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.16 seconds.</span></span>
+<span><span class="co">#&gt; Chain 2: Gradient evaluation took 1.7e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.17 seconds.</span></span>
 <span><span class="co">#&gt; Chain 2: Adjust your expectations accordingly!</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
@@ -448,9 +497,9 @@ posterior predictive distribution under the specific treatment.</p>
 <span><span class="co">#&gt; Chain 2: Iteration: 3600 / 4000 [ 90%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 2: Iteration: 4000 / 4000 [100%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
-<span><span class="co">#&gt; Chain 2:  Elapsed Time: 0.478 seconds (Warm-up)</span></span>
-<span><span class="co">#&gt; Chain 2:                0.515 seconds (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2:                0.993 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 2:  Elapsed Time: 0.477 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 2:                0.52 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2:                0.997 seconds (Total)</span></span>
 <span><span class="co">#&gt; Chain 2:</span></span>
 <span><span class="va">hat_Delta_stats_gcomp_stan</span></span>
 <span><span class="co">#&gt; $contrasts</span></span>

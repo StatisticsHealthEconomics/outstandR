@@ -16,7 +16,7 @@ N_BC <- 600            # number of subjects in the BC trial
 b_trt <- log(0.17)     # conditional effect of active treatment vs. common comparator
 b_X <- -log(0.5)       # conditional effect of each prognostic variable
 b_EM <- -log(0.67)     # conditional interaction effect of each effect modifier
-event_rate <- 0.35
+event_rate <- 0.35     #
 meanX_AC <- c(0.45, 0.3, 0.15) # mean of each normally-distributed covariate in AC trial
 meanX_BC <- 0.6        # mean of each normally-distributed covariate in BC
 sdX <- 0.4             # standard deviation of each covariate (same for AC and BC)
@@ -25,13 +25,17 @@ corX <- 0.2            # covariate correlation coefficient
 # parameter combinations for each scenario
 pc_AC <- expand.grid(N = N_AC, meanX = meanX_AC)
 
-scenarios <- nrow(pc_AC)    # number of simulation scenarios
-save(pc_AC, n_sim, allocation,
-     file = here::here("data", "binary_settings.RData"))
+n_scenarios <- nrow(pc_AC)  # number of simulation scenarios
 
+save(pc_AC, n_sim, allocation,
+     file = here::here("data", "binary_settings_input_params.RData"))
+
+expit_diff <- function(x, y_prob)
+  sum(((1 / (1 + exp(-x))) - y_prob)^2)
+
+# find baseline intercept coefficient
 b_0 <- optim(par = 0,
-             fn = function(param, y_prob)
-               sum(((1 / (1 + exp(-param))) - y_prob)^2),
+             fn = expit_diff,
              y_prob = event_rate,
              method = "Brent",
              lower = -2, upper = 2)$par
@@ -75,12 +79,12 @@ ALD.BC <- lapply(1:n_sim, function(j) {
                 N.C = n())))   
 })
 
-save(IPD.BC, file = "Data/IPD_BC.RData")
-save(ALD.BC, file = "Data/ALD_BC.RData")  
+save(IPD.BC, file = "data/IPD_BC_scenarios.RData")
+save(ALD.BC, file = "data/ALD_BC_scenarios.RData")  
 
 
 # simulate IPD covariates and outcome for A vs. C trial (S=1)
-for (i in seq_len(scenarios)) {
+for (i in seq_len(n_scenarios)) {
   
   params <- pc_AC[i, ]
   file_id <- glue::glue("N_AC{params$N}meanX_AC{params$meanX}")

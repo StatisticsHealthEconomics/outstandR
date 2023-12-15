@@ -2,35 +2,52 @@
 % Please edit documentation in R/gen_data.R
 \name{gen_data}
 \alias{gen_data}
-\title{Generate simulated datasets for index and comparator trials}
+\title{Generate simulated datasets of IPD covariates and outcome for a trial}
 \usage{
 gen_data(N, b_trt, b_X, b_EM, b_0, meanX, sdX, event_rate, corX, allocation)
 }
 \arguments{
-\item{N}{Size}
+\item{N}{Total number of patients}
 
-\item{b_trt}{b coefficient for treatment}
+\item{b_trt}{\code{b} coefficient for active treatment vs. common comparator}
 
-\item{b_X}{b coefficients for X}
+\item{b_X}{\code{b} coefficients for each prognostic variable \code{X}}
 
-\item{b_EM}{b coefficients effect modifiers}
+\item{b_EM}{\code{b} coefficients effect modifiers}
 
 \item{b_0}{Intercept coefficient}
 
-\item{meanX}{mean X}
+\item{meanX}{Mean of each normally-distributed covariate \code{X}}
 
-\item{sdX}{standard deviation X}
+\item{sdX}{Standard deviation of each covariate \code{X}}
 
 \item{event_rate}{Event rate}
 
-\item{corX}{Correlation of X}
+\item{corX}{Covariate correlation coefficient of \code{X}}
 
-\item{allocation}{Allocation}
+\item{allocation}{Allocation to active treatment as proportion of total; 0 to 1}
 }
 \value{
 Data frame of \code{X}, \code{trt} and \code{y}
 }
 \description{
-Generate simulated datasets for index and comparator trials
+Generate simulated datasets of IPD covariates and outcome for a trial
+}
+\examples{
+
+x <- gen_data(
+ N = 100,
+ b_trt = log(0.17),
+ b_X = -log(0.5),
+ b_EM = -log(0.67),
+ b_0 = -0.62,
+ meanX = 0.6,
+ sdX = 0.4,
+ event_rate = 0.35, 
+ corX = 0.2,
+ allocation = 2/3) 
+
+head(x)
+
 }
 \keyword{internal}
