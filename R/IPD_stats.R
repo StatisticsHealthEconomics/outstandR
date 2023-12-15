@@ -34,9 +34,7 @@
 #' @export
 #'
 strategy_maic <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
-                          R = 1000,
-                          ald) {
-  
+                          R = 1000) {
   if (class(formula) != "formula")
     stop("formula argument must be of formula class.")
   
@@ -247,7 +245,7 @@ new_strategy <- function(strategy, ...) {
 hat_Delta_stats <- function(AC.IPD, BC.ALD, strategy, CI = 0.95, ...) {
 
   if (CI <= 0 || CI >= 1) stop("CI argument must be between 0 and 1.")
-  
+
   ##TODO: as method instead?
   if (!inherits(strategy, "strategy"))
     stop("strategy argument must be of a class strategy.")
@@ -329,7 +327,7 @@ IPD_stats.maic <- function(strategy,
                           statistic = maic.boot,
                           R = strategy$R,
                           formula = strategy$formula,
-                          ald = strategy$dat_ALD)
+                          ald = ald)
   
   list(mean = mean(maic_boot$t),
        var = var(maic_boot$t))

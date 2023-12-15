@@ -30,6 +30,7 @@ gcomp_ml.boot <- function(data, indices,
 #'
 #' @return Difference of log-odds 
 #' @seealso [strategy_gcomp_ml()], [gcomp_ml.boot()]
+#' @importFrom copula normalCopula mvdc rMvdc
 #' @export
 #'
 gcomp_ml_log_odds_ratio <- function(formula, dat) {
@@ -56,9 +57,9 @@ gcomp_ml_log_odds_ratio <- function(formula, dat) {
   # AC IPD pairwise correlations
   t_rho <- t(rho)  # extract along rows
   cop <-
-    normalCopula(param = t_rho[lower.tri(t_rho)],
-                 dim = n_covariates,
-                 dispstr = "un")
+    copula::normalCopula(param = t_rho[lower.tri(t_rho)],
+                         dim = n_covariates,
+                         dispstr = "un")
   
   # BC covariate means & standard deviations
   mean_sd_margins <- list()
@@ -69,12 +70,12 @@ gcomp_ml_log_odds_ratio <- function(formula, dat) {
   }
   
   # sample covariates from approximate joint distribution using copula
-  mvd <- mvdc(copula = cop,
-              margins = rep("norm", n_covariates),  # Gaussian marginals
-              paramMargins = mean_sd_margins)
+  mvd <- copula::mvdc(copula = cop,
+                      margins = rep("norm", n_covariates),  # Gaussian marginals
+                      paramMargins = mean_sd_margins)
   
   # simulated BC pseudo-population
-  x_star <- as.data.frame(rMvdc(n = 1000, mvd))
+  x_star <- as.data.frame(copula::rMvdc(n = 1000, mvd))
   colnames(x_star) <- covariate_names
   
   # outcome logistic regression fitted to IPD using maximum likelihood

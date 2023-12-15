@@ -9,11 +9,7 @@
 \alias{new_strategy}
 \title{New strategy objects}
 \usage{
-strategy_maic(
-  formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
-  R = 1000,
-  ald
-)
+strategy_maic(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"), R = 1000)
 
 strategy_stc(
   formula = as.formula("y ~ X3 + X4 + trt*I(X1 - mean(X1)) + trt*I(X2 - mean(X2))")
@@ -33,11 +29,11 @@ new_strategy(strategy, ...)
 
 \item{R}{The number of resamples used for the non-parametric bootstrap}
 
-\item{ald}{Aggregate-level data}
-
 \item{strategy}{Class name from \code{strategy_maic}, \code{strategy_stc}, \code{strategy_gcomp_ml}, \code{strategy_gcomp_stan}}
 
 \item{...}{Additional arguments}
+
+\item{ald}{Aggregate-level data}
 }
 \value{
 \code{maic} class object

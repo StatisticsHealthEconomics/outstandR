@@ -79,8 +79,8 @@ ALD.BC <- lapply(1:n_sim, function(j) {
                 N.C = n())))   
 })
 
-save(IPD.BC, file = "data/IPD_BC.RData")
-save(ALD.BC, file = "data/ALD_BC.RData")  
+save(IPD.BC, file = "data/IPD_BC_scenarios.RData")
+save(ALD.BC, file = "data/ALD_BC_scenarios.RData")  
 
 
 # simulate IPD covariates and outcome for A vs. C trial (S=1)
