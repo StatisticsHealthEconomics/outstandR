@@ -25,3 +25,4 @@ Matching-adjusted indirect comparison bootstrap sampling.
 \seealso{
 \code{\link[=IPD_stats.maic]{IPD_stats.maic()}}
 }
+\keyword{internal}

@@ -1,4 +1,19 @@
 
+#' Aggregate-level data mean and variance statistics
+#'
+#' @param ald Aggregate-level trial data
+#' @param treatments Treatment labels list; default `B`, `C`
+#'
+#' @return List of marginal treatment effect mean and variance
+#' @seealso [marginal_treatment_effect()], [marginal_variance()]
+#' @export
+#'
+ALD_stats <- function(ald, treatments = list("B", "C")) {
+  list(mean = marginal_treatment_effect(ald, treatments),
+       var = marginal_variance(ald, treatments))
+}
+
+
 #' Marginal effect variance using the delta method
 #' 
 #' Calculate
@@ -67,19 +82,3 @@ trial_treatment_effect <- function(ald, tid) {
   var_string <- glue::glue("log(ald$y.{tid}.sum*(ald$N.{tid} - ald$y.{tid}.sum))")
   eval(parse(text = var_string))
 }
-
-  
-#' Aggregate-level data mean and variance statistics
-#'
-#' @param ald Aggregate-level trial data
-#' @param treatments Treatment labels list; default `B`, `C`
-#'
-#' @return List of marginal treatment effect mean and variance
-#' @seealso [marginal_treatment_effect()], [marginal_variance()]
-#' @export
-#'
-ALD_stats <- function(ald, treatments = list("B", "C")) {
-  list(mean = marginal_treatment_effect(ald, treatments),
-       var = marginal_variance(ald, treatments))
-}
-

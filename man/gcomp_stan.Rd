@@ -18,5 +18,6 @@ A list of \eqn{y^*_A} and \eqn{y^*_C} posterior predictions
 }
 \description{
 Calculate draws of binary responses from posterior predictive distribution
-from the Bayesian G-computation method and Hamiltonian Monte-Carlo.
+from the Bayesian G-computation method using Hamiltonian Monte Carlo.
 }
+\keyword{internal}
