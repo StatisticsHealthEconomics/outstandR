@@ -14,37 +14,40 @@ test_that("mimR errors", {
 #
 test_that("different combinations of covariates in formula", {
   
-  # # maic
-  # strat_none <- strategy_maic(formula = as.formula("y ~ ."))
-  # strat_1 <- strategy_maic(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"))
-  # strat_2 <- strategy_maic(formula = as.formula("y ~ X3 + X4 + X5 + trt*X1"))
-  # strat_no_trt <- strategy_maic(formula = as.formula("y ~ X3 + X4"))
-  # strat_31 <- strategy_maic(formula = as.formula("y ~ X3 + trt*X1"))
-  # strat_32 <- strategy_maic(formula = as.formula("y ~ trt*X1 + X3"))
-  # strat_no_X1 <- strategy_maic(formula = as.formula("y ~ trt*X1"))
-  # 
-  # expect_equal(mimR(AC.IPD, BC.ALD, strategy = strat_none))
-  # expect_equal(mimR(AC.IPD, BC.ALD, strategy = strat_1))
-  # expect_equal(mimR(AC.IPD, BC.ALD, strategy = strat_2))
-  # expect_equal(mimR(AC.IPD, BC.ALD, strategy = strat_no_trt))
-  # expect_equal(mimR(AC.IPD, BC.ALD, strategy = strat_31))
-  # expect_equal(mimR(AC.IPD, BC.ALD, strategy = strat_32))
-  # expect_equal(mimR(AC.IPD, BC.ALD, strategy = strat_no_X1))
-  # 
-  # # stc
-  # strat_none <- strategy_stc(formula = as.formula("y ~ ."))
-  # strat_1 <- strategy_stc(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"))
-  # strat_2 <- strategy_stc(formula = as.formula("y ~ X3 + X4 + X5 + trt*X1"))
-  # strat_no_trt <- strategy_stc(formula = as.formula("y ~ X3 + X4"))
-  # strat_31 <- strategy_stc(formula = as.formula("y ~ X3 + trt*X1"))
-  # strat_32 <- strategy_stc(formula = as.formula("y ~ trt*X1 + X3"))
-  # strat_no_X1 <- strategy_stc(formula = as.formula("y ~ trt*X1"))
-  # 
-  # expect_equal(mimR(AC.IPD, BC.ALD, strategy = strat_none))
-  # expect_equal(mimR(AC.IPD, BC.ALD, strategy = strat_1))
-  # expect_equal(mimR(AC.IPD, BC.ALD, strategy = strat_2))
-  # expect_equal(mimR(AC.IPD, BC.ALD, strategy = strat_no_trt))
-  # expect_equal(mimR(AC.IPD, BC.ALD, strategy = strat_31))
-  # expect_equal(mimR(AC.IPD, BC.ALD, strategy = strat_32))
-  # expect_equal(mimR(AC.IPD, BC.ALD, strategy = strat_no_X1))
+  load(test_path("testdata/BC_ALD.RData"))
+  load(test_path("testdata/AC_IPD.RData"))
+  
+  # maic
+  expect_error(strategy_maic(formula = as.formula("y ~ 1")),
+               regexp = "Treatment term, trt, is missing in the formula")
+
+  expect_error(strategy_maic(formula = as.formula("y ~ X3 + X4")),
+               regexp = "Treatment term, trt, is missing in the formula")
+  
+  strat_1234 <- strategy_maic(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"))
+  strat_31 <- strategy_maic(formula = as.formula("y ~ X3 + trt*X1"))
+  strat_13 <- strategy_maic(formula = as.formula("y ~ trt*X1 + X3"))
+  strat_1 <- strategy_maic(formula = as.formula("y ~ trt*X1"))
+  
+  expect_length(mimR(AC_IPD, BC_ALD, strategy = strat_1234), 3)
+  expect_equal(mimR(AC_IPD, BC_ALD, strategy = strat_31))
+  expect_equal(mimR(AC_IPD, BC_ALD, strategy = strat_13))
+  expect_equal(mimR(AC_IPD, BC_ALD, strategy = strat_1))
+
+  # stc
+  expect_error(strategy_stc(formula = as.formula("y ~ 1")),
+               regexp = "Treatment term, trt, is missing in the formula")
+  
+  expect_error(strategy_stc(formula = as.formula("y ~ X3 + X4")),
+               regexp = "Treatment term, trt, is missing in the formula")
+  
+  strat_1234 <- strategy_stc(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"))
+  strat_31 <- strategy_stc(formula = as.formula("y ~ X3 + trt*X1"))
+  strat_13 <- strategy_stc(formula = as.formula("y ~ trt*X1 + X3"))
+  strat_1 <- strategy_stc(formula = as.formula("y ~ trt*X1"))
+
+  expect_equal(mimR(AC_IPD, BC_ALD, strategy = strat_1234))
+  expect_equal(mimR(AC_IPD, BC_ALD, strategy = strat_31))
+  expect_equal(mimR(AC_IPD, BC_ALD, strategy = strat_13))
+  expect_equal(mimR(AC_IPD, BC_ALD, strategy = strat_1))
 })

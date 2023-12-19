@@ -47,8 +47,18 @@ mimR <- function(AC.IPD, BC.ALD, strategy, CI = 0.95, ...) {
   if (!inherits(strategy, "strategy"))
     stop("strategy argument must be of a class strategy.")
   
-  AC_mimR <- IPD_stats(strategy, ipd = AC.IPD, ald = BC.ALD, ...) 
-  BC_mimR <- ALD_stats(ald = BC.ALD) 
+  # select data according to formula
+  ipd <- model.frame(strategy$formula, data = AC.IPD)
+  
+  term.labels <- attr(terms(strategy$formula), "term.labels")
+  mean_names <- paste0("mean.", term.labels)
+  sd_names <- paste0("sd.", term.labels)
+  keep_names <- c(mean_names, sd_names,
+                  "y.B.sum", "y.B.bar", "N.B", "y.C.sum", "y.C.bar", "N.C")
+  ald <- BC.ALD[keep_names]
+  
+  AC_mimR <- IPD_stats(strategy, ipd = ipd, ald = ald, ...) 
+  BC_mimR <- ALD_stats(ald = ald) 
   
   upper <- 0.5 + CI/2
   ci_range <- c(1-upper, upper)
