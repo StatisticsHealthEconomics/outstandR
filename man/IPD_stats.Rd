@@ -46,7 +46,7 @@ using bootstrapping sampling.
 \section{Simulated treatment comparison statistics}{
 
 IPD from the \emph{AC} trial are used to fit a regression model describing the
-observed outcomes \eqn{y} in terms of the relevant baseline characteristics \code{x} and
+observed outcomes \eqn{y} in terms of the relevant baseline characteristics \eqn{x} and
 the treatment variable \eqn{z}.
 }
 
@@ -58,6 +58,6 @@ Compute a non-parametric bootstrap with \eqn{R=1000} resamples.
 \section{G-computation Bayesian statistics}{
 
 Using Stan, compute marginal log-odds ratio for \emph{A} vs \emph{C} for each MCMC sample
-by transforming from probability to linear predictor scale
+by transforming from probability to linear predictor scale.
 }
 

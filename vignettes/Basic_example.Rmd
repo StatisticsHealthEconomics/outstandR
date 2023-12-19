@@ -165,7 +165,7 @@ For the last two approaches, we perform G-computation firstly with a frequentist
 G-computation marginalizes the conditional estimates by separating the regression modelling from the estimation of the marginal treatment effect for _A_ versus _C_. First, a regression model of the observed outcome $y$ on the covariates $x$ and treatment $z$ is fitted to the _AC_ IPD:
 
 $$
-g(\mu_n) = \beta_0 + \boldsymbol{x}_n \boldsymbol{\beta_1} + (\beta_z + \boldsymbol{x_n^{EM}} \boldsymbol{\beta_2}) \mbox{I}(z_n=1)
+g(\mu_n) = \beta_0 + \boldsymbol{x}_n \boldsymbol{\beta_1} + (\beta_z + \boldsymbol{x_n^{EM}} \boldsymbol{\beta_2}) \mbox{I}(z_n = 1)
 $$
 In the context of G-computation, this regression model is often called the “Q-model.”
 Having fitted the Q-model, the regression coefficients are treated as nuisance parameters. The parameters are applied to the simulated covariates $x*$ to predict hypothetical outcomes for each subject under both possible treatments. Namely, a pair of predicted outcomes, also called potential outcomes, under _A_ and under _C_, is generated for each subject.
@@ -197,7 +197,7 @@ $$
 p(y^*_{^z*} \mid \mathcal{D}_{AC}) = \int_{x^*} p(y^* \mid z^*, x^*, \mathcal{D}_{AC}) p(x^* \mid \mathcal{D}_{AC})\;  dx^*
 $$
 $$
-= \int_{x*} \int_{\beta} p(y^* \mid z^*, x^*, \beta) p(x^* \mid \beta) p(\beta \mid \mathcal{D}_{AC})\; d\beta \; dx^*
+= \int_{x^*} \int_{\beta} p(y^* \mid z^*, x^*, \beta) p(x^* \mid \beta) p(\beta \mid \mathcal{D}_{AC})\; d\beta \; dx^*
 $$
 In practice, the integrals above can be approximated numerically, using full Bayesian estimation via Markov chain Monte Carlo (MCMC) sampling.
 

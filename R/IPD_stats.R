@@ -55,7 +55,7 @@ IPD_stats.maic <- function(strategy,
 #' @rdname IPD_stats
 #' @section Simulated treatment comparison statistics: 
 #' IPD from the _AC_ trial are used to fit a regression model describing the
-#' observed outcomes \eqn{y} in terms of the relevant baseline characteristics `x` and
+#' observed outcomes \eqn{y} in terms of the relevant baseline characteristics \eqn{x} and
 #' the treatment variable \eqn{z}.
 #' 
 #' @export
@@ -96,7 +96,7 @@ IPD_stats.gcomp_ml <- function(strategy,
 #' @rdname IPD_stats
 #' @section G-computation Bayesian statistics:
 #' Using Stan, compute marginal log-odds ratio for _A_ vs _C_ for each MCMC sample
-#' by transforming from probability to linear predictor scale
+#' by transforming from probability to linear predictor scale.
 #'
 #' @export
 #'
