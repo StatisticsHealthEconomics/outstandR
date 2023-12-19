@@ -76,7 +76,7 @@ get_sd_names <- function(ald, var_names) {
 #'
 get_covariate_names <- function(formula) {
   
-  if (class(formula) != "formula")
+  if (!inherits(formula, "formula"))
     stop("formula argument must be of formula class.")
   
   all.vars(formula)[-1]

@@ -36,7 +36,7 @@ gcomp_ml.boot <- function(data, indices,
 gcomp_ml_log_odds_ratio <- function(formula, dat) {
   browser()  ## what is type of data?...
   
-  if (class(formula) != "formula")
+  if (!inherits(formula, "formula"))
     stop("formula argument must be of formula class.")
   
   treat_name <- get_treatment_name(formula)

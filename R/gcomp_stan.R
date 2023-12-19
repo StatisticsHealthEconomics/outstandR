@@ -16,7 +16,7 @@
 gcomp_stan <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
                        ipd, ald) {
   
-  if (class(formula) != "formula")
+  if (!inherits(formula, "formula"))
     stop("formula argument must be of formula class.")
   
   treat_names <- get_treatment_name(formula)
