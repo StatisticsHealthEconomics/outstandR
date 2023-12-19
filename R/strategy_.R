@@ -35,9 +35,6 @@
 #'
 strategy_maic <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
                           R = 1000) {
-  if (class(formula) != "formula")
-    stop("formula argument must be of formula class.")
-  browser()
   check_formula(formula)
   
   default_args <- formals()
@@ -74,10 +71,6 @@ strategy_maic <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
 # 
 strategy_stc <- function(formula =
                            as.formula("y ~ X3 + X4 + trt*I(X1 - mean(X1)) + trt*I(X2 - mean(X2))")) {
-  
-  if (class(formula) != "formula")
-    stop("formula argument must be of formula class.")
-  
   check_formula(formula)
   
   default_args <- formals()
@@ -130,9 +123,7 @@ strategy_stc <- function(formula =
 strategy_gcomp_ml <- function(formula =
                                 as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
                               R = 1000) {
-  
-  if (class(formula) != "formula")
-    stop("formula argument must be of formula class.")
+  check_formula(formula)
   
   default_args <- formals()
   args <- as.list(match.call())[-1]
@@ -179,9 +170,7 @@ strategy_gcomp_ml <- function(formula =
 #'
 strategy_gcomp_stan <- function(formula =
                                   as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")) {
-  
-  if (class(formula) != "formula")
-    stop("formula argument must be of formula class.")
+  check_formula(formula)
   
   default_args <- formals()
   args <- as.list(match.call())[-1]
