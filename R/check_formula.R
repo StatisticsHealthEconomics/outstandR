@@ -1,5 +1,6 @@
 
-#
+#' @keywords internal
+#' 
 check_formula <- function(formula) {
   
   if (!inherit(formula, "formula"))

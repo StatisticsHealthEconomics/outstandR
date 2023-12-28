@@ -20,12 +20,6 @@
 #' }
 #' where the weight \eqn{w_{it}} assigned to the \eqn{i}-th individual receiving treatment
 #' \eqn{t} is equal to the odds of being enrolled in the _AC_ trial vs the _AB_ trial.
-#'
-#'
-#' The default formula is
-#' \deqn{
-#'  y = X_3 + X_4 + \beta_{t}X_1 + \beta_{t}X_2
-#' }
 #' 
 #' @param R The number of resamples used for the non-parametric bootstrap
 #' @template args-ald
@@ -33,7 +27,7 @@
 #' @return `maic` class object
 #' @export
 #'
-strategy_maic <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
+strategy_maic <- function(formula = NULL,
                           R = 1000) {
   check_formula(formula)
   
@@ -61,16 +55,10 @@ strategy_maic <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
 #' treatment \eqn{t} with covariate values \eqn{X} which is transformed onto a
 #' chosen linear predictor scale with link function \eqn{g(\cdot)}.
 #' 
-#' The default formula is
-#' \deqn{
-#'  y = X_3 + X_4 + \beta_t(X_1 - \bar{X_1}) + \beta_t(X_2 - \bar{X2})
-#' }
-#' 
 #' @return `stc` class object
 #' @export
 # 
-strategy_stc <- function(formula =
-                           as.formula("y ~ X3 + X4 + trt*I(X1 - mean(X1)) + trt*I(X2 - mean(X2))")) {
+strategy_stc <- function(formula = NULL) {
   check_formula(formula)
   
   default_args <- formals()
@@ -109,19 +97,13 @@ strategy_stc <- function(formula =
 #' \deqn{
 #' \hat{\Delta}^{(2)}_{10} = g(\hat{\mu}_1) - g(\hat{\mu}_0)
 #' }
-#' 
-#' The default formula is
-#' \deqn{
-#'  y = X_3 + X_4 + \beta_{t}X_1 + \beta_{t}X_2
-#' }
 #'
 #' @param R The number of resamples used for the non-parametric bootstrap
 #' 
 #' @return `gcomp_ml` class object
 #' @export
 #'
-strategy_gcomp_ml <- function(formula =
-                                as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
+strategy_gcomp_ml <- function(formula = NULL,
                               R = 1000) {
   check_formula(formula)
   
@@ -159,17 +141,11 @@ strategy_gcomp_ml <- function(formula =
 #' }
 #' In practice, the integrals above can be approximated numerically, using full Bayesian
 #' estimation via Markov chain Monte Carlo (MCMC) sampling.
-#' 
-#' The default formula is
-#' \deqn{
-#'  y = X_3 + X_4 + \beta_{t}X_1 + \beta_{t}X_2
-#' }
 #'
 #' @return `gcomp_stan` class object
 #' @export
 #'
-strategy_gcomp_stan <- function(formula =
-                                  as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")) {
+strategy_gcomp_stan <- function(formula = NULL) {
   check_formula(formula)
   
   default_args <- formals()

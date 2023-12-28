@@ -4,18 +4,14 @@
 \alias{gcomp_ml.boot}
 \title{G-computation maximum likelihood bootstrap}
 \usage{
-gcomp_ml.boot(
-  data,
-  indices,
-  formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")
-)
+gcomp_ml.boot(data, indices, formula = NULL)
 }
 \arguments{
 \item{data}{Trial data}
 
 \item{indices}{Indices sampled from rows of \code{data}}
 
-\item{formula}{Linear regression formula; default \eqn{y = X_3 + X_4 + \beta_t X_1 + \beta_t X_2}}
+\item{formula}{Linear regression \code{formula} object}
 }
 \value{
 Mean difference in expected log-odds

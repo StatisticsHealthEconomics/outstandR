@@ -9,18 +9,13 @@
 \alias{new_strategy}
 \title{New strategy objects}
 \usage{
-strategy_maic(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"), R = 1000)
+strategy_maic(formula = NULL, R = 1000)
 
-strategy_stc(
-  formula = as.formula("y ~ X3 + X4 + trt*I(X1 - mean(X1)) + trt*I(X2 - mean(X2))")
-)
+strategy_stc(formula = NULL)
 
-strategy_gcomp_ml(
-  formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
-  R = 1000
-)
+strategy_gcomp_ml(formula = NULL, R = 1000)
 
-strategy_gcomp_stan(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"))
+strategy_gcomp_stan(formula = NULL)
 
 new_strategy(strategy, ...)
 }
@@ -65,11 +60,6 @@ differences in effect modifiers and limited patient-level data.
 }
 where the weight \eqn{w_{it}} assigned to the \eqn{i}-th individual receiving treatment
 \eqn{t} is equal to the odds of being enrolled in the \emph{AC} trial vs the \emph{AB} trial.
-
-The default formula is
-\deqn{
- y = X_3 + X_4 + \beta_{t}X_1 + \beta_{t}X_2
-}
 }
 
 \section{Simulated treatment comparison (STC)}{
@@ -88,11 +78,6 @@ modifiers \eqn{X^{EM}} subvector of the full covariate vector \eqn{X}), and
 \eqn{\mu_{t(AB)}(X)} is the expected outcome of an individual assigned
 treatment \eqn{t} with covariate values \eqn{X} which is transformed onto a
 chosen linear predictor scale with link function \eqn{g(\cdot)}.
-
-The default formula is
-\deqn{
- y = X_3 + X_4 + \beta_t(X_1 - \bar{X_1}) + \beta_t(X_2 - \bar{X2})
-}
 }
 
 \section{G-computation maximum likelihood}{
@@ -124,11 +109,6 @@ and calculates the difference between the average linear predictions:
 \deqn{
 \hat{\Delta}^{(2)}_{10} = g(\hat{\mu}_1) - g(\hat{\mu}_0)
 }
-
-The default formula is
-\deqn{
- y = X_3 + X_4 + \beta_{t}X_1 + \beta_{t}X_2
-}
 }
 
 \section{G-computation Bayesian}{
@@ -158,10 +138,5 @@ p(y*_{z*} | \mathcal{D}_{AC}) = \int_{x*} p(y* | z*, x*, \mathcal{D}_{AC}) p(x* 
 }
 In practice, the integrals above can be approximated numerically, using full Bayesian
 estimation via Markov chain Monte Carlo (MCMC) sampling.
-
-The default formula is
-\deqn{
- y = X_3 + X_4 + \beta_{t}X_1 + \beta_{t}X_2
-}
 }
 

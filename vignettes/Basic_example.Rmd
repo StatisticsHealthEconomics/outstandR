@@ -116,15 +116,26 @@ This can be used to run all of the different types of model, which we will call 
 
 A `strategy` argument of `mimR` takes functions called `strategy_*()`, where the wildcard `*` is replaced by the name of the particular method required, e.g. `strategy_maic()` for MAIC. Each specific example is provided below.
 
+
 ### MAIC
 
-Using the individual level data for _AC_ firstly we perform non-parametric bootstrap
-of the `maic.boot` function with `R` = 1000 replicates. This function
-fits treatment coefficient for the marginal effect for _A_ vs _C_.
+Using the individual level data for _AC_ firstly we perform non-parametric bootstrap of the `maic.boot` function with `R` = 1000 replicates. This function fits treatment coefficient for the marginal effect for _A_ vs _C_.
 The returned value is an object of class `boot` from the `{boot}` package. We then calculate the bootstrap mean and variance in the wrapper function `maic_boot_stats`.
 
+The formula used in this model is
+
+$$
+y = X_3 + X_4 + \beta_t X_1 + \beta_t X_2
+$$
+which corresponds to the following `R` `formula` object passed as an argument to the strategy function.
+
+```{r}
+lin_form <- as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")
+```
+
+
 ```{r mimR_maic}
-mimR_maic <- mimR(AC.IPD, BC.ALD, strategy = strategy_maic())
+mimR_maic <- mimR(AC.IPD, BC.ALD, strategy = strategy_maic(formula = lin_form))
 ```
 
 The returned object is of class `mimR`.
@@ -151,10 +162,20 @@ $$
 where $\beta_0$ is the intercept, $\beta_1$ are the covariate coefficients, $\beta_z$ and $\beta_2$ are the effect modifier coefficients, $z_n$ are the indicator variables of effect alternative treatment.
 $g(\cdot)$ is the link function e.g. $\log$.
 
-As already mentioned, running the STC analysis is almost identical to the previous analysis but we now use the `strategy_stc()` strategy function instead.
+As already mentioned, running the STC analysis is almost identical to the previous analysis but we now use the `strategy_stc()` strategy function instead and a formula with centered covariates.
+
+$$
+y = X_3 + X_4 + \beta_t(X_1 - \bar{X_1}) + \beta_t(X_2 - \bar{X2})
+$$
+The corresponding `R` object is
+
+```{r}
+lin_form_centre <- as.formula("y ~ X3 + X4 + trt*I(X1 - mean(X1)) + trt*I(X2 - mean(X2))")
+```
+
 
 ```{r mimR_stc}
-mimR_stc <- mimR(AC.IPD, BC.ALD, strategy = strategy_stc())
+mimR_stc <- mimR(AC.IPD, BC.ALD, strategy = strategy_stc(formula = lin_form_centre))
 mimR_stc
 ```
 
@@ -183,7 +204,7 @@ $$
 
 
 ```{r mimR_gcomp_ml}
-# mimR_gcomp_ml <- mimR(AC.IPD, BC.ALD, strategy = strategy_gcomp_ml())
+# mimR_gcomp_ml <- mimR(AC.IPD, BC.ALD, strategy = strategy_gcomp_ml(formula = lin_form))
 ```
 
 
@@ -206,7 +227,7 @@ The average, variance and interval estimates of the marginal treatment effect ca
 We can draw a vector of size $N^*$ of predicted outcomes $y^*_z$ under each set intervention $z^*$ from its posterior predictive distribution under the specific treatment.
 
 ```{r mimR_gcomp_stan}
-mimR_gcomp_stan <- mimR(AC.IPD, BC.ALD, strategy = strategy_gcomp_stan())
+mimR_gcomp_stan <- mimR(AC.IPD, BC.ALD, strategy = strategy_gcomp_stan(formula = lin_form))
 mimR_gcomp_stan
 ```
 

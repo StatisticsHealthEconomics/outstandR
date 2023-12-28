@@ -4,7 +4,7 @@
 #' Calculate draws of binary responses from posterior predictive distribution
 #' from the Bayesian G-computation method using Hamiltonian Monte Carlo.
 #' 
-#' @param formula Linear regression formula object; default \eqn{y = X_3 + X_4 + \beta_t X_1 + \beta_t X_2} 
+#' @param formula Linear regression `formula` object
 #' @template args-ipd
 #' @template args-ald
 #'
@@ -13,7 +13,7 @@
 #' @importFrom rstanarm stan_glm posterior_predict
 #' @keywords internal
 #'
-gcomp_stan <- function(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
+gcomp_stan <- function(formula = NULL,
                        ipd, ald) {
   
   if (!inherits(formula, "formula"))

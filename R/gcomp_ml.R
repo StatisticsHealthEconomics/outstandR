@@ -5,14 +5,14 @@
 #'     
 #' @param data Trial data 
 #' @param indices Indices sampled from rows of `data`
-#' @param formula Linear regression formula; default \eqn{y = X_3 + X_4 + \beta_t X_1 + \beta_t X_2} 
+#' @param formula Linear regression `formula` object
 #'
 #' @return Mean difference in expected log-odds
 #' @seealso [strategy_gcomp_ml()], [gcomp_ml_log_odds_ratio()]
 #' @keywords internal
 #' 
 gcomp_ml.boot <- function(data, indices,
-                          formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")) {
+                          formula = NULL) {
   dat <- data[indices, ]
   gcomp_ml_log_odds_ratio(formula, dat) 
 }

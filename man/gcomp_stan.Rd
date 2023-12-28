@@ -4,10 +4,10 @@
 \alias{gcomp_stan}
 \title{G-computation using Stan}
 \usage{
-gcomp_stan(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"), ipd, ald)
+gcomp_stan(formula = NULL, ipd, ald)
 }
 \arguments{
-\item{formula}{Linear regression formula object; default \eqn{y = X_3 + X_4 + \beta_t X_1 + \beta_t X_2}}
+\item{formula}{Linear regression \code{formula} object}
 
 \item{ipd}{Individual-level data}
 
