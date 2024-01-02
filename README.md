@@ -1,4 +1,4 @@
-# mimR: Multiple Imputation Marginalisation
+# mimR: Multiple Imputation Marginalisation <img align="right" src="mime.png" width="100">
 
 <!-- badges: start -->
 
