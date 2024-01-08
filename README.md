@@ -1,4 +1,4 @@
-# mimR: Multiple Imputation Marginalisation
+# mimR: Multiple Imputation Marginalisation <img align="right" src="mime.png" width="100">
 
 <!-- badges: start -->
 
@@ -10,8 +10,8 @@
 
 This R package contains code originally written for the paper:
 
-> Parametric G-computation for Compatible Indirect Treatment Comparisons with Limited Individual Patient Data
-> Antonio Remiro-Azócar, Anna Heath, Gianluca Baio
+> Antonio Remiro-Azócar, Anna Heath, Gianluca Baio. _Parametric G-computation for Compatible Indirect Treatment Comparisons with Limited Individual Patient Data._
+> Res Synth Methods. 2022;1–31.
 
 ## Installation
 Install the [development version from GitHub](https://github.com/StatisticsHealthEconomics/mimR) using `remotes`:
