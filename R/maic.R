@@ -57,7 +57,6 @@ maic.boot <- function(ipd, indices, formula, ald) {
   # BC effect modifier means, assumed fixed
   mean_names <- get_mean_names(ald, effect_modifier_names)
 
-  browser()
   # centre AC effect modifiers on BC means
   dat_ALD_means <- ald[, mean_names][rep(1, nrow(X_EM)), ]
   X_EM <- X_EM - dat_ALD_means

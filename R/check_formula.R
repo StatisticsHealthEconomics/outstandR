@@ -3,7 +3,7 @@
 #' 
 check_formula <- function(formula) {
   
-  if (!inherit(formula, "formula"))
+  if (!inherits(formula, "formula"))
     stop("formula argument must be of formula class.")
   
   if (!"trt" %in% attr(terms(formula), "term.labels"))

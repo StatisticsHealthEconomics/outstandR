@@ -62,6 +62,13 @@ IPD_stats.maic <- function(strategy,
 #' 
 IPD_stats.stc <- function(strategy,
                           ipd, ald) {
+
+  # centre covariates
+  term.labels <- attr(terms(strategy$formula), "term.labels")
+  centre_vars <- gsub("trt:", "", term.labels[grepl(":", term.labels)])
+
+  ipd[, centre_vars] <- scale(ipd[, centre_vars], scale = FALSE)
+  
   fit <- glm(strategy$formula,
              data = ipd,
              family = binomial)
