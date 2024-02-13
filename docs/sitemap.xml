@@ -25,7 +25,13 @@
     <loc>https://StatisticsHealthEconomics.github.io/mimR/news/index.html</loc>
   </url>
   <url>
+    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/AC_IPD.html</loc>
+  </url>
+  <url>
     <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/ALD_stats.html</loc>
+  </url>
+  <url>
+    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/BC_ALD.html</loc>
   </url>
   <url>
     <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/bias.html</loc>
@@ -104,6 +110,9 @@
   </url>
   <url>
     <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/mcse.estimate.html</loc>
+  </url>
+  <url>
+    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/mimR.html</loc>
   </url>
   <url>
     <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/mse.html</loc>

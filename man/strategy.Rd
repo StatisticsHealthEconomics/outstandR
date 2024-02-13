@@ -50,13 +50,13 @@ which allows the propensity score logistic
 regression model to be estimated without IPD in the \emph{AC} population.
 The mean outcomes \eqn{\mu_{t(AC)}} on treatment \eqn{t = A,B} in the \emph{AC}
 target population are estimated by taking a weighted average of the
-outcomes \eqn{Y} of the \eqn{N} individuals in arm \eqn{t} of the \emph{AB} population
+outcomes \eqn{Y} of the \eqn{N} individuals in arm \eqn{t} of the \emph{AB} population.
 
 Used to compare marginal treatment effects where there are cross-trial
 differences in effect modifiers and limited patient-level data.
 
 \deqn{
-\hat{Y}_{} = \frac{\sum_{i=1}^{N} Y_{it(AB)} w_{it}}{\sum _{i=1}^{N} w_{it}}
+\hat{Y}_{} = \frac{\sum_{i=1}^{N} Y_{it(AB)} w_{it}}{\sum_{i=1}^{N} w_{it}}
 }
 where the weight \eqn{w_{it}} assigned to the \eqn{i}-th individual receiving treatment
 \eqn{t} is equal to the odds of being enrolled in the \emph{AC} trial vs the \emph{AB} trial.
@@ -102,7 +102,7 @@ we predict the marginal outcome mean in the hypothetical scenario in which all u
 \deqn{
 \hat{\mu}_0 = \int_{x^*} g^{-1} (\hat{\beta}_0 + x^* \hat{\beta}_1 ) p(x^*) dx^*
 }
-To estimate the marginal or population-average treatment effect for A versus C in the linear predictor scale,
+To estimate the marginal or population-average treatment effect for \emph{A} versus \emph{C} in the linear predictor scale,
 one back-transforms to this scale the average predictions, taken over all subjects on the natural outcome scale,
 and calculates the difference between the average linear predictions:
 
@@ -130,11 +130,11 @@ which encode the predictor-outcome relationships observed in the \emph{AC} trial
 This is given by:
 
 \deqn{
-p(y*_{z*} | \mathcal{D}_{AC}) = \int_{x*} p(y* | z*, x*, \mathcal{D}_{AC}) p(x* | \mathcal{D}_{AC}) dx*
+p(y*_{z*} \mid \mathcal{D}_{AC}) = \int_{x*} p(y* \mid z*, x*, \mathcal{D}_{AC}) p(x* \mid \mathcal{D}_{AC}) dx*
 }
 
 \deqn{
-= \int_{x*} \int_{\beta} p(y* | z*, x*, \beta) p(x* | \beta) p(\beta | \mathcal{D}_{AC}) d\beta dx*
+= \int_{x*} \int_{\beta} p(y* \mid z*, x*, \beta) p(x* \mid \beta) p(\beta \mid \mathcal{D}_{AC}) d\beta dx*
 }
 In practice, the integrals above can be approximated numerically, using full Bayesian
 estimation via Markov chain Monte Carlo (MCMC) sampling.

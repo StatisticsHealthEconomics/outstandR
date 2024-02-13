@@ -4,12 +4,12 @@
 \alias{get_sd_names}
 \title{Get standard deviation names}
 \usage{
-get_sd_names(ald, var_names)
+get_sd_names(ald, keep_nms)
 }
 \arguments{
 \item{ald}{Aggregate-level data}
 
-\item{var_names}{Variable names character vector}
+\item{keep_nms}{Variable names character vector}
 }
 \value{
 Standard deviation names vector

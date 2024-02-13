@@ -30,4 +30,8 @@ reference:
   - marginal_variance
   - trial_treatment_effect
   - trial_variance
+- title: "Data"
+  contents:
+  - AC_IPD
+  - BC_ALD
   

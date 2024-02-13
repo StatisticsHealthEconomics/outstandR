@@ -4,12 +4,12 @@
 \alias{get_mean_names}
 \title{Get mean names}
 \usage{
-get_mean_names(ald, var_names)
+get_mean_names(ald, keep_nms)
 }
 \arguments{
 \item{ald}{Aggregate-level data}
 
-\item{var_names}{Variable names character vector}
+\item{keep_nms}{Variable names character vector}
 }
 \value{
 Mean names vector

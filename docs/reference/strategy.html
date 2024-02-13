@@ -47,7 +47,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>New strategy objects</h1>
-      <small class="dont-index">Source: <a href="https://github.com/StatisticsHealthEconomics/mimR/blob/HEAD/R/IPD_stats.R" class="external-link"><code>R/IPD_stats.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/StatisticsHealthEconomics/mimR/blob/HEAD/R/strategy_.R" class="external-link"><code>R/strategy_.R</code></a></small>
       <div class="d-none name"><code>strategy.Rd</code></div>
     </div>
 
@@ -57,18 +57,13 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">strategy_maic</span><span class="op">(</span>formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/formula.html" class="external-link">as.formula</a></span><span class="op">(</span><span class="st">"y ~ X3 + X4 + trt*X1 + trt*X2"</span><span class="op">)</span>, R <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">strategy_maic</span><span class="op">(</span>formula <span class="op">=</span> <span class="cn">NULL</span>, R <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">strategy_stc</span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/formula.html" class="external-link">as.formula</a></span><span class="op">(</span><span class="st">"y ~ X3 + X4 + trt*I(X1 - mean(X1)) + trt*I(X2 - mean(X2))"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
+<span><span class="fu">strategy_stc</span><span class="op">(</span>formula <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">strategy_gcomp_ml</span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/formula.html" class="external-link">as.formula</a></span><span class="op">(</span><span class="st">"y ~ X3 + X4 + trt*X1 + trt*X2"</span><span class="op">)</span>,</span>
-<span>  R <span class="op">=</span> <span class="fl">1000</span></span>
-<span><span class="op">)</span></span>
+<span><span class="fu">strategy_gcomp_ml</span><span class="op">(</span>formula <span class="op">=</span> <span class="cn">NULL</span>, R <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">strategy_gcomp_stan</span><span class="op">(</span>formula <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/formula.html" class="external-link">as.formula</a></span><span class="op">(</span><span class="st">"y ~ X3 + X4 + trt*X1 + trt*X2"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu">strategy_gcomp_stan</span><span class="op">(</span>formula <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">new_strategy</span><span class="op">(</span><span class="va">strategy</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -120,18 +115,14 @@ which allows the propensity score logistic
 regression model to be estimated without IPD in the <em>AC</em> population.
 The mean outcomes \(\mu_{t(AC)}\) on treatment \(t = A,B\) in the <em>AC</em>
 target population are estimated by taking a weighted average of the
-outcomes \(Y\) of the \(N\) individuals in arm \(t\) of the <em>AB</em> population</p>
+outcomes \(Y\) of the \(N\) individuals in arm \(t\) of the <em>AB</em> population.</p>
 <p>Used to compare marginal treatment effects where there are cross-trial
 differences in effect modifiers and limited patient-level data.</p>
 <p>$$
-\hat{Y}_{} = \frac{\sum_{i=1}^{N} Y_{it(AB)} w_{it}}{\sum _{i=1}^{N} w_{it}}
+\hat{Y}_{} = \frac{\sum_{i=1}^{N} Y_{it(AB)} w_{it}}{\sum_{i=1}^{N} w_{it}}
 $$
 where the weight \(w_{it}\) assigned to the \(i\)-th individual receiving treatment
 \(t\) is equal to the odds of being enrolled in the <em>AC</em> trial vs the <em>AB</em> trial.</p>
-<p>The default formula is
-$$
- y = X_3 + X_4 + \beta_{t}X_1 + \beta_{t}X_2
-$$</p>
     </div>
     <div class="section level2">
     <h2 id="simulated-treatment-comparison-stc-">Simulated treatment comparison (STC)<a class="anchor" aria-label="anchor" href="#simulated-treatment-comparison-stc-"></a></h2>
@@ -150,10 +141,6 @@ modifiers \(X^{EM}\) subvector of the full covariate vector \(X\)), and
 \(\mu_{t(AB)}(X)\) is the expected outcome of an individual assigned
 treatment \(t\) with covariate values \(X\) which is transformed onto a
 chosen linear predictor scale with link function \(g(\cdot)\).</p>
-<p>The default formula is
-$$
- y = X_3 + X_4 + \beta_t(X_1 - \bar{X_1}) + \beta_t(X_2 - \bar{X2})
-$$</p>
     </div>
     <div class="section level2">
     <h2 id="g-computation-maximum-likelihood">G-computation maximum likelihood<a class="anchor" aria-label="anchor" href="#g-computation-maximum-likelihood"></a></h2>
@@ -176,15 +163,11 @@ we predict the marginal outcome mean in the hypothetical scenario in which all u
 <p>$$
 \hat{\mu}_0 = \int_{x^*} g^{-1} (\hat{\beta}_0 + x^* \hat{\beta}_1 ) p(x^*) dx^*
 $$
-To estimate the marginal or population-average treatment effect for A versus C in the linear predictor scale,
+To estimate the marginal or population-average treatment effect for <em>A</em> versus <em>C</em> in the linear predictor scale,
 one back-transforms to this scale the average predictions, taken over all subjects on the natural outcome scale,
 and calculates the difference between the average linear predictions:</p>
 <p>$$
 \hat{\Delta}^{(2)}_{10} = g(\hat{\mu}_1) - g(\hat{\mu}_0)
-$$</p>
-<p>The default formula is
-$$
- y = X_3 + X_4 + \beta_{t}X_1 + \beta_{t}X_2
 $$</p>
     </div>
     <div class="section level2">
@@ -205,17 +188,13 @@ posterior distribution of the outcome regression coefficients \(\beta\),
 which encode the predictor-outcome relationships observed in the <em>AC</em> trial IPD.</p>
 <p>This is given by:</p>
 <p>$$
-p(y*_{z*} | \mathcal{D}_{AC}) = \int_{x*} p(y* | z*, x*, \mathcal{D}_{AC}) p(x* | \mathcal{D}_{AC}) dx*
+p(y*_{z*} \mid \mathcal{D}_{AC}) = \int_{x*} p(y* \mid z*, x*, \mathcal{D}_{AC}) p(x* \mid \mathcal{D}_{AC}) dx*
 $$</p>
 <p>$$
-= \int_{x*} \int_{\beta} p(y* | z*, x*, \beta) p(x* | \beta) p(\beta | \mathcal{D}_{AC}) d\beta dx*
+= \int_{x*} \int_{\beta} p(y* \mid z*, x*, \beta) p(x* \mid \beta) p(\beta \mid \mathcal{D}_{AC}) d\beta dx*
 $$
 In practice, the integrals above can be approximated numerically, using full Bayesian
 estimation via Markov chain Monte Carlo (MCMC) sampling.</p>
-<p>The default formula is
-$$
- y = X_3 + X_4 + \beta_{t}X_1 + \beta_{t}X_2
-$$</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
