@@ -40,6 +40,7 @@
 #' mimR_gcomp_stan <- mimR(AC_IPD, BC_ALD, strategy = strategy_gcomp_stan())
 #' 
 mimR <- function(AC.IPD, BC.ALD, strategy, CI = 0.95, ...) {
+  
   if (CI <= 0 || CI >= 1) stop("CI argument must be between 0 and 1.")
   ##TODO: as method instead?
   if (!inherits(strategy, "strategy"))
