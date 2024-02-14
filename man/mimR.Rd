@@ -30,14 +30,13 @@ Methods taken from
 \insertCite{RemiroAzocar2022}{mimR}.
 }
 \examples{
-
 data(AC_IPD)  # AC patient-level data
 data(BC_ALD)  # BC aggregate-level data
 
 lin_form <- as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")
 
 # matching-adjusted indirect comparison
-mimR_maic <- mimR(AC_IPD, BC_ALD, strategy = strategy_maic(lin_form))
+mimR_maic <- mimR(AC_IPD, BC_ALD, strategy = strategy_maic(formula = lin_form))
 
 # simulated treatment comparison
 mimR_stc <- mimR(AC_IPD, BC_ALD, strategy = strategy_stc(lin_form))

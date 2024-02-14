@@ -30,9 +30,8 @@
 strategy_maic <- function(formula = NULL,
                           R = 1000) {
   check_formula(formula)
-  
   default_args <- formals()
-  args <- as.list(match.call())[-1]
+  args <- c(formula = formula, as.list(match.call())[-c(1,2)])
   args <- modifyList(default_args, args)
   do.call(new_strategy, c(strategy = "maic", args))
 }
@@ -62,7 +61,7 @@ strategy_stc <- function(formula = NULL) {
   check_formula(formula)
   
   default_args <- formals()
-  args <- as.list(match.call())[-1]
+  args <- c(formula = formula, as.list(match.call())[-c(1,2)])
   args <- modifyList(default_args, args)
   do.call(new_strategy, c(strategy = "stc", args))
 }
@@ -108,7 +107,7 @@ strategy_gcomp_ml <- function(formula = NULL,
   check_formula(formula)
   
   default_args <- formals()
-  args <- as.list(match.call())[-1]
+  args <- c(formula = formula, as.list(match.call())[-c(1,2)])
   args <- modifyList(default_args, args)
   do.call(new_strategy, c(strategy = "gcomp_ml", args))
 }
@@ -149,7 +148,7 @@ strategy_gcomp_stan <- function(formula = NULL) {
   check_formula(formula)
   
   default_args <- formals()
-  args <- as.list(match.call())[-1]
+  args <- c(formula = formula, as.list(match.call())[-c(1,2)])
   args <- modifyList(default_args, args)
   do.call(new_strategy, c(strategy = "gcomp_stan", args))
 }
