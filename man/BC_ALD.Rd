@@ -5,7 +5,7 @@
 \alias{BC_ALD}
 \title{Data set for aggregate level patient data}
 \format{
-A data list including the variables needed for the mimR basic example. The variables are as follows:
+A data list including the variables needed for the ModStanR basic example. The variables are as follows:
 \describe{
 \item{list("mean.X1")}{Numeric value}
 \item{list("mean.X2")}{Numeric value}

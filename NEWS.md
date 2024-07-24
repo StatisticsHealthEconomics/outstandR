@@ -1,3 +1,3 @@
-# mimR (development version)
+# ModStanR (development version)
 
 * Initial CRAN submission.

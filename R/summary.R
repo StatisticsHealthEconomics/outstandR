@@ -1,8 +1,8 @@
 
 #
-summary.mimR <- function(object, ...) {
+summary.ModStanR <- function(object, ...) {
   
   ans <- NULL
-  class(ans) <- "summary.mimR"
+  class(ans) <- "summary.ModStanR"
   ans
 } 

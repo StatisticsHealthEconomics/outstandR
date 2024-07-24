@@ -1,4 +1,4 @@
-url: https://StatisticsHealthEconomics.github.io/mimR/
+url: https://StatisticsHealthEconomics.github.io/ModStanR/
   
 news:
   cran_dates: false
@@ -18,8 +18,8 @@ reference:
 - title: "Main"
   desc: "Main analysis functions."
   contents:
-  # - mimR-package
-  - starts_with("mimR")
+  # - ModStanR-package
+  - starts_with("ModStanR")
   - strategy
 - title: "Constituent statistics"
   desc: "Helper functions used by the main functions."

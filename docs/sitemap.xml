@@ -1,144 +1,147 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/404.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/404.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/articles/Basic_example.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/articles/Basic_example.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/articles/Example.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/articles/Example.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/articles/index.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/articles/index.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/authors.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/authors.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/index.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/index.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/LICENSE.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/LICENSE.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/news/index.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/news/index.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/AC_IPD.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/AC_IPD.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/ALD_stats.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/ALD_stats.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/BC_ALD.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/BC_ALD.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/bias.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/bias.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/bias.mcse.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/bias.mcse.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/cor2cov.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/cor2cov.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/coverage.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/coverage.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/coverage.mcse.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/coverage.mcse.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/empse.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/empse.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/empse.mcse.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/empse.mcse.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/gcomp_ml.boot.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/gcomp_ml.boot.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/gcomp_ml_log_odds_ratio.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/gcomp_ml_log_odds_ratio.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/gcomp_stan.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/gcomp_stan.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/gen_data.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/gen_data.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/get_covariate_names.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/get_covariate_names.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/get_effect_modifiers.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/get_effect_modifiers.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/get_mean_names.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/get_mean_names.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/get_sd_names.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/get_sd_names.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/get_treatment_name.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/get_treatment_name.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/hat_Delta_stats.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/hat_Delta_stats.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/index.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/index.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/IPD_stats.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/IPD_stats.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/IPD_stats.maic.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/IPD_stats.maic.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/mae.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/mae.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/maic.boot.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/maic.boot.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/maic_weights.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/maic_weights.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/marginal_treatment_effect.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/marginal_treatment_effect.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/marginal_variance.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/marginal_variance.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/mcse.estimate.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/mcse.estimate.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/mimR.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/mimR.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/mse.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/ModStanR.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/mse.mcse.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/mse.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/process_metrics.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/mse.mcse.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/Q.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/process_metrics.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/strategy.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/Q.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/trial_treatment_effect.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/strategy.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/trial_variance.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/trial_treatment_effect.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/var.ratio.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/trial_variance.html</loc>
   </url>
   <url>
-    <loc>https://StatisticsHealthEconomics.github.io/mimR/reference/var.ratio.mcse.html</loc>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/var.ratio.html</loc>
+  </url>
+  <url>
+    <loc>https://StatisticsHealthEconomics.github.io/ModStanR/reference/var.ratio.mcse.html</loc>
   </url>
 </urlset>

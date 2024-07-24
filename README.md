@@ -16,7 +16,7 @@ This R package contains code originally written for the paper:
 > Res Synth Methods. 2022;1–31.
 
 ## Installation
-Install the [development version from GitHub](https://github.com/StatisticsHealthEconomics/) usModStanRing `remotes`:
+Install the [development version from GitHub](https://github.com/StatisticsHealthEconomics/) using `remotes`:
 
 ```r
 remotes::install_github("StatisticsHealthEconomics/ModStanR")

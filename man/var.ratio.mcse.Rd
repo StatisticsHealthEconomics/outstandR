@@ -17,9 +17,9 @@ var.ratio.mcse(avg.se, emp.se, var.avg.se, var.emp.se)
 }
 \description{
 Approximation of ratio variance based on independence of avg. se and emp.se
-see \insertCite{wolter2007}{mimR}
+see \insertCite{wolter2007}{ModStanR}
 }
 \references{
-\insertRef{wolter2007}{mimR}
+\insertRef{wolter2007}{ModStanR}
 }
 \keyword{internal}

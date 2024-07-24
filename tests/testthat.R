@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/reference/test_package.html#special-files
 
 library(testthat)
-library(mimR)
+library(ModStanR)
 
-test_check("mimR")
+test_check("ModStanR")

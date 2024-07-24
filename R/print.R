@@ -1,6 +1,6 @@
 
 #'
-print.mimR <- function(x, newline = TRUE) {
+print.ModStanR <- function(x, newline = TRUE) {
   
   cat("\nContrasts:", x$contrasts, "\n")
   cat("\nVariances:", x$contrasts_variances, "\n")

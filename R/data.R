@@ -5,7 +5,7 @@
 #' 
 #' @name AC_IPD
 #' @docType data
-#' @format A data list including the variables needed for the mimR basic example. The variables are as follows:
+#' @format A data list including the variables needed for the ModStanR basic example. The variables are as follows:
 #' \describe{
 #' \item{list("X1")}{Numeric covariate}
 #' \item{list("X2")}{Numeric covariate}
@@ -25,7 +25,7 @@ NULL
 #' 
 #' @name BC_ALD
 #' @docType data
-#' @format A data list including the variables needed for the mimR basic example. The variables are as follows:
+#' @format A data list including the variables needed for the ModStanR basic example. The variables are as follows:
 #' \describe{
 #' \item{list("mean.X1")}{Numeric value}
 #' \item{list("mean.X2")}{Numeric value}
