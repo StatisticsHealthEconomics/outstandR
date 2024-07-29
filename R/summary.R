@@ -1,8 +1,8 @@
 
 #
-summary.ModStanR <- function(object, ...) {
+summary.outstandR <- function(object, ...) {
   
   ans <- NULL
-  class(ans) <- "summary.ModStanR"
+  class(ans) <- "summary.outstandR"
   ans
 } 

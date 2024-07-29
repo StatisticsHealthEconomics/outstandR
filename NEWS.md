@@ -1,3 +1,3 @@
-# ModStanR (development version)
+# outstandR (development version)
 
 * Initial CRAN submission.

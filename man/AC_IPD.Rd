@@ -5,7 +5,7 @@
 \alias{AC_IPD}
 \title{Data set for individual level patient data}
 \format{
-A data list including the variables needed for the ModStanR basic example. The variables are as follows:
+A data list including the variables needed for the outstandR basic example. The variables are as follows:
 \describe{
 \item{list("X1")}{Numeric covariate}
 \item{list("X2")}{Numeric covariate}

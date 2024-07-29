@@ -1,4 +1,4 @@
-url: https://StatisticsHealthEconomics.github.io/ModStanR/
+url: https://StatisticsHealthEconomics.github.io/outstandR/
   
 news:
   cran_dates: false
@@ -18,8 +18,8 @@ reference:
 - title: "Main"
   desc: "Main analysis functions."
   contents:
-  # - ModStanR-package
-  - starts_with("ModStanR")
+  # - outstandR-package
+  - starts_with("outstandR")
   - strategy
 - title: "Constituent statistics"
   desc: "Helper functions used by the main functions."

@@ -399,7 +399,7 @@ form estimators <span class="math inline">\(\Delta_{AB(AB)}\)</span> and
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(boot)      <span class="co"># non-parametric bootstrap in MAIC and ML G-computation</span></span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(copula)    <span class="co"># simulating BC covariates from Gaussian copula</span></span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(rstanarm)  <span class="co"># fit outcome regression, draw outcomes in Bayesian G-computation</span></span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">library</span>(ModStanR)</span></code></pre></div>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">library</span>(outstandR)</span></code></pre></div>
 <div id="data" class="section level3">
 <h3>Data</h3>
 <p>Next, we load the data to use in the analysis. The data comes from a
@@ -480,13 +480,13 @@ compliment of <span class="math inline">\(C\)</span> so e.g. <span class="math 
 </div>
 <div id="model-fitting-in-r" class="section level2">
 <h2>Model fitting in R</h2>
-<p>The <code>{ModStanR}</code> package has been written to be easy to
+<p>The <code>{outstandR}</code> package has been written to be easy to
 use and essential consists of a single function,
-<code>ModStanR()</code>. This can be used to run all of the different
+<code>outstandR()</code>. This can be used to run all of the different
 types of model, which we will call <em>strategies</em>. The first two
-arguments of <code>ModStanR()</code> are the individual and
+arguments of <code>outstandR()</code> are the individual and
 aggregate-level data, respectively.</p>
-<p>A <code>strategy</code> argument of <code>ModStanR</code> takes
+<p>A <code>strategy</code> argument of <code>outstandR</code> takes
 functions called <code>strategy_*()</code>, where the wildcard
 <code>*</code> is replaced by the name of the particular method
 required, e.g. <code>strategy_maic()</code> for MAIC. Each specific
@@ -507,10 +507,10 @@ y = X_3 + X_4 + \beta_t X_1 + \beta_t X_2
 <code>formula</code> object passed as an argument to the strategy
 function.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>lin_form <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="st">&quot;y ~ X3 + X4 + trt*X1 + trt*X2&quot;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>ModStanR_maic <span class="ot">&lt;-</span> <span class="fu">ModStanR</span>(AC.IPD, BC.ALD, <span class="at">strategy =</span> <span class="fu">strategy_maic</span>(<span class="at">formula =</span> lin_form))</span></code></pre></div>
-<p>The returned object is of class <code>ModStanR</code>.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>outstandR_maic <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(AC.IPD, BC.ALD, <span class="at">strategy =</span> <span class="fu">strategy_maic</span>(<span class="at">formula =</span> lin_form))</span></code></pre></div>
+<p>The returned object is of class <code>outstandR</code>.</p>
 <!-- Wald-type normal distribution-based 95\% confidence interval are also returned. -->
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>ModStanR_maic</span>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>outstandR_maic</span>
 <span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="co">#&gt; $contrasts</span></span>
 <span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co">#&gt; $contrasts$AB</span></span>
 <span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt; [1] 0.5008915</span></span>
@@ -549,11 +549,11 @@ function.</p>
 <span id="cb7-37"><a href="#cb7-37" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;CI&quot;)</span></span>
 <span id="cb7-38"><a href="#cb7-38" tabindex="-1"></a><span class="co">#&gt; [1] 0.95</span></span>
 <span id="cb7-39"><a href="#cb7-39" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;class&quot;)</span></span>
-<span id="cb7-40"><a href="#cb7-40" tabindex="-1"></a><span class="co">#&gt; [1] &quot;ModStanR&quot; &quot;list&quot;</span></span></code></pre></div>
+<span id="cb7-40"><a href="#cb7-40" tabindex="-1"></a><span class="co">#&gt; [1] &quot;outstandR&quot; &quot;list&quot;</span></span></code></pre></div>
 <p>We see that this is a list object with 3 parts, each containing
 statistics between each pair of treatments. These are the mean
 contrasts, variances and confidence intervals (CI), respectively. The
-default CI is for 95% but can be altered in <code>ModStanR</code> with
+default CI is for 95% but can be altered in <code>outstandR</code> with
 the <code>CI</code> argument.</p>
 </div>
 <div id="stc" class="section level3">
@@ -577,10 +577,10 @@ the previous analysis but we now use the <code>strategy_stc()</code>
 strategy function instead and a formula with centered covariates.</p>
 <p><span class="math display">\[
 y = X_3 + X_4 + \beta_t(X_1 - \bar{X_1}) + \beta_t(X_2 - \bar{X_2})
-\]</span> However, <code>ModStanR()</code> knows how to handle this so
+\]</span> However, <code>outstandR()</code> knows how to handle this so
 we can simply pass the same (uncentred) formula as before.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>ModStanR_stc <span class="ot">&lt;-</span> <span class="fu">ModStanR</span>(AC.IPD, BC.ALD, <span class="at">strategy =</span> <span class="fu">strategy_stc</span>(<span class="at">formula =</span> lin_form))</span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>ModStanR_stc</span>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>outstandR_stc <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(AC.IPD, BC.ALD, <span class="at">strategy =</span> <span class="fu">strategy_stc</span>(<span class="at">formula =</span> lin_form))</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>outstandR_stc</span>
 <span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="co">#&gt; $contrasts</span></span>
 <span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="co">#&gt; $contrasts$AB</span></span>
 <span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co">#&gt;     trt </span></span>
@@ -619,7 +619,7 @@ we can simply pass the same (uncentred) formula as before.</p>
 <span id="cb8-38"><a href="#cb8-38" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;CI&quot;)</span></span>
 <span id="cb8-39"><a href="#cb8-39" tabindex="-1"></a><span class="co">#&gt; [1] 0.95</span></span>
 <span id="cb8-40"><a href="#cb8-40" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;class&quot;)</span></span>
-<span id="cb8-41"><a href="#cb8-41" tabindex="-1"></a><span class="co">#&gt; [1] &quot;ModStanR&quot; &quot;list&quot;</span></span></code></pre></div>
+<span id="cb8-41"><a href="#cb8-41" tabindex="-1"></a><span class="co">#&gt; [1] &quot;outstandR&quot; &quot;list&quot;</span></span></code></pre></div>
 <p>For the last two approaches, we perform G-computation firstly with a
 frequentist MLE approach and then a Bayesian approach.</p>
 </div>
@@ -657,7 +657,7 @@ between the average linear predictions:</p>
 <p><span class="math display">\[
 \hat{\Delta}^{(2)}_{10} = g(\hat{\mu}_1) - g(\hat{\mu}_0)
 \]</span></p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># ModStanR_gcomp_ml &lt;- ModStanR(AC.IPD, BC.ALD, strategy = strategy_gcomp_ml(formula = lin_form))</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># outstandR_gcomp_ml &lt;- outstandR(AC.IPD, BC.ALD, strategy = strategy_gcomp_ml(formula = lin_form))</span></span></code></pre></div>
 </div>
 <div id="bayesian-g-computation-with-mcmc" class="section level3">
 <h3>Bayesian G-computation with MCMC</h3>
@@ -694,7 +694,7 @@ density.</p>
 of predicted outcomes <span class="math inline">\(y^*_z\)</span> under
 each set intervention <span class="math inline">\(z^*\)</span> from its
 posterior predictive distribution under the specific treatment.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>ModStanR_gcomp_stan <span class="ot">&lt;-</span> <span class="fu">ModStanR</span>(AC.IPD, BC.ALD, <span class="at">strategy =</span> <span class="fu">strategy_gcomp_stan</span>(<span class="at">formula =</span> lin_form))</span>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>outstandR_gcomp_stan <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(AC.IPD, BC.ALD, <span class="at">strategy =</span> <span class="fu">strategy_gcomp_stan</span>(<span class="at">formula =</span> lin_form))</span>
 <span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="co">#&gt; SAMPLING FOR MODEL &#39;bernoulli&#39; NOW (CHAIN 1).</span></span>
 <span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co">#&gt; Chain 1: </span></span>
@@ -745,7 +745,7 @@ posterior predictive distribution under the specific treatment.</p>
 <span id="cb10-49"><a href="#cb10-49" tabindex="-1"></a><span class="co">#&gt; Chain 2:                0.746 seconds (Sampling)</span></span>
 <span id="cb10-50"><a href="#cb10-50" tabindex="-1"></a><span class="co">#&gt; Chain 2:                1.422 seconds (Total)</span></span>
 <span id="cb10-51"><a href="#cb10-51" tabindex="-1"></a><span class="co">#&gt; Chain 2:</span></span></code></pre></div>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>ModStanR_gcomp_stan</span>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>outstandR_gcomp_stan</span>
 <span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="co">#&gt; $contrasts</span></span>
 <span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="co">#&gt; $contrasts$AB</span></span>
 <span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a><span class="co">#&gt; [1] 0.5567315</span></span>
@@ -782,7 +782,7 @@ posterior predictive distribution under the specific treatment.</p>
 <span id="cb11-35"><a href="#cb11-35" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;CI&quot;)</span></span>
 <span id="cb11-36"><a href="#cb11-36" tabindex="-1"></a><span class="co">#&gt; [1] 0.95</span></span>
 <span id="cb11-37"><a href="#cb11-37" tabindex="-1"></a><span class="co">#&gt; attr(,&quot;class&quot;)</span></span>
-<span id="cb11-38"><a href="#cb11-38" tabindex="-1"></a><span class="co">#&gt; [1] &quot;ModStanR&quot; &quot;list&quot;</span></span></code></pre></div>
+<span id="cb11-38"><a href="#cb11-38" tabindex="-1"></a><span class="co">#&gt; [1] &quot;outstandR&quot; &quot;list&quot;</span></span></code></pre></div>
 </div>
 </div>
 

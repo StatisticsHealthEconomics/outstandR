@@ -3,13 +3,13 @@
 #' 
 #' Matching-adjusted indirect comparison weights.
 #' Method is taken from
-#' \insertCite{Signorovitch2010}{ModStanR}.
+#' \insertCite{Signorovitch2010}{outstandR}.
 #' 
 #' @param X_EM Centred \eqn{S=1} effect modifiers; matrix or data frame
 #' @return Estimated weights for each individual; vector
 #' 
 #' @references
-#' \insertRef{Signorovitch2010}{ModStanR}
+#' \insertRef{Signorovitch2010}{outstandR}
 #' @keywords internal
 #' 
 maic_weights <- function(X_EM) {

@@ -15,9 +15,9 @@ Estimated weights for each individual; vector
 \description{
 Matching-adjusted indirect comparison weights.
 Method is taken from
-\insertCite{Signorovitch2010}{ModStanR}.
+\insertCite{Signorovitch2010}{outstandR}.
 }
 \references{
-\insertRef{Signorovitch2010}{ModStanR}
+\insertRef{Signorovitch2010}{outstandR}
 }
 \keyword{internal}

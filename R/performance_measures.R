@@ -149,7 +149,7 @@ var.ratio <- function(theta.hat, std.err) {
 #' Variability ratio MCSE
 #' 
 #' Approximation of ratio variance based on independence of avg. se and emp.se
-#' see \insertCite{wolter2007}{ModStanR}
+#' see \insertCite{wolter2007}{outstandR}
 #'
 #' @param avg.se Average SE
 #' @param emp.se Emp SE
@@ -157,7 +157,7 @@ var.ratio <- function(theta.hat, std.err) {
 #' @param var.emp.se Variance of Emp SE
 #' 
 #' @references
-#' \insertRef{wolter2007}{ModStanR}
+#' \insertRef{wolter2007}{outstandR}
 #' 
 #' @keywords internal
 #' 

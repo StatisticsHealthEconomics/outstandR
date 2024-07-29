@@ -1,4 +1,4 @@
-Package: ModStanR
+Package: outstandR
 Title: Model-based Standardisation
 Version: 0.0.0.9000
 Authors@R: c(
@@ -39,5 +39,5 @@ Suggests:
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 RdMacros: Rdpack
-URL: https://github.com/StatisticsHealthEconomics/ModStanR/
-BugReports: https://github.com/StatisticsHealthEconomics/ModStanR/issues/
+URL: https://github.com/StatisticsHealthEconomics/outstandR/
+BugReports: https://github.com/StatisticsHealthEconomics/outstandR/issues/
