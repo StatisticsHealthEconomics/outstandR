@@ -120,3 +120,18 @@ IPD_stats.gcomp_stan <- function(strategy,
        var = var(hat.delta.AC))
 } 
 
+
+#' @rdname IPD_stats
+#' @section Multiple imputation marginalisation:
+#'
+#' @export
+#'
+IPD_stats.mim <- function(strategy,
+                          ipd, ald) {
+  
+  hat.delta.AC <- mim(ipd, ald)
+  
+  list(mean = mean(hat.delta.AC),
+       var = var(hat.delta.AC))
+} 
+

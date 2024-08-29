@@ -153,6 +153,22 @@ strategy_gcomp_stan <- function(formula = NULL) {
   do.call(new_strategy, c(strategy = "gcomp_stan", args))
 }
 
+#' @rdname strategy
+#' 
+#' @section Multiple imputation marginalization (MIM):
+#' 
+#' @return `mim` class object
+#' @export
+# 
+strategy_mim <- function(formula = NULL) {
+  check_formula(formula)
+  
+  default_args <- formals()
+  args <- c(formula = formula, as.list(match.call())[-c(1,2)])
+  args <- modifyList(default_args, args)
+  do.call(new_strategy, c(strategy = "mim", args))
+}
+
 #' @name strategy
 #' @title New strategy objects
 #' 
