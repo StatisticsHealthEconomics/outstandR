@@ -6,10 +6,10 @@
 #'
 mim <- function(ipd.index,
                 ipd.target,
-                M = 1,
+                M = 1000,
                 n.chains = 2,
-                warmup = 10,
-                iters = 1000) {
+                warmup = 1000,
+                iters = 4000) {
   
   ## SYNTHESIS STAGE ##
   

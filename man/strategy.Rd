@@ -5,6 +5,7 @@
 \alias{strategy_stc}
 \alias{strategy_gcomp_ml}
 \alias{strategy_gcomp_stan}
+\alias{strategy_mim}
 \alias{strategy}
 \alias{new_strategy}
 \title{New strategy objects}
@@ -16,6 +17,8 @@ strategy_stc(formula = NULL)
 strategy_gcomp_ml(formula = NULL, R = 1000)
 
 strategy_gcomp_stan(formula = NULL)
+
+strategy_mim(formula = NULL)
 
 new_strategy(strategy, ...)
 }
@@ -38,6 +41,8 @@ new_strategy(strategy, ...)
 \code{gcomp_ml} class object
 
 \code{gcomp_stan} class object
+
+\code{mim} class object
 }
 \description{
 Create a type of strategy class for each modelling approach.
@@ -138,5 +143,9 @@ p(y*_{z*} \mid \mathcal{D}_{AC}) = \int_{x*} p(y* \mid z*, x*, \mathcal{D}_{AC})
 }
 In practice, the integrals above can be approximated numerically, using full Bayesian
 estimation via Markov chain Monte Carlo (MCMC) sampling.
+}
+
+\section{Multiple imputation marginalization (MIM)}{
+
 }
 

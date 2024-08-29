@@ -7,6 +7,7 @@
 \alias{IPD_stats.stc}
 \alias{IPD_stats.gcomp_ml}
 \alias{IPD_stats.gcomp_stan}
+\alias{IPD_stats.mim}
 \title{Calculate individual-level patient data statistics}
 \usage{
 IPD_stats(strategy, ipd, ald, ...)
@@ -20,6 +21,8 @@ IPD_stats(strategy, ipd, ald, ...)
 \method{IPD_stats}{gcomp_ml}(strategy, ipd, ald)
 
 \method{IPD_stats}{gcomp_stan}(strategy, ipd, ald)
+
+\method{IPD_stats}{mim}(strategy, ipd, ald)
 }
 \arguments{
 \item{strategy}{A list corresponding to different approaches}
@@ -59,5 +62,9 @@ Compute a non-parametric bootstrap with \eqn{R=1000} resamples.
 
 Using Stan, compute marginal log-odds ratio for \emph{A} vs \emph{C} for each MCMC sample
 by transforming from probability to linear predictor scale.
+}
+
+\section{Multiple imputation marginalisation}{
+
 }
 
