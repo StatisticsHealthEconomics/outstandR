@@ -39,5 +39,5 @@ Suggests:
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 RdMacros: Rdpack
-URL: https://github.com/StatisticsHealthEconomics/outstandR/
+URL: https://StatisticsHealthEconomics.github.io/outstandR
 BugReports: https://github.com/StatisticsHealthEconomics/outstandR/issues/

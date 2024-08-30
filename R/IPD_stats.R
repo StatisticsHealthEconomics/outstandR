@@ -93,7 +93,8 @@ IPD_stats.gcomp_ml <- function(strategy,
   AC_maic_boot <- boot::boot(data = ipd,
                              statistic = gcomp_ml.boot,
                              R = strategy$R,
-                             formula = strategy$formula)
+                             formula = strategy$formula,
+                             ald = ald)
   
   list(mean = mean(AC_maic_boot$t),
        var = var(AC_maic_boot$t))
@@ -129,9 +130,26 @@ IPD_stats.gcomp_stan <- function(strategy,
 IPD_stats.mim <- function(strategy,
                           ipd, ald) {
   
-  hat.delta.AC <- mim(ipd, ald)
+  mis_res <- mim(formula = strategy$formula,
+                 ipd, ald)
   
-  list(mean = mean(hat.delta.AC),
-       var = var(hat.delta.AC))
+  M <- mis_res$M
+  
+  # quantities originally defined by Rubin (1987) for multiple imputation
+  bar.delta <- mean(mis_res$hats.delta)  # average of treatment effect point estimates
+  bar.v <- mean(mis_res$hats.v)          # "within" variance (average of variance point estimates)
+  b <- var(mis_res$hats.delta)           # "between" variance (sample variance of point estimates)
+  
+  # pooling: average of point estimates is marginal log odds ratio
+  hat.Delta <- bar.delta
+  
+  hat.var.Delta <- var_by_pooling(M, bar.v, b)
+  nu <- wald_type_interval(M, bar.v, b)
+  
+  lci.Delta <- hat.Delta + qt(0.025, df = nu) * sqrt(hat.var.Delta)
+  uci.Delta <- hat.Delta + qt(0.975, df = nu) * sqrt(hat.var.Delta)
+  
+  list(mean = hat.Delta,
+       var = hat.var.Delta)
 } 
 

@@ -4,12 +4,14 @@
 \alias{gcomp_ml_log_odds_ratio}
 \title{G-computation Maximum Likelihood Log-Odds Ratio}
 \usage{
-gcomp_ml_log_odds_ratio(formula, dat)
+gcomp_ml_log_odds_ratio(formula, ipd, ald)
 }
 \arguments{
 \item{formula}{Linear regression \code{formula} object}
 
-\item{dat}{Trial data}
+\item{ipd}{Individual-level data}
+
+\item{ald}{Aggregate-level data}
 }
 \value{
 Difference of log-odds

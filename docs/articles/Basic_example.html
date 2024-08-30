@@ -5,64 +5,48 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="outstandR">
 <title>Basic Example • outstandR</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha512-7O5pXpc0oCRrxk8RUfDYFgn0nO1t+jLuIOQdOMRp4APB7uZ4vSjspzp5y6YDtDs4VzUSTbWzBFZ/LKJhnyFOKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Basic Example">
-<meta property="og:description" content="outstandR">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Basic Example">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-    
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light" data-bs-theme="light"><div class="container">
-    
+
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">outstandR</a>
 
     <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
 
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Reference</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/Basic_example.html">Basic Example</a>
-  </div>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/Basic_example.html">Basic Example</a></li>
+  </ul>
 </li>
-<li class="nav-item">
-  <a class="nav-link" href="../news/index.html">Changelog</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
-<form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
-</form>
-
-      <ul class="navbar-nav">
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/StatisticsHealthEconomics/outstandR/" aria-label="github">
-    <span class="fab fa fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/StatisticsHealthEconomics/outstandR/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
-    
+
   </div>
 </nav><div class="container template-article">
 
@@ -71,7 +55,8 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="" class="logo" alt=""><h1>Basic Example</h1>
+
+      <h1>Basic Example</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/StatisticsHealthEconomics/outstandR/blob/HEAD/vignettes/Basic_example.Rmd" class="external-link"><code>vignettes/Basic_example.Rmd</code></a></small>
@@ -118,22 +103,34 @@ regression.</p>
 one <em>AC</em> trial, for which only published aggregate data are
 available. We wish to estimate a comparison of the effects of treatments
 <em>B</em> and <em>C</em> on an appropriate scale in some target
-population <em>P</em>, denoted by the parameter <span class="math inline">\(d_{BC(P)}\)</span>. We make use of bracketed
-subscripts to denote a specific population. Within the <em>AB</em>
-population there are parameters <span class="math inline">\(\mu_{A(
-AB)}\)</span>, <span class="math inline">\(\mu_{B(AB)}\)</span> and
-<span class="math inline">\(\mu_{C(AB)}\)</span> representing the
-expected outcome on each treatment (including parameters for treatments
-not studied in the <em>AB</em> trial, e.g. treatment <em>C</em>). The
-<em>AB</em> trial provides estimators <span class="math inline">\(\bar{Y}_{A(AB)}\)</span> and <span class="math inline">\(\bar{Y}_{B(AB)}\)</span> of <span class="math inline">\(\mu_{A( AB)}\)</span>, <span class="math inline">\(\mu_{B(AB)}\)</span>, respectively, which are the
-summary outcomes. It the same situation for the <em>AC</em> trial.</p>
+population <em>P</em>, denoted by the parameter
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>d</mi><mrow><mi>B</mi><mi>C</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>P</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><annotation encoding="application/x-tex">d_{BC(P)}</annotation></semantics></math>.
+We make use of bracketed subscripts to denote a specific population.
+Within the <em>AB</em> population there are parameters
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>μ</mi><mrow><mi>A</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mi>B</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><annotation encoding="application/x-tex">\mu_{A( AB)}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>μ</mi><mrow><mi>B</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mi>B</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><annotation encoding="application/x-tex">\mu_{B(AB)}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>μ</mi><mrow><mi>C</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mi>B</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><annotation encoding="application/x-tex">\mu_{C(AB)}</annotation></semantics></math>
+representing the expected outcome on each treatment (including
+parameters for treatments not studied in the <em>AB</em> trial,
+e.g. treatment <em>C</em>). The <em>AB</em> trial provides estimators
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mi>Y</mi><mo accent="true">‾</mo></mover><mrow><mi>A</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mi>B</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><annotation encoding="application/x-tex">\bar{Y}_{A(AB)}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mi>Y</mi><mo accent="true">‾</mo></mover><mrow><mi>B</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mi>B</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><annotation encoding="application/x-tex">\bar{Y}_{B(AB)}</annotation></semantics></math>
+of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>μ</mi><mrow><mi>A</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mi>B</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><annotation encoding="application/x-tex">\mu_{A( AB)}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>μ</mi><mrow><mi>B</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mi>B</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><annotation encoding="application/x-tex">\mu_{B(AB)}</annotation></semantics></math>,
+respectively, which are the summary outcomes. It the same situation for
+the <em>AC</em> trial.</p>
 <p>For a suitable scale, for example a logit, or risk difference, we
-form estimators <span class="math inline">\(\Delta_{AB(AB)}\)</span> and
-<span class="math inline">\(\Delta_{AC(AC)}\)</span> of the trial level
-(or marginal) relative treatment effects.</p>
-<p><span class="math display">\[
+form estimators
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Δ</mi><mrow><mi>A</mi><mi>B</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mi>B</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><annotation encoding="application/x-tex">\Delta_{AB(AB)}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Δ</mi><mrow><mi>A</mi><mi>C</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mi>C</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><annotation encoding="application/x-tex">\Delta_{AC(AC)}</annotation></semantics></math>
+of the trial level (or marginal) relative treatment effects.</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Δ</mi><mrow><mi>A</mi><mi>B</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mi>B</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><mo>=</mo><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mover><mi>Y</mi><mo accent="true">‾</mo></mover><mrow><mi>B</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mi>B</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mover><mi>Y</mi><mo accent="true">‾</mo></mover><mrow><mi>A</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mi>B</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
 \Delta_{AB(AB)} = g(\bar{Y}_{B{(AB)}}) - g(\bar{Y}_{A{(AB)}})
-\]</span></p>
+</annotation></semantics></math></p>
 </div>
 <div class="section level2">
 <h2 id="example-analysis">Example analysis<a class="anchor" aria-label="anchor" href="#example-analysis"></a>
@@ -151,9 +148,12 @@ form estimators <span class="math inline">\(\Delta_{AB(AB)}\)</span> and
 simulation study in Remiro‐Azócar A, Heath A, Baio G (2020). We consider
 binary outcomes using the log-odds ratio as the measure of effect. The
 binary outcome may be response to treatment or the occurrence of an
-adverse event. For trials <em>AC</em> and <em>BC</em>, outcome <span class="math inline">\(y_n\)</span> for subject <span class="math inline">\(n\)</span> is simulated from a Bernoulli
-distribution with probabilities of success generated from logistic
-regression.</p>
+adverse event. For trials <em>AC</em> and <em>BC</em>, outcome
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>y</mi><mi>n</mi></msub><annotation encoding="application/x-tex">y_n</annotation></semantics></math>
+for subject
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+is simulated from a Bernoulli distribution with probabilities of success
+generated from logistic regression.</p>
 <p>For the <em>BC</em> trial, the individual-level covariates and
 outcomes are aggregated to obtain summaries. The continuous covariates
 are summarized as means and standard deviations, which would be
@@ -199,7 +199,7 @@ observed</li>
 </ul>
 <p>Note that the wildcard <code>*</code> here is usually an integer from
 1 or the trial identifier <em>B</em>, <em>C</em>.</p>
-<p>Our data looks like the following.</p>
+<p>Our data look like the following.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">AC.IPD</span><span class="op">)</span></span>
 <span><span class="co">#&gt;            X1        X2          X3          X4 trt y</span></span>
@@ -227,16 +227,18 @@ and the event total, average and sample size for each treatment
 </h3>
 <p>We will implement for MAIC, STC, and G-computation methods to obtain
 the <em>marginal variance</em>, defined as</p>
-<p><span class="math display">\[
-\frac{1}{n_C} + \frac{1}{n_{\bar{C}}} + \frac{1}{n_B} +
-\frac{1}{n_{\bar{B}}}
-\]</span></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mn>1</mn><msub><mi>n</mi><mi>C</mi></msub></mfrac><mo>+</mo><mfrac><mn>1</mn><msub><mi>n</mi><mover><mi>C</mi><mo accent="true">‾</mo></mover></msub></mfrac><mo>+</mo><mfrac><mn>1</mn><msub><mi>n</mi><mi>B</mi></msub></mfrac><mo>+</mo><mfrac><mn>1</mn><msub><mi>n</mi><mover><mi>B</mi><mo accent="true">‾</mo></mover></msub></mfrac></mrow><annotation encoding="application/x-tex">
+\frac{1}{n_C} + \frac{1}{n_{\bar{C}}} + \frac{1}{n_B} + \frac{1}{n_{\bar{B}}}
+</annotation></semantics></math></p>
 <p>and the <em>marginal treatment effect</em>, defined as</p>
-<p><span class="math display">\[
-\log\left( \frac{n_B/(N_B-n_B)}{n_C/(N_B-n_{B})} \right) = \log(n_B
-n_{\bar{C}}) - \log(n_C n_{\bar{B}})
-\]</span> where <span class="math inline">\(\bar{C}\)</span> is the
-compliment of <span class="math inline">\(C\)</span> so e.g. <span class="math inline">\(n_{\bar{C}} = N_C - n_c\)</span>.</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mrow><msub><mi>n</mi><mi>B</mi></msub><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>N</mi><mi>B</mi></msub><mo>−</mo><msub><mi>n</mi><mi>B</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><msub><mi>n</mi><mi>C</mi></msub><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>N</mi><mi>B</mi></msub><mo>−</mo><msub><mi>n</mi><mi>B</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>n</mi><mi>B</mi></msub><msub><mi>n</mi><mover><mi>C</mi><mo accent="true">‾</mo></mover></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>n</mi><mi>C</mi></msub><msub><mi>n</mi><mover><mi>B</mi><mo accent="true">‾</mo></mover></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+\log\left( \frac{n_B/(N_B-n_B)}{n_C/(N_B-n_{B})} \right) = \log(n_B n_{\bar{C}}) - \log(n_C n_{\bar{B}})
+</annotation></semantics></math> where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>C</mi><mo accent="true">‾</mo></mover><annotation encoding="application/x-tex">\bar{C}</annotation></semantics></math>
+is the compliment of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>C</mi><annotation encoding="application/x-tex">C</annotation></semantics></math>
+so
+e.g. <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>n</mi><mover><mi>C</mi><mo accent="true">‾</mo></mover></msub><mo>=</mo><msub><mi>N</mi><mi>C</mi></msub><mo>−</mo><msub><mi>n</mi><mi>c</mi></msub></mrow><annotation encoding="application/x-tex">n_{\bar{C}} = N_C - n_c</annotation></semantics></math>.</p>
 </div>
 </div>
 <div class="section level2">
@@ -264,17 +266,16 @@ returned value is an object of class <code>boot</code> from the
 <code>{boot}</code> package. We then calculate the bootstrap mean and
 variance in the wrapper function <code>maic_boot_stats</code>.</p>
 <p>The formula used in this model is</p>
-<p><span class="math display">\[
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><msub><mi>X</mi><mn>3</mn></msub><mo>+</mo><msub><mi>X</mi><mn>4</mn></msub><mo>+</mo><msub><mi>β</mi><mi>t</mi></msub><msub><mi>X</mi><mn>1</mn></msub><mo>+</mo><msub><mi>β</mi><mi>t</mi></msub><msub><mi>X</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">
 y = X_3 + X_4 + \beta_t X_1 + \beta_t X_2
-\]</span> which corresponds to the following <code>R</code>
-<code>formula</code> object passed as an argument to the strategy
-function.</p>
+</annotation></semantics></math> which corresponds to the following
+<code>R</code> <code>formula</code> object passed as an argument to the
+strategy function.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lin_form</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/formula.html" class="external-link">as.formula</a></span><span class="op">(</span><span class="st">"y ~ X3 + X4 + trt*X1 + trt*X2"</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outstandR_maic</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>, strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_maic</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>The returned object is of class <code>outstandR</code>.</p>
-<!-- Wald-type normal distribution-based 95\% confidence interval are also returned. -->
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outstandR_maic</span></span>
 <span><span class="co">#&gt; $contrasts</span></span>
@@ -329,23 +330,30 @@ the <code>CI</code> argument.</p>
 fitting a regression model of outcome on treatment and covariates to the
 IPD. IPD effect modifiers are centred at the mean <em>BC</em>
 values.</p>
-<p><span class="math display">\[
-g(\mu_n) = \beta_0 + (\boldsymbol{x}_n - \boldsymbol{\theta}) \beta_1 +
-(\beta_z + (\boldsymbol{x_n^{EM}} - \boldsymbol{\theta^{EM}})
-\boldsymbol{\beta_2}) \; \mbox{I}(z_n=1)
-\]</span> where <span class="math inline">\(\beta_0\)</span> is the
-intercept, <span class="math inline">\(\beta_1\)</span> are the
-covariate coefficients, <span class="math inline">\(\beta_z\)</span> and
-<span class="math inline">\(\beta_2\)</span> are the effect modifier
-coefficients, <span class="math inline">\(z_n\)</span> are the indicator
-variables of effect alternative treatment. <span class="math inline">\(g(\cdot)\)</span> is the link function e.g. <span class="math inline">\(\log\)</span>.</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>μ</mi><mi>n</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>β</mi><mn>0</mn></msub><mo>+</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>𝐱</mi><mi>n</mi></msub><mo>−</mo><mi>𝛉</mi><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>β</mi><mn>1</mn></msub><mo>+</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>β</mi><mi>z</mi></msub><mo>+</mo><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>𝐱</mi><mi>𝐧</mi><mrow><mi>𝐄</mi><mi>𝐌</mi></mrow></msubsup><mo>−</mo><msup><mi>𝛉</mi><mrow><mi>𝐄</mi><mi>𝐌</mi></mrow></msup><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>𝛃</mi><mn>𝟐</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mspace width="0.278em"></mspace><mtext mathvariant="normal">I</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>z</mi><mi>n</mi></msub><mo>=</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+g(\mu_n) = \beta_0 + (\boldsymbol{x}_n - \boldsymbol{\theta}) \beta_1 + (\beta_z + (\boldsymbol{x_n^{EM}} - \boldsymbol{\theta^{EM}}) \boldsymbol{\beta_2}) \; \mbox{I}(z_n=1)
+</annotation></semantics></math> where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mn>0</mn></msub><annotation encoding="application/x-tex">\beta_0</annotation></semantics></math>
+is the intercept,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mn>1</mn></msub><annotation encoding="application/x-tex">\beta_1</annotation></semantics></math>
+are the covariate coefficients,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mi>z</mi></msub><annotation encoding="application/x-tex">\beta_z</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mn>2</mn></msub><annotation encoding="application/x-tex">\beta_2</annotation></semantics></math>
+are the effect modifier coefficients,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>z</mi><mi>n</mi></msub><annotation encoding="application/x-tex">z_n</annotation></semantics></math>
+are the indicator variables of effect alternative treatment.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>⋅</mo><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">g(\cdot)</annotation></semantics></math>
+is the link function
+e.g. <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mo>log</mo><annotation encoding="application/x-tex">\log</annotation></semantics></math>.</p>
 <p>As already mentioned, running the STC analysis is almost identical to
 the previous analysis but we now use the <code><a href="../reference/strategy.html">strategy_stc()</a></code>
 strategy function instead and a formula with centered covariates.</p>
-<p><span class="math display">\[
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><msub><mi>X</mi><mn>3</mn></msub><mo>+</mo><msub><mi>X</mi><mn>4</mn></msub><mo>+</mo><msub><mi>β</mi><mi>t</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mn>1</mn></msub><mo>−</mo><mover><msub><mi>X</mi><mn>1</mn></msub><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msub><mi>β</mi><mi>t</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mn>2</mn></msub><mo>−</mo><mover><msub><mi>X</mi><mn>2</mn></msub><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
 y = X_3 + X_4 + \beta_t(X_1 - \bar{X_1}) + \beta_t(X_2 - \bar{X_2})
-\]</span> However, <code><a href="../reference/outstandR.html">outstandR()</a></code> knows how to handle this so
-we can simply pass the same (uncentred) formula as before.</p>
+</annotation></semantics></math> However, <code><a href="../reference/outstandR.html">outstandR()</a></code> knows
+how to handle this so we can simply pass the same (uncentred) formula as
+before.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outstandR_stc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>, strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_stc</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">outstandR_stc</span></span>
@@ -397,37 +405,82 @@ frequentist MLE approach and then a Bayesian approach.</p>
 <p>G-computation marginalizes the conditional estimates by separating
 the regression modelling from the estimation of the marginal treatment
 effect for <em>A</em> versus <em>C</em>. First, a regression model of
-the observed outcome <span class="math inline">\(y\)</span> on the
-covariates <span class="math inline">\(x\)</span> and treatment <span class="math inline">\(z\)</span> is fitted to the <em>AC</em> IPD:</p>
-<p><span class="math display">\[
-g(\mu_n) = \beta_0 + \boldsymbol{x}_n \boldsymbol{\beta_1} + (\beta_z +
-\boldsymbol{x_n^{EM}} \boldsymbol{\beta_2}) \; \mbox{I}(z_n = 1)
-\]</span></p>
+the observed outcome
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>y</mi><annotation encoding="application/x-tex">y</annotation></semantics></math>
+on the covariates
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>
+and treatment
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>z</mi><annotation encoding="application/x-tex">z</annotation></semantics></math>
+is fitted to the <em>AC</em> IPD:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>μ</mi><mi>n</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>β</mi><mn>0</mn></msub><mo>+</mo><msub><mi>𝐱</mi><mi>n</mi></msub><msub><mi>𝛃</mi><mn>𝟏</mn></msub><mo>+</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>β</mi><mi>z</mi></msub><mo>+</mo><msubsup><mi>𝐱</mi><mi>𝐧</mi><mrow><mi>𝐄</mi><mi>𝐌</mi></mrow></msubsup><msub><mi>𝛃</mi><mn>𝟐</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mspace width="0.278em"></mspace><mtext mathvariant="normal">I</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>z</mi><mi>n</mi></msub><mo>=</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+g(\mu_n) = \beta_0 + \boldsymbol{x}_n \boldsymbol{\beta_1} + (\beta_z + \boldsymbol{x_n^{EM}} \boldsymbol{\beta_2}) \; \mbox{I}(z_n = 1)
+</annotation></semantics></math></p>
 <p>In the context of G-computation, this regression model is often
 called the “Q-model.” Having fitted the Q-model, the regression
 coefficients are treated as nuisance parameters. The parameters are
-applied to the simulated covariates <span class="math inline">\(x*\)</span> to predict hypothetical outcomes for
-each subject under both possible treatments. Namely, a pair of predicted
-outcomes, also called potential outcomes, under <em>A</em> and under
-<em>C</em>, is generated for each subject.</p>
+applied to the simulated covariates
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>*</mo></mrow><annotation encoding="application/x-tex">x*</annotation></semantics></math>
+to predict hypothetical outcomes for each subject under both possible
+treatments. Namely, a pair of predicted outcomes, also called potential
+outcomes, under <em>A</em> and under <em>C</em>, is generated for each
+subject.</p>
 <p>By plugging treatment <em>C</em> into the regression fit for every
 simulated observation, we predict the marginal outcome mean in the
 hypothetical scenario in which all units are under treatment
 <em>C</em>:</p>
-<p><span class="math display">\[
-\hat{\mu}_0 = \int_{x^*} g^{-1} (\hat{\beta}_0 + x^* \hat{\beta}_1 )
-p(x^*) \; \text{d}x^*
-\]</span></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover><mi>μ</mi><mo accent="true">̂</mo></mover><mn>0</mn></msub><mo>=</mo><msub><mo>∫</mo><msup><mi>x</mi><mo>*</mo></msup></msub><msup><mi>g</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mover><mi>β</mi><mo accent="true">̂</mo></mover><mn>0</mn></msub><mo>+</mo><msup><mi>x</mi><mo>*</mo></msup><msub><mover><mi>β</mi><mo accent="true">̂</mo></mover><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>x</mi><mo>*</mo></msup><mo stretchy="true" form="postfix">)</mo></mrow><mspace width="0.278em"></mspace><mtext mathvariant="normal">d</mtext><msup><mi>x</mi><mo>*</mo></msup></mrow><annotation encoding="application/x-tex">
+\hat{\mu}_0 = \int_{x^*} g^{-1} (\hat{\beta}_0 + x^* \hat{\beta}_1 ) p(x^*) \; \text{d}x^*
+</annotation></semantics></math></p>
 <p>To estimate the marginal or population-average treatment effect for
 <em>A</em> versus <em>C</em> in the linear predictor scale, one
 back-transforms to this scale the average predictions, taken over all
 subjects on the natural outcome scale, and calculates the difference
 between the average linear predictions:</p>
-<p><span class="math display">\[
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mover><mi>Δ</mi><mo accent="true">̂</mo></mover><mn>10</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>2</mn><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>=</mo><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mover><mi>μ</mi><mo accent="true">̂</mo></mover><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mover><mi>μ</mi><mo accent="true">̂</mo></mover><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
 \hat{\Delta}^{(2)}_{10} = g(\hat{\mu}_1) - g(\hat{\mu}_0)
-\]</span></p>
+</annotation></semantics></math></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># outstandR_gcomp_ml &lt;- outstandR(AC.IPD, BC.ALD, strategy = strategy_gcomp_ml(formula = lin_form))</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">outstandR_gcomp_ml</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>, strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_ml</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">outstandR_gcomp_ml</span></span>
+<span><span class="co">#&gt; $contrasts</span></span>
+<span><span class="co">#&gt; $contrasts$AB</span></span>
+<span><span class="co">#&gt; [1] 0.5645192</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $contrasts$AC</span></span>
+<span><span class="co">#&gt; [1] -1.088211</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $contrasts$BC</span></span>
+<span><span class="co">#&gt; [1] -1.65273</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $variances</span></span>
+<span><span class="co">#&gt; $variances$AB</span></span>
+<span><span class="co">#&gt;           [,1]</span></span>
+<span><span class="co">#&gt; [1,] 0.1425196</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $variances$AC</span></span>
+<span><span class="co">#&gt;           [,1]</span></span>
+<span><span class="co">#&gt; [1,] 0.1061187</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $variances$BC</span></span>
+<span><span class="co">#&gt; [1] 0.03640091</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $CI</span></span>
+<span><span class="co">#&gt; $CI$AB</span></span>
+<span><span class="co">#&gt; [1] -0.1754018  1.3044402</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $CI$AC</span></span>
+<span><span class="co">#&gt; [1] -1.7266857 -0.4497354</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $CI$BC</span></span>
+<span><span class="co">#&gt; [1] -2.026672 -1.278788</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; attr(,"CI")</span></span>
+<span><span class="co">#&gt; [1] 0.95</span></span>
+<span><span class="co">#&gt; attr(,"class")</span></span>
+<span><span class="co">#&gt; [1] "outstandR" "list"</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="bayesian-g-computation-with-mcmc">Bayesian G-computation with MCMC<a class="anchor" aria-label="anchor" href="#bayesian-g-computation-with-mcmc"></a>
@@ -438,40 +491,47 @@ predicted outcomes. The Bayesian approach also marginalizes, integrates
 or standardizes over the joint posterior distribution of the conditional
 nuisance parameters of the outcome regression, as well as the joint
 covariate distribution.</p>
-<p>Draw a vector of size <span class="math inline">\(N^*\)</span> of
-predicted outcomes <span class="math inline">\(y^*_z\)</span> under each
-set intervention <span class="math inline">\(z^* \in \{0, 1\}\)</span>
+<p>Draw a vector of size
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>N</mi><mo>*</mo></msup><annotation encoding="application/x-tex">N^*</annotation></semantics></math>
+of predicted outcomes
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>y</mi><mi>z</mi><mo>*</mo></msubsup><annotation encoding="application/x-tex">y^*_z</annotation></semantics></math>
+under each set intervention
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>z</mi><mo>*</mo></msup><mo>∈</mo><mo stretchy="false" form="prefix">{</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">z^* \in \{0, 1\}</annotation></semantics></math>
 from its posterior predictive distribution under the specific treatment.
-This is defined as <span class="math inline">\(p(y^*_{z^*} \mid
-\mathcal{D}_{AC}) = \int_{\beta} p(y^*_{z^*} \mid \beta) p(\beta \mid
-\mathcal{D}_{AC}) d\beta\)</span> where <span class="math inline">\(p(\beta \mid \mathcal{D}_{AC})\)</span> is the
-posterior distribution of the outcome regression coefficients <span class="math inline">\(\beta\)</span>, which encode the predictor-outcome
-relationships observed in the <em>AC</em> trial IPD. This is given
-by:</p>
-<p><span class="math display">\[
-p(y^*_{^z*} \mid \mathcal{D}_{AC}) = \int_{x^*} p(y^* \mid z^*, x^*,
-\mathcal{D}_{AC}) p(x^* \mid \mathcal{D}_{AC})\; \text{d}x^*
-\]</span> <span class="math display">\[
-= \int_{x^*} \int_{\beta} p(y^* \mid z^*, x^*, \beta) p(x^* \mid \beta)
-p(\beta \mid \mathcal{D}_{AC})\; d\beta \; \text{d}x^*
-\]</span></p>
+This is defined as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>y</mi><msup><mi>z</mi><mo>*</mo></msup><mo>*</mo></msubsup><mo>∣</mo><msub><mi>𝒟</mi><mrow><mi>A</mi><mi>C</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mo>∫</mo><mi>β</mi></msub><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>y</mi><msup><mi>z</mi><mo>*</mo></msup><mo>*</mo></msubsup><mo>∣</mo><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>β</mi><mo>∣</mo><msub><mi>𝒟</mi><mrow><mi>A</mi><mi>C</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>d</mi><mi>β</mi></mrow><annotation encoding="application/x-tex">p(y^*_{z^*} \mid \mathcal{D}_{AC}) = \int_{\beta} p(y^*_{z^*} \mid \beta) p(\beta \mid \mathcal{D}_{AC}) d\beta</annotation></semantics></math>
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>β</mi><mo>∣</mo><msub><mi>𝒟</mi><mrow><mi>A</mi><mi>C</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">p(\beta \mid \mathcal{D}_{AC})</annotation></semantics></math>
+is the posterior distribution of the outcome regression coefficients
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>,
+which encode the predictor-outcome relationships observed in the
+<em>AC</em> trial IPD. This is given by:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>y</mi><mrow><msup><mi></mi><mi>z</mi></msup><mo>*</mo></mrow><mo>*</mo></msubsup><mo>∣</mo><msub><mi>𝒟</mi><mrow><mi>A</mi><mi>C</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mo>∫</mo><msup><mi>x</mi><mo>*</mo></msup></msub><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>y</mi><mo>*</mo></msup><mo>∣</mo><msup><mi>z</mi><mo>*</mo></msup><mo>,</mo><msup><mi>x</mi><mo>*</mo></msup><mo>,</mo><msub><mi>𝒟</mi><mrow><mi>A</mi><mi>C</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>x</mi><mo>*</mo></msup><mo>∣</mo><msub><mi>𝒟</mi><mrow><mi>A</mi><mi>C</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mspace width="0.278em"></mspace><mtext mathvariant="normal">d</mtext><msup><mi>x</mi><mo>*</mo></msup></mrow><annotation encoding="application/x-tex">
+p(y^*_{^z*} \mid \mathcal{D}_{AC}) = \int_{x^*} p(y^* \mid z^*, x^*, \mathcal{D}_{AC}) p(x^* \mid \mathcal{D}_{AC})\; \text{d}x^*
+</annotation></semantics></math><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>=</mo><msub><mo>∫</mo><msup><mi>x</mi><mo>*</mo></msup></msub><msub><mo>∫</mo><mi>β</mi></msub><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>y</mi><mo>*</mo></msup><mo>∣</mo><msup><mi>z</mi><mo>*</mo></msup><mo>,</mo><msup><mi>x</mi><mo>*</mo></msup><mo>,</mo><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>x</mi><mo>*</mo></msup><mo>∣</mo><mi>β</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>p</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>β</mi><mo>∣</mo><msub><mi>𝒟</mi><mrow><mi>A</mi><mi>C</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mspace width="0.278em"></mspace><mi>d</mi><mi>β</mi><mspace width="0.278em"></mspace><mtext mathvariant="normal">d</mtext><msup><mi>x</mi><mo>*</mo></msup></mrow><annotation encoding="application/x-tex">
+= \int_{x^*} \int_{\beta} p(y^* \mid z^*, x^*, \beta) p(x^* \mid \beta) p(\beta \mid \mathcal{D}_{AC})\; d\beta \; \text{d}x^*
+</annotation></semantics></math></p>
 <p>In practice, the integrals above can be approximated numerically,
 using full Bayesian estimation via Markov chain Monte Carlo (MCMC)
 sampling.</p>
 <p>The average, variance and interval estimates of the marginal
 treatment effect can be derived empirically from draws of the posterior
 density.</p>
-<p>We can draw a vector of size <span class="math inline">\(N^*\)</span>
-of predicted outcomes <span class="math inline">\(y^*_z\)</span> under
-each set intervention <span class="math inline">\(z^*\)</span> from its
-posterior predictive distribution under the specific treatment.</p>
+<p>We can draw a vector of size
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>N</mi><mo>*</mo></msup><annotation encoding="application/x-tex">N^*</annotation></semantics></math>
+of predicted outcomes
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>y</mi><mi>z</mi><mo>*</mo></msubsup><annotation encoding="application/x-tex">y^*_z</annotation></semantics></math>
+under each set intervention
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>z</mi><mo>*</mo></msup><annotation encoding="application/x-tex">z^*</annotation></semantics></math>
+from its posterior predictive distribution under the specific
+treatment.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outstandR_gcomp_stan</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>, strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_stan</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 1).</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1: Gradient evaluation took 5.5e-05 seconds</span></span>
-<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.55 seconds.</span></span>
+<span><span class="co">#&gt; Chain 1: Gradient evaluation took 3.8e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.38 seconds.</span></span>
 <span><span class="co">#&gt; Chain 1: Adjust your expectations accordingly!</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
@@ -488,15 +548,15 @@ posterior predictive distribution under the specific treatment.</p>
 <span><span class="co">#&gt; Chain 1: Iteration: 3600 / 4000 [ 90%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 1: Iteration: 4000 / 4000 [100%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.708 seconds (Warm-up)</span></span>
-<span><span class="co">#&gt; Chain 1:                0.8 seconds (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1:                1.508 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.522 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 1:                0.499 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1:                1.021 seconds (Total)</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 2).</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
-<span><span class="co">#&gt; Chain 2: Gradient evaluation took 2.1e-05 seconds</span></span>
-<span><span class="co">#&gt; Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.21 seconds.</span></span>
+<span><span class="co">#&gt; Chain 2: Gradient evaluation took 1.8e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.18 seconds.</span></span>
 <span><span class="co">#&gt; Chain 2: Adjust your expectations accordingly!</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
@@ -513,18 +573,17 @@ posterior predictive distribution under the specific treatment.</p>
 <span><span class="co">#&gt; Chain 2: Iteration: 3600 / 4000 [ 90%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 2: Iteration: 4000 / 4000 [100%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
-<span><span class="co">#&gt; Chain 2:  Elapsed Time: 0.693 seconds (Warm-up)</span></span>
-<span><span class="co">#&gt; Chain 2:                0.75 seconds (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2:                1.443 seconds (Total)</span></span>
-<span><span class="co">#&gt; Chain 2:</span></span></code></pre></div>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outstandR_gcomp_stan</span></span>
+<span><span class="co">#&gt; Chain 2:  Elapsed Time: 0.508 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 2:                0.534 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2:                1.042 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 2:</span></span>
+<span><span class="va">outstandR_gcomp_stan</span></span>
 <span><span class="co">#&gt; $contrasts</span></span>
 <span><span class="co">#&gt; $contrasts$AB</span></span>
-<span><span class="co">#&gt; [1] 0.5567315</span></span>
+<span><span class="co">#&gt; [1] 0.5614387</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $contrasts$AC</span></span>
-<span><span class="co">#&gt; [1] -1.095998</span></span>
+<span><span class="co">#&gt; [1] -1.091291</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $contrasts$BC</span></span>
 <span><span class="co">#&gt; [1] -1.65273</span></span>
@@ -532,10 +591,10 @@ posterior predictive distribution under the specific treatment.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $variances</span></span>
 <span><span class="co">#&gt; $variances$AB</span></span>
-<span><span class="co">#&gt; [1] 0.1402647</span></span>
+<span><span class="co">#&gt; [1] 0.137929</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $variances$AC</span></span>
-<span><span class="co">#&gt; [1] 0.1038638</span></span>
+<span><span class="co">#&gt; [1] 0.1015281</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $variances$BC</span></span>
 <span><span class="co">#&gt; [1] 0.03640091</span></span>
@@ -543,10 +602,10 @@ posterior predictive distribution under the specific treatment.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $CI</span></span>
 <span><span class="co">#&gt; $CI$AB</span></span>
-<span><span class="co">#&gt; [1] -0.1773129  1.2907759</span></span>
+<span><span class="co">#&gt; [1] -0.1664684  1.2893457</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $CI$AC</span></span>
-<span><span class="co">#&gt; [1] -1.7276538 -0.4643429</span></span>
+<span><span class="co">#&gt; [1] -1.7158038 -0.4667785</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $CI$BC</span></span>
 <span><span class="co">#&gt; [1] -2.026672 -1.278788</span></span>
@@ -557,8 +616,152 @@ posterior predictive distribution under the specific treatment.</p>
 <span><span class="co">#&gt; attr(,"class")</span></span>
 <span><span class="co">#&gt; [1] "outstandR" "list"</span></span></code></pre></div>
 </div>
+<div class="section level3">
+<h3 id="multiple-imputation-marginalisation">Multiple imputation marginalisation<a class="anchor" aria-label="anchor" href="#multiple-imputation-marginalisation"></a>
+</h3>
+<p>ref</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi><mi>q</mi><mi>u</mi><mi>a</mi><mi>t</mi><mi>i</mi><mi>o</mi><mi>n</mi><mi>h</mi><mi>e</mi><mi>r</mi><mi>e</mi></mrow><annotation encoding="application/x-tex">
+equation here
+</annotation></semantics></math></p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">outstandR_mim</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>, strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_mim</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 1).</span></span>
+<span><span class="co">#&gt; Chain 1: </span></span>
+<span><span class="co">#&gt; Chain 1: Gradient evaluation took 2.3e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.23 seconds.</span></span>
+<span><span class="co">#&gt; Chain 1: Adjust your expectations accordingly!</span></span>
+<span><span class="co">#&gt; Chain 1: </span></span>
+<span><span class="co">#&gt; Chain 1: </span></span>
+<span><span class="co">#&gt; Chain 1: Iteration:    1 / 4000 [  0%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration:  400 / 4000 [ 10%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration:  800 / 4000 [ 20%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 1001 / 4000 [ 25%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 1400 / 4000 [ 35%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 1800 / 4000 [ 45%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 2200 / 4000 [ 55%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 2600 / 4000 [ 65%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 3000 / 4000 [ 75%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 3400 / 4000 [ 85%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 3800 / 4000 [ 95%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 4000 / 4000 [100%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: </span></span>
+<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.254 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 1:                0.751 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1:                1.005 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 1: </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 2).</span></span>
+<span><span class="co">#&gt; Chain 2: </span></span>
+<span><span class="co">#&gt; Chain 2: Gradient evaluation took 1.8e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.18 seconds.</span></span>
+<span><span class="co">#&gt; Chain 2: Adjust your expectations accordingly!</span></span>
+<span><span class="co">#&gt; Chain 2: </span></span>
+<span><span class="co">#&gt; Chain 2: </span></span>
+<span><span class="co">#&gt; Chain 2: Iteration:    1 / 4000 [  0%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration:  400 / 4000 [ 10%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration:  800 / 4000 [ 20%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 1001 / 4000 [ 25%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 1400 / 4000 [ 35%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 1800 / 4000 [ 45%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 2200 / 4000 [ 55%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 2600 / 4000 [ 65%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 3000 / 4000 [ 75%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 3400 / 4000 [ 85%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 3800 / 4000 [ 95%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 4000 / 4000 [100%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: </span></span>
+<span><span class="co">#&gt; Chain 2:  Elapsed Time: 0.262 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 2:                0.768 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2:                1.03 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 2:</span></span>
+<span><span class="va">outstandR_mim</span></span>
+<span><span class="co">#&gt; $contrasts</span></span>
+<span><span class="co">#&gt; $contrasts$AB</span></span>
+<span><span class="co">#&gt; [1] 0.5811889</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $contrasts$AC</span></span>
+<span><span class="co">#&gt; [1] -1.071541</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $contrasts$BC</span></span>
+<span><span class="co">#&gt; [1] -1.65273</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $variances</span></span>
+<span><span class="co">#&gt; $variances$AB</span></span>
+<span><span class="co">#&gt; [1] 0.1330941</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $variances$AC</span></span>
+<span><span class="co">#&gt; [1] 0.09669322</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $variances$BC</span></span>
+<span><span class="co">#&gt; [1] 0.03640091</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $CI</span></span>
+<span><span class="co">#&gt; $CI$AB</span></span>
+<span><span class="co">#&gt; [1] -0.1338465  1.2962243</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $CI$AC</span></span>
+<span><span class="co">#&gt; [1] -1.6810021 -0.4620796</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $CI$BC</span></span>
+<span><span class="co">#&gt; [1] -2.026672 -1.278788</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; attr(,"CI")</span></span>
+<span><span class="co">#&gt; [1] 0.95</span></span>
+<span><span class="co">#&gt; attr(,"class")</span></span>
+<span><span class="co">#&gt; [1] "outstandR" "list"</span></span></code></pre></div>
+<p>Combine all outputs</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  `MAIC` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_maic</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span>,</span>
+<span>  `STC` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_stc</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span>,</span>
+<span>  `Gcomp ML` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_gcomp_ml</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span>,</span>
+<span>  `Gcomp Bayes` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_gcomp_stan</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span>,</span>
+<span>  `MIM` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_mim</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left"></th>
+<th align="right">MAIC</th>
+<th align="right">STC</th>
+<th align="right">Gcomp.ML</th>
+<th align="right">Gcomp.Bayes</th>
+<th align="right">MIM</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">AB</td>
+<td align="right">0.5008915</td>
+<td align="right">0.22425</td>
+<td align="right">0.5645192</td>
+<td align="right">0.5614387</td>
+<td align="right">0.5811889</td>
+</tr>
+<tr class="even">
+<td align="left">AC</td>
+<td align="right">-1.1518383</td>
+<td align="right">-1.42848</td>
+<td align="right">-1.0882106</td>
+<td align="right">-1.0912911</td>
+<td align="right">-1.0715409</td>
+</tr>
+<tr class="odd">
+<td align="left">BC</td>
+<td align="right">-1.6527298</td>
+<td align="right">-1.65273</td>
+<td align="right">-1.6527298</td>
+<td align="right">-1.6527298</td>
+<td align="right">-1.6527298</td>
+</tr>
+</tbody>
+</table>
 </div>
-  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+</div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
 
@@ -569,15 +772,15 @@ posterior predictive distribution under the specific treatment.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
     </footer>
 </div>
 
-  
 
-  
+
+
 
   </body>
 </html>

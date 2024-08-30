@@ -4,7 +4,7 @@
 \alias{gcomp_ml.boot}
 \title{G-computation maximum likelihood bootstrap}
 \usage{
-gcomp_ml.boot(data, indices, formula = NULL)
+gcomp_ml.boot(data, indices, R, formula = NULL, ald)
 }
 \arguments{
 \item{data}{Trial data}

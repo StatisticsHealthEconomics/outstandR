@@ -4,13 +4,16 @@
 \alias{mim}
 \title{Multiple imputation marginalization (MIM)}
 \usage{
-mim(ipd.index, ipd.target, M = 1000, n.chains = 2, warmup = 1000, iters = 4000)
+mim(formula, ipd, ald, M = 1000, n.chains = 2, warmup = 1000, iters = 4000)
 }
 \arguments{
-\item{ipd.index, ipd.target}{Index RCT and target covariate datasets}
+\item{ipd}{Individual-level data}
+
+\item{ald}{Aggregate-level data}
 
 \item{M}{Number of syntheses used in analysis stage (high for low Monte Carlo error)}
 }
 \description{
 Multiple imputation marginalization (MIM)
 }
+\keyword{internal}

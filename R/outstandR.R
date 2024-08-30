@@ -40,6 +40,9 @@
 #' # G-computation with Bayesian inference
 #' outstandR_gcomp_stan <- outstandR(AC_IPD, BC_ALD, strategy = strategy_gcomp_stan(lin_form))
 #' 
+#' # Multiple imputation marginalization
+#' outstandR_gcomp_stan <- outstandR(AC_IPD, BC_ALD, strategy = strategy_mim(lin_form))
+#' 
 outstandR <- function(AC.IPD, BC.ALD, strategy, CI = 0.95, ...) {
   
   if (CI <= 0 || CI >= 1) stop("CI argument must be between 0 and 1.")
@@ -66,7 +69,7 @@ outstandR <- function(AC.IPD, BC.ALD, strategy, CI = 0.95, ...) {
   keep_names <- c(term_names, response_names)
   
   ald <- BC.ALD[keep_names]
-  
+
   AC_outstandR <- IPD_stats(strategy, ipd = ipd, ald = ald, ...) 
   BC_outstandR <- ALD_stats(ald = ald) 
   

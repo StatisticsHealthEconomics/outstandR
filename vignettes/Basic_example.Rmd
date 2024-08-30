@@ -78,7 +78,7 @@ This general format of data sets consist of the following.
 
 Note that the wildcard `*` here is usually an integer from 1 or the trial identifier _B_, _C_.
 
-Our data looks like the following.
+Our data look like the following.
 
 ```{r}
 head(AC.IPD)
@@ -139,8 +139,6 @@ outstandR_maic <- outstandR(AC.IPD, BC.ALD, strategy = strategy_maic(formula = l
 
 The returned object is of class `outstandR`.
 
-<!-- Wald-type normal distribution-based 95\% confidence interval are also returned. -->
-
 ```{r outstandR_maic-print}
 outstandR_maic
 ```
@@ -200,7 +198,8 @@ $$
 
 
 ```{r outstandR_gcomp_ml}
-# outstandR_gcomp_ml <- outstandR(AC.IPD, BC.ALD, strategy = strategy_gcomp_ml(formula = lin_form))
+outstandR_gcomp_ml <- outstandR(AC.IPD, BC.ALD, strategy = strategy_gcomp_ml(formula = lin_form))
+outstandR_gcomp_ml
 ```
 
 
@@ -228,3 +227,28 @@ outstandR_gcomp_stan <- outstandR(AC.IPD, BC.ALD, strategy = strategy_gcomp_stan
 outstandR_gcomp_stan
 ```
 
+### Multiple imputation marginalisation
+
+ref
+
+$$
+equation here
+$$
+
+```{r outstandR_mim}
+outstandR_mim <- outstandR(AC.IPD, BC.ALD, strategy = strategy_mim(formula = lin_form))
+outstandR_mim
+```
+
+Combine all outputs
+
+```{r}
+knitr::kable(
+  data.frame(
+  `MAIC` = unlist(outstandR_maic$contrasts),
+  `STC` = unlist(outstandR_stc$contrasts),
+  `Gcomp ML` = unlist(outstandR_gcomp_ml$contrasts),
+  `Gcomp Bayes` = unlist(outstandR_gcomp_stan$contrasts),
+  `MIM` = unlist(outstandR_mim$contrasts))
+)
+```

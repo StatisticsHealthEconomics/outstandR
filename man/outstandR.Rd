@@ -47,6 +47,9 @@ outstandR_stc <- outstandR(AC_IPD, BC_ALD, strategy = strategy_stc(lin_form))
 # G-computation with Bayesian inference
 outstandR_gcomp_stan <- outstandR(AC_IPD, BC_ALD, strategy = strategy_gcomp_stan(lin_form))
 
+# Multiple imputation marginalization
+outstandR_gcomp_stan <- outstandR(AC_IPD, BC_ALD, strategy = strategy_mim(lin_form))
+
 }
 \references{
 \insertRef{RemiroAzocar2022}{outstandR}
