@@ -1,14 +1,4 @@
-#
-
-
-test_that("outstandR basics", {
-  expect_equal(2 * 2, 4)
-})
-
-
-test_that("outstandR errors", {
-  expect_equal(2 * 2, 4)
-})
+# maic, stc
 
 
 #
