@@ -18,6 +18,7 @@
 #' 
 #' @examples
 #' 
+#' \dontrun{
 #' x <- gen_data(
 #'  N = 100,
 #'  b_trt = log(0.17),
@@ -31,16 +32,18 @@
 #'  allocation = 2/3) 
 #' 
 #' head(x)
-#' 
+#' }
 gen_data <- function(N, b_trt, b_X, b_EM, b_0,
                      meanX, sdX, event_rate, 
                      corX, allocation) {
   # 4 baseline covariates
-  rho <- matrix(corX, nrow=4, ncol=4) # set correlation matrix
-  diag(rho) <- rep(1, 4)
+  n_c <- 4
+  
+  rho <- matrix(corX, nrow=n_c, ncol=n_c) # set correlation matrix
+  diag(rho) <- rep(1, n_c)
   N_active <- round(N*allocation)  # number of patients under active treatment
   N_control <- N - N_active        # number of patients under control
-  sd.vec <- rep(sdX, 4)            # vector of standard deviations
+  sd.vec <- rep(sdX, n_c)            # vector of standard deviations
   
   cov.mat <- cor2cov(rho, sd.vec)  # covariance matrix
   
@@ -49,21 +52,22 @@ gen_data <- function(N, b_trt, b_X, b_EM, b_0,
   X_active <- 
     as.data.frame(
       MASS::mvrnorm(n = N_active,
-                    mu = rep(meanX, 4),
+                    mu = rep(meanX, n_c),
                     Sigma = cov.mat))
   
   # patients under control treatment
   X_control <-
     as.data.frame(
       MASS::mvrnorm(n = N_control,
-                    mu = rep(meanX, 4),
+                    mu = rep(meanX, n_c),
                     Sigma = cov.mat))  
   # all patients
   X <- rbind(X_active, X_control)
   colnames(X) <- c("X1", "X2", "X3", "X4")
   
   # treatment assignment (1: active; 0: control)
-  trt <- c(rep(1,N_active), rep(0,N_control))
+  trt <- c(rep(1, N_active),
+           rep(0, N_control))
   
   # generate binary outcomes using logistic regression
   # linear predictor

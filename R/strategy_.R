@@ -22,7 +22,6 @@
 #' \eqn{t} is equal to the odds of being enrolled in the _AC_ trial vs the _AB_ trial.
 #' 
 #' @param R The number of resamples used for the non-parametric bootstrap
-#' @template args-ald
 #' @return `maic` class object
 #' 
 #' @importFrom utils modifyList
