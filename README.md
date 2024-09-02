@@ -21,12 +21,12 @@ Key features include:
 
 This R package contains code originally written for the papers:
 
-> Antonio Remiro-Azócar, Anna Heath, Gianluca Baio. _Parametric G-computation for Compatible Indirect Treatment Comparisons with Limited Individual Patient Data._
-> Res Synth Methods. 2022;1–31.
+> Remiro-Azócar, A., Heath, A. & Baio, G. (2022) _Parametric G-computation for Compatible Indirect Treatment Comparisons with Limited Individual Patient Data._
+> Res Synth Methods;1–31.
 
 and
 
-> Remiro-Azócar, A., Heath, A., & Baio, G. (2023). _Model-based standardization using multiple imputation. BMC Medical Research Methodology_, 1–15. https://doi.org/10.1186/s12874-024-02157-x
+> Remiro-Azócar, A., Heath, A., & Baio, G. (2023) _Model-based standardization using multiple imputation. BMC Medical Research Methodology_, 1–15. https://doi.org/10.1186/s12874-024-02157-x
 
 ## Installation
 Install the [development version from GitHub](https://github.com/StatisticsHealthEconomics/) using `remotes`:
