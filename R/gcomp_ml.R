@@ -32,6 +32,7 @@ gcomp_ml.boot <- function(data, indices,
 #' @return Difference of log-odds 
 #' @seealso [strategy_gcomp_ml()], [gcomp_ml.boot()]
 #' @importFrom copula normalCopula mvdc rMvdc
+#' @importFrom stats predict glm
 #' @keywords internal
 #'
 gcomp_ml_log_odds_ratio <- function(formula, ipd, ald) {
@@ -72,7 +73,7 @@ gcomp_ml_log_odds_ratio <- function(formula, ipd, ald) {
 #' @param formula Linear regression `formula` object
 #' @template args-ipd
 #' @template args-ald
-#'
+#' @importFrom copula normalCopula mvdc
 #' @keywords internal
 #' 
 simulate_ALD_pseudo_pop <- function(formula, ipd, ald) {

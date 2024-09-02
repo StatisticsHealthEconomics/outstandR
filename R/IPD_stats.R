@@ -19,6 +19,7 @@ IPD_stats <- function(strategy, ipd, ald, ...)
 
 
 #' @rdname IPD_stats
+#' @importFrom utils methods
 #' @export
 IPD_stats.default <- function(...) {
   strategy_classes <- sub("IPD_stats\\.", "", methods(IPD_stats)[-1])
@@ -31,7 +32,7 @@ IPD_stats.default <- function(...) {
 #' @section Matching-adjusted indirect comparison statistics:
 #' Marginal _A_ vs _C_ treatment effect estimates
 #' using bootstrapping sampling.
-#'
+#' @importFrom boot boot
 #' @export
 #' 
 IPD_stats.maic <- function(strategy,
@@ -57,7 +58,7 @@ IPD_stats.maic <- function(strategy,
 #' IPD from the _AC_ trial are used to fit a regression model describing the
 #' observed outcomes \eqn{y} in terms of the relevant baseline characteristics \eqn{x} and
 #' the treatment variable \eqn{z}.
-#' 
+#' @importFrom stats glm
 #' @export
 #' 
 IPD_stats.stc <- function(strategy,
@@ -84,7 +85,7 @@ IPD_stats.stc <- function(strategy,
 #' @rdname IPD_stats
 #' @section G-computation maximum likelihood statistics:
 #' Compute a non-parametric bootstrap with \eqn{R=1000} resamples.
-#'
+#' @importFrom boot boot
 #' @export
 #'
 IPD_stats.gcomp_ml <- function(strategy,
@@ -105,7 +106,7 @@ IPD_stats.gcomp_ml <- function(strategy,
 #' @section G-computation Bayesian statistics:
 #' Using Stan, compute marginal log-odds ratio for _A_ vs _C_ for each MCMC sample
 #' by transforming from probability to linear predictor scale.
-#'
+#' @importFrom stats qlogis
 #' @export
 #'
 IPD_stats.gcomp_stan <- function(strategy,
@@ -127,7 +128,7 @@ IPD_stats.gcomp_stan <- function(strategy,
 #' Using Stan, compute marginal log-odds ratio for _A_ vs _C_ for each MCMC sample
 #' by transforming from probability to linear predictor scale. Approximate by 
 #' using imputation and combining estimates using Rubin's rules, in contrast to [IPD_stats.gcomp_stan()].
-#' 
+#' @import stats
 #' @export
 #'
 IPD_stats.mim <- function(strategy,

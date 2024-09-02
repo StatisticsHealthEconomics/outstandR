@@ -1,5 +1,5 @@
 
-#
+#' @export
 summary.outstandR <- function(object, ...) {
   
   ans <- NULL

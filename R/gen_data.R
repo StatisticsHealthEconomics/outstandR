@@ -13,6 +13,7 @@
 #' @param allocation Allocation to active treatment as proportion of total; 0 to 1
 #' @return Data frame of `X`, `trt` and `y`
 #' 
+#' @importFrom MASS mvrnorm
 #' @keywords internal
 #' 
 #' @examples

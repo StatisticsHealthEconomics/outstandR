@@ -7,7 +7,7 @@
 #' 
 #' @param X_EM Centred \eqn{S=1} effect modifiers; matrix or data frame
 #' @return Estimated weights for each individual; vector
-#' 
+#' @importFrom stats optim
 #' @references
 #' \insertRef{Signorovitch2010}{outstandR}
 #' @keywords internal

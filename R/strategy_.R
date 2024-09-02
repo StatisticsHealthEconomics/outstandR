@@ -23,8 +23,9 @@
 #' 
 #' @param R The number of resamples used for the non-parametric bootstrap
 #' @template args-ald
-#'
 #' @return `maic` class object
+#' 
+#' @importFrom utils modifyList
 #' @export
 #'
 strategy_maic <- function(formula = NULL,
@@ -53,8 +54,8 @@ strategy_maic <- function(formula = NULL,
 #' \eqn{\mu_{t(AB)}(X)} is the expected outcome of an individual assigned
 #' treatment \eqn{t} with covariate values \eqn{X} which is transformed onto a
 #' chosen linear predictor scale with link function \eqn{g(\cdot)}.
-#' 
 #' @return `stc` class object
+#' @importFrom utils modifyList
 #' @export
 # 
 strategy_stc <- function(formula = NULL) {
@@ -98,8 +99,8 @@ strategy_stc <- function(formula = NULL) {
 #' }
 #'
 #' @param R The number of resamples used for the non-parametric bootstrap
-#' 
 #' @return `gcomp_ml` class object
+#' @importFrom utils modifyList
 #' @export
 #'
 strategy_gcomp_ml <- function(formula = NULL,
@@ -140,8 +141,8 @@ strategy_gcomp_ml <- function(formula = NULL,
 #' }
 #' In practice, the integrals above can be approximated numerically, using full Bayesian
 #' estimation via Markov chain Monte Carlo (MCMC) sampling.
-#'
 #' @return `gcomp_stan` class object
+#' @importFrom utils modifyList
 #' @export
 #'
 strategy_gcomp_stan <- function(formula = NULL) {
@@ -156,8 +157,8 @@ strategy_gcomp_stan <- function(formula = NULL) {
 #' @rdname strategy
 #' 
 #' @section Multiple imputation marginalization (MIM):
-#' 
 #' @return `mim` class object
+#' @importFrom utils modifyList
 #' @export
 # 
 strategy_mim <- function(formula = NULL) {

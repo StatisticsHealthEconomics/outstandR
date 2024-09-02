@@ -1,5 +1,5 @@
 
-#'
+#' @export
 print.outstandR <- function(x, newline = TRUE) {
   
   cat("\nContrasts:", x$contrasts, "\n")
