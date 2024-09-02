@@ -5,11 +5,19 @@
 
 [![R-CMD-check](https://github.com/StatisticsHealthEconomics/outstandR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/StatisticsHealthEconomics/outstandR/actions/workflows/R-CMD-check.yaml)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 <!-- badges: end -->
 
 > Model-based Standardisation with G-estimation
 
 ## Overview
+
+`outstandR` is an R package designed to facilitate **outcome regression standardisation** using model-based approaches, particularly focusing on G-estimation. The package provides tools to apply standardisation techniques for indirect treatment comparisons, especially in scenarios with limited individual patient data.
+
+Key features include:
+- **G-computation methods**
+- **Multiple imputation marginalisation**
+- **MAIC, STC** for comparison
 
 This R package contains code originally written for the papers:
 
@@ -28,10 +36,10 @@ remotes::install_github("StatisticsHealthEconomics/outstandR")
 ```
 
 ## License
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+This package is licensed under the GPLv3. For more information, see [LICENSE](https://www.gnu.org/licenses/gpl-3.0).
 
 ## Contributing
-Please submit contributions through `Pull Requests`, following the [contributing guidelines](https://github.com/n8thangreen/BCEA/blob/dev/CONTRIBUTING.md).
+We welcome contributions! Please submit contributions through `Pull Requests`, following the [contributing guidelines](https://github.com/n8thangreen/BCEA/blob/dev/CONTRIBUTING.md).
 To report issues and/or seek support, please file a new ticket in the
 [issue](https://github.com/StatisticsHealthEconomics/outstandR/issues) tracker.
 
