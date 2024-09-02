@@ -68,6 +68,11 @@ gcomp_ml_log_odds_ratio <- function(formula, ipd, ald) {
 
 
 #' Synthetic cohort using normal copula
+#'
+#' @param formula Linear regression `formula` object
+#' @template args-ipd
+#' @template args-ald
+#'
 #' @keywords internal
 #' 
 simulate_ALD_pseudo_pop <- function(formula, ipd, ald) {

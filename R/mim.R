@@ -1,10 +1,14 @@
 
 #' Multiple imputation marginalization (MIM)
 #' 
-#' @param formuala
+#' @param formula Linear regression `formula` object
 #' @template args-ipd
 #' @template args-ald
 #' @param M Number of syntheses used in analysis stage (high for low Monte Carlo error)
+#' @param n.chain Number of chains
+#' @param warmup Number of warm-up iterations
+#' @param iters Number of total iterations
+#' 
 #' @importFrom rstanarm posterior_predict stan_glm
 #' @keywords internal
 #' 
@@ -65,6 +69,11 @@ mim <- function(formula,
 
 #' Wald-type interval estimates
 #' Constructed using t-distribution with nu degrees of freedom
+#'
+#' @param M Number of syntheses used in analysis stage (high for low Monte Carlo error)
+#' @param bar.v "within" variance (average of variance point estimates)
+#' @param b "between" variance (sample variance of point estimates)
+#'
 #' @keywords internal
 #' 
 wald_type_interval <- function(M, bar.v, b) {
@@ -73,6 +82,11 @@ wald_type_interval <- function(M, bar.v, b) {
 
 #' Variance estimate by pooling
 #' Use combining rules to estimate
+#' 
+#' @param M Number of syntheses used in analysis stage (high for low Monte Carlo error)
+#' @param bar.v "within" variance (average of variance point estimates)
+#' @param b "between" variance (sample variance of point estimates)
+#' 
 #' @keywords internal
 #' 
 var_by_pooling <- function(M, bar.v, b) {

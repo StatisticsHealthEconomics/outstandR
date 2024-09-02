@@ -7,11 +7,19 @@
 mim(formula, ipd, ald, M = 1000, n.chains = 2, warmup = 1000, iters = 4000)
 }
 \arguments{
+\item{formula}{Linear regression \code{formula} object}
+
 \item{ipd}{Individual-level data}
 
 \item{ald}{Aggregate-level data}
 
 \item{M}{Number of syntheses used in analysis stage (high for low Monte Carlo error)}
+
+\item{warmup}{Number of warm-up iterations}
+
+\item{iters}{Number of total iterations}
+
+\item{n.chain}{Number of chains}
 }
 \description{
 Multiple imputation marginalization (MIM)

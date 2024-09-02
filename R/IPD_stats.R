@@ -124,7 +124,10 @@ IPD_stats.gcomp_stan <- function(strategy,
 
 #' @rdname IPD_stats
 #' @section Multiple imputation marginalisation:
-#'
+#' Using Stan, compute marginal log-odds ratio for _A_ vs _C_ for each MCMC sample
+#' by transforming from probability to linear predictor scale. Approximate by 
+#' using imputation and combining estimates using Rubin's rules, in contrast to [IPD_stats.gcomp_stan()].
+#' 
 #' @export
 #'
 IPD_stats.mim <- function(strategy,

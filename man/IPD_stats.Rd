@@ -66,5 +66,8 @@ by transforming from probability to linear predictor scale.
 
 \section{Multiple imputation marginalisation}{
 
+Using Stan, compute marginal log-odds ratio for \emph{A} vs \emph{C} for each MCMC sample
+by transforming from probability to linear predictor scale. Approximate by
+using imputation and combining estimates using Rubin's rules, in contrast to \code{\link[=IPD_stats.gcomp_stan]{IPD_stats.gcomp_stan()}}.
 }
 

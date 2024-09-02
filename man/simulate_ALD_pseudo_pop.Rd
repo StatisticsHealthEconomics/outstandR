@@ -6,6 +6,13 @@
 \usage{
 simulate_ALD_pseudo_pop(formula, ipd, ald)
 }
+\arguments{
+\item{formula}{Linear regression \code{formula} object}
+
+\item{ipd}{Individual-level data}
+
+\item{ald}{Aggregate-level data}
+}
 \description{
 Synthetic cohort using normal copula
 }

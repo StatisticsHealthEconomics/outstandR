@@ -7,6 +7,13 @@ Use combining rules to estimate}
 \usage{
 var_by_pooling(M, bar.v, b)
 }
+\arguments{
+\item{M}{Number of syntheses used in analysis stage (high for low Monte Carlo error)}
+
+\item{bar.v}{"within" variance (average of variance point estimates)}
+
+\item{b}{"between" variance (sample variance of point estimates)}
+}
 \description{
 Variance estimate by pooling
 Use combining rules to estimate

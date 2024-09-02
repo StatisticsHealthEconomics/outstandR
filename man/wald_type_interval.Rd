@@ -7,6 +7,13 @@ Constructed using t-distribution with nu degrees of freedom}
 \usage{
 wald_type_interval(M, bar.v, b)
 }
+\arguments{
+\item{M}{Number of syntheses used in analysis stage (high for low Monte Carlo error)}
+
+\item{bar.v}{"within" variance (average of variance point estimates)}
+
+\item{b}{"between" variance (sample variance of point estimates)}
+}
 \description{
 Wald-type interval estimates
 Constructed using t-distribution with nu degrees of freedom
