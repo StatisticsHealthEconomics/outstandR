@@ -1,0 +1,177 @@
+---
+title: "COPD Analysis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Basic Example}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+## Analysis
+
+First, let us load necessary packages.
+
+```{r setup, warning=FALSE, message=FALSE}
+library(boot)      # non-parametric bootstrap in MAIC and ML G-computation
+library(copula)    # simulating BC covariates from Gaussian copula
+library(rstanarm)  # fit outcome regression, draw outcomes in Bayesian G-computation
+library(outstandR)
+```
+
+### Data
+
+```{r load-data}
+set.seed(555)
+
+AC.IPD <- read.csv(here::here("raw-data", "AC_IPD.csv"))  # AC patient-level data
+BC.ALD <- read.csv(here::here("raw-data", "BC_ALD.csv"))  # BC aggregate-level data
+```
+
+This general format of data sets consist of the following.
+
+#### `AC.IPD`: Individual patient data
+
+-   `X*`: patient measurements
+-   `trt`: treatment ID
+-   `y`: (logical) indicator of whether event was observed
+
+#### `BC.ALD`: Aggregate-level data
+
+-   `mean.X*`: mean patient measurement
+-   `sd.X*`: standard deviation of patient measurement
+-   `y.*.sum`: total number of events
+-   `y.*.bar`: total number of events
+-   `N.*`: total number of individuals
+
+Note that the wildcard `*` here is usually an integer from 1 or the trial identifier _B_, _C_.
+
+Our data look like the following.
+
+```{r}
+head(AC.IPD)
+```
+
+There are 4 correlated continuous covariates generated per subject, simulated from a multivariate normal distribution.
+
+```{r}
+BC.ALD
+```
+
+### Output statistics
+
+
+
+## Model fitting in R
+
+
+### MAIC
+
+The formula used in this model is
+
+$$
+y = X_3 + X_4 + \beta_t X_1 + \beta_t X_2
+$$
+which corresponds to the following `R` `formula` object passed as an argument to the strategy function.
+
+```{r}
+lin_form <- as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")
+```
+
+
+```{r outstandR_maic}
+outstandR_maic <- outstandR(AC.IPD, BC.ALD, strategy = strategy_maic(formula = lin_form))
+```
+
+The returned object is of class `outstandR`.
+
+```{r outstandR_maic-print}
+outstandR_maic
+```
+
+
+### STC
+
+$$
+g(\mu_n) = \beta_0 + (\boldsymbol{x}_n - \boldsymbol{\theta}) \beta_1 + (\beta_z + (\boldsymbol{x_n^{EM}} - \boldsymbol{\theta^{EM}}) \boldsymbol{\beta_2}) \; \mbox{I}(z_n=1)
+$$
+
+$$
+y = X_3 + X_4 + \beta_t(X_1 - \bar{X_1}) + \beta_t(X_2 - \bar{X_2})
+$$
+However, `outstandR()` knows how to handle this so we can simply pass the same (uncentred) formula as before.
+
+```{r outstandR_stc}
+outstandR_stc <- outstandR(AC.IPD, BC.ALD, strategy = strategy_stc(formula = lin_form))
+outstandR_stc
+```
+
+
+### Parametric G-computation with maximum-likelihood estimation 
+
+
+$$
+g(\mu_n) = \beta_0 + \boldsymbol{x}_n \boldsymbol{\beta_1} + (\beta_z + \boldsymbol{x_n^{EM}} \boldsymbol{\beta_2}) \; \mbox{I}(z_n = 1)
+$$
+
+
+$$
+\hat{\mu}_0 = \int_{x^*} g^{-1} (\hat{\beta}_0 + x^* \hat{\beta}_1 ) p(x^*) \; \text{d}x^*
+$$
+
+$$
+\hat{\Delta}^{(2)}_{10} = g(\hat{\mu}_1) - g(\hat{\mu}_0)
+$$
+
+
+```{r outstandR_gcomp_ml}
+outstandR_gcomp_ml <- outstandR(AC.IPD, BC.ALD, strategy = strategy_gcomp_ml(formula = lin_form))
+outstandR_gcomp_ml
+```
+
+
+### Bayesian G-computation with MCMC 
+
+
+$$
+p(y^*_{^z*} \mid \mathcal{D}_{AC}) = \int_{x^*} p(y^* \mid z^*, x^*, \mathcal{D}_{AC}) p(x^* \mid \mathcal{D}_{AC})\; \text{d}x^*
+$$
+$$
+= \int_{x^*} \int_{\beta} p(y^* \mid z^*, x^*, \beta) p(x^* \mid \beta) p(\beta \mid \mathcal{D}_{AC})\; d\beta \; \text{d}x^*
+$$
+
+```{r outstandR_gcomp_stan}
+outstandR_gcomp_stan <- outstandR(AC.IPD, BC.ALD, strategy = strategy_gcomp_stan(formula = lin_form))
+outstandR_gcomp_stan
+```
+
+### Multiple imputation marginalisation
+
+
+```{r outstandR_mim}
+outstandR_mim <- outstandR(AC.IPD, BC.ALD, strategy = strategy_mim(formula = lin_form))
+outstandR_mim
+```
+
+Combine all outputs
+
+```{r}
+knitr::kable(
+  data.frame(
+  `MAIC` = unlist(outstandR_maic$contrasts),
+  `STC` = unlist(outstandR_stc$contrasts),
+  `Gcomp ML` = unlist(outstandR_gcomp_ml$contrasts),
+  `Gcomp Bayes` = unlist(outstandR_gcomp_stan$contrasts),
+  `MIM` = unlist(outstandR_mim$contrasts))
+)
+```
