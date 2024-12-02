@@ -28,8 +28,11 @@
 #' @export
 #'
 strategy_maic <- function(formula = NULL,
+                          family = gaussian(link = "identity"),
                           R = 1000) {
   check_formula(formula)
+  check_family(family)
+  
   default_args <- formals()
   args <- c(formula = formula, as.list(match.call())[-c(1,2)])
   args <- modifyList(default_args, args)
@@ -57,8 +60,10 @@ strategy_maic <- function(formula = NULL,
 #' @importFrom utils modifyList
 #' @export
 # 
-strategy_stc <- function(formula = NULL) {
+strategy_stc <- function(formula = NULL,
+                         family = gaussian(link = "identity")) {
   check_formula(formula)
+  check_family(family)
   
   default_args <- formals()
   args <- c(formula = formula, as.list(match.call())[-c(1,2)])
@@ -103,8 +108,10 @@ strategy_stc <- function(formula = NULL) {
 #' @export
 #'
 strategy_gcomp_ml <- function(formula = NULL,
+                              family = gaussian(link = "identity"),
                               R = 1000) {
   check_formula(formula)
+  check_family(family)
   
   default_args <- formals()
   args <- c(formula = formula, as.list(match.call())[-c(1,2)])
@@ -144,8 +151,10 @@ strategy_gcomp_ml <- function(formula = NULL,
 #' @importFrom utils modifyList
 #' @export
 #'
-strategy_gcomp_stan <- function(formula = NULL) {
+strategy_gcomp_stan <- function(formula = NULL,
+                                family = gaussian(link = "identity")) {
   check_formula(formula)
+  check_family(family)
   
   default_args <- formals()
   args <- c(formula = formula, as.list(match.call())[-c(1,2)])
@@ -160,8 +169,10 @@ strategy_gcomp_stan <- function(formula = NULL) {
 #' @importFrom utils modifyList
 #' @export
 # 
-strategy_mim <- function(formula = NULL) {
+strategy_mim <- function(formula = NULL,
+                         family = gaussian(link = "identity")) {
   check_formula(formula)
+  check_family(family)
   
   default_args <- formals()
   args <- c(formula = formula, as.list(match.call())[-c(1,2)])
@@ -177,10 +188,21 @@ strategy_mim <- function(formula = NULL) {
 #'
 #' @param strategy Class name from `strategy_maic`, `strategy_stc`, `strategy_gcomp_ml`, `strategy_gcomp_stan`
 #' @param formula Linear regression `formula` object
+#' @param family `family` object from the `stats` library
 #' @param ... Additional arguments
 #'
 #' @export
 #'
 new_strategy <- function(strategy, ...) {
   structure(list(...), class = c(strategy, "strategy", "list"))
+}
+
+#
+is_family <- function(obj) inherits(obj, "family")
+
+#
+check_family <- function(obj) {
+  if (!is_family(obj)) {
+    stop("family must be a family object")
+  }
 }

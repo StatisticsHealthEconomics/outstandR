@@ -35,6 +35,7 @@ Generate simulated datasets of IPD covariates and outcome for a trial
 }
 \examples{
 
+\dontrun{
 x <- gen_data(
  N = 100,
  b_trt = log(0.17),
@@ -48,6 +49,6 @@ x <- gen_data(
  allocation = 2/3) 
 
 head(x)
-
+}
 }
 \keyword{internal}

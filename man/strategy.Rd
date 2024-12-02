@@ -10,28 +10,32 @@
 \alias{new_strategy}
 \title{New strategy objects}
 \usage{
-strategy_maic(formula = NULL, R = 1000)
+strategy_maic(formula = NULL, family = gaussian(link = "identity"), R = 1000)
 
-strategy_stc(formula = NULL)
+strategy_stc(formula = NULL, family = gaussian(link = "identity"))
 
-strategy_gcomp_ml(formula = NULL, R = 1000)
+strategy_gcomp_ml(
+  formula = NULL,
+  family = gaussian(link = "identity"),
+  R = 1000
+)
 
-strategy_gcomp_stan(formula = NULL)
+strategy_gcomp_stan(formula = NULL, family = gaussian(link = "identity"))
 
-strategy_mim(formula = NULL)
+strategy_mim(formula = NULL, family = gaussian(link = "identity"))
 
 new_strategy(strategy, ...)
 }
 \arguments{
 \item{formula}{Linear regression \code{formula} object}
 
+\item{family}{\code{family} object from the \code{stats} library}
+
 \item{R}{The number of resamples used for the non-parametric bootstrap}
 
 \item{strategy}{Class name from \code{strategy_maic}, \code{strategy_stc}, \code{strategy_gcomp_ml}, \code{strategy_gcomp_stan}}
 
 \item{...}{Additional arguments}
-
-\item{ald}{Aggregate-level data}
 }
 \value{
 \code{maic} class object
