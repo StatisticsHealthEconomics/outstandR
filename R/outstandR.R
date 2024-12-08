@@ -50,50 +50,13 @@ outstandR <- function(AC.IPD, BC.ALD, strategy, CI = 0.95, ...) {
   if (!inherits(strategy, "strategy"))
     stop("strategy argument must be a class strategy.")
   
-  # select data according to formula
-  ipd <- model.frame(strategy$formula, data = AC.IPD)
-  
-  term.labels <- attr(terms(strategy$formula), "term.labels")
-  mean_names <- paste0("mean.", term.labels)
-  sd_names <- paste0("sd.", term.labels)
-  term_names <- c(mean_names, sd_names)
-  
-  # remove treatment labels
-  term_names <- sort(term_names[!grepl(pattern = "trt", term_names)])
-  
-  # replace outcome variable name
-  response_var <- all.vars(strategy$formula)[1]
-  response_names <- gsub(pattern = "y", replacement = response_var,
-                         x = c("y.B.sum", "y.B.bar", "N.B", "y.C.sum", "y.C.bar", "N.C")) 
-  
-  keep_names <- c(term_names, response_names)
-  
-  ald <- BC.ALD[keep_names]
+  ipd <- prep_ipd(strategy$formula, AC.IPD)
+  ald <- prep_ald(strategy$formula, BC.ALD)
 
-  AC_outstandR <- IPD_stats(strategy, ipd = ipd, ald = ald, ...) 
-  BC_outstandR <- ALD_stats(ald = ald) 
+  AC_stats <- IPD_stats(strategy, ipd = ipd, ald = ald, ...) 
+  BC_stats <- ALD_stats(ald = ald) 
   
-  upper <- 0.5 + CI/2
-  ci_range <- c(1-upper, upper)
-  
-  contrasts <- list(
-    AB = AC_outstandR$mean - BC_outstandR$mean,
-    AC = AC_outstandR$mean,
-    BC = BC_outstandR$mean)
-  
-  contrast_variances <- list(
-    AB = AC_outstandR$var + BC_outstandR$var,
-    AC = AC_outstandR$var,
-    BC = BC_outstandR$var)
-  
-  contrast_ci <- list(
-    AB = contrasts$AB + qnorm(ci_range)*as.vector(sqrt(contrast_variances$AB)),
-    AC = contrasts$AC + qnorm(ci_range)*as.vector(sqrt(contrast_variances$AC)),
-    BC = contrasts$BC + qnorm(ci_range)*as.vector(sqrt(contrast_variances$BC)))
-  
-  stats <- list(contrasts = contrasts,
-                variances = contrast_variances,
-                CI = contrast_ci)
+  stats <- contrast_stats(AC_stats, BC_stats, CI)
   
   structure(stats,
             CI = CI,
