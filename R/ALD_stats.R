@@ -9,8 +9,8 @@
 #' @export
 #'
 ALD_stats <- function(strategy, ald, treatments = list("B", "C")) {
-  list(mean = marginal_treatment_effect(ald, treatments, link = strategy$family$link),
-       var = marginal_variance(ald, treatments, link = strategy$family$link))
+  list(mean = marginal_treatment_effect(ald, treatments, link = strategy$family),
+       var = marginal_variance(ald, treatments, link = strategy$family))
 }
 
 
@@ -24,8 +24,8 @@ ALD_stats <- function(strategy, ald, treatments = list("B", "C")) {
 #' @return Sum of variances
 #' @export
 #' 
-marginal_variance <- function(ald, treatments = list("B", "C"), link) {
-  trial_vars <- purrr::map_dbl(treatments, ~trial_variance(ald, .x, link))
+marginal_variance <- function(ald, treatments = list("B", "C"), family) {
+  trial_vars <- purrr::map_dbl(treatments, ~trial_variance(ald, .x, family$link))
   sum(trial_vars)
 }
 
@@ -44,8 +44,8 @@ marginal_variance <- function(ald, treatments = list("B", "C"), link) {
 #' @return Trial effect difference
 #' @export
 #' 
-marginal_treatment_effect <- function(ald, treatments = list("B", "C"), link) {
-  trial_effect <- purrr::map_dbl(treatments, ~trial_treatment_effect(ald, .x, link))
+marginal_treatment_effect <- function(ald, treatments = list("B", "C"), family) {
+  trial_effect <- purrr::map_dbl(treatments, ~trial_treatment_effect(ald, .x, family))
   trial_effect[2] - trial_effect[1]
 }
 
@@ -61,12 +61,14 @@ marginal_treatment_effect <- function(ald, treatments = list("B", "C"), link) {
 #' @return Value
 #' @export
 #'
-trial_variance <- function(ald, tid, link = "logit") {
+trial_variance <- function(ald, tid, family) {
   
   y <- ald[[paste0("y.", tid, ".sum")]]
   N <- ald[[paste0("N.", tid)]]
-  
-  link_transform_var(y, N, link)
+
+  ##TODO: replace?
+  #(1 / (family$mu.eta(y/N)^2)) * family$variance(y/N)  # delta method
+  link_transform_var(y, N, family$link)
 }
 
 
@@ -77,19 +79,21 @@ trial_variance <- function(ald, tid, link = "logit") {
 #' 
 #' @param ald Aggregate-level data
 #' @param tid Treatment label
-#' @param link Link function; default "logit"
+#' @param family
 #'
 #' @return Value
 #' @export
 #'
-trial_treatment_effect <- function(ald, tid, link = "logit") {
+trial_treatment_effect <- function(ald, tid, family) {
   ##TODO: should this be instead i.e. log odds? it was * before
   # var_string <- glue::glue("log(ald$y.{tid}.sum / (ald$N.{tid} - ald$y.{tid}.sum))")
   
   # estimated probability
   p_hat <- ald[[paste0("y.", tid, ".sum")]] / ald[[paste0("N.", tid)]]
-  
-  link_transform(p_hat, link)
+
+  ##TODO: replace?
+  #family$linkfun(p_hat)
+  link_transform(p_hat, family$link)
 }
 
 
