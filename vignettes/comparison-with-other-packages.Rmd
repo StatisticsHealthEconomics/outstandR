@@ -1,0 +1,30 @@
+---
+title: "Comparison with other packages"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{comparison-with-other-packages}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(outstandR)
+```
+
+There are already a few widely-used R packages in CRAN to perform model-based standardization, such as `{marginaleffects}` and `{stdReg}`.
+
+
+```{r marginaleffects}
+
+```
+
+```{r stdReg}
+
+```
