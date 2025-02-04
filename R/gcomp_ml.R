@@ -12,20 +12,22 @@
 #' @keywords internal
 #' 
 gcomp_ml.boot <- function(data, indices,
-                          R, formula = NULL, ald) {
+                          R, formula = NULL, family, ald) {
   dat <- data[indices, ]
-  gcomp_ml_log_odds_ratio(formula, dat, ald) 
+  gcomp_ml_ate(formula, family, dat, ald) 
 }
 
 
-#' G-computation Maximum Likelihood Log-Odds Ratio
+#' G-computation Maximum Likelihood ATE
 #' 
+#' @section Log-Odds Ratio: 
 #' Marginal _A_ vs _C_ log-odds ratio (mean difference in expected log-odds)
 #' estimated by transforming from probability to linear predictor scale.
 #'
 #' \eqn{\log(\hat{\mu}_A/(1 - \hat{\mu}_A)) - \log(\hat{\mu}_C/(1 - \hat{\mu}_C))}
 #'
 #' @param formula Linear regression `formula` object
+#' @param family Family object
 #' @template args-ipd
 #' @template args-ald
 #'
@@ -35,7 +37,9 @@ gcomp_ml.boot <- function(data, indices,
 #' @importFrom stats predict glm
 #' @keywords internal
 #'
-gcomp_ml_log_odds_ratio <- function(formula, ipd, ald) {
+gcomp_ml_ate <- function(formula,
+                         family,
+                         ipd, ald) {
   
   if (!inherits(formula, "formula"))
     stop("formula argument must be of formula class.")
@@ -45,7 +49,7 @@ gcomp_ml_log_odds_ratio <- function(formula, ipd, ald) {
   # outcome logistic regression fitted to IPD using maximum likelihood
   fit <- glm(formula,
              data = ipd,
-             family = binomial)
+             family = family)
   
   # counterfactual datasets
   data.trtA <- data.trtC <- x_star
@@ -63,8 +67,7 @@ gcomp_ml_log_odds_ratio <- function(formula, ipd, ald) {
   hat.mu.A <- mean(hat.mu.A.i) # (marginal) mean probability prediction under A
   hat.mu.C <- mean(hat.mu.C.i) # (marginal) mean probability prediction under C
   
-  log(hat.mu.A/(1-hat.mu.A)) - log(hat.mu.C/(1-hat.mu.C))
-  # qlogis(hat.mu.A) - qlogis(hat.mu.C)#'
+  calculate_ate(hat.mu.A, hat.mu.C, family = strategy$family)
 }
 
 

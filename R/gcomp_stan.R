@@ -5,6 +5,7 @@
 #' from the Bayesian G-computation method using Hamiltonian Monte Carlo.
 #' 
 #' @param formula Linear regression `formula` object
+#' @param family A `family` object
 #' @template args-ipd
 #' @template args-ald
 #'
@@ -14,6 +15,7 @@
 #' @keywords internal
 #'
 gcomp_stan <- function(formula = NULL,
+                       family = gaussian(link = "identity"),
                        ipd, ald) {
   
   if (!inherits(formula, "formula"))
@@ -25,7 +27,7 @@ gcomp_stan <- function(formula = NULL,
   outcome.model <-
     rstanarm::stan_glm(formula,
                        data = ipd,
-                       family = binomial,
+                       family = family,
                        algorithm = "sampling",
                        iter = 4000, warmup = 2000, chains = 2)
   
@@ -40,7 +42,7 @@ gcomp_stan <- function(formula = NULL,
   
   # draw binary responses from posterior predictive distribution
   list(
-    y.star.A = rstanarm::posterior_predict(outcome.model, newdata=data.trtA),
-    y.star.C = rstanarm::posterior_predict(outcome.model, newdata=data.trtC))
+    y.star.A = rstanarm::posterior_predict(outcome.model, newdata = data.trtA),
+    y.star.C = rstanarm::posterior_predict(outcome.model, newdata = data.trtC))
 }
 

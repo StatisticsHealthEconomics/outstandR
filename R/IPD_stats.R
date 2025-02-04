@@ -72,7 +72,7 @@ IPD_stats.stc <- function(strategy,
   
   fit <- glm(strategy$formula,
              data = ipd,
-             family = binomial)
+             family = strategy$family)
   
   treat_nm <- get_treatment_name(strategy$formula)
   
@@ -95,6 +95,7 @@ IPD_stats.gcomp_ml <- function(strategy,
                              statistic = gcomp_ml.boot,
                              R = strategy$R,
                              formula = strategy$formula,
+                             family = strategy$family,
                              ald = ald)
   
   list(mean = mean(AC_maic_boot$t),
@@ -113,10 +114,14 @@ IPD_stats.gcomp_stan <- function(strategy,
                                  ipd, ald) {
   
   ppv <- gcomp_stan(formula = strategy$formula,
+                    family = strategy$family,
                     ipd = ipd, ald = ald)
+
+  # posterior means for each treatment group
+  mean_A <- rowMeans(ppv$y.star.A)
+  mean_C <- rowMeans(ppv$y.star.C)
   
-  hat.delta.AC <-
-    qlogis(rowMeans(ppv$y.star.A)) - qlogis(rowMeans(ppv$y.star.C))
+  hat.delta.AC <- calculate_ate(mean_A, mean_B, family = strategy$family)
   
   list(mean = mean(hat.delta.AC),
        var = var(hat.delta.AC))
@@ -135,6 +140,7 @@ IPD_stats.mim <- function(strategy,
                           ipd, ald) {
   
   mis_res <- mim(formula = strategy$formula,
+                 family = strategy$family,
                  ipd, ald)
   
   M <- mis_res$M

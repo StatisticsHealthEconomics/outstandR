@@ -54,7 +54,7 @@ outstandR <- function(AC.IPD, BC.ALD, strategy, CI = 0.95, ...) {
   ald <- prep_ald(strategy$formula, BC.ALD)
 
   AC_stats <- IPD_stats(strategy, ipd = ipd, ald = ald, ...) 
-  BC_stats <- ALD_stats(ald = ald) 
+  BC_stats <- ALD_stats(strategy, ald = ald) 
   
   stats <- contrast_stats(AC_stats, BC_stats, CI)
   

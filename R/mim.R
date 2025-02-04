@@ -13,6 +13,7 @@
 #' @keywords internal
 #' 
 mim <- function(formula,
+                family,
                 ipd, ald,
                 M = 1000,
                 n.chains = 2,
@@ -28,9 +29,9 @@ mim <- function(formula,
   
   # first-stage logistic regression model fitted to index RCT using MCMC (Stan)
   outcome.model <- stan_glm(
-    formula,
+    formula = formula,
     data = ipd,
-    family = binomial,
+    family = family,
     algorithm = "sampling",
     iter = iters,
     warmup = warmup,
@@ -52,7 +53,7 @@ mim <- function(formula,
   
   # fit second-stage regression to each synthesis using maximum-likelihood estimation
   reg2.fits <- lapply(1:M, function(m)
-    glm(y_star[m, ] ~ trt, data = aug.target, family = binomial))
+    glm(y_star[m, ] ~ trt, data = aug.target, family = family))
   
   # treatment effect point estimates in each synthesis
   hats.delta <- unlist(lapply(reg2.fits,

@@ -4,10 +4,12 @@
 \alias{gcomp_stan}
 \title{G-computation using Stan}
 \usage{
-gcomp_stan(formula = NULL, ipd, ald)
+gcomp_stan(formula = NULL, family = gaussian(link = "identity"), ipd, ald)
 }
 \arguments{
 \item{formula}{Linear regression \code{formula} object}
+
+\item{family}{A \code{family} object}
 
 \item{ipd}{Individual-level data}
 
