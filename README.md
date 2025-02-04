@@ -8,7 +8,7 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 <!-- badges: end -->
 
-> Model-based Standardisation with G-estimation
+> Model-based Standardisation with G-computation
 
 ## Overview
 
@@ -18,6 +18,15 @@ Key features include:
 - **G-computation methods**
 - **Multiple imputation marginalisation**
 - **MAIC, STC** for comparison
+
+## Who is this package for?
+
+The target audience of `outstandR` is those who want to perform model-based standardization in the specific context of two-study indirect treatment comparisons with limited subject-level data. This is model-based standardization with two additional steps:
+
+1. Covariate simulation (to overcome limited subject-level data for one of the studies)
+2. Indirect comparison across studies
+
+## Background
 
 This R package contains code originally written for the papers:
 
