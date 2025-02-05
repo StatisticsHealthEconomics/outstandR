@@ -115,13 +115,17 @@ link_transform <- function(p, family) {
 #'
 link_transform_var <- function(y, N, family) {
   link <- family$link
+  p <- y/N
   
   if (link == "logit") {
     # log-OR
     return(1/y + 1/(N - y))
   } else if (link == "log") {
     # log-RR
-    return(1/y)
+    return((1-p)/(p*n))
+  } else if (link == "log") {
+    # log-RD
+    return((1-p)/n)
   } else {
     ##TODO: replace all? and move to trial_variance()
     (1 / (family$mu.eta(y/N)^2)) * family$variance(y/N)  # delta method
