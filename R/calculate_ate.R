@@ -7,7 +7,7 @@
 #' @returns ATE
 #' @export
 #'
-calculate_ate <- function(mean_A, mean_B, family) {
+calculate_ate <- function(mean_A, mean_C, family) {
 
   link <- family$link
   

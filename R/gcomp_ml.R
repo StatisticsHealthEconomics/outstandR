@@ -67,7 +67,7 @@ gcomp_ml_ate <- function(formula,
   hat.mu.A <- mean(hat.mu.A.i) # (marginal) mean probability prediction under A
   hat.mu.C <- mean(hat.mu.C.i) # (marginal) mean probability prediction under C
   
-  calculate_ate(hat.mu.A, hat.mu.C, family = strategy$family)
+  calculate_ate(hat.mu.A, hat.mu.C, family = family)
 }
 
 

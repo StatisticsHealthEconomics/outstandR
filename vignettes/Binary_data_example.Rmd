@@ -2,7 +2,7 @@
 title: "Binary data example"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Basic Example}
+  %\VignetteIndexEntry{Binary data example}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -353,7 +353,7 @@ outstandR_mim
 
 ### Model comparison
 
-Combine all outputs
+Combine all outputs for log-odds ratio table of all contrasts and methods.
 
 ```{r}
 knitr::kable(

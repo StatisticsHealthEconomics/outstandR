@@ -9,8 +9,8 @@
 #' @export
 #'
 ALD_stats <- function(strategy, ald, treatments = list("B", "C")) {
-  list(mean = marginal_treatment_effect(ald, treatments, link = strategy$family),
-       var = marginal_variance(ald, treatments, link = strategy$family))
+  list(mean = marginal_treatment_effect(ald, treatments, family = strategy$family),
+       var = marginal_variance(ald, treatments, family = strategy$family))
 }
 
 
@@ -25,7 +25,7 @@ ALD_stats <- function(strategy, ald, treatments = list("B", "C")) {
 #' @export
 #' 
 marginal_variance <- function(ald, treatments = list("B", "C"), family) {
-  trial_vars <- purrr::map_dbl(treatments, ~trial_variance(ald, .x, family$link))
+  trial_vars <- purrr::map_dbl(treatments, ~trial_variance(ald, .x, family))
   sum(trial_vars)
 }
 
@@ -66,9 +66,7 @@ trial_variance <- function(ald, tid, family) {
   y <- ald[[paste0("y.", tid, ".sum")]]
   N <- ald[[paste0("N.", tid)]]
 
-  ##TODO: replace?
-  #(1 / (family$mu.eta(y/N)^2)) * family$variance(y/N)  # delta method
-  link_transform_var(y, N, family$link)
+  link_transform_var(y, N, family)
 }
 
 
@@ -91,32 +89,41 @@ trial_treatment_effect <- function(ald, tid, family) {
   # estimated probability
   p_hat <- ald[[paste0("y.", tid, ".sum")]] / ald[[paste0("N.", tid)]]
 
-  ##TODO: replace?
-  #family$linkfun(p_hat)
-  link_transform(p_hat, family$link)
+  ##TODO: need to test this replaced
+  # link_transform(p_hat, family)
+  family$linkfun(p_hat)
 }
 
 
 #' mean
 #'
-link_transform <- function(p, link) {
+link_transform <- function(p, family) {
+  link <- family$link
+  
   if (link == "logit") {
     # log-OR
     return(qlogis(p))  # log(p / (1 - p))
   } else if (link == "log") {
     # log-Relative Risk (log-RR)
     return(log(p))
+  } else {
+    stop("Link function not implemented")
   }
 }
 
 #' variance
 #'
-link_transform_var <- function(y, N, link) {
+link_transform_var <- function(y, N, family) {
+  link <- family$link
+  
   if (link == "logit") {
     # log-OR
     return(1/y + 1/(N - y))
   } else if (link == "log") {
     # log-RR
     return(1/y)
+  } else {
+    ##TODO: replace all? and move to trial_variance()
+    (1 / (family$mu.eta(y/N)^2)) * family$variance(y/N)  # delta method
   }
 }

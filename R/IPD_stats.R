@@ -121,7 +121,7 @@ IPD_stats.gcomp_stan <- function(strategy,
   mean_A <- rowMeans(ppv$y.star.A)
   mean_C <- rowMeans(ppv$y.star.C)
   
-  hat.delta.AC <- calculate_ate(mean_A, mean_B, family = strategy$family)
+  hat.delta.AC <- calculate_ate(mean_A, mean_C, family = strategy$family)
   
   list(mean = mean(hat.delta.AC),
        var = var(hat.delta.AC))
