@@ -1,5 +1,5 @@
 
-#' Generate simulated datasets of IPD covariates and outcome for a trial
+#' Generate simulated datasets of IPD covariates and binary outcome for a trial
 #' 
 #' @param N Total number of patients
 #' @param b_trt `b` coefficient for active treatment vs. common comparator 
