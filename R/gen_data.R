@@ -34,8 +34,11 @@
 #' head(x)
 #' }
 gen_data <- function(N, b_trt, b_X, b_EM, b_0,
-                     meanX, sdX, event_rate, 
-                     corX, allocation) {
+                     meanX, sdX, 
+                     corX, allocation,
+                     family = "binomial") {
+  ##TODO: what does event_rate do?
+  
   # 4 baseline covariates
   n_c <- 4
   
@@ -76,8 +79,12 @@ gen_data <- function(N, b_trt, b_X, b_EM, b_0,
     b_X*X$X3 + b_X*X$X4 + b_trt*trt +
     b_EM*X$X1*trt + b_EM*X$X2*trt
   
-  yprob <- 1/(1 + exp(-LP))             # binary outcome probability
-  y <- rbinom(n=N, size=1, prob=yprob)  # binary outcome
+  if (family == "binomial") {
+    yprob <- 1/(1 + exp(-LP))             # binary outcome probability
+    y <- rbinom(n=N, size=1, prob=yprob)  # binary outcome
+  } else if (family == "normal") {
+    y <- rnorm(n=N, mean=LP, sd=1)        # continuous outcome
+  }
   
   as.data.frame(cbind(X, trt, y))
 }

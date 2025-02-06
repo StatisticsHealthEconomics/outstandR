@@ -43,8 +43,7 @@ b_0 <- optim(par = 0,
 gen_data_args <-
   tibble::lst(b_trt, b_X,
               b_EM, b_0,
-              sdX, event_rate,
-              corX, allocation)
+              sdX, corX, allocation)
 
 # simulate IPD covariates and outcome for B vs. C trial (S=2)
 IPD.BC <-

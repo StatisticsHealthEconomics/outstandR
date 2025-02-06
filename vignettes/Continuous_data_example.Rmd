@@ -2,10 +2,10 @@
 title: "Continuous data example"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Continuous data example}
+%\VignetteIndexEntry{Continuous data example}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
-editor_options: 
+  editor_options: 
   markdown: 
     wrap: 72
 ---
@@ -49,21 +49,90 @@ the RCT publication. The binary outcomes are summarized in an overall
 event table. Typically, the published study only provides aggregate
 information to the analyst.
 
-```{r generate-data}
+```{r generate-ipd-data}
 # Generate data
-betas <- c(0.5, 0.5, 0.5, 0.5)  # coefficients for the logistic regression
-mean_linpred <- AC.IPD[, c("X1","X2","X3","X4")]%*%betas
 
+# use the covariate already created
 AC.IPD <- read.csv(here::here("raw-data", "AC_IPD.csv"))  # AC patient-level data
-AC.IPD$y <- rnorm(nrow(AC.IPD), mean = mean_linpred, sd = 1)
 
+# EM: X1, X2
+# PV: X3, X4
 
+# Define the coefficients for the model (including interaction terms)
+betas <- c(0.5, 0.5, 0.5, 0.5, 0.3, 0.4)
+betas_trt1 <- c(0.6, 0.4, 0.5, 0.7, 0.3, 0.4)
+
+AC.IPD$y <- NA
+
+# Create interaction terms for effect modifiers (X1, X2) and treatment (trt)
+AC.IPD$X1_trt <- AC.IPD$X1 * AC.IPD$trt
+AC.IPD$X2_trt <- AC.IPD$X2 * AC.IPD$trt
+
+# treatment group 0
+group_0 <- subset(AC.IPD, trt == 0)
+mean_linpred_0 <- as.matrix(group_0[, c("X1", "X2", "X3", "X4", "X1_trt", "X2_trt")]) %*% betas
+residuals_0 <- rnorm(nrow(group_0), mean = 0, sd = 1)
+group_0$y <- mean_linpred_0 + residuals_0
+
+# treatment group 1
+group_1 <- subset(AC.IPD, trt == 1)
+mean_linpred_1 <- as.matrix(group_1[, c("X1", "X2", "X3", "X4", "X1_trt", "X2_trt")]) %*% betas_trt1
+residuals_1 <- rnorm(nrow(group_1), mean = 0, sd = 1)
+group_1$y <- mean_linpred_1 + residuals_1
+
+# Combine the groups back into the original data
+AC.IPD <- rbind(group_0, group_1)
 ```
 
-```{r load-data}
-set.seed(555)
+or can use the in-built `gen_data()` function.
 
-BC.ALD <- read.csv(here::here("raw-data", "BC_ALD.csv"))  # BC aggregate-level data
+```{r}
+library(dplyr)
+library(MASS)
+
+N <- 200
+allocation <- 2/3      # active treatment vs. placebo allocation ratio (2:1)
+b_trt <- log(0.17)     # conditional effect of active treatment vs. common comparator
+b_X <- -log(0.5)       # conditional effect of each prognostic variable
+b_EM <- -log(0.67)     # conditional interaction effect of each effect modifier
+meanX_AC <- 0.45       # mean of normally-distributed covariate in AC trial
+meanX_BC <- 0.6        # mean of each normally-distributed covariate in BC
+sdX <- 0.4             # standard deviation of each covariate (same for AC and BC)
+corX <- 0.2            # covariate correlation coefficient  
+b_0 <- -0.6            # baseline intercept coefficient  ##TODO: fixed value
+
+AC.IPD <- gen_data(N, b_trt, b_X, b_EM, b_0,
+                   meanX_AC, sdX, corX, allocation,
+                   family = "normal")
+```
+
+Similarly, for the aggregate data but with the additional summarise step.
+
+```{r generate-ald-data}
+# BC.ALD <- read.csv(here::here("raw-data", "BC_ALD.csv"))  # BC aggregate-level data
+
+BC.ILD <- gen_data(N, b_trt, b_X, b_EM, b_0,
+                   meanX_BC, sdX, corX, allocation,
+                   family = "normal")
+
+cov.X <- BC.IPD %>%
+  summarise(across(starts_with("X"),
+                   list(mean = mean, sd = sd),
+                   .names = "{fn}.{col}"))
+
+out.C <- filter(BC.IPD, trt == 1) %>%
+  summarise(y.B.sum = sum(y),
+            y.B.bar = mean(y),
+            y.B.sd = sd(y),
+            N.B = n())
+
+out.B <- filter(BC.IPD, trt == 0) %>%
+  summarise(y.C.sum = sum(y),
+            y.C.bar = mean(y),
+            y.C.sd = sd(y),
+            N.C = n())
+
+BC.ALD <- cbind.data.frame(cov.X, out.C, out.B)
 ```
 
 This general format of data sets consist of the following.
@@ -72,15 +141,14 @@ This general format of data sets consist of the following.
 
 -   `X*`: patient measurements
 -   `trt`: treatment ID (integer)
--   `y`: (logical) indicator of whether event was observed
+-   `y`: continuous outcome measure
 
 #### `BC.ALD`: Aggregate-level data
 
 -   `mean.X*`: mean patient measurement
 -   `sd.X*`: standard deviation of patient measurement
--   `y.*.sum`: total number of events
--   `y.*.bar`: proportion of events
--   `N.*`: total number of individuals
+-   `mean.y`:
+-   `sd.y`:
 
 Note that the wildcard `*` here is usually an integer from 1 or the
 trial identifier *B*, *C*.
