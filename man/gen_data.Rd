@@ -2,9 +2,22 @@
 % Please edit documentation in R/gen_data.R
 \name{gen_data}
 \alias{gen_data}
-\title{Generate simulated datasets of IPD covariates and outcome for a trial}
+\title{Generate simulated datasets of IPD covariates and binary outcome for a trial}
 \usage{
-gen_data(N, b_trt, b_X, b_EM, b_0, meanX, sdX, event_rate, corX, allocation)
+gen_data(
+  N,
+  b_trt,
+  b_X,
+  b_EM,
+  b_0,
+  meanX_EM,
+  sdX_EM,
+  meanX,
+  sdX,
+  corX,
+  allocation,
+  family = binomial("logit")
+)
 }
 \arguments{
 \item{N}{Total number of patients}
@@ -21,17 +34,17 @@ gen_data(N, b_trt, b_X, b_EM, b_0, meanX, sdX, event_rate, corX, allocation)
 
 \item{sdX}{Standard deviation of each covariate \code{X}}
 
-\item{event_rate}{Event rate}
-
 \item{corX}{Covariate correlation coefficient of \code{X}}
 
 \item{allocation}{Allocation to active treatment as proportion of total; 0 to 1}
+
+\item{event_rate}{Event rate}
 }
 \value{
 Data frame of \code{X}, \code{trt} and \code{y}
 }
 \description{
-Generate simulated datasets of IPD covariates and outcome for a trial
+Generate simulated datasets of IPD covariates and binary outcome for a trial
 }
 \examples{
 
@@ -51,4 +64,3 @@ x <- gen_data(
 head(x)
 }
 }
-\keyword{internal}

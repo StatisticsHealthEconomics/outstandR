@@ -2,10 +2,10 @@
 title: "Continuous data example"
 output: rmarkdown::html_vignette
 vignette: >
-%\VignetteIndexEntry{Continuous data example}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
   editor_options: 
+    chunk_output_type: console
   markdown: 
     wrap: 72
 ---
@@ -49,42 +49,7 @@ the RCT publication. The binary outcomes are summarized in an overall
 event table. Typically, the published study only provides aggregate
 information to the analyst.
 
-```{r generate-ipd-data}
-# Generate data
-
-# use the covariate already created
-AC.IPD <- read.csv(here::here("raw-data", "AC_IPD.csv"))  # AC patient-level data
-
-# EM: X1, X2
-# PV: X3, X4
-
-# Define the coefficients for the model (including interaction terms)
-betas <- c(0.5, 0.5, 0.5, 0.5, 0.3, 0.4)
-betas_trt1 <- c(0.6, 0.4, 0.5, 0.7, 0.3, 0.4)
-
-AC.IPD$y <- NA
-
-# Create interaction terms for effect modifiers (X1, X2) and treatment (trt)
-AC.IPD$X1_trt <- AC.IPD$X1 * AC.IPD$trt
-AC.IPD$X2_trt <- AC.IPD$X2 * AC.IPD$trt
-
-# treatment group 0
-group_0 <- subset(AC.IPD, trt == 0)
-mean_linpred_0 <- as.matrix(group_0[, c("X1", "X2", "X3", "X4", "X1_trt", "X2_trt")]) %*% betas
-residuals_0 <- rnorm(nrow(group_0), mean = 0, sd = 1)
-group_0$y <- mean_linpred_0 + residuals_0
-
-# treatment group 1
-group_1 <- subset(AC.IPD, trt == 1)
-mean_linpred_1 <- as.matrix(group_1[, c("X1", "X2", "X3", "X4", "X1_trt", "X2_trt")]) %*% betas_trt1
-residuals_1 <- rnorm(nrow(group_1), mean = 0, sd = 1)
-group_1$y <- mean_linpred_1 + residuals_1
-
-# Combine the groups back into the original data
-AC.IPD <- rbind(group_0, group_1)
-```
-
-or can use the in-built `gen_data()` function.
+use the in-built `gen_data()` function.
 
 ```{r}
 library(dplyr)
@@ -95,15 +60,26 @@ allocation <- 2/3      # active treatment vs. placebo allocation ratio (2:1)
 b_trt <- log(0.17)     # conditional effect of active treatment vs. common comparator
 b_X <- -log(0.5)       # conditional effect of each prognostic variable
 b_EM <- -log(0.67)     # conditional interaction effect of each effect modifier
-meanX_AC <- 0.45       # mean of normally-distributed covariate in AC trial
-meanX_BC <- 0.6        # mean of each normally-distributed covariate in BC
-sdX <- 0.4             # standard deviation of each covariate (same for AC and BC)
+meanX_AC <- c(0.45, 0.45)       # mean of normally-distributed covariate in AC trial
+meanX_BC <- c(0.6, 0.6)         # mean of each normally-distributed covariate in BC
+meanX_EM_AC <- c(0.45, 0.45)    # mean of normally-distributed EM covariate in AC trial
+meanX_EM_BC <- c(0.6, 0.6)      # mean of each normally-distributed EM covariate in BC
+sdX <- c(0.4, 0.4)     # standard deviation of each covariate (same for AC and BC)
+sdX_EM <- c(0.4, 0.4)  # standard deviation of each EM covariate
 corX <- 0.2            # covariate correlation coefficient  
 b_0 <- -0.6            # baseline intercept coefficient  ##TODO: fixed value
 
 AC.IPD <- gen_data(N, b_trt, b_X, b_EM, b_0,
-                   meanX_AC, sdX, corX, allocation,
-                   family = "normal")
+                   meanX_AC, sdX, 
+                   meanX_EM_AC, sdX_EM, 
+                   corX, allocation,
+                   family = binomial("logit"))
+
+AC.IPD <- gen_data(N, b_trt, b_X, b_EM, b_0,
+                   meanX_AC, sdX, 
+                   meanX_EM_AC, sdX_EM, 
+                   corX, allocation,
+                   family = gaussian(link = "identity"))
 ```
 
 Similarly, for the aggregate data but with the additional summarise step.
@@ -111,22 +87,24 @@ Similarly, for the aggregate data but with the additional summarise step.
 ```{r generate-ald-data}
 # BC.ALD <- read.csv(here::here("raw-data", "BC_ALD.csv"))  # BC aggregate-level data
 
-BC.ILD <- gen_data(N, b_trt, b_X, b_EM, b_0,
-                   meanX_BC, sdX, corX, allocation,
-                   family = "normal")
+BC.IPD <- gen_data(N, b_trt, b_X, b_EM, b_0,
+                   meanX_BC, sdX, 
+                   meanX_EM_BC, sdX_EM, 
+                   corX, allocation,
+                   family = gaussian(link = "identity"))
 
 cov.X <- BC.IPD %>%
   summarise(across(starts_with("X"),
                    list(mean = mean, sd = sd),
                    .names = "{fn}.{col}"))
 
-out.C <- filter(BC.IPD, trt == 1) %>%
+out.C <- dplyr::filter(BC.IPD, trt == 1) %>%
   summarise(y.B.sum = sum(y),
             y.B.bar = mean(y),
             y.B.sd = sd(y),
             N.B = n())
 
-out.B <- filter(BC.IPD, trt == 0) %>%
+out.B <- dplyr::filter(BC.IPD, trt == 0) %>%
   summarise(y.C.sum = sum(y),
             y.C.bar = mean(y),
             y.C.sd = sd(y),

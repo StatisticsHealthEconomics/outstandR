@@ -8,6 +8,7 @@ vignette: >
 editor_options: 
   markdown: 
     wrap: 72
+  chunk_output_type: console
 ---
 
 ```{r, include = FALSE}
@@ -19,130 +20,77 @@ knitr::opts_chunk$set(
 
 ##TODO
 
-<!-- ## Introduction -->
+## Introduction
 
-<!-- Population adjustment methods such as *matching-adjusted indirect -->
-<!-- comparison* (MAIC) are increasingly used to compare marginal treatment -->
-<!-- effects when there are cross-trial differences in effect modifiers and -->
-<!-- limited patient-level data. MAIC is based on propensity score weighting, -->
-<!-- which is sensitive to poor covariate overlap and cannot extrapolate -->
-<!-- beyond the observed covariate space. Current outcome regression-based -->
-<!-- alternatives can extrapolate but target a conditional treatment effect -->
-<!-- that is incompatible in the indirect comparison. When adjusting for -->
-<!-- covariates, one must integrate or average the conditional estimate over -->
-<!-- the relevant population to recover a compatible marginal treatment -->
-<!-- effect. -->
+## Example analysis
 
-<!-- We propose a marginalization method based on *parametric G-computation* -->
-<!-- that can be easily applied where the outcome regression is a generalized -->
-<!-- linear model or a Cox model. The approach views the covariate adjustment -->
-<!-- regression as a nuisance model and separates its estimation from the -->
-<!-- evaluation of the marginal treatment effect of interest. The method can -->
-<!-- accommodate a Bayesian statistical framework, which naturally integrates -->
-<!-- the analysis into a probabilistic framework. A simulation study provides -->
-<!-- proof-of-principle and benchmarks the method's performance against MAIC -->
-<!-- and the conventional outcome regression. Parametric G-computation -->
-<!-- achieves more precise and more accurate estimates than MAIC, -->
-<!-- particularly when covariate overlap is poor, and yields unbiased -->
-<!-- marginal treatment effect estimates under no failures of assumptions. -->
-<!-- Furthermore, the marginalized regression-adjusted estimates provide -->
-<!-- greater precision and accuracy than the conditional estimates produced -->
-<!-- by the conventional outcome regression. -->
+First, let us load necessary packages.
 
-<!-- ## General problem -->
+```{r setup, warning=FALSE, message=FALSE}
+library(boot)      # non-parametric bootstrap in MAIC and ML G-computation
+library(copula)    # simulating BC covariates from Gaussian copula
+library(rstanarm)  # fit outcome regression, draw outcomes in Bayesian G-computation
+library(outstandR)
+```
 
-<!-- Consider one *AB* trial, for which the company has IPD, and one *AC* -->
-<!-- trial, for which only published aggregate data are available. We wish to -->
-<!-- estimate a comparison of the effects of treatments *B* and *C* on an -->
-<!-- appropriate scale in some target population *P*, denoted by the -->
-<!-- parameter $d_{BC(P)}$. We make use of bracketed subscripts to denote a -->
-<!-- specific population. Within the *AB* population there are parameters -->
-<!-- $\mu_{A( AB)}$, $\mu_{B(AB)}$ and $\mu_{C(AB)}$ representing the -->
-<!-- expected outcome on each treatment (including parameters for treatments -->
-<!-- not studied in the *AB* trial, e.g. treatment *C*). The *AB* trial -->
-<!-- provides estimators $\bar{Y}_{A(AB)}$ and $\bar{Y}_{B(AB)}$ of -->
-<!-- $\mu_{A( AB)}$, $\mu_{B(AB)}$, respectively, which are the summary -->
-<!-- outcomes. It is the same situation for the *AC* trial. -->
+### Data
 
-<!-- For a suitable scale, for example a logit, or risk difference, we form -->
-<!-- estimators $\Delta_{AB(AB)}$ and $\Delta_{AC(AC)}$ of the trial level -->
-<!-- (or marginal) relative treatment effects. -->
+First, use the in-built `gen_data()` function.
 
-<!-- $$ -->
-<!-- \Delta_{AB(AB)} = g(\bar{Y}_{B{(AB)}}) - g(\bar{Y}_{A{(AB)}}) -->
-<!-- $$ -->
+```{r}
+library(dplyr)
+library(MASS)
 
-<!-- ## Example analysis -->
+N <- 200
+allocation <- 2/3      # active treatment vs. placebo allocation ratio (2:1)
+b_trt <- log(0.17)     # conditional effect of active treatment vs. common comparator
+b_X <- -log(0.5)       # conditional effect of each prognostic variable
+b_EM <- -log(0.67)     # conditional interaction effect of each effect modifier
+meanX_AC <- c(0.45, 0.45)       # mean of normally-distributed covariate in AC trial
+meanX_BC <- c(0.6, 0.6)         # mean of each normally-distributed covariate in BC
+meanX_EM_AC <- c(0.45, 0.45)    # mean of normally-distributed EM covariate in AC trial
+meanX_EM_BC <- c(0.6, 0.6)      # mean of each normally-distributed EM covariate in BC
+sdX <- c(0.4, 0.4)     # standard deviation of each covariate (same for AC and BC)
+sdX_EM <- c(0.4, 0.4)  # standard deviation of each EM covariate
+corX <- 0.2            # covariate correlation coefficient  
+b_0 <- -0.6            # baseline intercept coefficient  ##TODO: fixed value
 
-<!-- First, let us load necessary packages. -->
+AC.IPD <- gen_data(N, b_trt, b_X, b_EM, b_0,
+                   meanX_AC, sdX, 
+                   meanX_EM_AC, sdX_EM, 
+                   corX, allocation,
+                   family = poisson(link = "log"))
+```
 
-<!-- ```{r setup, warning=FALSE, message=FALSE} -->
-<!-- library(boot)      # non-parametric bootstrap in MAIC and ML G-computation -->
-<!-- library(copula)    # simulating BC covariates from Gaussian copula -->
-<!-- library(rstanarm)  # fit outcome regression, draw outcomes in Bayesian G-computation -->
-<!-- library(outstandR) -->
-<!-- ``` -->
+Similarly, for the aggregate data but with the additional summarise step.
 
-<!-- ### Data -->
+```{r generate-ald-data}
+BC.IPD <- gen_data(N, b_trt, b_X, b_EM, b_0,
+                   meanX_BC, sdX, 
+                   meanX_EM_BC, sdX_EM, 
+                   corX, allocation,
+                   family = poisson(link = "log"))
 
-<!-- Next, we load the data to use in the analysis. The data comes from a -->
-<!-- simulation study in Remiro‐Azócar A, Heath A, Baio G (2020). We consider -->
-<!-- binary outcomes using the log-odds ratio as the measure of effect. The -->
-<!-- binary outcome may be response to treatment or the occurrence of an -->
-<!-- adverse event. For trials *AC* and *BC*, outcome $y_n$ for subject $n$ -->
-<!-- is simulated from a Bernoulli distribution with probabilities of success -->
-<!-- generated from logistic regression. -->
+cov.X <- BC.IPD %>%
+  summarise(across(starts_with("X"),
+                   list(mean = mean, sd = sd),
+                   .names = "{fn}.{col}"))
 
-<!-- For the *BC* trial, the individual-level covariates and outcomes are -->
-<!-- aggregated to obtain summaries. The continuous covariates are summarized -->
-<!-- as means and standard deviations, which would be available to the -->
-<!-- analyst in the published study in a table of baseline characteristics in -->
-<!-- the RCT publication. The binary outcomes are summarized in an overall -->
-<!-- event table. Typically, the published study only provides aggregate -->
-<!-- information to the analyst. -->
+out.C <- dplyr::filter(BC.IPD, trt == 1) %>%
+  summarise(y.B.sum = sum(y),
+            y.B.bar = mean(y),
+            N.B = n())
 
-<!-- ```{r load-data} -->
-<!-- set.seed(555) -->
+out.B <- dplyr::filter(BC.IPD, trt == 0) %>%
+  summarise(y.C.sum = sum(y),
+            y.C.bar = mean(y),
+            N.C = n())
 
-<!-- AC.IPD <- read.csv(here::here("raw-data", "AC_IPD.csv"))  # AC patient-level data -->
-<!-- BC.ALD <- read.csv(here::here("raw-data", "BC_ALD.csv"))  # BC aggregate-level data -->
-<!-- ``` -->
+BC.ALD <- cbind.data.frame(cov.X, out.C, out.B)
+```
 
-<!-- This general format of data sets consist of the following. -->
 
-<!-- #### `AC.IPD`: Individual patient data -->
 
-<!-- -   `X*`: patient measurements -->
-<!-- -   `trt`: treatment ID (integer) -->
-<!-- -   `y`: (logical) indicator of whether event was observed -->
-
-<!-- #### `BC.ALD`: Aggregate-level data -->
-
-<!-- -   `mean.X*`: mean patient measurement -->
-<!-- -   `sd.X*`: standard deviation of patient measurement -->
-<!-- -   `y.*.sum`: total number of events -->
-<!-- -   `y.*.bar`: proportion of events -->
-<!-- -   `N.*`: total number of individuals -->
-
-<!-- Note that the wildcard `*` here is usually an integer from 1 or the -->
-<!-- trial identifier *B*, *C*. -->
-
-<!-- Our data look like the following. -->
-
-<!-- ```{r} -->
-<!-- head(AC.IPD) -->
-<!-- ``` -->
-
-<!-- There are 4 correlated continuous covariates generated per subject, -->
-<!-- simulated from a multivariate normal distribution. -->
-
-<!-- ```{r} -->
-<!-- BC.ALD -->
-<!-- ``` -->
-
-<!-- In this case, we have 4 covariate mean and standard deviation values; -->
-<!-- and the event total, average and sample size for each treatment *B*, and -->
-<!-- *C*. -->
 
 <!-- ### Output statistics -->
 

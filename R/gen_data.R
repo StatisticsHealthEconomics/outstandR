@@ -14,7 +14,7 @@
 #' @return Data frame of `X`, `trt` and `y`
 #' 
 #' @importFrom MASS mvrnorm
-#' @keywords internal
+#' @export
 #' 
 #' @examples
 #' 
@@ -40,14 +40,15 @@ gen_data <- function(N, b_trt, b_X, b_EM, b_0,
                      family = binomial("logit")) {
   ##TODO: what does event_rate do?
 
-  n_X <- length(meanX)
+  nX <- length(meanX)
   nX_EM <- length(meanX_EM)
+  n_c <- nX + nX_EM
     
   rho <- matrix(corX, nrow=n_c, ncol=n_c) # set correlation matrix
   diag(rho) <- rep(1, n_c)
   N_active <- round(N*allocation)  # number of patients under active treatment
   N_control <- N - N_active        # number of patients under control
-  sd.vec <- rep(sdX, n_c)            # vector of standard deviations
+  sd.vec <- c(sdX, sdX_EM)         # vector of standard deviations
   
   cov.mat <- cor2cov(rho, sd.vec)  # covariance matrix
   
@@ -74,26 +75,30 @@ gen_data <- function(N, b_trt, b_X, b_EM, b_0,
            rep(0, N_control))
   
   Xnames <- colnames(X)
-  PF_names <- Xnames[1:n_X] 
-  EM_names <- Xnames[(n_X+1):(n_X+nX_EM)]
+  PF_names <- Xnames[1:nX] 
+  EM_names <- Xnames[nX + (1:nX_EM)]
   
   design_mat <- X |> 
     mutate(trt = trt,
            X0 = 1) |> 
     # add interaction terms
     mutate(across(all_of(EM_names), ~ . * trt)) |> 
-    select(X0, everything(), trt)
+    relocate(X0) |>
+    relocate(trt, .after = last_col())
   
   # generate outcomes using regression
   # linear predictor
-  betas <- c(b_0, rep(b_X, n_X), rep(b_EM, nX_EM), b_trt)
-  LP <- design_mat %*% betas
+  betas <- c(b_0, rep(b_X, nX), rep(b_EM, nX_EM), b_trt)
+  LP <- as.matrix(design_mat) %*% betas
   
   if (family$family == "binomial") {
     yprob <- family$linkinv(LP)           # binary outcome probability
     y <- rbinom(n=N, size=1, prob=yprob)  # binary outcome
-  } else if (family$family == "normal") {
+  } else if (family$family == "gaussian") {
     y <- rnorm(n=N, mean=LP, sd=1)        # continuous outcome
+  } else if (family$family == "poisson") {
+    yrate <- family$linkinv(LP)
+    y <- rpois(n=N, lambda = yrate)        # counts outcome
   }
   
   as.data.frame(cbind(X, trt, y))
