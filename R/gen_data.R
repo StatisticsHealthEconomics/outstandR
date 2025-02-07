@@ -1,16 +1,18 @@
 
-#' Generate simulated datasets of IPD covariates and binary outcome for a trial
+#' Generate simulated datasets of IPD covariates and outcome for a trial
 #' 
 #' @param N Total number of patients
 #' @param b_trt `b` coefficient for active treatment vs. common comparator 
 #' @param b_X `b` coefficients for each prognostic variable `X` 
 #' @param b_EM `b` coefficients effect modifiers
 #' @param b_0 Intercept coefficient
-#' @param meanX Mean of each normally-distributed covariate `X` 
-#' @param sdX Standard deviation of each covariate `X` 
-#' @param event_rate Event rate 
+#' @param meanX Mean vector of each normally-distributed covariate `X` 
+#' @param sdX Standard deviation vector of each covariate `X` 
+#' @param meanX_EM Mean vector of each normally-distributed EM covariate `X` 
+#' @param sdX_EM Standard deviation vector of each EM covariate `X` 
 #' @param corX Covariate correlation coefficient of `X` 
 #' @param allocation Allocation to active treatment as proportion of total; 0 to 1
+#' @pram family Family object
 #' @return Data frame of `X`, `trt` and `y`
 #' 
 #' @importFrom MASS mvrnorm
@@ -25,9 +27,10 @@
 #'  b_X = -log(0.5),
 #'  b_EM = -log(0.67),
 #'  b_0 = -0.62,
-#'  meanX = 0.6,
-#'  sdX = 0.4,
-#'  event_rate = 0.35, 
+#'  meanX = c(0.6, 0.6),
+#'  sdX = c(0.4, 0.4),
+#'  meanX_EM = c(0.6, 0.6),
+#'  sdX_EM = c(0.4, 0.4),
 #'  corX = 0.2,
 #'  allocation = 2/3) 
 #' 
