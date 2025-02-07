@@ -34,14 +34,15 @@
 #' head(x)
 #' }
 gen_data <- function(N, b_trt, b_X, b_EM, b_0,
+                     meanX_EM, sdX_EM, 
                      meanX, sdX, 
                      corX, allocation,
-                     family = "binomial") {
+                     family = binomial("logit")) {
   ##TODO: what does event_rate do?
-  
-  # 4 baseline covariates
-  n_c <- 4
-  
+
+  n_X <- length(meanX)
+  nX_EM <- length(meanX_EM)
+    
   rho <- matrix(corX, nrow=n_c, ncol=n_c) # set correlation matrix
   diag(rho) <- rep(1, n_c)
   N_active <- round(N*allocation)  # number of patients under active treatment
@@ -55,34 +56,43 @@ gen_data <- function(N, b_trt, b_X, b_EM, b_0,
   X_active <- 
     as.data.frame(
       MASS::mvrnorm(n = N_active,
-                    mu = rep(meanX, n_c),
+                    mu = c(meanX, meanX_EM),
                     Sigma = cov.mat))
   
   # patients under control treatment
   X_control <-
     as.data.frame(
       MASS::mvrnorm(n = N_control,
-                    mu = rep(meanX, n_c),
+                    mu = c(meanX, meanX_EM),
                     Sigma = cov.mat))  
   # all patients
   X <- rbind(X_active, X_control)
-  colnames(X) <- c("X1", "X2", "X3", "X4")
+  colnames(X) <- paste0("X", 1:ncol(X))
   
   # treatment assignment (1: active; 0: control)
   trt <- c(rep(1, N_active),
            rep(0, N_control))
   
-  # generate binary outcomes using logistic regression
-  # linear predictor
-  LP <-
-    b_0 + b_X*X$X1 + b_X*X$X2 +
-    b_X*X$X3 + b_X*X$X4 + b_trt*trt +
-    b_EM*X$X1*trt + b_EM*X$X2*trt
+  Xnames <- colnames(X)
+  PF_names <- Xnames[1:n_X] 
+  EM_names <- Xnames[(n_X+1):(n_X+nX_EM)]
   
-  if (family == "binomial") {
-    yprob <- 1/(1 + exp(-LP))             # binary outcome probability
+  design_mat <- X |> 
+    mutate(trt = trt,
+           X0 = 1) |> 
+    # add interaction terms
+    mutate(across(all_of(EM_names), ~ . * trt)) |> 
+    select(X0, everything(), trt)
+  
+  # generate outcomes using regression
+  # linear predictor
+  betas <- c(b_0, rep(b_X, n_X), rep(b_EM, nX_EM), b_trt)
+  LP <- design_mat %*% betas
+  
+  if (family$family == "binomial") {
+    yprob <- family$linkinv(LP)           # binary outcome probability
     y <- rbinom(n=N, size=1, prob=yprob)  # binary outcome
-  } else if (family == "normal") {
+  } else if (family$family == "normal") {
     y <- rnorm(n=N, mean=LP, sd=1)        # continuous outcome
   }
   
