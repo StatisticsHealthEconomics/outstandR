@@ -8,6 +8,7 @@
 #' @param family A `family` object
 #' @template args-ipd
 #' @template args-ald
+#' @params iter,warmup,chains Stan MCMC parameters
 #'
 #' @return A list of \eqn{y^*_A} and \eqn{y^*_C} posterior predictions
 #' @importFrom copula normalCopula mvdc rMvdc
@@ -16,7 +17,10 @@
 #'
 gcomp_stan <- function(formula = NULL,
                        family = gaussian(link = "identity"),
-                       ipd, ald) {
+                       ipd, ald,
+                       iter = 4000,
+                       warmup = 2000,
+                       chains = 2) {
   
   if (!inherits(formula, "formula"))
     stop("formula argument must be of formula class.")
@@ -29,7 +33,7 @@ gcomp_stan <- function(formula = NULL,
                        data = ipd,
                        family = family,
                        algorithm = "sampling",
-                       iter = 4000, warmup = 2000, chains = 2)
+                       iter = iter, warmup = warmup, chains = chains)
   
   # counterfactual datasets
   data.trtA <- data.trtC <- x_star
