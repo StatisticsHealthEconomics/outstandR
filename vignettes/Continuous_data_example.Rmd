@@ -49,7 +49,7 @@ the RCT publication. The binary outcomes are summarized in an overall
 event table. Typically, the published study only provides aggregate
 information to the analyst.
 
-```{r generate-ipd-data}
+```{r generate-ipd}
 # Generate data
 
 # use the covariate already created
@@ -108,7 +108,7 @@ AC.IPD <- gen_data(N, b_trt, b_X, b_EM, b_0,
 
 Similarly, for the aggregate data but with the additional summarise step.
 
-```{r generate-ald-data}
+```{r generate-ald}
 # BC.ALD <- read.csv(here::here("raw-data", "BC_ALD.csv"))  # BC aggregate-level data
 
 BC.ILD <- gen_data(N, b_trt, b_X, b_EM, b_0,
@@ -147,8 +147,9 @@ This general format of data sets consist of the following.
 
 -   `mean.X*`: mean patient measurement
 -   `sd.X*`: standard deviation of patient measurement
--   `mean.y`:
--   `sd.y`:
+-   `y.*.bar`: mean outcome
+-   `y.*.sd`: standard deviation of outcome
+-   `N.*`: sample size
 
 Note that the wildcard `*` here is usually an integer from 1 or the
 trial identifier *B*, *C*.

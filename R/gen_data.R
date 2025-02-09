@@ -8,7 +8,6 @@
 #' @param b_0 Intercept coefficient
 #' @param meanX Mean of each normally-distributed covariate `X` 
 #' @param sdX Standard deviation of each covariate `X` 
-#' @param event_rate Event rate 
 #' @param corX Covariate correlation coefficient of `X` 
 #' @param allocation Allocation to active treatment as proportion of total; 0 to 1
 #' @return Data frame of `X`, `trt` and `y`
@@ -27,7 +26,6 @@
 #'  b_0 = -0.62,
 #'  meanX = 0.6,
 #'  sdX = 0.4,
-#'  event_rate = 0.35, 
 #'  corX = 0.2,
 #'  allocation = 2/3) 
 #' 
@@ -37,7 +35,7 @@ gen_data <- function(N, b_trt, b_X, b_EM, b_0,
                      meanX, sdX, 
                      corX, allocation,
                      family = "binomial") {
-  ##TODO: what does event_rate do?
+  ##TODO: what did event_rate do?
   
   # 4 baseline covariates
   n_c <- 4
