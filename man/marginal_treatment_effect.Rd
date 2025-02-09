@@ -4,7 +4,7 @@
 \alias{marginal_treatment_effect}
 \title{Marginal treatment effect from reported event counts}
 \usage{
-marginal_treatment_effect(ald, treatments = list("B", "C"))
+marginal_treatment_effect(ald, treatments = list("B", "C"), family)
 }
 \arguments{
 \item{ald}{Aggregate-level data}

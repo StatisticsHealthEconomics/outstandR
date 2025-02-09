@@ -4,7 +4,7 @@
 \alias{marginal_variance}
 \title{Marginal effect variance using the delta method}
 \usage{
-marginal_variance(ald, treatments = list("B", "C"))
+marginal_variance(ald, treatments = list("B", "C"), family)
 }
 \arguments{
 \item{ald}{Aggregate-level data}

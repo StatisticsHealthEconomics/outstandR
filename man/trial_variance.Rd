@@ -2,9 +2,9 @@
 % Please edit documentation in R/ALD_stats.R
 \name{trial_variance}
 \alias{trial_variance}
-\title{Trial variance with aggregate data}
+\title{Trial variance of the log-odds (logit) estimate with aggregate data}
 \usage{
-trial_variance(ald, tid)
+trial_variance(ald, tid, family)
 }
 \arguments{
 \item{ald}{Aggregate-level data}

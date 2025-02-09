@@ -4,12 +4,14 @@
 \alias{trial_treatment_effect}
 \title{Trial treatment effect with aggregate data}
 \usage{
-trial_treatment_effect(ald, tid)
+trial_treatment_effect(ald, tid, family)
 }
 \arguments{
 \item{ald}{Aggregate-level data}
 
 \item{tid}{Treatment label}
+
+\item{family}{}
 }
 \value{
 Value

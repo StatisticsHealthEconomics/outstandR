@@ -4,7 +4,16 @@
 \alias{mim}
 \title{Multiple imputation marginalization (MIM)}
 \usage{
-mim(formula, ipd, ald, M = 1000, n.chains = 2, warmup = 1000, iters = 4000)
+mim(
+  formula,
+  family,
+  ipd,
+  ald,
+  M = 1000,
+  n.chains = 2,
+  warmup = 1000,
+  iters = 4000
+)
 }
 \arguments{
 \item{formula}{Linear regression \code{formula} object}
