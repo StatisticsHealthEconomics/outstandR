@@ -29,6 +29,7 @@ library(boot)      # non-parametric bootstrap in MAIC and ML G-computation
 library(copula)    # simulating BC covariates from Gaussian copula
 library(rstanarm)  # fit outcome regression, draw outcomes in Bayesian G-computation
 library(outstandR)
+library(simcovariates)
 ```
 
 ### Data
