@@ -8,7 +8,7 @@
 #' @param family A `family` object
 #' @template args-ipd
 #' @template args-ald
-#' @params iter,warmup,chains Stan MCMC parameters
+#' @param iter,warmup,chains Stan MCMC parameters
 #'
 #' @return A list of \eqn{y^*_A} and \eqn{y^*_C} posterior predictions
 #' @importFrom copula normalCopula mvdc rMvdc

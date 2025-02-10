@@ -4,7 +4,15 @@
 \alias{gcomp_stan}
 \title{G-computation using Stan}
 \usage{
-gcomp_stan(formula = NULL, family = gaussian(link = "identity"), ipd, ald)
+gcomp_stan(
+  formula = NULL,
+  family = gaussian(link = "identity"),
+  ipd,
+  ald,
+  iter = 4000,
+  warmup = 2000,
+  chains = 2
+)
 }
 \arguments{
 \item{formula}{Linear regression \code{formula} object}
@@ -14,6 +22,8 @@ gcomp_stan(formula = NULL, family = gaussian(link = "identity"), ipd, ald)
 \item{ipd}{Individual-level data}
 
 \item{ald}{Aggregate-level data}
+
+\item{iter, warmup, chains}{Stan MCMC parameters}
 }
 \value{
 A list of \eqn{y^*_A} and \eqn{y^*_C} posterior predictions
