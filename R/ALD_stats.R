@@ -106,6 +106,9 @@ link_transform <- function(p, family) {
   } else if (link == "log") {
     # log-Relative Risk (log-RR)
     return(log(p))
+  } else if (link == "identity") {
+    # RD
+    return(p)
   } else {
     stop("Link function not implemented")
   }
@@ -122,10 +125,11 @@ link_transform_var <- function(y, N, family) {
     return(1/y + 1/(N - y))
   } else if (link == "log") {
     # log-RR
-    return((1-p)/(p*n))
-  } else if (link == "log") {
-    # log-RD
-    return((1-p)/n)
+    # return(1/y + 1/N)
+    return((1-p)/(p*N))  ##TODO: check
+  # } else if (link == "identity") {
+  #   # RD
+  #   return((1-p)/n)
   } else {
     ##TODO: replace all? and move to trial_variance()
     (1 / (family$mu.eta(y/N)^2)) * family$variance(y/N)  # delta method

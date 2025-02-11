@@ -46,6 +46,7 @@ IPD_stats.maic <- function(strategy,
                           statistic = maic.boot,
                           R = strategy$R,
                           formula = strategy$formula,
+                          family = strategy$family,
                           ald = ald)
   
   list(mean = mean(maic_boot$t),

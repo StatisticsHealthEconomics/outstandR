@@ -100,6 +100,10 @@ the RCT publication. The binary outcomes are summarized in an overall
 event table. Typically, the published study only provides aggregate
 information to the analyst.
 
+```{r sim-data, echo=FALSE, eval=FALSE}
+# use simcovariates package
+```
+
 ```{r load-data}
 set.seed(555)
 

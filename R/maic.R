@@ -32,6 +32,15 @@ maic_weights <- function(X_EM) {
   exp(log.hat_w)
 }
 
+#' Objective function to minimize for standard method of moments MAIC
+#'
+#' @param beta Beta
+#' @param X X
+#' @keywords internal
+#' 
+Q <- function(beta, X) {
+  sum(exp(X %*% beta))
+}
 
 #' MAIC bootstrap sample
 #' 
@@ -41,12 +50,13 @@ maic_weights <- function(X_EM) {
 #' @param indices Vector of indices, same length as original,
 #'   which define the bootstrap sample
 #' @param formula Linear regression formula
+#' @param family Family object
 #' @template args-ald
 #' @return Fitted treatment coefficient is marginal effect for _A_ vs _C_
 #' @seealso [IPD_stats.maic()]
 #' @keywords internal
 #' 
-maic.boot <- function(ipd, indices, formula, ald) {
+maic.boot <- function(ipd, indices, formula, family, ald) {
   dat <- ipd[indices, ]  # bootstrap sample
   
   effect_modifier_names <- get_effect_modifiers(formula)
@@ -68,7 +78,7 @@ maic.boot <- function(ipd, indices, formula, ald) {
 
   # fit weighted logistic regression model
   fit <- glm(formula_treat,
-             family = "quasibinomial",
+             family = family,
              weights = hat_w,
              data = cbind(dat, hat_w = hat_w))
   
