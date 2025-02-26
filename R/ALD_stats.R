@@ -92,6 +92,12 @@ trial_treatment_effect <- function(ald, tid, family) {
   ##TODO: need to test this replaced
   # link_transform(p_hat, family)
   family$linkfun(p_hat)
+  
+  ##TODO: actually want to allow this to be any scale
+  ##      and not just that used to fit the model
+  ##      see the NICE Guidelines Technical Support Unit Meta-Analysis of Event Outcomes
+  ##      Guideline Methodology Document 3 Version 1 (January 2021)
+  ## for how to convert from probability to different relative effect statistics
 }
 
 
