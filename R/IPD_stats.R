@@ -47,9 +47,19 @@ IPD_stats.maic <- function(strategy,
                           R = strategy$R,
                           formula = strategy$formula,
                           ald = ald)
+
+  treat_nm <- get_treatment_name(strategy$formula)
+  coef_est <- mean(maic_boot$t)
+  var_est <- var(maic_boot$t)
   
-  list(mean = mean(maic_boot$t),
-       var = var(maic_boot$t))
+  # compute baseline probability in control group (P0)
+  newdat <- ipd[ipd[[treat_nm]] == 0, ]
+  P0 <- mean(predict(fit, newdata = newdat, type = "response"))
+  
+  converted_effect <- convert_effect(coef_est, from_scale, to_scale, P0)
+  
+  list(mean = converted_effect,
+       var = var_est)  ##TODO: variance conversion
 }
 
 
@@ -75,10 +85,18 @@ IPD_stats.stc <- function(strategy,
              family = strategy$family)
   
   treat_nm <- get_treatment_name(strategy$formula)
+  coef_est <- coef(fit)[treat_nm]
+  var_est <- vcov(fit)[treat_nm, treat_nm]
+  
+  # compute baseline probability in control group (P0)
+  newdat <- ipd[ipd[[treat_nm]] == 0, ]
+  P0 <- mean(predict(fit, newdata = newdat, type = "response"))
+  
+  converted_effect <- convert_effect(coef_est, from_scale, to_scale, P0)
   
   # fitted treatment coefficient is relative A vs C conditional effect
-  list(mean = coef(fit)[treat_nm],
-       var = vcov(fit)[treat_nm, treat_nm])
+  list(mean = converted_effect,
+       var = var_est)  ##TODO: variance conversion
 }
 
 
@@ -98,8 +116,18 @@ IPD_stats.gcomp_ml <- function(strategy,
                              family = strategy$family,
                              ald = ald)
   
-  list(mean = mean(AC_maic_boot$t),
-       var = var(AC_maic_boot$t))
+  treat_nm <- get_treatment_name(strategy$formula)
+  coef_est <- mean(AC_maic_boot$t)
+  var_est <- var(AC_maic_boot$t)
+  
+  # compute baseline probability in control group (P0)
+  newdat <- ipd[ipd[[treat_nm]] == 0, ]
+  P0 <- mean(predict(fit, newdata = newdat, type = "response"))
+  
+  converted_effect <- convert_effect(coef_est, from_scale, to_scale, P0)
+  
+  list(mean = converted_effect,
+       var = var_est)  ##TODO: variance conversion
 }
 
 
@@ -123,8 +151,18 @@ IPD_stats.gcomp_stan <- function(strategy,
   
   hat.delta.AC <- calculate_ate(mean_A, mean_C, family = strategy$family)
   
-  list(mean = mean(hat.delta.AC),
-       var = var(hat.delta.AC))
+  treat_nm <- get_treatment_name(strategy$formula)
+  coef_est <- mean(hat.delta.AC)
+  var_est <- var(hat.delta.AC)
+  
+  # compute baseline probability in control group (P0)
+  newdat <- ipd[ipd[[treat_nm]] == 0, ]
+  P0 <- mean(predict(fit, newdata = newdat, type = "response"))
+  
+  converted_effect <- convert_effect(coef_est, from_scale, to_scale, P0)
+  
+  list(mean = converted_effect,
+       var = var_est)  ##TODO: variance conversion
 } 
 
 
@@ -159,7 +197,17 @@ IPD_stats.mim <- function(strategy,
   lci.Delta <- hat.Delta + qt(0.025, df = nu) * sqrt(hat.var.Delta)
   uci.Delta <- hat.Delta + qt(0.975, df = nu) * sqrt(hat.var.Delta)
   
-  list(mean = hat.Delta,
-       var = hat.var.Delta)
+  treat_nm <- get_treatment_name(strategy$formula)
+  coef_est <- hat.Delta
+  var_est <- hat.var.Delta
+  
+  # compute baseline probability in control group (P0)
+  newdat <- ipd[ipd[[treat_nm]] == 0, ]
+  P0 <- mean(predict(fit, newdata = newdat, type = "response"))
+  
+  converted_effect <- convert_effect(coef_est, from_scale, to_scale, P0)
+  
+  list(mean = converted_effect,
+       var = var_est)  ##TODO: variance conversion
 } 
 
