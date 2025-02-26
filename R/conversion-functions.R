@@ -3,6 +3,9 @@
 convert_lor_to_or <- function(lor, P0 = NULL) exp(lor)
 convert_or_to_lor <- function(or, P0 = NULL) log(or)
 
+convert_lrr_to_rr <- function(lrr, P0 = NULL) exp(lrr)
+convert_rr_to_lrr <- function(rr, P0 = NULL) log(rr)
+
 convert_or_to_rr <- function(or, P0) or / ((1 - P0) + (P0 * or))
 convert_rr_to_or <- function(rr, P0) rr * ((1 - P0) / (1 - P0 * rr))
 
@@ -19,6 +22,7 @@ conversion_map <- function() {
            relative_risk = convert_or_to_rr),
     relative_risk =
       list(odds_ratio = convert_rr_to_or,
+           log_rr = convert_rr_to_lrr,
            risk_difference = convert_rr_to_rd),
     risk_difference =
       list(relative_risk = convert_rd_to_rr)
