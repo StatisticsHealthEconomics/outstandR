@@ -12,9 +12,10 @@
 #' @keywords internal
 #' 
 gcomp_ml.boot <- function(data, indices,
-                          R, formula = NULL, family, ald) {
+                          R, formula = NULL,
+                          family, ald, scale) {
   dat <- data[indices, ]
-  gcomp_ml_ate(formula, family, dat, ald) 
+  gcomp_ml_ate(formula, family, dat, ald, scale) 
 }
 
 
@@ -39,7 +40,8 @@ gcomp_ml.boot <- function(data, indices,
 #'
 gcomp_ml_ate <- function(formula,
                          family,
-                         ipd, ald) {
+                         ipd, ald,
+                         scale) {
   
   if (!inherits(formula, "formula"))
     stop("formula argument must be of formula class.")
@@ -67,7 +69,7 @@ gcomp_ml_ate <- function(formula,
   hat.mu.A <- mean(hat.mu.A.i) # (marginal) mean probability prediction under A
   hat.mu.C <- mean(hat.mu.C.i) # (marginal) mean probability prediction under C
   
-  calculate_ate(hat.mu.A, hat.mu.C, family = family)
+  calculate_ate(hat.mu.A, hat.mu.C, effect = scale)
 }
 
 

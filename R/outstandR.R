@@ -11,6 +11,7 @@
 #' @param strategy Computation strategy function. These can be
 #'    `strategy_maic()`, `strategy_stc()`, `strategy_gcomp_ml()` and  `strategy_gcomp_stan()`
 #' @param CI Confidence interval; between 0,1
+#' @param scale Relative treatment effect scale. If `NULL`, the scale is automatically determined from the model.
 #' @param ... Additional arguments
 #' @return List of length 3 of statistics as a `outstandR` class object.
 #'   Containing statistics between each pair of treatments.
@@ -43,7 +44,7 @@
 #' # Multiple imputation marginalization
 #' outstandR_gcomp_stan <- outstandR(AC_IPD, BC_ALD, strategy = strategy_mim(lin_form))
 #' 
-outstandR <- function(AC.IPD, BC.ALD, strategy, CI = 0.95, ...) {
+outstandR <- function(AC.IPD, BC.ALD, strategy, CI = 0.95, scale = NULL, ...) {
   
   if (CI <= 0 || CI >= 1) stop("CI argument must be between 0 and 1.")
   ##TODO: as method instead?
@@ -53,8 +54,10 @@ outstandR <- function(AC.IPD, BC.ALD, strategy, CI = 0.95, ...) {
   ipd <- prep_ipd(strategy$formula, AC.IPD)
   ald <- prep_ald(strategy$formula, BC.ALD)
 
-  AC_stats <- IPD_stats(strategy, ipd = ipd, ald = ald, ...) 
-  BC_stats <- ALD_stats(strategy, ald = ald) 
+  scale <- if (is.null(scale)) get_treatment_effect(strategy$family$link)
+  
+  AC_stats <- IPD_stats(strategy, ipd = ipd, ald = ald, scale, ...) 
+  BC_stats <- ALD_stats(strategy, ald = ald, scale) 
   
   stats <- contrast_stats(AC_stats, BC_stats, CI)
   

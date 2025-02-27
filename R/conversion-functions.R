@@ -22,10 +22,12 @@ conversion_map <- function() {
            relative_risk = convert_or_to_rr),
     relative_risk =
       list(odds_ratio = convert_rr_to_or,
-           log_rr = convert_rr_to_lrr,
+           log_relative_risk = convert_rr_to_lrr,
            risk_difference = convert_rr_to_rd),
     risk_difference =
-      list(relative_risk = convert_rd_to_rr)
+      list(relative_risk = convert_rd_to_rr),
+    delta_z = 
+      list(odds_ratio = convert_delta_z_to_or),
   )
 }
 
@@ -62,7 +64,9 @@ find_conversion_path <- function(from, to, visited = c()) {
 
 # apply conversions along the found path
 #
-convert_effect <- function(value, from, to, P0) {
+convert_effect <- function(value, link, to, P0) {
+  
+  from <- get_treatment_effect(link)  # scale
   conv_map <- conversion_map()
   
   path <- find_conversion_path(from, to)

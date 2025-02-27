@@ -1,3 +1,4 @@
+#
 
 #' Calculate ATE
 #'
@@ -7,24 +8,63 @@
 #' @returns ATE
 #' @export
 #'
-calculate_ate <- function(mean_A, mean_C, family) {
+calculate_ate <- function(mean_A, mean_C, effect) {
 
-  link <- family$link
-  
-  if (link == "logit") {
+  if (effect == "log_odds") {
     ate <- qlogis(mean_A) - qlogis(mean_C)
-  } else if (link == "identity") {
+  } else if (effect == "risk_difference") {
     ate <- mean_A - mean_C
-  } else if (link == "probit") {
+  } else if (effect == "delta_z") {
     ate <- qnorm(mean_A) - qnorm(mean_C)
-  } else if (link == "cloglog") {
+  } else if (effect == "log_relative_risk_rare_events") {
     ate <- log(-log(1 - mean_A)) - log(-log(1 - mean_C))
-  } else if (link == "log") {  # Poisson log link
+  } else if (effect == "log_relative_risk") {  # Poisson log link
     ate <- log(mean_A) - log(mean_C)
   } else {
-    stop("Unsupported link function. Choose from 'logit', 'identity', 'probit', 'cloglog', or 'log'.")
+    stop("Unsupported link function.")
   }
   
   ate
 }
 
+#' Get treatment effect scale corresponding to a link function
+#'
+get_treatment_effect <- function(link) {
+
+  if (link == "logit") {
+    rte <- "log_odds"
+  } else if (link == "identity") {
+    rte <- "risk_difference"
+  } else if (link == "probit") {
+    rte <- "delta_z"
+  } else if (link == "cloglog") {  # binomial
+    rte <- "log_relative_risk_rare_events"
+  } else if (link == "log") {  # Poisson log link
+    rte <- "log_relative_risk"
+  } else {
+    stop("Unsupported link function. Choose from
+         'logit', 'identity', 'probit', 'cloglog', or 'log'.")
+  }
+  
+  rte
+}
+
+calc_log_odds_ratio <- function(mean_A, mean_C) {
+  qlogis(mean_A) - qlogis(mean_C)
+}
+
+calc_risk_difference <- function(mean_A, mean_C) {
+  mean_A - mean_C
+}
+
+calc_delta_z <- function(mean_A, mean_C) {
+  qnorm(mean_A) - qnorm(mean_C)
+}
+
+calc_log_relative_risk_rare_events <- function(mean_A, mean_C) {
+  log(-log(1 - mean_A)) - log(-log(1 - mean_C))
+}
+
+calc_log_relative_risk <- function(mean_A, mean_C) {
+  log(mean_A) - log(mean_C)
+}
