@@ -1,7 +1,7 @@
 
-#' Calculate ATE
+#' Calculate Average Treatment Effect
 #'
-#' @param ppv model prediction samples
+#' @param mean_A,mean_C Mean of the outcome for the treatment and control
 #' @param family family object of the model
 #'
 #' @returns ATE
