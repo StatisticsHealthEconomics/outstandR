@@ -38,10 +38,6 @@ IPD_stats.default <- function(...) {
 IPD_stats.maic <- function(strategy,
                            ipd, ald,
                            scale) {
-  # maic.boot(data = data,
-  #           indices = 1:nrow(data),
-  #           formula = strategy$formula,
-  #           dat_ALD = strategy$dat_ALD)
   
   maic_boot <- boot::boot(data = ipd,
                           statistic = maic.boot,
@@ -49,12 +45,15 @@ IPD_stats.maic <- function(strategy,
                           formula = strategy$formula,
                           ald = ald)
 
+  hat.delta.AC <- calculate_ate(maic_boot$A_mean, maic_boot$C_mean,
+                                effect = scale)
+  
   treat_nm <- get_treatment_name(strategy$formula)
-  coef_est <- mean(maic_boot$t)
-  var_est <- var(maic_boot$t)
+  coef_est <- mean(hat.delta.AC)
+  var_est <- var(hat.delta.AC)
 
   list(mean = coef_est,
-       var = var_est)  ##TODO: variance conversion
+       var = var_est)
 }
 
 
@@ -113,14 +112,14 @@ IPD_stats.gcomp_ml <- function(strategy,
                                ipd, ald,
                                scale) {
 
-  maic_boot <- boot::boot(data = ipd,
-                          statistic = gcomp_ml.boot,
-                          R = strategy$R,
-                          formula = strategy$formula,
-                          family = strategy$family,
-                          ald = ald)
+  gcomp_boot <- boot::boot(data = ipd,
+                           statistic = gcomp_ml.boot,
+                           R = strategy$R,
+                           formula = strategy$formula,
+                           family = strategy$family,
+                           ald = ald)
   
-  hat.delta.AC <- calculate_ate(maic_boot$A_mean, maic_boot$C_mean,
+  hat.delta.AC <- calculate_ate(gcomp_boot$A_mean, gcomp_boot$C_mean,
                                 effect = scale)
   
   treat_nm <- get_treatment_name(strategy$formula)
@@ -128,7 +127,7 @@ IPD_stats.gcomp_ml <- function(strategy,
   var_est <- var(hat.delta.AC)
   
   list(mean = coef_est,
-       var = var_est)  ##TODO: variance conversion
+       var = var_est)
 }
 
 
@@ -158,7 +157,7 @@ IPD_stats.gcomp_stan <- function(strategy,
   var_est <- var(hat.delta.AC)
   
   list(mean = coef_est,
-       var = var_est)  ##TODO: variance conversion
+       var = var_est)
 } 
 
 
