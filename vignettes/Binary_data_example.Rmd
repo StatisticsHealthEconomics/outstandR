@@ -214,6 +214,33 @@ contrasts, variances and confidence intervals (CI), respectively. The
 default CI is for 95% but can be altered in `outstandR` with the `CI`
 argument.
 
+#### Outcome scale
+
+If we do not explicitly specify the outcome scale, the default is that used for fit the data in the regression model. As we saw, in this case, the default is
+log-odds ratio corresponding to the `"logit"` link function for binary data.
+However, we can change this to some other scale which may be more appropriate for a particular analysis.
+So far implemented in the package, the links and their corresponding relative treatment effect scales are as follows:
+
+| Data Type  | Model   | Scale             |
+|:-----------|---------|:------------------|
+| Binary     | `logit` | Log-odds ratio    |
+| Count      | `log`   | Log-risk ratio    |
+| Continuous | `mean`  | Mean difference   |
+
+The full list of possible tranformed treatment effect scales are:
+_log-odds ratio_, _log-risk ratio_, _mean difference_, risk difference, hazard ratio, hazard difference.
+
+To change the outcome scale, we can pass the `scale` argument in the `outstandR()` function.
+For example, to change the scale to risk difference, we can use the following code.
+
+```{r outstandR_rd}
+outstandR_maic_rd <-
+  outstandR(AC.IPD, BC.ALD,
+            strategy = strategy_maic(formula = lin_form,
+                                     family = binomial(link = "logit")),
+            scale = "risk-difference")
+```
+
 ### STC
 
 STC is the conventional outcome regression method. It involves fitting a

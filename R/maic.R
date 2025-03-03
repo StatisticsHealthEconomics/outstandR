@@ -42,7 +42,7 @@ maic_weights <- function(X_EM) {
 #'   which define the bootstrap sample
 #' @param formula Linear regression formula
 #' @template args-ald
-#' @return Fitted treatment coefficient is marginal effect for _A_ vs _C_
+#' @return Fitted probabilities for _A_ and _C_
 #' @seealso [IPD_stats.maic()]
 #' @keywords internal
 #' 
@@ -72,7 +72,15 @@ maic.boot <- function(ipd, indices, formula, ald) {
              weights = hat_w,
              data = cbind(dat, hat_w = hat_w))
   
-  coef(fit)[treat_nm]
+  # extract model coefficients
+  coef_fit <- coef(fit)
+  
+  ##TODO: use inverse link from formula
+  # probabilities using inverse logit
+  p0 <- plogis(coef_fit[1])                # probability for control group
+  p1 <- plogis(coef_fit[1] + coef_fit[2])  # probability for treatment group
+  
+  list(mean_A = p0, mean_C = p1)
 }
 
 

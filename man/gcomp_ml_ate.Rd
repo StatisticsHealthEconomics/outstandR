@@ -4,7 +4,7 @@
 \alias{gcomp_ml_ate}
 \title{G-computation Maximum Likelihood ATE}
 \usage{
-gcomp_ml_ate(formula, family, ipd, ald)
+gcomp_ml_ate(formula, family, ipd, ald, scale)
 }
 \arguments{
 \item{formula}{Linear regression \code{formula} object}

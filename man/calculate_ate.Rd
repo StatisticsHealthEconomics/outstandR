@@ -4,12 +4,12 @@
 \alias{calculate_ate}
 \title{Calculate ATE}
 \usage{
-calculate_ate(mean_A, mean_C, family)
+calculate_ate(mean_A, mean_C, effect)
 }
 \arguments{
-\item{family}{family object of the model}
-
 \item{ppv}{model prediction samples}
+
+\item{family}{family object of the model}
 }
 \value{
 ATE

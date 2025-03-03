@@ -57,7 +57,7 @@ outstandR <- function(AC.IPD, BC.ALD, strategy, CI = 0.95, scale = NULL, ...) {
   scale <- if (is.null(scale)) get_treatment_effect(strategy$family$link)
   
   AC_stats <- IPD_stats(strategy, ipd = ipd, ald = ald, scale, ...) 
-  BC_stats <- ALD_stats(strategy, ald = ald, scale) 
+  BC_stats <- ALD_stats(strategy, ald = ald, scale = scale) 
   
   stats <- contrast_stats(AC_stats, BC_stats, CI)
   

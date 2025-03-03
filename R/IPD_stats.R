@@ -53,14 +53,6 @@ IPD_stats.maic <- function(strategy,
   coef_est <- mean(maic_boot$t)
   var_est <- var(maic_boot$t)
 
-  ##TODO:  
-  # # compute baseline probability in control group (P0)
-  # newdat <- ipd[ipd[[treat_nm]] == 0, ]
-  # P0 <- mean(predict(fit, newdata = newdat, type = "response"))
-  # 
-  # converted_effect <- convert_effect(
-  #   coef_est, link = strategy$family$link, to_scale = scale, P0)
-  
   list(mean = coef_est,
        var = var_est)  ##TODO: variance conversion
 }
@@ -88,20 +80,26 @@ IPD_stats.stc <- function(strategy,
              data = ipd,
              family = strategy$family)
   
-  treat_nm <- get_treatment_name(strategy$formula)
-  coef_est <- coef(fit)[treat_nm]
-  var_est <- vcov(fit)[treat_nm, treat_nm]
-
-  ##TODO:  
-  # # compute baseline probability in control group (P0)
-  # newdat <- ipd[ipd[[treat_nm]] == 0, ]
-  # P0 <- mean(predict(fit, newdata = newdat, type = "response"))
-  # 
-  # converted_effect <- convert_effect(coef_est, from_scale, to_scale, P0)
+  # extract model coefficients
+  coef_fit <- coef(fit)
   
-  # fitted treatment coefficient is relative A vs C conditional effect
+  ##TODO: use inverse link from formula
+  # probabilities using inverse logit
+  A_mean <- plogis(coef_fit[1])                # probability for control group
+  C_mean <- plogis(coef_fit[1] + coef_fit[2])  # probability for treatment group
+  
+  hat.delta.AC <- calculate_ate(A_mean, C_mean,
+                                effect = scale)
+  
+  treat_nm <- get_treatment_name(strategy$formula)
+  coef_est <- mean(hat.delta.AC)
+  var_est <- var(hat.delta.AC)
+  
+  # coef_est <- coef(fit)[treat_nm]
+  # var_est <- vcov(fit)[treat_nm, treat_nm]
+  
   list(mean = coef_est,
-       var = var_est)  ##TODO: variance conversion
+       var = var_est)
 }
 
 
@@ -115,24 +113,19 @@ IPD_stats.gcomp_ml <- function(strategy,
                                ipd, ald,
                                scale) {
 
-  AC_maic_boot <- boot::boot(data = ipd,
-                             statistic = gcomp_ml.boot,
-                             R = strategy$R,
-                             formula = strategy$formula,
-                             family = strategy$family,
-                             ald = ald,
-                             scale = scale)
+  maic_boot <- boot::boot(data = ipd,
+                          statistic = gcomp_ml.boot,
+                          R = strategy$R,
+                          formula = strategy$formula,
+                          family = strategy$family,
+                          ald = ald)
+  
+  hat.delta.AC <- calculate_ate(maic_boot$A_mean, maic_boot$C_mean,
+                                effect = scale)
   
   treat_nm <- get_treatment_name(strategy$formula)
-  coef_est <- mean(AC_maic_boot$t)
-  var_est <- var(AC_maic_boot$t)
-
-  ##TODO:  
-  # # compute baseline probability in control group (P0)
-  # newdat <- ipd[ipd[[treat_nm]] == 0, ]
-  # P0 <- mean(predict(fit, newdata = newdat, type = "response"))
-  # 
-  # converted_effect <- convert_effect(coef_est, from_scale, to_scale, P0)
+  coef_est <- mean(hat.delta.AC)
+  var_est <- var(hat.delta.AC)
   
   list(mean = coef_est,
        var = var_est)  ##TODO: variance conversion
@@ -163,15 +156,6 @@ IPD_stats.gcomp_stan <- function(strategy,
   treat_nm <- get_treatment_name(strategy$formula)
   coef_est <- mean(hat.delta.AC)
   var_est <- var(hat.delta.AC)
-
-  ##TODO: dont think need to convert scale to new scale
-  ##      just do directly on the original probabilities
-  
-  # # compute baseline probability in control group (P0)
-  # newdat <- ipd[ipd[[treat_nm]] == 0, ]
-  # P0 <- mean(predict(fit, newdata = newdat, type = "response"))
-  # 
-  # converted_effect <- convert_effect(coef_est, from_scale, to_scale, P0)
   
   list(mean = coef_est,
        var = var_est)  ##TODO: variance conversion
@@ -213,15 +197,8 @@ IPD_stats.mim <- function(strategy,
   treat_nm <- get_treatment_name(strategy$formula)
   coef_est <- hat.Delta
   var_est <- hat.var.Delta
-
-  ##TODO:  
-  # # compute baseline probability in control group (P0)
-  # newdat <- ipd[ipd[[treat_nm]] == 0, ]
-  # P0 <- mean(predict(fit, newdata = newdat, type = "response"))
-  # 
-  # converted_effect <- convert_effect(coef_est, from_scale, to_scale, P0)
   
   list(mean = coef_est,
-       var = var_est)  ##TODO: variance conversion
+       var = var_est)
 } 
 

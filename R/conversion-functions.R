@@ -1,3 +1,12 @@
+##TODO: dont think need to convert scale to new scale
+##      just do directly on the original probabilities
+
+# # compute baseline probability in control group (P0)
+# newdat <- ipd[ipd[[treat_nm]] == 0, ]
+# P0 <- mean(predict(fit, newdata = newdat, type = "response"))
+# 
+# converted_effect <- convert_effect(
+#   coef_est, link = strategy$family$link, to_scale = scale, P0)
 
 # transformation functions
 convert_lor_to_or <- function(lor, P0 = NULL) exp(lor)
