@@ -14,9 +14,11 @@ gcomp_ml_ate(formula, family, ipd, ald, scale)
 \item{ipd}{Individual-level data}
 
 \item{ald}{Aggregate-level data}
+
+\item{scale}{Effect scale}
 }
 \value{
-Difference of log-odds
+Difference on relative treatment effect scale
 }
 \description{
 G-computation Maximum Likelihood ATE

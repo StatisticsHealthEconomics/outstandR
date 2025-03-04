@@ -4,7 +4,7 @@
 \alias{ALD_stats}
 \title{Aggregate-level data mean and variance statistics}
 \usage{
-ALD_stats(strategy, ald, treatments = list("B", "C"))
+ALD_stats(strategy, ald, treatments = list("B", "C"), scale)
 }
 \arguments{
 \item{ald}{Aggregate-level trial data}

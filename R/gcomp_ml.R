@@ -31,8 +31,9 @@ gcomp_ml.boot <- function(data, indices,
 #' @param family Family object
 #' @template args-ipd
 #' @template args-ald
+#' @param scale Effect scale
 #'
-#' @return Difference of log-odds 
+#' @return Difference on relative treatment effect scale 
 #' @seealso [strategy_gcomp_ml()], [gcomp_ml.boot()]
 #' @importFrom copula normalCopula mvdc rMvdc
 #' @importFrom stats predict glm
@@ -49,9 +50,9 @@ gcomp_ml_ate <- function(formula,
   x_star <- simulate_ALD_pseudo_pop(formula, ipd, ald)
   
   # outcome logistic regression fitted to IPD using maximum likelihood
-  fit <- glm(formula,
-             data = ipd,
-             family = family)
+  fit <- glm(formula = formula,
+             family = family,
+             data = ipd)
   
   # counterfactual datasets
   data.trtA <- data.trtC <- x_star
@@ -66,8 +67,8 @@ gcomp_ml_ate <- function(formula,
   hat.mu.A.i <- predict(fit, type="response", newdata=data.trtA)
   hat.mu.C.i <- predict(fit, type="response", newdata=data.trtC)
   
-  hat.mu.A <- mean(hat.mu.A.i) # (marginal) mean probability prediction under A
-  hat.mu.C <- mean(hat.mu.C.i) # (marginal) mean probability prediction under C
+  hat.mu.A <- mean(hat.mu.A.i)  # (marginal) mean probability prediction under A
+  hat.mu.C <- mean(hat.mu.C.i)  # (marginal) mean probability prediction under C
   
   calculate_ate(hat.mu.A, hat.mu.C, effect = scale)
 }
@@ -108,6 +109,7 @@ simulate_ALD_pseudo_pop <- function(formula, ipd, ald) {
   
   # BC covariate means & standard deviations
   mean_sd_margins <- list()
+  
   for (i in seq_len(n_covariates)) {
     mean_sd_margins[[i]] <- list(mean = ald[[mean_names[i]]],
                                  sd = ald[[sd_names[i]]])

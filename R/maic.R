@@ -41,12 +41,13 @@ maic_weights <- function(X_EM) {
 #' @param indices Vector of indices, same length as original,
 #'   which define the bootstrap sample
 #' @param formula Linear regression formula
+#' @param family Family object
 #' @template args-ald
 #' @return Fitted probabilities for _A_ and _C_
 #' @seealso [IPD_stats.maic()]
 #' @keywords internal
 #' 
-maic.boot <- function(ipd, indices, formula, ald) {
+maic.boot <- function(ipd, indices, formula, family, ald) {
   dat <- ipd[indices, ]  # bootstrap sample
   
   effect_modifier_names <- get_effect_modifiers(formula)
@@ -68,17 +69,16 @@ maic.boot <- function(ipd, indices, formula, ald) {
 
   # fit weighted logistic regression model
   fit <- glm(formula_treat,
-             family = "quasibinomial",
+             family = family,
              weights = hat_w,
              data = cbind(dat, hat_w = hat_w))
   
   # extract model coefficients
   coef_fit <- coef(fit)
   
-  ##TODO: use inverse link from formula
   # probabilities using inverse logit
-  p0 <- plogis(coef_fit[1])                # probability for control group
-  p1 <- plogis(coef_fit[1] + coef_fit[2])  # probability for treatment group
+  p0 <- family$linkinv(coef_fit[1])                # probability for control group
+  p1 <- family$linkinv(coef_fit[1] + coef_fit[2])  # probability for treatment group
   
   list(mean_A = p0, mean_C = p1)
 }

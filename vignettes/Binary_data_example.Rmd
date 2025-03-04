@@ -227,7 +227,7 @@ So far implemented in the package, the links and their corresponding relative tr
 | Count      | `log`   | Log-risk ratio    |
 | Continuous | `mean`  | Mean difference   |
 
-The full list of possible tranformed treatment effect scales are:
+The full list of possible transformed treatment effect scales are:
 _log-odds ratio_, _log-risk ratio_, _mean difference_, risk difference, hazard ratio, hazard difference.
 
 To change the outcome scale, we can pass the `scale` argument in the `outstandR()` function.

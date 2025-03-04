@@ -4,7 +4,7 @@
 \alias{maic.boot}
 \title{MAIC bootstrap sample}
 \usage{
-maic.boot(ipd, indices, formula, ald)
+maic.boot(ipd, indices, formula, family, ald)
 }
 \arguments{
 \item{ipd}{Individual-level data}
@@ -14,10 +14,12 @@ which define the bootstrap sample}
 
 \item{formula}{Linear regression formula}
 
+\item{family}{Family object}
+
 \item{ald}{Aggregate-level data}
 }
 \value{
-Fitted treatment coefficient is marginal effect for \emph{A} vs \emph{C}
+Fitted probabilities for \emph{A} and \emph{C}
 }
 \description{
 Matching-adjusted indirect comparison bootstrap sampling.

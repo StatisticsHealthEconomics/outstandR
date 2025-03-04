@@ -1,5 +1,6 @@
-##TODO: dont think need to convert scale to new scale
-##      just do directly on the original probabilities
+## see the NICE Guidelines Technical Support Unit Meta-Analysis of Event Outcomes
+## Guideline Methodology Document 3 Version 1 (January 2021)
+## for how to convert from probability to different relative effect statistics
 
 # # compute baseline probability in control group (P0)
 # newdat <- ipd[ipd[[treat_nm]] == 0, ]

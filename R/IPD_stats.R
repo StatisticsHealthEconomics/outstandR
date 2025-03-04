@@ -43,9 +43,10 @@ IPD_stats.maic <- function(strategy,
                           statistic = maic.boot,
                           R = strategy$R,
                           formula = strategy$formula,
+                          family = strategy$family,
                           ald = ald)
 
-  hat.delta.AC <- calculate_ate(maic_boot$A_mean, maic_boot$C_mean,
+  hat.delta.AC <- calculate_ate(maic_boot$mean_A, maic_boot$mean_C,
                                 effect = scale)
   
   treat_nm <- get_treatment_name(strategy$formula)
@@ -75,19 +76,17 @@ IPD_stats.stc <- function(strategy,
 
   ipd[, centre_vars] <- scale(ipd[, centre_vars], scale = FALSE)
   
-  fit <- glm(strategy$formula,
-             data = ipd,
-             family = strategy$family)
+  fit <- glm(formula = strategy$formula,
+             family = strategy$family,
+             data = ipd)
   
   # extract model coefficients
   coef_fit <- coef(fit)
   
-  ##TODO: use inverse link from formula
-  # probabilities using inverse logit
-  A_mean <- plogis(coef_fit[1])                # probability for control group
-  C_mean <- plogis(coef_fit[1] + coef_fit[2])  # probability for treatment group
+  mean_A <- family$linkinv(coef_fit[1])                # probability for control group
+  mean_C <- family$linkinv(coef_fit[1] + coef_fit[2])  # probability for treatment group
   
-  hat.delta.AC <- calculate_ate(A_mean, C_mean,
+  hat.delta.AC <- calculate_ate(mean_A, mean_C,
                                 effect = scale)
   
   treat_nm <- get_treatment_name(strategy$formula)
@@ -185,17 +184,16 @@ IPD_stats.mim <- function(strategy,
   b <- var(mis_res$hats.delta)           # "between" variance (sample variance of point estimates)
   
   # pooling: average of point estimates is marginal log odds ratio
-  hat.Delta <- bar.delta
+  coef_est <- bar.delta
   
-  hat.var.Delta <- var_by_pooling(M, bar.v, b)
+  var_est <- var_by_pooling(M, bar.v, b)
   nu <- wald_type_interval(M, bar.v, b)
   
-  lci.Delta <- hat.Delta + qt(0.025, df = nu) * sqrt(hat.var.Delta)
-  uci.Delta <- hat.Delta + qt(0.975, df = nu) * sqrt(hat.var.Delta)
+  ##TODO: how are these used?
+  lci.Delta <- coef_est + qt(0.025, df = nu) * sqrt(var_est)
+  uci.Delta <- coef_est + qt(0.975, df = nu) * sqrt(var_est)
   
   treat_nm <- get_treatment_name(strategy$formula)
-  coef_est <- hat.Delta
-  var_est <- hat.var.Delta
   
   list(mean = coef_est,
        var = var_est)

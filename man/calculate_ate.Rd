@@ -2,7 +2,7 @@
 % Please edit documentation in R/calculate_ate.R
 \name{calculate_ate}
 \alias{calculate_ate}
-\title{Calculate ATE}
+\title{Calculate average treatment effect}
 \usage{
 calculate_ate(mean_A, mean_C, effect)
 }
@@ -15,5 +15,5 @@ calculate_ate(mean_A, mean_C, effect)
 ATE
 }
 \description{
-Calculate ATE
+Calculate average treatment effect
 }

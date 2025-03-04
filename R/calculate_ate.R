@@ -1,6 +1,6 @@
 #
 
-#' Calculate ATE
+#' Calculate average treatment effect
 #'
 #' @param ppv model prediction samples
 #' @param family family object of the model
@@ -26,6 +26,55 @@ calculate_ate <- function(mean_A, mean_C, effect) {
   
   ate
 }
+
+#
+calculate_trial_variance <- function(ald, tid, effect) {
+  
+  y <- ald[[paste0("y.", tid, ".sum")]]
+  N <- ald[[paste0("N.", tid)]]
+  
+  if (effect == "log_odds") {
+    res <- y/N + (N-y)/N
+  } else if (effect == "log_relative_risk") {
+    res <- 1/(N-y) - 1/N
+  } else if (effect == "risk_difference") {
+    ##TODO:
+  } else if (effect == "delta_z") {
+    ##TODO:
+  } else if (effect == "log_relative_risk_rare_events") {
+    ##TODO:
+  } else {
+    stop("Unsupported link function.")
+  }
+  
+  res
+}
+
+#
+calculate_trial_mean <- function(ald, tid, effect) {
+  
+  y <- ald[[paste0("y.", tid, ".sum")]]
+  N <- ald[[paste0("N.", tid)]]
+  p <- y/N
+  
+  if (effect == "log_odds") {
+    # res <- log(p/(1-p)
+    res <- qlogis(p)
+  } else if (effect == "risk_difference") {
+    res <- p
+  } else if (effect == "delta_z") {
+    res <- qnorm(p)
+  } else if (effect == "log_relative_risk_rare_events") {
+    res <- log(-log(1 - p))
+  } else if (effect == "log_relative_risk") {
+    res <- log(p)
+  } else {
+    stop("Unsupported link function.")
+  }
+  
+  res
+}
+
 
 #' Get treatment effect scale corresponding to a link function
 #'
