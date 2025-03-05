@@ -87,7 +87,7 @@ IPD_stats.stc <- function(strategy,
 
 #' @rdname IPD_stats
 #' @section G-computation maximum likelihood statistics:
-#' Compute a non-parametric bootstrap with \eqn{R=1000} resamples.
+#' Compute a non-parametric bootstrap with default \eqn{R=1000} resamples.
 #' @importFrom boot boot
 #' @export
 #'
@@ -117,7 +117,6 @@ IPD_stats.gcomp_ml <- function(strategy,
 #' @section G-computation Bayesian statistics:
 #' Using Stan, compute marginal log-odds ratio for _A_ vs _C_ for each MCMC sample
 #' by transforming from probability to linear predictor scale.
-#' @importFrom stats qlogis
 #' @export
 #'
 IPD_stats.gcomp_stan <- function(strategy,
@@ -144,7 +143,7 @@ IPD_stats.gcomp_stan <- function(strategy,
 
 #' @rdname IPD_stats
 #' @section Multiple imputation marginalisation:
-#' Using Stan, compute marginal log-odds ratio for _A_ vs _C_ for each MCMC sample
+#' Using Stan, compute marginal relative treatment effect for _A_ vs _C_ for each MCMC sample
 #' by transforming from probability to linear predictor scale. Approximate by 
 #' using imputation and combining estimates using Rubin's rules, in contrast to [IPD_stats.gcomp_stan()].
 #' @import stats
@@ -160,7 +159,6 @@ IPD_stats.mim <- function(strategy,
   
   hat.delta.AC <- calculate_ate(mis_res$mean_A, mis_res$mean_C,
                                 effect = scale)
-  
   M <- mis_res$M
   
   # quantities originally defined by Rubin (1987) for multiple imputation

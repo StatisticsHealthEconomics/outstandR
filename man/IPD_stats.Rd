@@ -55,7 +55,7 @@ the treatment variable \eqn{z}.
 
 \section{G-computation maximum likelihood statistics}{
 
-Compute a non-parametric bootstrap with \eqn{R=1000} resamples.
+Compute a non-parametric bootstrap with default \eqn{R=1000} resamples.
 }
 
 \section{G-computation Bayesian statistics}{
@@ -66,7 +66,7 @@ by transforming from probability to linear predictor scale.
 
 \section{Multiple imputation marginalisation}{
 
-Using Stan, compute marginal log-odds ratio for \emph{A} vs \emph{C} for each MCMC sample
+Using Stan, compute marginal relative treatment effect for \emph{A} vs \emph{C} for each MCMC sample
 by transforming from probability to linear predictor scale. Approximate by
 using imputation and combining estimates using Rubin's rules, in contrast to \code{\link[=IPD_stats.gcomp_stan]{IPD_stats.gcomp_stan()}}.
 }
