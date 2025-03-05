@@ -56,20 +56,29 @@ mim <- function(formula,
     glm(y_star[m, ] ~ trt, data = aug.target, family = family))
   
   ##TODO: this is on the original scale, need to transform to user-defined
-  ##so return the probability scale
+  ## so return the probability scale
   ## also its a bit unclear
   
   # treatment effect point estimates in each synthesis
   hats.delta <- unlist(lapply(reg2.fits,
                               function(fit)
                                 coef(fit)["trt"][[1]]))
+  ## replace by
+  # sapply(reg2.fits, function(fit) coef(fit)["trt"])
   
+  
+  ##TODO: how to transform this to the prob scale?
   # point estimates for the variance in each synthesis
   hats.v <- unlist(lapply(reg2.fits,
                           function(fit)
                             vcov(fit)["trt", "trt"]))
   
-  tibble::lst(hats.delta, hats.v, M)
+  ##TODO: this should use hats.delta code above
+  mean_A <- family$linkinv(coef_fit[1])                # probability for control
+  mean_C <- family$linkinv(coef_fit[1] + coef_fit[2])  # probability for treatment
+  
+  tibble::lst(mean_A, mean_C,
+              hats.v, M)
 }
 
 #' Wald-type interval estimates

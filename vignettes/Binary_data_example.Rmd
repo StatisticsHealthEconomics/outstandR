@@ -238,7 +238,7 @@ outstandR_maic_rd <-
   outstandR(AC.IPD, BC.ALD,
             strategy = strategy_maic(formula = lin_form,
                                      family = binomial(link = "logit")),
-            scale = "risk-difference")
+            scale = "relative-risk")
 ```
 
 ### STC

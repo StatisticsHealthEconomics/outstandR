@@ -46,10 +46,9 @@ IPD_stats.maic <- function(strategy,
                           family = strategy$family,
                           ald = ald)
 
-  hat.delta.AC <- calculate_ate(maic_boot$mean_A, maic_boot$mean_C,
+  hat.delta.AC <- calculate_ate(maic_boot$t[, 1], maic_boot$t[, 2],
                                 effect = scale)
   
-  treat_nm <- get_treatment_name(strategy$formula)
   coef_est <- mean(hat.delta.AC)
   var_est <- var(hat.delta.AC)
 
@@ -70,26 +69,11 @@ IPD_stats.stc <- function(strategy,
                           ipd, ald,
                           scale) {
 
-  # centre covariates
-  term.labels <- attr(terms(strategy$formula), "term.labels")
-  centre_vars <- gsub("trt:", "", term.labels[grepl(":", term.labels)])
-
-  ipd[, centre_vars] <- scale(ipd[, centre_vars], scale = FALSE)
+  stc_out <- calc_stc(strategy, ipd)
   
-  fit <- glm(formula = strategy$formula,
-             family = strategy$family,
-             data = ipd)
-  
-  # extract model coefficients
-  coef_fit <- coef(fit)
-  
-  mean_A <- family$linkinv(coef_fit[1])                # probability for control group
-  mean_C <- family$linkinv(coef_fit[1] + coef_fit[2])  # probability for treatment group
-  
-  hat.delta.AC <- calculate_ate(mean_A, mean_C,
+  hat.delta.AC <- calculate_ate(stc_out$mean_A, stc_out$mean_C,
                                 effect = scale)
   
-  treat_nm <- get_treatment_name(strategy$formula)
   coef_est <- mean(hat.delta.AC)
   var_est <- var(hat.delta.AC)
   
@@ -118,10 +102,9 @@ IPD_stats.gcomp_ml <- function(strategy,
                            family = strategy$family,
                            ald = ald)
   
-  hat.delta.AC <- calculate_ate(gcomp_boot$A_mean, gcomp_boot$C_mean,
+  hat.delta.AC <- calculate_ate(gcomp_boot$t[, 1], gcomp_boot$t[, 2],
                                 effect = scale)
   
-  treat_nm <- get_treatment_name(strategy$formula)
   coef_est <- mean(hat.delta.AC)
   var_est <- var(hat.delta.AC)
   
@@ -151,7 +134,6 @@ IPD_stats.gcomp_stan <- function(strategy,
   
   hat.delta.AC <- calculate_ate(mean_A, mean_C, effect = scale)
   
-  treat_nm <- get_treatment_name(strategy$formula)
   coef_est <- mean(hat.delta.AC)
   var_est <- var(hat.delta.AC)
   
@@ -176,15 +158,15 @@ IPD_stats.mim <- function(strategy,
                  family = strategy$family,
                  ipd, ald)
   
-  ##TODO:
-  # hat.delta.AC <- calculate_ate(mis_res$mean_A, mis_res$mean_C, effect = scale)
+  hat.delta.AC <- calculate_ate(mis_res$mean_A, mis_res$mean_C,
+                                effect = scale)
   
   M <- mis_res$M
   
   # quantities originally defined by Rubin (1987) for multiple imputation
-  coef_est <- mean(mis_res$hats.delta)  # average of treatment effect point estimates
-  bar.v <- mean(mis_res$hats.v)         # "within" variance (average of variance point estimates)
-  b <- var(mis_res$hats.delta)          # "between" variance (sample variance of point estimates)
+  coef_est <- mean(hats.delta.AC)   # average of treatment effect point estimates
+  bar.v <- mean(mis_res$hats.v)     # "within" variance (average of variance point estimates)
+  b <- var(hats.delta.AC)           # "between" variance (sample variance of point estimates)
   
   var_est <- var_by_pooling(M, bar.v, b)
   nu <- wald_type_interval(M, bar.v, b)
@@ -192,8 +174,6 @@ IPD_stats.mim <- function(strategy,
   ##TODO: how are these used?
   lci.Delta <- coef_est + qt(0.025, df = nu) * sqrt(var_est)
   uci.Delta <- coef_est + qt(0.975, df = nu) * sqrt(var_est)
-  
-  treat_nm <- get_treatment_name(strategy$formula)
   
   list(mean = coef_est,
        var = var_est)

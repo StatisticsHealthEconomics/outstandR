@@ -66,9 +66,8 @@ gcomp_ml_means <- function(formula,
   hat.mu.C.i <- predict(fit, type="response", newdata=data.trtC)
   
   # (marginal) mean probability prediction under A and C
-  list(
-    hat.mu.A = mean(hat.mu.A.i),
-    hat.mu.C = mean(hat.mu.C.i))
+  c("hat.mu.A" = mean(hat.mu.A.i),
+    "hat.mu.C" = mean(hat.mu.C.i))
 }
 
 

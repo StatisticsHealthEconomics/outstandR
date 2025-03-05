@@ -80,7 +80,7 @@ maic.boot <- function(ipd, indices, formula, family, ald) {
   p0 <- family$linkinv(coef_fit[1])                # probability for control group
   p1 <- family$linkinv(coef_fit[1] + coef_fit[2])  # probability for treatment group
   
-  list(mean_A = p0, mean_C = p1)
+  c("mean_A" = p0, "mean_C" = p1)
 }
 
 
