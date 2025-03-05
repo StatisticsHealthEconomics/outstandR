@@ -40,7 +40,8 @@ gcomp_stan <- function(formula = NULL,
   data.trtA[[treat_name]] <- 1  # everyone receives treatment A
   data.trtC[[treat_name]] <- 0  # all observations receive treatment C
   
-  # draw binary responses from posterior predictive distribution
+  ##TODO: is this going to work for all of the different data types?
+  # draw responses from posterior predictive distribution
   list(
     y.star.A = rstanarm::posterior_predict(outcome.model, newdata = data.trtA),
     y.star.C = rstanarm::posterior_predict(outcome.model, newdata = data.trtC))

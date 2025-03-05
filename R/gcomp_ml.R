@@ -13,13 +13,13 @@
 #' 
 gcomp_ml.boot <- function(data, indices,
                           R, formula = NULL,
-                          family, ald, scale) {
+                          family, ald) {
   dat <- data[indices, ]
-  gcomp_ml_ate(formula, family, dat, ald, scale) 
+  gcomp_ml_means(formula, family, dat, ald) 
 }
 
 
-#' G-computation Maximum Likelihood ATE
+#' G-computation Maximum Likelihood mean outcome
 #' 
 #' @section Log-Odds Ratio: 
 #' Marginal _A_ vs _C_ log-odds ratio (mean difference in expected log-odds)
@@ -31,7 +31,6 @@ gcomp_ml.boot <- function(data, indices,
 #' @param family Family object
 #' @template args-ipd
 #' @template args-ald
-#' @param scale Effect scale
 #'
 #' @return Difference on relative treatment effect scale 
 #' @seealso [strategy_gcomp_ml()], [gcomp_ml.boot()]
@@ -39,10 +38,9 @@ gcomp_ml.boot <- function(data, indices,
 #' @importFrom stats predict glm
 #' @keywords internal
 #'
-gcomp_ml_ate <- function(formula,
-                         family,
-                         ipd, ald,
-                         scale) {
+gcomp_ml_means <- function(formula,
+                           family,
+                           ipd, ald) {
   
   if (!inherits(formula, "formula"))
     stop("formula argument must be of formula class.")
@@ -67,10 +65,10 @@ gcomp_ml_ate <- function(formula,
   hat.mu.A.i <- predict(fit, type="response", newdata=data.trtA)
   hat.mu.C.i <- predict(fit, type="response", newdata=data.trtC)
   
-  hat.mu.A <- mean(hat.mu.A.i)  # (marginal) mean probability prediction under A
-  hat.mu.C <- mean(hat.mu.C.i)  # (marginal) mean probability prediction under C
-  
-  calculate_ate(hat.mu.A, hat.mu.C, effect = scale)
+  # (marginal) mean probability prediction under A and C
+  list(
+    hat.mu.A = mean(hat.mu.A.i),
+    hat.mu.C = mean(hat.mu.C.i))
 }
 
 

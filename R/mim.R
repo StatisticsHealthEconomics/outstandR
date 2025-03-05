@@ -55,6 +55,10 @@ mim <- function(formula,
   reg2.fits <- lapply(1:M, function(m)
     glm(y_star[m, ] ~ trt, data = aug.target, family = family))
   
+  ##TODO: this is on the original scale, need to transform to user-defined
+  ##so return the probability scale
+  ## also its a bit unclear
+  
   # treatment effect point estimates in each synthesis
   hats.delta <- unlist(lapply(reg2.fits,
                               function(fit)
@@ -69,6 +73,7 @@ mim <- function(formula,
 }
 
 #' Wald-type interval estimates
+#' 
 #' Constructed using t-distribution with nu degrees of freedom
 #'
 #' @param M Number of syntheses used in analysis stage (high for low Monte Carlo error)
@@ -82,6 +87,7 @@ wald_type_interval <- function(M, bar.v, b) {
 }
 
 #' Variance estimate by pooling
+#' 
 #' Use combining rules to estimate
 #' 
 #' @param M Number of syntheses used in analysis stage (high for low Monte Carlo error)

@@ -176,15 +176,15 @@ IPD_stats.mim <- function(strategy,
                  family = strategy$family,
                  ipd, ald)
   
+  ##TODO:
+  # hat.delta.AC <- calculate_ate(mis_res$mean_A, mis_res$mean_C, effect = scale)
+  
   M <- mis_res$M
   
   # quantities originally defined by Rubin (1987) for multiple imputation
-  bar.delta <- mean(mis_res$hats.delta)  # average of treatment effect point estimates
-  bar.v <- mean(mis_res$hats.v)          # "within" variance (average of variance point estimates)
-  b <- var(mis_res$hats.delta)           # "between" variance (sample variance of point estimates)
-  
-  # pooling: average of point estimates is marginal log odds ratio
-  coef_est <- bar.delta
+  coef_est <- mean(mis_res$hats.delta)  # average of treatment effect point estimates
+  bar.v <- mean(mis_res$hats.v)         # "within" variance (average of variance point estimates)
+  b <- var(mis_res$hats.delta)          # "between" variance (sample variance of point estimates)
   
   var_est <- var_by_pooling(M, bar.v, b)
   nu <- wald_type_interval(M, bar.v, b)
