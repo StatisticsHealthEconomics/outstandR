@@ -20,6 +20,9 @@ calc_mim <- function(formula,
                      warmup = 1000,
                      iters = 4000) {
   
+  formula <- strategy$formula
+  family <- strategy$family
+  
   if (!inherits(formula, "formula"))
     stop("formula argument must be of formula class.")
   

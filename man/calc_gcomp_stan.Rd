@@ -4,16 +4,16 @@
 \alias{calc_gcomp_stan}
 \title{G-computation using Stan}
 \usage{
-calc_gcomp_stan(formula = NULL, family = gaussian(link = "identity"), ipd, ald)
+calc_gcomp_stan(strategy, ipd, ald)
 }
 \arguments{
-\item{formula}{Linear regression \code{formula} object}
-
-\item{family}{A \code{family} object}
-
 \item{ipd}{Individual-level data}
 
 \item{ald}{Aggregate-level data}
+
+\item{formula}{Linear regression \code{formula} object}
+
+\item{family}{A \code{family} object}
 }
 \value{
 A list of \eqn{y^*_A} and \eqn{y^*_C} posterior predictions

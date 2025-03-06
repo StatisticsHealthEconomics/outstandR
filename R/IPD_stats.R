@@ -28,116 +28,111 @@ IPD_stats.default <- function(...) {
 }
 
 
-#' @rdname IPD_stats
-#' @section Matching-adjusted indirect comparison statistics:
-#' Marginal _A_ vs _C_ treatment effect estimates
-#' using bootstrapping sampling.
-#' @importFrom boot boot
-#' @export
-#' 
-IPD_stats.maic <- function(strategy,
-                           ipd, ald,
-                           scale) {
-  
-  maic_out <-
-    calc_maic(data = ipd,
-              R = strategy$R,
-              formula = strategy$formula,
-              family = strategy$family,
-              ald = ald)
-  
-  hat.delta.AC <-
-    calculate_ate(maic_out$mean_A, maic_out$mean_C,
-                  effect = scale)
-  
-  coef_est <- mean(hat.delta.AC)
-  var_est <- var(hat.delta.AC)
-
-  list(mean = coef_est,
-       var = var_est)
-}
-
-
-#' @rdname IPD_stats
-#' @section Simulated treatment comparison statistics: 
-#' IPD from the _AC_ trial are used to fit a regression model describing the
-#' observed outcomes \eqn{y} in terms of the relevant baseline characteristics \eqn{x} and
-#' the treatment variable \eqn{z}.
-#' @importFrom stats glm
-#' @export
-#' 
-IPD_stats.stc <- function(strategy,
-                          ipd, ald,
-                          scale) {
-
-  stc_out <- calc_stc(strategy, ipd)
-  
-  hat.delta.AC <-
-    calculate_ate(stc_out$mean_A, stc_out$mean_C,
-                  effect = scale)
-  
-  coef_est <- mean(hat.delta.AC)
-  var_est <- var(hat.delta.AC)
-  
-  list(mean = coef_est,
-       var = var_est)
-}
-
-
-#' @rdname IPD_stats
-#' @section G-computation maximum likelihood statistics:
-#' Compute a non-parametric bootstrap with default \eqn{R=1000} resamples.
-#' @importFrom boot boot
-#' @export
-#'
-IPD_stats.gcomp_ml <- function(strategy,
-                               ipd, ald,
-                               scale) {
-  
-  gcomp_out <-
-    calc_gcomp_ml(data = ipd,
-                  R = strategy$R,
-                  formula = strategy$formula,
-                  family = strategy$family,
-                  ald = ald)
-  
-  hat.delta.AC <-
-    calculate_ate(gcomp_out$mean_A, gcomp_out$mean_C,
-                  effect = scale)
-  
-  coef_est <- mean(hat.delta.AC)
-  var_est <- var(hat.delta.AC)
-  
-  list(mean = coef_est,
-       var = var_est)
-}
-
-
-#' @rdname IPD_stats
-#' @section G-computation Bayesian statistics:
-#' Using Stan, compute marginal log-odds ratio for _A_ vs _C_ for each MCMC sample
-#' by transforming from probability to linear predictor scale.
-#' @export
-#'
-IPD_stats.gcomp_stan <- function(strategy,
-                                 ipd, ald,
-                                 scale) {
-  
-  gcomp_out <-
-    calc_gcomp_stan(formula = strategy$formula,
-                    family = strategy$family,
-                    ipd = ipd, ald = ald)
-  
-  hat.delta.AC <-
-    calculate_ate(gcomp_out$mean_A, gcomp_out$mean_C,
-                  effect = scale)
-  
-  coef_est <- mean(hat.delta.AC)
-  var_est <- var(hat.delta.AC)
-  
-  list(mean = coef_est,
-       var = var_est)
-} 
+# #' @rdname IPD_stats
+# #' @section Matching-adjusted indirect comparison statistics:
+# #' Marginal _A_ vs _C_ treatment effect estimates
+# #' using bootstrapping sampling.
+# #' @importFrom boot boot
+# #' @export
+# #' 
+# IPD_stats.maic <- function(strategy,
+#                            ipd, ald,
+#                            scale) {
+#   
+#   maic_out <-
+#     calc_maic(strategy,
+#               ipd = ipd,
+#               ald = ald)
+#   
+#   hat.delta.AC <-
+#     calculate_ate(maic_out$mean_A, maic_out$mean_C,
+#                   effect = scale)
+#   
+#   coef_est <- mean(hat.delta.AC)
+#   var_est <- var(hat.delta.AC)
+# 
+#   list(mean = coef_est,
+#        var = var_est)
+# }
+# 
+# 
+# #' @rdname IPD_stats
+# #' @section Simulated treatment comparison statistics: 
+# #' IPD from the _AC_ trial are used to fit a regression model describing the
+# #' observed outcomes \eqn{y} in terms of the relevant baseline characteristics \eqn{x} and
+# #' the treatment variable \eqn{z}.
+# #' @importFrom stats glm
+# #' @export
+# #' 
+# IPD_stats.stc <- function(strategy,
+#                           ipd, ald,
+#                           scale) {
+# 
+#   stc_out <- calc_stc(strategy, ipd)
+#   
+#   hat.delta.AC <-
+#     calculate_ate(stc_out$mean_A, stc_out$mean_C,
+#                   effect = scale)
+#   
+#   coef_est <- mean(hat.delta.AC)
+#   var_est <- var(hat.delta.AC)
+#   
+#   list(mean = coef_est,
+#        var = var_est)
+# }
+# 
+# 
+# #' @rdname IPD_stats
+# #' @section G-computation maximum likelihood statistics:
+# #' Compute a non-parametric bootstrap with default \eqn{R=1000} resamples.
+# #' @importFrom boot boot
+# #' @export
+# #'
+# IPD_stats.gcomp_ml <- function(strategy,
+#                                ipd, ald,
+#                                scale) {
+#   
+#   gcomp_out <-
+#     calc_gcomp_ml(strategy,
+#                   ipd = ipd,
+#                   ald = ald)
+#   
+#   hat.delta.AC <-
+#     calculate_ate(gcomp_out$mean_A, gcomp_out$mean_C,
+#                   effect = scale)
+#   
+#   coef_est <- mean(hat.delta.AC)
+#   var_est <- var(hat.delta.AC)
+#   
+#   list(mean = coef_est,
+#        var = var_est)
+# }
+# 
+# 
+# #' @rdname IPD_stats
+# #' @section G-computation Bayesian statistics:
+# #' Using Stan, compute marginal log-odds ratio for _A_ vs _C_ for each MCMC sample
+# #' by transforming from probability to linear predictor scale.
+# #' @export
+# #'
+# IPD_stats.gcomp_stan <- function(strategy,
+#                                  ipd, ald,
+#                                  scale) {
+#   gcomp_out <-
+#     calc_gcomp_stan(strategy,
+#                     ipd = ipd
+#                     ald = ald)
+#   
+#   hat.delta.AC <-
+#     calculate_ate(gcomp_out$mean_A, gcomp_out$mean_C,
+#                   effect = scale)
+#   
+#   coef_est <- mean(hat.delta.AC)
+#   var_est <- var(hat.delta.AC)
+#   
+#   list(mean = coef_est,
+#        var = var_est)
+# } 
 
 
 #' @rdname IPD_stats
@@ -150,12 +145,11 @@ IPD_stats.gcomp_stan <- function(strategy,
 #'
 IPD_stats.mim <- function(strategy,
                           ipd, ald,
-                          scale) {
+                          scale, ...) {
   
   mis_res <-
-    calc_mim(formula = strategy$formula,
-             family = strategy$family,
-             ipd, ald)
+    calc_mim(strategy,
+             ipd, ald, ...)
   
   hat.delta.AC <-
     calculate_ate(mis_res$mean_A, mis_res$mean_C,
@@ -181,28 +175,36 @@ IPD_stats.mim <- function(strategy,
 
 ##TODO:
 
-#' #' function operator
-#' #'
-#' IPD_stat_factory <- function(ipd_fun) {
-#'   force(ipd_fun)
-#'   
-#'   function(strategy, ipd, ald, scale) {
-#'     out <- ipd_fun(strategy, ipd)
-#'     
-#'     hat.delta.AC <- calculate_ate(out$mean_A, out$mean_C,
-#'                                   effect = scale)
-#'     
-#'     coef_est <- mean(hat.delta.AC)
-#'     var_est <- var(hat.delta.AC)
-#'     
-#'     list(mean = coef_est,
-#'          var = var_est)
-#'   }
-#' }
-#' 
-#' IPD_stats.stc <- IPD_stat_factory(calc_stc)
-#' IPD_stats.maic <- IPD_stat_factory(calc_maic)
-#' IPD_stats.gcomp_ml <- IPD_stat_factory(calc_gcomp_ml)
-#' IPD_stats.gcomp_stan <- IPD_stat_factory(calc_gcomp_stan)
-#' IPD_stats.mim <- IPD_stat_factory(calc_mim)
+#' function operator
+#'
+IPD_stat_factory <- function(ipd_fun) {
+
+  function(strategy, ipd, ald, scale, ...) {
+    out <- ipd_fun(strategy, ipd, ald, ...)
+
+    hat.delta.AC <- calculate_ate(out$mean_A, out$mean_C,
+                                  effect = scale)
+
+    coef_est <- mean(hat.delta.AC)
+    var_est <- var(hat.delta.AC)
+
+    list(mean = coef_est,
+         var = var_est)
+  }
+}
+
+#' @export
+IPD_stats.stc <- IPD_stat_factory(outstandR:::calc_stc)
+
+#' @export
+IPD_stats.maic <- IPD_stat_factory(outstandR:::calc_maic)
+
+#' @export
+IPD_stats.gcomp_ml <- IPD_stat_factory(outstandR:::calc_gcomp_ml)
+
+#' @export
+IPD_stats.gcomp_stan <- IPD_stat_factory(outstandR:::calc_gcomp_stan)
+
+# #' @export
+#' IPD_stats.mim <- IPD_stat_factory(outstandR:::calc_mim)
 

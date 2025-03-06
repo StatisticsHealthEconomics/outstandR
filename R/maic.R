@@ -57,16 +57,16 @@ maic.boot <- function(ipd, indices, formula, family, ald) {
   
   # BC effect modifier means, assumed fixed
   mean_names <- get_mean_names(ald, effect_modifier_names)
-
+  
   # centre AC effect modifiers on BC means
   dat_ALD_means <- ald[, mean_names][rep(1, nrow(X_EM)), ]
   X_EM <- X_EM - dat_ALD_means
- 
+  
   hat_w <- maic_weights(X_EM)
   
   treat_nm <- get_treatment_name(formula)
   formula_treat <- glue::glue("{formula[[2]]} ~ {treat_nm}")
-
+  
   # fit weighted logistic regression model
   fit <- glm(formula_treat,
              family = family,
@@ -80,18 +80,19 @@ maic.boot <- function(ipd, indices, formula, family, ald) {
   p0 <- family$linkinv(coef_fit[1])                # probability for control group
   p1 <- family$linkinv(coef_fit[1] + coef_fit[2])  # probability for treatment group
   
-  c("mean_A" = p0, "mean_C" = p1)
+  c(p0, p1)
 }
 
 
 #
-calc_maic <- function(data = ipd,
-                      R = strategy$R,
-                      formula = strategy$formula,
-                      family = strategy$family,
-                      ald = ald) {
-
-  args_list <- as.list(match.call())[-1]  # remove function name
+calc_maic <- function(strategy,
+                      ipd, ald) {
+  args_list <- 
+    list(R = strategy$R,
+         formula = strategy$formula,
+         family = strategy$family,
+         data = ipd,
+         ald = ald)
   
   maic_boot <- do.call(boot::boot, c(statistic = maic.boot, args_list))
   

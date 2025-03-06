@@ -14,9 +14,11 @@
 #' @importFrom rstanarm stan_glm posterior_predict
 #' @keywords internal
 #'
-calc_gcomp_stan <- function(formula = NULL,
-                            family = gaussian(link = "identity"),
+calc_gcomp_stan <- function(strategy,
                             ipd, ald) {
+  
+  formula <- strategy$formula
+  family <- strategy$family
   
   if (!inherits(formula, "formula"))
     stop("formula argument must be of formula class.")
@@ -46,20 +48,21 @@ calc_gcomp_stan <- function(formula = NULL,
   y.star.C <- rstanarm::posterior_predict(outcome.model, newdata = data.trtC)
   
   # posterior means for each treatment group
-  cbind(
-    "mean_A" = rowMeans(ppv$y.star.A),
-    "mean_C" = rowMeans(ppv$y.star.C))
+  list(
+    mean_A = rowMeans(ppv$y.star.A),
+    mean_C = rowMeans(ppv$y.star.C))
 }
 
 
 #
-calc_gcomp_ml <- function(data = ipd,
-                          R = strategy$R,
-                          formula = strategy$formula,
-                          family = strategy$family,
-                          ald = ald) {
-  
-  args_list <- as.list(match.call())[-1]  # remove function name
+calc_gcomp_ml <- function(strategy,
+                          ipd, ald) {
+  args_list <- 
+    list(R = strategy$R,
+         formula = strategy$formula,
+         family = strategy$family,
+         data = ipd,
+         ald = ald)
   
   gcomp_boot <- do.call(boot::boot, c(statistic = gcomp_ml.boot, args_list))
   

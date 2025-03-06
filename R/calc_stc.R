@@ -1,7 +1,7 @@
 
 #' Calculate simulated treatment comparison statistics
 #' 
-calc_stc <- function(strategy, ipd) {
+calc_stc <- function(strategy, ipd, ...) {
   
   # centre covariates
   term.labels <- attr(terms(strategy$formula), "term.labels")
