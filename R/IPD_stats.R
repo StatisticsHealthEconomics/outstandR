@@ -39,15 +39,16 @@ IPD_stats.maic <- function(strategy,
                            ipd, ald,
                            scale) {
   
-  maic_boot <- boot::boot(data = ipd,
-                          statistic = maic.boot,
-                          R = strategy$R,
-                          formula = strategy$formula,
-                          family = strategy$family,
-                          ald = ald)
-
-  hat.delta.AC <- calculate_ate(maic_boot$t[, 1], maic_boot$t[, 2],
-                                effect = scale)
+  maic_out <-
+    calc_maic(data = ipd,
+              R = strategy$R,
+              formula = strategy$formula,
+              family = strategy$family,
+              ald = ald)
+  
+  hat.delta.AC <-
+    calculate_ate(maic_out$mean_A, maic_out$mean_C,
+                  effect = scale)
   
   coef_est <- mean(hat.delta.AC)
   var_est <- var(hat.delta.AC)
@@ -71,14 +72,12 @@ IPD_stats.stc <- function(strategy,
 
   stc_out <- calc_stc(strategy, ipd)
   
-  hat.delta.AC <- calculate_ate(stc_out$mean_A, stc_out$mean_C,
-                                effect = scale)
+  hat.delta.AC <-
+    calculate_ate(stc_out$mean_A, stc_out$mean_C,
+                  effect = scale)
   
   coef_est <- mean(hat.delta.AC)
   var_est <- var(hat.delta.AC)
-  
-  # coef_est <- coef(fit)[treat_nm]
-  # var_est <- vcov(fit)[treat_nm, treat_nm]
   
   list(mean = coef_est,
        var = var_est)
@@ -94,16 +93,17 @@ IPD_stats.stc <- function(strategy,
 IPD_stats.gcomp_ml <- function(strategy,
                                ipd, ald,
                                scale) {
-
-  gcomp_boot <- boot::boot(data = ipd,
-                           statistic = gcomp_ml.boot,
-                           R = strategy$R,
-                           formula = strategy$formula,
-                           family = strategy$family,
-                           ald = ald)
   
-  hat.delta.AC <- calculate_ate(gcomp_boot$t[, 1], gcomp_boot$t[, 2],
-                                effect = scale)
+  gcomp_out <-
+    calc_gcomp_ml(data = ipd,
+                  R = strategy$R,
+                  formula = strategy$formula,
+                  family = strategy$family,
+                  ald = ald)
+  
+  hat.delta.AC <-
+    calculate_ate(gcomp_out$mean_A, gcomp_out$mean_C,
+                  effect = scale)
   
   coef_est <- mean(hat.delta.AC)
   var_est <- var(hat.delta.AC)
@@ -123,15 +123,14 @@ IPD_stats.gcomp_stan <- function(strategy,
                                  ipd, ald,
                                  scale) {
   
-  ppv <- gcomp_stan(formula = strategy$formula,
+  gcomp_out <-
+    calc_gcomp_stan(formula = strategy$formula,
                     family = strategy$family,
                     ipd = ipd, ald = ald)
-
-  # posterior means for each treatment group
-  mean_A <- rowMeans(ppv$y.star.A)
-  mean_C <- rowMeans(ppv$y.star.C)
   
-  hat.delta.AC <- calculate_ate(mean_A, mean_C, effect = scale)
+  hat.delta.AC <-
+    calculate_ate(gcomp_out$mean_A, gcomp_out$mean_C,
+                  effect = scale)
   
   coef_est <- mean(hat.delta.AC)
   var_est <- var(hat.delta.AC)
@@ -153,12 +152,15 @@ IPD_stats.mim <- function(strategy,
                           ipd, ald,
                           scale) {
   
-  mis_res <- mim(formula = strategy$formula,
-                 family = strategy$family,
-                 ipd, ald)
+  mis_res <-
+    calc_mim(formula = strategy$formula,
+             family = strategy$family,
+             ipd, ald)
   
-  hat.delta.AC <- calculate_ate(mis_res$mean_A, mis_res$mean_C,
-                                effect = scale)
+  hat.delta.AC <-
+    calculate_ate(mis_res$mean_A, mis_res$mean_C,
+                  effect = scale)
+  
   M <- mis_res$M
   
   # quantities originally defined by Rubin (1987) for multiple imputation
@@ -176,4 +178,31 @@ IPD_stats.mim <- function(strategy,
   list(mean = coef_est,
        var = var_est)
 } 
+
+##TODO:
+
+#' #' function operator
+#' #'
+#' IPD_stat_factory <- function(ipd_fun) {
+#'   force(ipd_fun)
+#'   
+#'   function(strategy, ipd, ald, scale) {
+#'     out <- ipd_fun(strategy, ipd)
+#'     
+#'     hat.delta.AC <- calculate_ate(out$mean_A, out$mean_C,
+#'                                   effect = scale)
+#'     
+#'     coef_est <- mean(hat.delta.AC)
+#'     var_est <- var(hat.delta.AC)
+#'     
+#'     list(mean = coef_est,
+#'          var = var_est)
+#'   }
+#' }
+#' 
+#' IPD_stats.stc <- IPD_stat_factory(calc_stc)
+#' IPD_stats.maic <- IPD_stat_factory(calc_maic)
+#' IPD_stats.gcomp_ml <- IPD_stat_factory(calc_gcomp_ml)
+#' IPD_stats.gcomp_stan <- IPD_stat_factory(calc_gcomp_stan)
+#' IPD_stats.mim <- IPD_stat_factory(calc_mim)
 

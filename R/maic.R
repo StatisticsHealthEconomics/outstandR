@@ -84,3 +84,17 @@ maic.boot <- function(ipd, indices, formula, family, ald) {
 }
 
 
+#
+calc_maic <- function(data = ipd,
+                      R = strategy$R,
+                      formula = strategy$formula,
+                      family = strategy$family,
+                      ald = ald) {
+
+  args_list <- as.list(match.call())[-1]  # remove function name
+  
+  maic_boot <- do.call(boot::boot, c(statistic = maic.boot, args_list))
+  
+  list(mean_A = maic_boot$t[, 1],
+       mean_C = maic_boot$t[, 2])  
+}

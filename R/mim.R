@@ -12,13 +12,13 @@
 #' @importFrom rstanarm posterior_predict stan_glm
 #' @keywords internal
 #' 
-mim <- function(formula,
-                family,
-                ipd, ald,
-                M = 1000,
-                n.chains = 2,
-                warmup = 1000,
-                iters = 4000) {
+calc_mim <- function(formula,
+                     family,
+                     ipd, ald,
+                     M = 1000,
+                     n.chains = 2,
+                     warmup = 1000,
+                     iters = 4000) {
   
   if (!inherits(formula, "formula"))
     stop("formula argument must be of formula class.")
