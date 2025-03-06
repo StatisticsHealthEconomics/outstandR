@@ -76,7 +76,7 @@ maic.boot <- function(ipd, indices, formula, family, ald) {
   # extract model coefficients
   coef_fit <- coef(fit)
   
-  # probabilities using inverse logit
+  # probabilities using inverse link
   p0 <- family$linkinv(coef_fit[1])                # probability for control group
   p1 <- family$linkinv(coef_fit[1] + coef_fit[2])  # probability for treatment group
   
