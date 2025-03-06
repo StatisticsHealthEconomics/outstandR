@@ -14,9 +14,9 @@
 #' @importFrom rstanarm stan_glm posterior_predict
 #' @keywords internal
 #'
-cal_gcomp_stan <- function(formula = NULL,
-                           family = gaussian(link = "identity"),
-                           ipd, ald) {
+calc_gcomp_stan <- function(formula = NULL,
+                            family = gaussian(link = "identity"),
+                            ipd, ald) {
   
   if (!inherits(formula, "formula"))
     stop("formula argument must be of formula class.")
