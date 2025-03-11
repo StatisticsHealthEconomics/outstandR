@@ -57,17 +57,17 @@ gcomp_ml_means <- function(formula,
   
   treat_name <- get_treatment_name(formula)
   
-  # intervene on treatment while keeping set covariates fixed
-  data.trtA[[treat_name]] <- 1  # all receive A
-  data.trtC[[treat_name]] <- 0  # all receive C
+  # # intervene on treatment while keeping set covariates fixed
+  data.trtA[[treat_name]] <- 0  # all receive A
+  data.trtC[[treat_name]] <- 1  # all receive C
   
   # predict counterfactual event probs, conditional on treatment/covariates
-  hat.mu.A.i <- predict(fit, type="response", newdata=data.trtA)
-  hat.mu.C.i <- predict(fit, type="response", newdata=data.trtC)
+  hat.mu.A <- predict(fit, type="response", newdata=data.trtA)
+  hat.mu.C <- predict(fit, type="response", newdata=data.trtC)
   
   # (marginal) mean probability prediction under A and C
-  c(mean(hat.mu.A.i),
-    mean(hat.mu.C.i))
+  c(mean(hat.mu.A),
+    mean(hat.mu.C))
 }
 
 

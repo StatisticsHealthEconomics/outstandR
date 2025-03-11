@@ -1,7 +1,7 @@
 
 #' Multiple imputation marginalization (MIM)
 #' 
-#' @param formula Linear regression `formula` object
+#' @param strategy Strategy object
 #' @template args-ipd
 #' @template args-ald
 #' @param M Number of syntheses used in analysis stage (high for low Monte Carlo error)
@@ -12,8 +12,7 @@
 #' @importFrom rstanarm posterior_predict stan_glm
 #' @keywords internal
 #' 
-calc_mim <- function(formula,
-                     family,
+calc_mim <- function(strategy,
                      ipd, ald,
                      M = 1000,
                      n.chains = 2,
@@ -58,17 +57,11 @@ calc_mim <- function(formula,
   reg2.fits <- lapply(1:M, function(m)
     glm(y_star[m, ] ~ trt, data = aug.target, family = family))
   
-  ##TODO: this is on the original scale, need to transform to user-defined
-  ## so return the probability scale
+  ##TODO: return the probability scale
   ## also its a bit unclear
   
   # treatment effect point estimates in each synthesis
-  hats.delta <- unlist(lapply(reg2.fits,
-                              function(fit)
-                                coef(fit)["trt"][[1]]))
-  ## replace by
-  # sapply(reg2.fits, function(fit) coef(fit)["trt"])
-  
+  coef_fit <- do.call(rbind, lapply(reg2.fits, function(fit) coef(fit)))
   
   ##TODO: how to transform this to the prob scale?
   # point estimates for the variance in each synthesis
@@ -76,9 +69,8 @@ calc_mim <- function(formula,
                           function(fit)
                             vcov(fit)["trt", "trt"]))
   
-  ##TODO: this should use hats.delta code above
-  mean_A <- family$linkinv(coef_fit[1])                # probability for control
-  mean_C <- family$linkinv(coef_fit[1] + coef_fit[2])  # probability for treatment
+  mean_A <- family$linkinv(coef_fit[, 1])                  # probability for control
+  mean_C <- family$linkinv(coef_fit[, 1] + coef_fit[, 2])  # probability for treatment
   
   tibble::lst(mean_A, mean_C,
               hats.v, M)

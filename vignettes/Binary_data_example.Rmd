@@ -455,3 +455,16 @@ knitr::kable(
   `MIM` = unlist(outstandR_mim$contrasts))
 )
 ```
+
+On log relative risk scale
+
+```{r}
+knitr::kable(
+  data.frame(
+  `MAIC` = unlist(outstandR_maic_lrr$contrasts),
+  `STC` = unlist(outstandR_stc_lrr$contrasts),
+  `Gcomp ML` = unlist(outstandR_gcomp_ml_lrr$contrasts),
+  `Gcomp Bayes` = unlist(outstandR_gcomp_stan_lrr$contrasts),
+  `MIM` = unlist(outstandR_mim_lrr$contrasts))
+)
+```

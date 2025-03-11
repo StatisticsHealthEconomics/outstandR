@@ -5,8 +5,7 @@
 \title{Multiple imputation marginalization (MIM)}
 \usage{
 calc_mim(
-  formula,
-  family,
+  strategy,
   ipd,
   ald,
   M = 1000,
@@ -16,7 +15,7 @@ calc_mim(
 )
 }
 \arguments{
-\item{formula}{Linear regression \code{formula} object}
+\item{strategy}{Strategy object}
 
 \item{ipd}{Individual-level data}
 

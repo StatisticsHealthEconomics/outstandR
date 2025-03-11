@@ -63,5 +63,6 @@ outstandR <- function(AC.IPD, BC.ALD, strategy, CI = 0.95, scale = NULL, ...) {
   
   structure(stats,
             CI = CI,
+            scale = scale,
             class = c("outstandR", class(stats)))
 }
