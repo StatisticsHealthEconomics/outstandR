@@ -67,10 +67,15 @@ maic.boot <- function(ipd, indices, formula, family, ald) {
   treat_nm <- get_treatment_name(formula)
   formula_treat <- glue::glue("{formula[[2]]} ~ {treat_nm}")
   
+  # so can use non-integer weights
+  if (family$family == "binomial") {
+    family <- quasibinomial()
+  }
+  
   # fit weighted logistic regression model
-  fit <- glm(formula_treat,
+  fit <- glm(formula = formula_treat,
              family = family,
-             weights = hat_w,
+             weights = hat_w / mean(hat_w),
              data = cbind(dat, hat_w = hat_w))
   
   # extract model coefficients
@@ -84,7 +89,9 @@ maic.boot <- function(ipd, indices, formula, family, ald) {
 }
 
 
-#
+#' @export
+#' @importFrom boot boot
+#' 
 calc_maic <- function(strategy,
                       ipd, ald) {
   args_list <- 

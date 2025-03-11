@@ -12,7 +12,7 @@
 #' @return A list of \eqn{y^*_A} and \eqn{y^*_C} posterior predictions
 #' @importFrom copula normalCopula mvdc rMvdc
 #' @importFrom rstanarm stan_glm posterior_predict
-#' @keywords internal
+#' @export
 #'
 calc_gcomp_stan <- function(strategy,
                             ipd, ald) {
@@ -54,7 +54,9 @@ calc_gcomp_stan <- function(strategy,
 }
 
 
-#
+#' @export
+#' @importFrom boot boot
+#' 
 calc_gcomp_ml <- function(strategy,
                           ipd, ald) {
   args_list <- 

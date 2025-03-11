@@ -1,5 +1,7 @@
 
 #' Calculate simulated treatment comparison statistics
+#' @importFrom stats glm
+#' @export
 #' 
 calc_stc <- function(strategy, ipd, ...) {
   

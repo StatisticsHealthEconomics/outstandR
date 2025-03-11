@@ -4,6 +4,10 @@
 \alias{IPD_stats}
 \alias{IPD_stats.default}
 \alias{IPD_stats.mim}
+\alias{IPD_stats.stc}
+\alias{IPD_stats.maic}
+\alias{IPD_stats.gcomp_ml}
+\alias{IPD_stats.gcomp_stan}
 \title{Calculate individual-level patient data statistics}
 \usage{
 IPD_stats(strategy, ipd, ald, scale, ...)
@@ -11,6 +15,14 @@ IPD_stats(strategy, ipd, ald, scale, ...)
 \method{IPD_stats}{default}(...)
 
 \method{IPD_stats}{mim}(strategy, ipd, ald, scale, ...)
+
+\method{IPD_stats}{stc}(strategy, ipd, ald, scale, ...)
+
+\method{IPD_stats}{maic}(strategy, ipd, ald, scale, ...)
+
+\method{IPD_stats}{gcomp_ml}(strategy, ipd, ald, scale, ...)
+
+\method{IPD_stats}{gcomp_stan}(strategy, ipd, ald, scale, ...)
 }
 \arguments{
 \item{strategy}{A list corresponding to different approaches}
@@ -33,5 +45,29 @@ MAIC, STC, G-computation via MLE or Bayesian inference.
 Using Stan, compute marginal relative treatment effect for \emph{A} vs \emph{C} for each MCMC sample
 by transforming from probability to linear predictor scale. Approximate by
 using imputation and combining estimates using Rubin's rules, in contrast to \code{\link[=IPD_stats.gcomp_stan]{IPD_stats.gcomp_stan()}}.
+}
+
+\section{Simulated treatment comparison statistics}{
+
+IPD from the \emph{AC} trial are used to fit a regression model describing the
+observed outcomes \eqn{y} in terms of the relevant baseline characteristics \eqn{x} and
+the treatment variable \eqn{z}.
+}
+
+\section{Matching-adjusted indirect comparison statistics}{
+
+Marginal \emph{A} vs \emph{C} treatment effect estimates
+using bootstrapping sampling.
+}
+
+\section{G-computation maximum likelihood statistics}{
+
+Compute a non-parametric bootstrap with default \eqn{R=1000} resamples.
+}
+
+\section{G-computation Bayesian statistics}{
+
+Using Stan, compute marginal log-odds ratio for \emph{A} vs \emph{C} for each MCMC sample
+by transforming from probability to linear predictor scale.
 }
 
