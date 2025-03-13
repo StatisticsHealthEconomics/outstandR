@@ -12,11 +12,13 @@
 #' @return A list of \eqn{y^*_A} and \eqn{y^*_C} posterior predictions
 #' @importFrom copula normalCopula mvdc rMvdc
 #' @importFrom rstanarm stan_glm posterior_predict
-#' @keywords internal
+#' @export
 #'
-gcomp_stan <- function(formula = NULL,
-                       family = gaussian(link = "identity"),
-                       ipd, ald) {
+calc_gcomp_stan <- function(strategy,
+                            ipd, ald) {
+  
+  formula <- strategy$formula
+  family <- strategy$family
   
   if (!inherits(formula, "formula"))
     stop("formula argument must be of formula class.")
@@ -37,13 +39,35 @@ gcomp_stan <- function(formula = NULL,
   treat_name <- get_treatment_name(formula)
   
   # intervene on treatment while keeping set covariates fixed
-  data.trtA[[treat_name]] <- 1  # everyone receives treatment A
-  data.trtC[[treat_name]] <- 0  # all observations receive treatment C
+  data.trtA[[treat_name]] <- 0  # everyone receives treatment A
+  data.trtC[[treat_name]] <- 1  # all observations receive treatment C
   
   ##TODO: is this going to work for all of the different data types?
   # draw responses from posterior predictive distribution
+  y.star.A <- rstanarm::posterior_predict(outcome.model, newdata = data.trtA)
+  y.star.C <- rstanarm::posterior_predict(outcome.model, newdata = data.trtC)
+  
+  # posterior means for each treatment group
   list(
-    y.star.A = rstanarm::posterior_predict(outcome.model, newdata = data.trtA),
-    y.star.C = rstanarm::posterior_predict(outcome.model, newdata = data.trtC))
+    mean_A = rowMeans(y.star.A),
+    mean_C = rowMeans(y.star.C))
 }
 
+
+#' @export
+#' @importFrom boot boot
+#' 
+calc_gcomp_ml <- function(strategy,
+                          ipd, ald) {
+  args_list <- 
+    list(R = strategy$R,
+         formula = strategy$formula,
+         family = strategy$family,
+         data = ipd,
+         ald = ald)
+  
+  gcomp_boot <- do.call(boot::boot, c(statistic = gcomp_ml.boot, args_list))
+  
+  list(mean_A = gcomp_boot$t[, 1],
+       mean_C = gcomp_boot$t[, 2])  
+}

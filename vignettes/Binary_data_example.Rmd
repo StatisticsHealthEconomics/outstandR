@@ -221,11 +221,11 @@ log-odds ratio corresponding to the `"logit"` link function for binary data.
 However, we can change this to some other scale which may be more appropriate for a particular analysis.
 So far implemented in the package, the links and their corresponding relative treatment effect scales are as follows:
 
-| Data Type  | Model   | Scale             |
-|:-----------|---------|:------------------|
-| Binary     | `logit` | Log-odds ratio    |
-| Count      | `log`   | Log-risk ratio    |
-| Continuous | `mean`  | Mean difference   |
+| Data Type  | Model   | Scale             | Argument           |
+|:-----------|---------|:------------------|:-------------------|
+| Binary     | `logit` | Log-odds ratio    | `log_odds`         |
+| Count      | `log`   | Log-risk ratio    | `log_relative_risk`|
+| Continuous | `mean`  | Mean difference   | `risk_difference`  |
 
 The full list of possible transformed treatment effect scales are:
 _log-odds ratio_, _log-risk ratio_, _mean difference_, risk difference, hazard ratio, hazard difference.
@@ -233,12 +233,16 @@ _log-odds ratio_, _log-risk ratio_, _mean difference_, risk difference, hazard r
 To change the outcome scale, we can pass the `scale` argument in the `outstandR()` function.
 For example, to change the scale to risk difference, we can use the following code.
 
-```{r outstandR_rd}
-outstandR_maic_rd <-
+```{r outstandR_maic_lrr}
+outstandR_maic_lrr <-
   outstandR(AC.IPD, BC.ALD,
             strategy = strategy_maic(formula = lin_form,
                                      family = binomial(link = "logit")),
-            scale = "risk-difference")
+            scale = "log_relative_risk")
+```
+
+```{r}
+outstandR_maic_lrr
 ```
 
 ### STC
@@ -272,6 +276,20 @@ outstandR_stc <- outstandR(AC.IPD, BC.ALD,
                            strategy = strategy_stc(formula = lin_form,
                                                    family = binomial(link = "logit")))
 outstandR_stc
+```
+
+Change the outcome scale
+
+```{r outstandR_stc_lrr}
+outstandR_stc_lrr <-
+  outstandR(AC.IPD, BC.ALD,
+            strategy = strategy_stc(formula = lin_form,
+                                     family = binomial(link = "logit")),
+            scale = "log_relative_risk")
+```
+
+```{r}
+outstandR_stc_lrr
 ```
 
 For the last two approaches, we perform G-computation firstly with a
@@ -322,6 +340,20 @@ outstandR_gcomp_ml <- outstandR(AC.IPD, BC.ALD,
 outstandR_gcomp_ml
 ```
 
+Change the outcome scale
+
+```{r outstandR_gcomp_ml_lrr}
+outstandR_gcomp_ml_lrr <-
+  outstandR(AC.IPD, BC.ALD,
+            strategy = strategy_gcomp_ml(formula = lin_form,
+                                         family = binomial(link = "logit")),
+            scale = "log_relative_risk")
+```
+
+```{r}
+outstandR_gcomp_ml_lrr
+```
+
 ### Bayesian G-computation with MCMC
 
 The difference between Bayesian G-computation and its maximum-likelihood
@@ -358,10 +390,25 @@ each set intervention $z^*$ from its posterior predictive distribution
 under the specific treatment.
 
 ```{r outstandR_gcomp_stan}
-outstandR_gcomp_stan <- outstandR(AC.IPD, BC.ALD,
-                                  strategy = strategy_gcomp_stan(formula = lin_form,
-                                                                 family = binomial(link = "logit")))
+outstandR_gcomp_stan <-
+  outstandR(AC.IPD, BC.ALD,
+            strategy = strategy_gcomp_stan(formula = lin_form,
+                                           family = binomial(link = "logit")))
 outstandR_gcomp_stan
+```
+
+Change the outcome scale
+
+```{r outstandR_gcomp_stan_lrr}
+outstandR_gcomp_stan_lrr <-
+  outstandR(AC.IPD, BC.ALD,
+            strategy = strategy_gcomp_stan(formula = lin_form,
+                                           family = binomial(link = "logit")),
+            scale = "log_relative_risk")
+```
+
+```{r}
+outstandR_gcomp_stan_lrr
 ```
 
 ### Multiple imputation marginalisation
@@ -373,10 +420,25 @@ equation here
 $$
 
 ```{r outstandR_mim}
-outstandR_mim <- outstandR(AC.IPD, BC.ALD,
-                           strategy = strategy_mim(formula = lin_form,
-                                                   family = binomial(link = "logit")))
+outstandR_mim <-
+  outstandR(AC.IPD, BC.ALD,
+            strategy = strategy_mim(formula = lin_form,
+                                    family = binomial(link = "logit")))
 outstandR_mim
+```
+
+Change the outcome scale
+
+```{r outstandR_mim_lrr}
+outstandR_mim_lrr <-
+  outstandR(AC.IPD, BC.ALD,
+            strategy = strategy_mim(formula = lin_form,
+                                    family = binomial(link = "logit")),
+            scale = "log_relative_risk")
+```
+
+```{r}
+outstandR_mim_lrr
 ```
 
 ### Model comparison
@@ -391,5 +453,18 @@ knitr::kable(
   `Gcomp ML` = unlist(outstandR_gcomp_ml$contrasts),
   `Gcomp Bayes` = unlist(outstandR_gcomp_stan$contrasts),
   `MIM` = unlist(outstandR_mim$contrasts))
+)
+```
+
+On log relative risk scale
+
+```{r}
+knitr::kable(
+  data.frame(
+  `MAIC` = unlist(outstandR_maic_lrr$contrasts),
+  `STC` = unlist(outstandR_stc_lrr$contrasts),
+  `Gcomp ML` = unlist(outstandR_gcomp_ml_lrr$contrasts),
+  `Gcomp Bayes` = unlist(outstandR_gcomp_stan_lrr$contrasts),
+  `MIM` = unlist(outstandR_mim_lrr$contrasts))
 )
 ```

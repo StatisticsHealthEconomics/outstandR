@@ -54,7 +54,7 @@ outstandR <- function(AC.IPD, BC.ALD, strategy, CI = 0.95, scale = NULL, ...) {
   ipd <- prep_ipd(strategy$formula, AC.IPD)
   ald <- prep_ald(strategy$formula, BC.ALD)
 
-  scale <- if (is.null(scale)) get_treatment_effect(strategy$family$link)
+  if (is.null(scale)) scale <- get_treatment_effect(strategy$family$link)
   
   AC_stats <- IPD_stats(strategy, ipd = ipd, ald = ald, scale, ...) 
   BC_stats <- ALD_stats(strategy, ald = ald, scale = scale) 
@@ -63,5 +63,6 @@ outstandR <- function(AC.IPD, BC.ALD, strategy, CI = 0.95, scale = NULL, ...) {
   
   structure(stats,
             CI = CI,
+            scale = scale,
             class = c("outstandR", class(stats)))
 }

@@ -57,30 +57,52 @@ maic.boot <- function(ipd, indices, formula, family, ald) {
   
   # BC effect modifier means, assumed fixed
   mean_names <- get_mean_names(ald, effect_modifier_names)
-
+  
   # centre AC effect modifiers on BC means
   dat_ALD_means <- ald[, mean_names][rep(1, nrow(X_EM)), ]
   X_EM <- X_EM - dat_ALD_means
- 
+  
   hat_w <- maic_weights(X_EM)
   
   treat_nm <- get_treatment_name(formula)
   formula_treat <- glue::glue("{formula[[2]]} ~ {treat_nm}")
-
+  
+  # so can use non-integer weights
+  if (family$family == "binomial") {
+    family <- quasibinomial()
+  }
+  
   # fit weighted logistic regression model
-  fit <- glm(formula_treat,
+  fit <- glm(formula = formula_treat,
              family = family,
-             weights = hat_w,
+             weights = hat_w / mean(hat_w),
              data = cbind(dat, hat_w = hat_w))
   
   # extract model coefficients
   coef_fit <- coef(fit)
   
-  # probabilities using inverse logit
+  # probabilities using inverse link
   p0 <- family$linkinv(coef_fit[1])                # probability for control group
   p1 <- family$linkinv(coef_fit[1] + coef_fit[2])  # probability for treatment group
   
-  list(mean_A = p0, mean_C = p1)
+  c(p0, p1)
 }
 
 
+#' @export
+#' @importFrom boot boot
+#' 
+calc_maic <- function(strategy,
+                      ipd, ald) {
+  args_list <- 
+    list(R = strategy$R,
+         formula = strategy$formula,
+         family = strategy$family,
+         data = ipd,
+         ald = ald)
+  
+  maic_boot <- do.call(boot::boot, c(statistic = maic.boot, args_list))
+  
+  list(mean_A = maic_boot$t[, 1],
+       mean_C = maic_boot$t[, 2])  
+}

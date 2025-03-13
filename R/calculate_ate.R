@@ -38,11 +38,11 @@ calculate_trial_variance <- function(ald, tid, effect) {
   } else if (effect == "log_relative_risk") {
     res <- 1/(N-y) - 1/N
   } else if (effect == "risk_difference") {
-    ##TODO:
+    res <- y * (1 - y/N) / N
   } else if (effect == "delta_z") {
-    ##TODO:
+    res <- 1/y + 1/(N - y)
   } else if (effect == "log_relative_risk_rare_events") {
-    ##TODO:
+    res <- 1/y - 1/N
   } else {
     stop("Unsupported link function.")
   }
