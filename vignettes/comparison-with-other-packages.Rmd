@@ -28,3 +28,7 @@ There are already a few widely-used R packages in CRAN to perform model-based st
 ```{r stdReg}
 
 ```
+
+ISPOR poster by Hatswell
+
+`maic`, `MAIC`, 

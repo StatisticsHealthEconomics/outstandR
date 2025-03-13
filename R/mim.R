@@ -89,6 +89,7 @@ wald_type_interval <- function(M, bar.v, b) {
 #' Variance estimate by pooling
 #' 
 #' Use combining rules to estimate
+#' 2003
 #' 
 #' @param M Number of syntheses used in analysis stage (high for low Monte Carlo error)
 #' @param bar.v "within" variance (average of variance point estimates)
