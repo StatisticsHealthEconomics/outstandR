@@ -84,10 +84,8 @@ library(outstandR)
 
 ### Data
 
-Next, we load the data to use in the analysis. The data comes from a
-simulation study in Remiro‐Azócar A, Heath A, Baio G (2020). We consider
-binary outcomes using the log-odds ratio as the measure of effect. The
-binary outcome may be response to treatment or the occurrence of an
+We consider binary outcomes using the log-odds ratio as the measure of effect.
+The binary outcome may be response to treatment or the occurrence of an
 adverse event. For trials *AC* and *BC*, outcome $y_n$ for subject $n$
 is simulated from a Bernoulli distribution with probabilities of success
 generated from logistic regression.
@@ -100,12 +98,70 @@ the RCT publication. The binary outcomes are summarized in an overall
 event table. Typically, the published study only provides aggregate
 information to the analyst.
 
-```{r load-data}
-set.seed(555)
+Use the `gen_data()` function available with the `outstandR` package.
 
-AC.IPD <- read.csv(here::here("raw-data", "AC_IPD.csv"))  # AC patient-level data
-BC.ALD <- read.csv(here::here("raw-data", "BC_ALD.csv"))  # BC aggregate-level data
+```{r}
+library(dplyr)
+library(MASS)
+
+N <- 200
+allocation <- 2/3      # active treatment vs. placebo allocation ratio (2:1)
+b_trt <- log(0.17)     # conditional effect of active treatment vs. common comparator
+b_X <- -log(0.5)       # conditional effect of each prognostic variable
+b_EM <- -log(0.67)     # conditional interaction effect of each effect modifier
+meanX_AC <- c(0.45, 0.45)       # mean of normally-distributed covariate in AC trial
+meanX_BC <- c(0.6, 0.6)         # mean of each normally-distributed covariate in BC
+meanX_EM_AC <- c(0.45, 0.45)    # mean of normally-distributed EM covariate in AC trial
+meanX_EM_BC <- c(0.6, 0.6)      # mean of each normally-distributed EM covariate in BC
+sdX <- c(0.4, 0.4)     # standard deviation of each covariate (same for AC and BC)
+sdX_EM <- c(0.4, 0.4)  # standard deviation of each EM covariate
+corX <- 0.2            # covariate correlation coefficient  
+b_0 <- -0.6            # baseline intercept coefficient  ##TODO: fixed value
+
+AC.IPD <- gen_data(N, b_trt, b_X, b_EM, b_0,
+                   meanX_AC, sdX, 
+                   meanX_EM_AC, sdX_EM, 
+                   corX, allocation,
+                   family = binomial("logit"))
 ```
+
+Similarly, for the aggregate data but with the additional summarise step.
+
+```{r generate-ald-data}
+BC.IPD <- gen_data(N, b_trt, b_X, b_EM, b_0,
+                   meanX_BC, sdX, 
+                   meanX_EM_BC, sdX_EM, 
+                   corX, allocation,
+                   family = binomial("logit"))
+
+cov.X <- BC.IPD %>%
+  summarise(across(starts_with("X"),
+                   list(mean = mean, sd = sd),
+                   .names = "{fn}.{col}"))
+
+out.B <- dplyr::filter(BC.IPD, trt == 1) %>%
+  summarise(y.B.sum = sum(y),
+            y.B.bar = mean(y),
+            y.B.sd = sd(y),
+            N.B = n())
+
+out.C <- dplyr::filter(BC.IPD, trt == 0) %>%
+  summarise(y.C.sum = sum(y),
+            y.C.bar = mean(y),
+            y.C.sd = sd(y),
+            N.C = n())
+
+BC.ALD <- cbind.data.frame(cov.X, out.C, out.B)
+```
+
+
+The true logistic outcome model which we use to simulate the data will be:
+
+$$
+\text{logit}(p_{it}) = \beta_0 + \beta_X (X_3 + X_4) + [\beta_{trt} + \beta_{EM} (X_1 + X_2)] \; \text{I}(trt \neq C)
+$$
+
+So, the log OR for the treatment effect of interest, i.e. $AC$ or $BC$, is $\beta_{trt}$ (`b_trt`).
 
 This general format of data sets consist of the following.
 
@@ -134,14 +190,14 @@ head(AC.IPD)
 
 There are 4 correlated continuous covariates generated per subject,
 simulated from a multivariate normal distribution.
+Treatment `trt` 1 corresponds to new treatment $A$, and 0 is standard of care or status quo $C$. 
 
 ```{r}
 BC.ALD
 ```
 
 In this case, we have 4 covariate mean and standard deviation values;
-and the event total, average and sample size for each treatment *B*, and
-*C*.
+and the event total, average and sample size for each treatment *B*, and *C*.
 
 ### Output statistics
 
@@ -158,8 +214,7 @@ $$
 \log\left( \frac{n_B/(N_B-n_B)}{n_C/(N_B-n_{B})} \right) = \log(n_B n_{\bar{C}}) - \log(n_C n_{\bar{B}})
 $$
 
-where $\bar{C}$ is the compliment of $C$ so e.g.
-$n_{\bar{C}} = N_C - n_c$.
+where $n_B, n_C$ are the number of events in each arm and $\bar{C}$ is the compliment of $C$ so e.g. $n_{\bar{C}} = N_C - n_c$.
 
 ## Model fitting in R
 
@@ -183,7 +238,7 @@ effect for *A* vs *C*. The returned value is an object of class `boot`
 from the `{boot}` package. We then calculate the bootstrap mean and
 variance in the wrapper function `maic_boot_stats`.
 
-The formula used in this model is
+Defining $X_1,X2$ as effect modifiers and $X_3,X_4$ as prognostic variables then the formula used in this model is
 
 $$
 y = X_3 + X_4 + \beta_t X_1 + \beta_t X_2
@@ -197,9 +252,10 @@ lin_form <- as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")
 ```
 
 ```{r outstandR_maic}
-outstandR_maic <- outstandR(AC.IPD, BC.ALD,
-                            strategy = strategy_maic(formula = lin_form,
-                                                     family = binomial(link = "logit")))
+outstandR_maic <-
+  outstandR(AC.IPD, BC.ALD,
+            strategy = strategy_maic(formula = lin_form,
+                                     family = binomial(link = "logit")))
 ```
 
 The returned object is of class `outstandR`.
@@ -252,7 +308,7 @@ regression model of outcome on treatment and covariates to the IPD. IPD
 effect modifiers are centred at the mean *BC* values.
 
 $$
-g(\mu_n) = \beta_0 + (\boldsymbol{x}_n - \boldsymbol{\theta}) \beta_1 + (\beta_z + (\boldsymbol{x_n^{EM}} - \boldsymbol{\theta^{EM}}) \boldsymbol{\beta_2}) \; \mbox{I}(z_n=1)
+g(\mu_n) = \beta_0 + \beta_X (\boldsymbol{x}_n - \boldsymbol{\theta}) + \boldsymbol{\beta_{EM}} (\beta_{trt} + (\boldsymbol{x_n^{EM}} - \boldsymbol{\theta^{EM}}) ) \; \mbox{I}(trt \neq C)
 $$
 
 where $\beta_0$ is the intercept, $\beta_1$ are the covariate
@@ -272,9 +328,10 @@ However, `outstandR()` knows how to handle this so we can simply pass
 the same (uncentred) formula as before.
 
 ```{r outstandR_stc}
-outstandR_stc <- outstandR(AC.IPD, BC.ALD,
-                           strategy = strategy_stc(formula = lin_form,
-                                                   family = binomial(link = "logit")))
+outstandR_stc <-
+  outstandR(AC.IPD, BC.ALD,
+            strategy = strategy_stc(formula = lin_form,
+                                    family = binomial(link = "logit")))
 outstandR_stc
 ```
 
@@ -304,7 +361,7 @@ outcome $y$ on the covariates $x$ and treatment $z$ is fitted to the
 *AC* IPD:
 
 $$
-g(\mu_n) = \beta_0 + \boldsymbol{x}_n \boldsymbol{\beta_1} + (\beta_z + \boldsymbol{x_n^{EM}} \boldsymbol{\beta_2}) \; \mbox{I}(z_n = 1)
+g(\mu_n) = \beta_0 + \boldsymbol{x}_n \boldsymbol{\beta_X} + (\beta_z + \boldsymbol{x_n^{EM}} \boldsymbol{\beta_{EM}}) \; \mbox{I}(trt \neq C)
 $$
 
 In the context of G-computation, this regression model is often called
@@ -334,9 +391,10 @@ $$
 $$
 
 ```{r outstandR_gcomp_ml}
-outstandR_gcomp_ml <- outstandR(AC.IPD, BC.ALD,
-                                strategy = strategy_gcomp_ml(formula = lin_form,
-                                                             family = binomial(link = "logit")))
+outstandR_gcomp_ml <-
+  outstandR(AC.IPD, BC.ALD,
+            strategy = strategy_gcomp_ml(formula = lin_form,
+                                         family = binomial(link = "logit")))
 outstandR_gcomp_ml
 ```
 
@@ -443,28 +501,143 @@ outstandR_mim_lrr
 
 ### Model comparison
 
-Combine all outputs for log-odds ratio table of all contrasts and methods.
+#### $AC$ effect in $BC$ population
+
+The true $AC$ effect on the log OR scale in the $BC$ (aggregate trial data) population is
+$\beta_{trt}^{AC} + \beta_{EM} (\bar{X}^{AC}_1 + \bar{X}_2^{AC})$. Calculated by 
 
 ```{r}
-knitr::kable(
-  data.frame(
-  `MAIC` = unlist(outstandR_maic$contrasts),
-  `STC` = unlist(outstandR_stc$contrasts),
-  `Gcomp ML` = unlist(outstandR_gcomp_ml$contrasts),
-  `Gcomp Bayes` = unlist(outstandR_gcomp_stan$contrasts),
-  `MIM` = unlist(outstandR_mim$contrasts))
-)
+d_AC_true <- b_trt + b_EM * (BC.ALD$mean.X1 + BC.ALD$mean.X2)
 ```
 
-On log relative risk scale
+```{r echo=FALSE}
+# alternative calculations
+# d_AC_true <- b_trt + b_EM * (meanX_EM_BC[1] + meanX_EM_BC[2])
+# 
+# d_C_true <- b_0 + b_trt + b_EM * (BC.ALD$mean.X1 + BC.ALD$mean.X2) + b_X * (BC.ALD$mean.X3 + BC.ALD$mean.X4)
+# d_A_true <- b_0 + b_X * (BC.ALD$mean.X3 + BC.ALD$mean.X4)
+# d_C_true - d_A_true
+```
+
+The naive approach is to just convert directly from one population to another, ignoring the imbalance in effect modifiers.
 
 ```{r}
-knitr::kable(
-  data.frame(
-  `MAIC` = unlist(outstandR_maic_lrr$contrasts),
-  `STC` = unlist(outstandR_stc_lrr$contrasts),
-  `Gcomp ML` = unlist(outstandR_gcomp_ml_lrr$contrasts),
-  `Gcomp Bayes` = unlist(outstandR_gcomp_stan_lrr$contrasts),
-  `MIM` = unlist(outstandR_mim_lrr$contrasts))
-)
+d_AC_naive <- 
+  AC.IPD |> 
+  group_by(trt) |> 
+  summarise(y_sum = sum(y), y_bar = mean(y), n = n()) |> 
+  tidyr::pivot_wider(names_from = trt,
+                     values_from = c(y_sum, y_bar, n)) |> 
+  mutate(d_AC =
+           log(y_bar_1/(1-y_bar_1)) - log(y_bar_0/(1-y_bar_0)),
+         var_AC =
+           1/(n_0-y_sum_0) + 1/y_sum_0 + 1/(n_1-y_sum_1) + 1/y_sum_1)
 ```
+
+#### $AB$ effect in $BC$ population
+
+This is the indirect effect. The true $AB$ effect in the $BC$ population is $\beta_{trt}^{AC} - \beta_{trt}^{BC}$.
+
+```{r echo=FALSE}
+d_AB_true <- 0
+```
+
+Following the simulation study in Remiro et al (2020) these cancel out and the true effect is zero.
+
+The naive comparison calculating $AB$ effect in the $BC$ population is
+
+```{r}
+d_BC <-
+  with(BC.ALD, log(y.B.bar/(1-y.B.bar)) - log(y.C.bar/(1-y.C.bar)))
+
+d_AB_naive <- d_BC - d_AC_naive$d_AC
+
+var.d.BC <- with(BC.ALD, 1/y.B.sum + 1/(N.B - y.B.sum) + 1/y.C.sum + 1/(N.C - y.C.sum))
+var.d.AB.naive <- d_AC_naive$var_AC + var.d.BC
+```
+
+Of course, the $BC$ contrast is calculated directly.
+
+
+### Results
+
+We will combine all outputs for a log-odds ratio table of all contrasts and methods in the $BC$ population.
+
+```{r}
+res_tab <- 
+  data.frame(
+    d_true = c(d_AB_true, d_AC_true, d_BC),
+    d_naive = c(d_AB_naive, d_AC_naive$d_AC, d_BC),
+    `MAIC` = unlist(outstandR_maic$contrasts),
+    `STC` = unlist(outstandR_stc$contrasts),
+    `Gcomp ML` = unlist(outstandR_gcomp_ml$contrasts),
+    `Gcomp Bayes` = unlist(outstandR_gcomp_stan$contrasts),
+    `MIM` = unlist(outstandR_mim$contrasts))
+
+res_tab_var <- 
+  data.frame(
+    d_true = c(NA, NA, NA),
+    d_naive = c(var.d.AB.naive, d_AC_naive$var_AC, var.d.BC),
+    `MAIC` = unlist(outstandR_maic$variances),
+    `STC` = unlist(outstandR_stc$variances),
+    `Gcomp ML` = unlist(outstandR_gcomp_ml$variances),
+    `Gcomp Bayes` = unlist(outstandR_gcomp_stan$variances),
+    `MIM` = unlist(outstandR_mim$variances))
+
+knitr::kable(res_tab)
+```
+
+On log relative risk scale the table is
+
+```{r eval=FALSE}
+d_AB_true_lrr <- 0
+d_AC_true_lrr <- log(plogis(d_A_true) / plogis(d_C_true))
+```
+
+```{r}
+res_tab_lrr <- 
+  data.frame(
+    # d_true = c(d_AB_true_lrr, d_AC_true_lrr, d_BC_lrr),
+    # d_naive = c(d_AB_naive_lrr, d_AC_naive_lrr$d_AC, d_BC_lrr),
+    `MAIC` = unlist(outstandR_maic_lrr$contrasts),
+    `STC` = unlist(outstandR_stc_lrr$contrasts),
+    `Gcomp ML` = unlist(outstandR_gcomp_ml_lrr$contrasts),
+    `Gcomp Bayes` = unlist(outstandR_gcomp_stan_lrr$contrasts),
+    `MIM` = unlist(outstandR_mim_lrr$contrasts))
+
+knitr::kable(res_tab_lrr)
+```
+
+The same output in a forest plot is
+
+```{r fig.width=10, fig.height=10}
+library(ggplot2)
+
+var_dat <- 
+  t(res_tab_var) |> 
+  as.data.frame() |> 
+  tibble::rownames_to_column("type") |>
+  reshape2::melt(variable.name = "Comparison",
+                 value.name = "var")
+
+plotdat <- 
+  t(res_tab) |> 
+  as.data.frame() |> 
+  tibble::rownames_to_column("type") |>
+  reshape2::melt(variable.name = "Comparison",
+                 value.name = "Estimate") |> 
+  mutate(id = 1:n(),
+         type = as.factor(type)) |> 
+  merge(var_dat) |> 
+  mutate(lo = Estimate + qnorm(0.025) * sqrt(var),
+         hi = Estimate + qnorm(0.975) * sqrt(var))
+
+ggplot(aes(x = Estimate, y = id, col = type), data = plotdat) +
+  geom_vline(xintercept = 0, lty = 2) +
+  geom_point(size = 2) +
+  geom_segment(aes(y = id, yend = id, x = lo, xend = hi), na.rm = TRUE) +
+  xlab("Estimate (Log OR)") +
+  facet_grid(Comparison~., switch = "y", scales = "free_y", space = "free_y") +
+  scale_y_reverse(name = "Comparison in BC population", breaks = NULL, expand = c(0, 0.6))
+```
+

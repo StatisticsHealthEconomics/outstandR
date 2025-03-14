@@ -39,8 +39,8 @@ calc_gcomp_stan <- function(strategy,
   treat_name <- get_treatment_name(formula)
   
   # intervene on treatment while keeping set covariates fixed
-  data.trtA[[treat_name]] <- 0  # everyone receives treatment A
-  data.trtC[[treat_name]] <- 1  # all observations receive treatment C
+  data.trtA[[treat_name]] <- 1  # everyone receives treatment A
+  data.trtC[[treat_name]] <- 0  # receive treatment C
   
   ##TODO: is this going to work for all of the different data types?
   # draw responses from posterior predictive distribution
@@ -68,6 +68,6 @@ calc_gcomp_ml <- function(strategy,
   
   gcomp_boot <- do.call(boot::boot, c(statistic = gcomp_ml.boot, args_list))
   
-  list(mean_A = gcomp_boot$t[, 1],
-       mean_C = gcomp_boot$t[, 2])  
+  list(mean_A = gcomp_boot$t[, 2],
+       mean_C = gcomp_boot$t[, 1])  
 }

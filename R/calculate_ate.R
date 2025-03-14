@@ -34,7 +34,9 @@ calculate_trial_variance <- function(ald, tid, effect) {
   N <- ald[[paste0("N.", tid)]]
   
   if (effect == "log_odds") {
-    res <- y/N + (N-y)/N
+    ##TODO: double check these
+    # res <- y/N + (N-y)/N
+    res <- 1/y + 1/(N-y)
   } else if (effect == "log_relative_risk") {
     res <- 1/(N-y) - 1/N
   } else if (effect == "risk_difference") {

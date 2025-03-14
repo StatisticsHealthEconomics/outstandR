@@ -1,8 +1,8 @@
 ---
-title: "Continuous data example"
+title: "Binary data example usind data from Remiro-Azocar et al. (2020)"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Binary data example}
+  %\VignetteIndexEntry{Binary data Remiro-Azocar}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -18,8 +18,58 @@ knitr::opts_chunk$set(
 )
 ```
 
-##TODO
+## Introduction
 
+Population adjustment methods such as *matching-adjusted indirect
+comparison* (MAIC) are increasingly used to compare marginal treatment
+effects when there are cross-trial differences in effect modifiers and
+limited patient-level data. MAIC is based on propensity score weighting,
+which is sensitive to poor covariate overlap and cannot extrapolate
+beyond the observed covariate space. Current outcome regression-based
+alternatives can extrapolate but target a conditional treatment effect
+that is incompatible in the indirect comparison. When adjusting for
+covariates, one must integrate or average the conditional estimate over
+the relevant population to recover a compatible marginal treatment
+effect.
+
+We propose a marginalization method based on *parametric G-computation*
+that can be easily applied where the outcome regression is a generalized
+linear model or a Cox model. The approach views the covariate adjustment
+regression as a nuisance model and separates its estimation from the
+evaluation of the marginal treatment effect of interest. The method can
+accommodate a Bayesian statistical framework, which naturally integrates
+the analysis into a probabilistic framework. A simulation study provides
+proof-of-principle and benchmarks the method's performance against MAIC
+and the conventional outcome regression. Parametric G-computation
+achieves more precise and more accurate estimates than MAIC,
+particularly when covariate overlap is poor, and yields unbiased
+marginal treatment effect estimates under no failures of assumptions.
+Furthermore, the marginalized regression-adjusted estimates provide
+greater precision and accuracy than the conditional estimates produced
+by the conventional outcome regression.
+
+## General problem
+
+Consider one *AB* trial, for which the company has IPD, and one *AC*
+trial, for which only published aggregate data are available. We wish to
+estimate a comparison of the effects of treatments *B* and *C* on an
+appropriate scale in some target population *P*, denoted by the
+parameter $d_{BC(P)}$. We make use of bracketed subscripts to denote a
+specific population. Within the *AB* population there are parameters
+$\mu_{A( AB)}$, $\mu_{B(AB)}$ and $\mu_{C(AB)}$ representing the
+expected outcome on each treatment (including parameters for treatments
+not studied in the *AB* trial, e.g. treatment *C*). The *AB* trial
+provides estimators $\bar{Y}_{A(AB)}$ and $\bar{Y}_{B(AB)}$ of
+$\mu_{A( AB)}$, $\mu_{B(AB)}$, respectively, which are the summary
+outcomes. It is the same situation for the *AC* trial.
+
+For a suitable scale, for example a logit, or risk difference, we form
+estimators $\Delta_{AB(AB)}$ and $\Delta_{AC(AC)}$ of the trial level
+(or marginal) relative treatment effects.
+
+$$
+\Delta_{AB(AB)} = g(\bar{Y}_{B{(AB)}}) - g(\bar{Y}_{A{(AB)}})
+$$
 
 ## Example analysis
 
@@ -50,60 +100,11 @@ the RCT publication. The binary outcomes are summarized in an overall
 event table. Typically, the published study only provides aggregate
 information to the analyst.
 
-Use the in-built `gen_data()` function.
+```{r load-data}
+set.seed(555)
 
-```{r}
-library(dplyr)
-library(MASS)
-
-N <- 200
-allocation <- 2/3      # active treatment vs. placebo allocation ratio (2:1)
-b_trt <- log(0.17)     # conditional effect of active treatment vs. common comparator
-b_X <- -log(0.5)       # conditional effect of each prognostic variable
-b_EM <- -log(0.67)     # conditional interaction effect of each effect modifier
-meanX_AC <- c(0.45, 0.45)       # mean of normally-distributed covariate in AC trial
-meanX_BC <- c(0.6, 0.6)         # mean of each normally-distributed covariate in BC
-meanX_EM_AC <- c(0.45, 0.45)    # mean of normally-distributed EM covariate in AC trial
-meanX_EM_BC <- c(0.6, 0.6)      # mean of each normally-distributed EM covariate in BC
-sdX <- c(0.4, 0.4)     # standard deviation of each covariate (same for AC and BC)
-sdX_EM <- c(0.4, 0.4)  # standard deviation of each EM covariate
-corX <- 0.2            # covariate correlation coefficient  
-b_0 <- -0.6            # baseline intercept coefficient  ##TODO: fixed value
-
-AC.IPD <- gen_data(N, b_trt, b_X, b_EM, b_0,
-                   meanX_AC, sdX, 
-                   meanX_EM_AC, sdX_EM, 
-                   corX, allocation,
-                   family = gaussian(link = "identity"))
-```
-
-Similarly, for the aggregate data but with the additional summarise step.
-
-```{r generate-ald-data}
-BC.IPD <- gen_data(N, b_trt, b_X, b_EM, b_0,
-                   meanX_BC, sdX, 
-                   meanX_EM_BC, sdX_EM, 
-                   corX, allocation,
-                   family = gaussian(link = "identity"))
-
-cov.X <- BC.IPD %>%
-  summarise(across(starts_with("X"),
-                   list(mean = mean, sd = sd),
-                   .names = "{fn}.{col}"))
-
-out.C <- dplyr::filter(BC.IPD, trt == 1) %>%
-  summarise(y.B.sum = sum(y),
-            y.B.bar = mean(y),
-            y.B.sd = sd(y),
-            N.B = n())
-
-out.B <- dplyr::filter(BC.IPD, trt == 0) %>%
-  summarise(y.C.sum = sum(y),
-            y.C.bar = mean(y),
-            y.C.sd = sd(y),
-            N.C = n())
-
-BC.ALD <- cbind.data.frame(cov.X, out.C, out.B)
+AC.IPD <- read.csv(here::here("raw-data", "AC_IPD.csv"))  # AC patient-level data
+BC.ALD <- read.csv(here::here("raw-data", "BC_ALD.csv"))  # BC aggregate-level data
 ```
 
 This general format of data sets consist of the following.
@@ -112,14 +113,15 @@ This general format of data sets consist of the following.
 
 -   `X*`: patient measurements
 -   `trt`: treatment ID (integer)
--   `y`: continuous outcome measure
+-   `y`: (logical) indicator of whether event was observed
 
 #### `BC.ALD`: Aggregate-level data
 
 -   `mean.X*`: mean patient measurement
 -   `sd.X*`: standard deviation of patient measurement
--   `mean.y`:
--   `sd.y`:
+-   `y.*.sum`: total number of events
+-   `y.*.bar`: proportion of events
+-   `N.*`: total number of individuals
 
 Note that the wildcard `*` here is usually an integer from 1 or the
 trial identifier *B*, *C*.
@@ -147,11 +149,13 @@ We will implement for MAIC, STC, and G-computation methods to obtain the
 *marginal variance*, defined as
 
 $$
+\frac{1}{n_C} + \frac{1}{n_{\bar{C}}} + \frac{1}{n_B} + \frac{1}{n_{\bar{B}}}
 $$
 
 and the *marginal treatment effect*, defined as the log-odds ratio,
 
 $$
+\log\left( \frac{n_B/(N_B-n_B)}{n_C/(N_B-n_{B})} \right) = \log(n_B n_{\bar{C}}) - \log(n_C n_{\bar{B}})
 $$
 
 where $\bar{C}$ is the compliment of $C$ so e.g.
@@ -193,10 +197,9 @@ lin_form <- as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")
 ```
 
 ```{r outstandR_maic}
-outstandR_maic <-
-  outstandR(AC.IPD, BC.ALD,
-            strategy = strategy_maic(formula = lin_form,
-                                     family = gaussian(link = "identity")))
+outstandR_maic <- outstandR(AC.IPD, BC.ALD,
+                            strategy = strategy_maic(formula = lin_form,
+                                                     family = binomial(link = "logit")))
 ```
 
 The returned object is of class `outstandR`.
@@ -210,6 +213,37 @@ statistics between each pair of treatments. These are the mean
 contrasts, variances and confidence intervals (CI), respectively. The
 default CI is for 95% but can be altered in `outstandR` with the `CI`
 argument.
+
+#### Outcome scale
+
+If we do not explicitly specify the outcome scale, the default is that used for fit the data in the regression model. As we saw, in this case, the default is
+log-odds ratio corresponding to the `"logit"` link function for binary data.
+However, we can change this to some other scale which may be more appropriate for a particular analysis.
+So far implemented in the package, the links and their corresponding relative treatment effect scales are as follows:
+
+| Data Type  | Model   | Scale             | Argument           |
+|:-----------|---------|:------------------|:-------------------|
+| Binary     | `logit` | Log-odds ratio    | `log_odds`         |
+| Count      | `log`   | Log-risk ratio    | `log_relative_risk`|
+| Continuous | `mean`  | Mean difference   | `risk_difference`  |
+
+The full list of possible transformed treatment effect scales are:
+_log-odds ratio_, _log-risk ratio_, _mean difference_, risk difference, hazard ratio, hazard difference.
+
+To change the outcome scale, we can pass the `scale` argument in the `outstandR()` function.
+For example, to change the scale to risk difference, we can use the following code.
+
+```{r outstandR_maic_lrr}
+outstandR_maic_lrr <-
+  outstandR(AC.IPD, BC.ALD,
+            strategy = strategy_maic(formula = lin_form,
+                                     family = binomial(link = "logit")),
+            scale = "log_relative_risk")
+```
+
+```{r}
+outstandR_maic_lrr
+```
 
 ### STC
 
@@ -238,11 +272,24 @@ However, `outstandR()` knows how to handle this so we can simply pass
 the same (uncentred) formula as before.
 
 ```{r outstandR_stc}
-outstandR_stc <-
+outstandR_stc <- outstandR(AC.IPD, BC.ALD,
+                           strategy = strategy_stc(formula = lin_form,
+                                                   family = binomial(link = "logit")))
+outstandR_stc
+```
+
+Change the outcome scale
+
+```{r outstandR_stc_lrr}
+outstandR_stc_lrr <-
   outstandR(AC.IPD, BC.ALD,
             strategy = strategy_stc(formula = lin_form,
-                                    family = gaussian(link = "identity")))
-outstandR_stc
+                                     family = binomial(link = "logit")),
+            scale = "log_relative_risk")
+```
+
+```{r}
+outstandR_stc_lrr
 ```
 
 For the last two approaches, we perform G-computation firstly with a
@@ -287,11 +334,24 @@ $$
 $$
 
 ```{r outstandR_gcomp_ml}
-outstandR_gcomp_ml <-
+outstandR_gcomp_ml <- outstandR(AC.IPD, BC.ALD,
+                                strategy = strategy_gcomp_ml(formula = lin_form,
+                                                             family = binomial(link = "logit")))
+outstandR_gcomp_ml
+```
+
+Change the outcome scale
+
+```{r outstandR_gcomp_ml_lrr}
+outstandR_gcomp_ml_lrr <-
   outstandR(AC.IPD, BC.ALD,
             strategy = strategy_gcomp_ml(formula = lin_form,
-                                         family = gaussian(link = "identity")))
-outstandR_gcomp_ml
+                                         family = binomial(link = "logit")),
+            scale = "log_relative_risk")
+```
+
+```{r}
+outstandR_gcomp_ml_lrr
 ```
 
 ### Bayesian G-computation with MCMC
@@ -333,8 +393,22 @@ under the specific treatment.
 outstandR_gcomp_stan <-
   outstandR(AC.IPD, BC.ALD,
             strategy = strategy_gcomp_stan(formula = lin_form,
-                                           family = gaussian(link = "identity")))
+                                           family = binomial(link = "logit")))
 outstandR_gcomp_stan
+```
+
+Change the outcome scale
+
+```{r outstandR_gcomp_stan_lrr}
+outstandR_gcomp_stan_lrr <-
+  outstandR(AC.IPD, BC.ALD,
+            strategy = strategy_gcomp_stan(formula = lin_form,
+                                           family = binomial(link = "logit")),
+            scale = "log_relative_risk")
+```
+
+```{r}
+outstandR_gcomp_stan_lrr
 ```
 
 ### Multiple imputation marginalisation
@@ -349,13 +423,27 @@ $$
 outstandR_mim <-
   outstandR(AC.IPD, BC.ALD,
             strategy = strategy_mim(formula = lin_form,
-                                    family = gaussian(link = "identity")))
+                                    family = binomial(link = "logit")))
 outstandR_mim
+```
+
+Change the outcome scale
+
+```{r outstandR_mim_lrr}
+outstandR_mim_lrr <-
+  outstandR(AC.IPD, BC.ALD,
+            strategy = strategy_mim(formula = lin_form,
+                                    family = binomial(link = "logit")),
+            scale = "log_relative_risk")
+```
+
+```{r}
+outstandR_mim_lrr
 ```
 
 ### Model comparison
 
-Combine all outputs for relative effects table of all contrasts and methods.
+Combine all outputs for log-odds ratio table of all contrasts and methods.
 
 ```{r}
 knitr::kable(
@@ -365,5 +453,18 @@ knitr::kable(
   `Gcomp ML` = unlist(outstandR_gcomp_ml$contrasts),
   `Gcomp Bayes` = unlist(outstandR_gcomp_stan$contrasts),
   `MIM` = unlist(outstandR_mim$contrasts))
+)
+```
+
+On log relative risk scale
+
+```{r}
+knitr::kable(
+  data.frame(
+  `MAIC` = unlist(outstandR_maic_lrr$contrasts),
+  `STC` = unlist(outstandR_stc_lrr$contrasts),
+  `Gcomp ML` = unlist(outstandR_gcomp_ml_lrr$contrasts),
+  `Gcomp Bayes` = unlist(outstandR_gcomp_stan_lrr$contrasts),
+  `MIM` = unlist(outstandR_mim_lrr$contrasts))
 )
 ```

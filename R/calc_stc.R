@@ -21,8 +21,8 @@ calc_stc <- function(strategy, ipd, ...) {
   treat_nm <- get_treatment_name(strategy$formula)
   
   # probability for control and treatment group
-  mean_A <- strategy$family$linkinv(coef_fit[1])
-  mean_C <- strategy$family$linkinv(coef_fit[1] + coef_fit[treat_nm])
+  mean_C <- strategy$family$linkinv(coef_fit[1])
+  mean_A <- strategy$family$linkinv(coef_fit[1] + coef_fit[treat_nm])
   
   list(mean_A = mean_A,
        mean_C = mean_C)

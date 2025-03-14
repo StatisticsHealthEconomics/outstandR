@@ -1,0 +1,6 @@
+-   Binary_data_example.Rmd
+-   Binary_data_Remiro-Azocar.Rmd
+-   comparison-with-other-packages.Rmd
+-   Continuous_data_example.Rmd
+-   copd_analysis.Rmd
+-   Count_data_example.Rmd

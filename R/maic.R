@@ -103,6 +103,6 @@ calc_maic <- function(strategy,
   
   maic_boot <- do.call(boot::boot, c(statistic = maic.boot, args_list))
   
-  list(mean_A = maic_boot$t[, 1],
-       mean_C = maic_boot$t[, 2])  
+  list(mean_A = maic_boot$t[, 2],
+       mean_C = maic_boot$t[, 1])  
 }

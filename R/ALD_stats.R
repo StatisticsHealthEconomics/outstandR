@@ -40,12 +40,12 @@ marginal_variance <- function(ald, treatments = list("B", "C"), scale) {
 #' so e.g. \eqn{n_{\bar{C}} = N_C - n_c}.
 #'
 #' @param ald Aggregate-level data
-#' @param treatments Treatment labels list; default _B_ vs _C_
+#' @param treatments Treatment labels list. Last variable is reference; default _B_ vs _C_
 #' @return Relative treatment effect
 #' @export
 #' 
 marginal_treatment_effect <- function(ald, treatments = list("B", "C"), scale) {
   trial_means <- purrr::map_dbl(treatments, ~calculate_trial_mean(ald, .x, scale))
-  sum(trial_means)
+  trial_means[1] - trial_means[2]
 }
 

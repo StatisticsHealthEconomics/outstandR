@@ -57,9 +57,6 @@ calc_mim <- function(strategy,
   reg2.fits <- lapply(1:M, function(m)
     glm(y_star[m, ] ~ trt, data = aug.target, family = family))
   
-  ##TODO: return the probability scale
-  ## also its a bit unclear
-  
   # treatment effect point estimates in each synthesis
   coef_fit <- do.call(rbind, lapply(reg2.fits, function(fit) coef(fit)))
   
@@ -69,8 +66,8 @@ calc_mim <- function(strategy,
                           function(fit)
                             vcov(fit)["trt", "trt"]))
   
-  mean_A <- family$linkinv(coef_fit[, 1])                  # probability for control
-  mean_C <- family$linkinv(coef_fit[, 1] + coef_fit[, 2])  # probability for treatment
+  mean_C <- family$linkinv(coef_fit[, 1])                  # probability for control
+  mean_A <- family$linkinv(coef_fit[, 1] + coef_fit[, 2])  # probability for treatment
   
   tibble::lst(mean_A, mean_C,
               hats.v, M)

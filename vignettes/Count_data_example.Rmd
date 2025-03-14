@@ -89,6 +89,12 @@ out.B <- dplyr::filter(BC.IPD, trt == 0) %>%
 BC.ALD <- cbind.data.frame(cov.X, out.C, out.B)
 ```
 
+By definition, the true log-OR relative effect in the AC population
+between AC is `r `b_trt`. Between BC is `r b_trt` and between AB is `r b_trt - b_trt`.
+
+A naive indirect comparison, ignoring the presence of effect modifiers, would calculate the C vs B effect in the AC population as
+`b_trt - b_trt`.
+
 
 ### Output statistics
 
