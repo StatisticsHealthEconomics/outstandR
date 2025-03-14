@@ -550,7 +550,7 @@ The naive comparison calculating $AB$ effect in the $BC$ population is
 d_BC <-
   with(BC.ALD, log(y.B.bar/(1-y.B.bar)) - log(y.C.bar/(1-y.C.bar)))
 
-d_AB_naive <- d_BC - d_AC_naive$d_AC
+d_AB_naive <- d_AC_naive$d_AC - d_BC
 
 var.d.BC <- with(BC.ALD, 1/y.B.sum + 1/(N.B - y.B.sum) + 1/y.C.sum + 1/(N.C - y.C.sum))
 var.d.AB.naive <- d_AC_naive$var_AC + var.d.BC
@@ -587,12 +587,12 @@ res_tab_var <-
 knitr::kable(res_tab)
 ```
 
-On log relative risk scale the table is
-
 ```{r eval=FALSE}
 d_AB_true_lrr <- 0
 d_AC_true_lrr <- log(plogis(d_A_true) / plogis(d_C_true))
 ```
+
+On log relative risk scale the table is
 
 ```{r}
 res_tab_lrr <- 
@@ -610,7 +610,7 @@ knitr::kable(res_tab_lrr)
 
 The same output in a forest plot is
 
-```{r fig.width=10, fig.height=10}
+```{r fig.width=10, fig.height=10, warning=FALSE, message=FALSE}
 library(ggplot2)
 
 var_dat <- 
@@ -638,6 +638,7 @@ ggplot(aes(x = Estimate, y = id, col = type), data = plotdat) +
   geom_segment(aes(y = id, yend = id, x = lo, xend = hi), na.rm = TRUE) +
   xlab("Estimate (Log OR)") +
   facet_grid(Comparison~., switch = "y", scales = "free_y", space = "free_y") +
-  scale_y_reverse(name = "Comparison in BC population", breaks = NULL, expand = c(0, 0.6))
+  scale_y_reverse(name = "Comparison in BC population",
+                  breaks = NULL, expand = c(0, 0.6))
 ```
 
