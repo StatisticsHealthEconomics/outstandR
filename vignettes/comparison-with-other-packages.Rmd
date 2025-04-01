@@ -14,21 +14,44 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup, warning=FALSE, message=FALSE}
 library(outstandR)
 ```
 
 There are already a few widely-used R packages in CRAN to perform model-based standardization, such as `{marginaleffects}` and `{stdReg}`.
 
+## marginaleffects
 
-```{r marginaleffects}
-
+```{r , warning=FALSE, message=FALSE}
+library(marginaleffects)
 ```
 
-```{r stdReg}
 
+## stdReg
+
+```{r, warning=FALSE, message=FALSE}
+library(stdReg)
 ```
 
-ISPOR poster by Hatswell
+[ISPOR poster by Hatswell](https://www.ispor.org/heor-resources/presentations-database/presentation/euro2024-4016/141209) make a comparison of different MAIC R packages.
 
-`maic`, `MAIC`, 
+## maicplus
+
+`MAIC` not on CRAN so not included at the moment. `maicChecks`
+
+Roche developed `maic` which is now deprecated and replaced by `maicplus`.
+
+For g-formula we will use `gFormulaMI` and `gfoRmula`.
+
+## gfoRmula
+
+```{r, warning=FALSE, message=FALSE}
+library(gfoRmula)
+```
+
+## gFormulaMI
+
+```{r, warning=FALSE, message=FALSE}
+library(gFormulaMI)
+```
+
