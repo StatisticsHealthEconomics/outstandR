@@ -91,19 +91,19 @@ cov.X <- BC.IPD %>%
                    list(mean = mean, sd = sd),
                    .names = "{fn}.{col}"))
 
-out.C <- dplyr::filter(BC.IPD, trt == 1) %>%
+out.B <- dplyr::filter(BC.IPD, trt == 1) %>%
   summarise(y.B.sum = sum(y),
             y.B.bar = mean(y),
             y.B.sd = sd(y),
             N.B = n())
 
-out.B <- dplyr::filter(BC.IPD, trt == 0) %>%
+out.C <- dplyr::filter(BC.IPD, trt == 0) %>%
   summarise(y.C.sum = sum(y),
             y.C.bar = mean(y),
             y.C.sd = sd(y),
             N.C = n())
 
-BC.ALD <- cbind.data.frame(cov.X, out.C, out.B)
+BC.ALD <- cbind.data.frame(cov.X, out.B, out.C)
 ```
 
 This general format of data sets consist of the following.

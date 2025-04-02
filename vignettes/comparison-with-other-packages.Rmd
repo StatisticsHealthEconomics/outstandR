@@ -43,8 +43,7 @@ library(causaldata)
 # data(nhefs_complete, package = "causaldata")
 nhefs_dat <- causaldata::nhefs_complete
 
-m <- glm(wt82_71 ~ qsmk + sex + race + age + I(age^2) +
-           as.factor(education) + smokeintensity + I(smokeintensity^2) + smokeyrs + I(smokeyrs^2) + as.factor(exercise) + as.factor(active) + wt71 + I(wt71^2), 
+m <- glm(wt82_71 ~ qsmk + sex + race + age + I(age^2) + as.factor(education) + smokeintensity + I(smokeintensity^2) + smokeyrs + I(smokeyrs^2) + as.factor(exercise) + as.factor(active) + wt71 + I(wt71^2), 
          data = nhefs_dat)
 summary(m)
 
@@ -52,7 +51,8 @@ m2 <- standardize_glm(
   wt82_71 ~ qsmk + sex + race + age + I(age^2) + as.factor(education) + smokeintensity + I(smokeintensity^2) + smokeyrs + I(smokeyrs^2) + as.factor(exercise) + as.factor(active) + wt71 + I(wt71^2),
   data = nhefs_dat, 
   values = list(qsmk = c(0,1)),
-  contrasts = c("difference", "ratio"), reference = 0)
+  contrasts = c("difference", "ratio"),
+  reference = 0)
 
 m2
 ```
@@ -60,7 +60,7 @@ m2
 ```{r}
 library(dplyr)
 
-##TODO: what to do with factors or more than 2 levels when aggregating?
+##TODO: what to do with factors of more than 2 levels when aggregating?
 # for now just remove them
 # use dummy variables like for {nmarunr}. copy code
 
@@ -69,26 +69,50 @@ library(dplyr)
 ##TODO: doubly-robust, separate treatment models?
 
 nhefs_ipd <- nhefs_dat |> 
-  select(qsmk, sex, race, age, smokeintensity, smokeyrs, wt71) |> 
-  rename(trt = qsmk)
+  select(qsmk, sex, race, age, smokeintensity, smokeyrs, wt71, wt82_71) |> 
+  rename(trt = qsmk,
+         y = wt82_71) |> 
+  mutate(sex = as.numeric(sex),
+         race = as.numeric(race))
 
-nhefs_ald <- nhefs_ipd |> 
-  summarise(across(everything(), \(x) mean(x, na.rm = TRUE)))
+# create aggregate data
 
+nhefs.X <- nhefs_ipd %>%
+  summarise(across(-c(trt, y),
+                   list(mean = mean, sd = sd),
+                   .names = "{fn}.{col}"))
+
+nhefs.B <- dplyr::filter(nhefs_ipd, trt == 1) |> 
+  summarise(y.B.sum = sum(y),
+            y.B.bar = mean(y),
+            y.B.sd = sd(y),
+            N.B = n())
+
+nhefs.C <- dplyr::filter(nhefs_ipd, trt == 0) |> 
+  summarise(y.C.sum = sum(y),
+            y.C.bar = mean(y),
+            y.C.sd = sd(y),
+            N.C = n())
+
+nhefs_ald <- cbind.data.frame(nhefs.X, nhefs.C, nhefs.B)
+
+##TODO: check how {outstandR} handles factor vs not factors?
 
 lin_form <-
-  as.formula(wt82_71 ~ trt + sex + race + age + I(age^2) + as.factor(education) +
-               smokeintensity + I(smokeintensity^2) + smokeyrs + I(smokeyrs^2) +
-               as.factor(exercise) + as.factor(active) + wt71 + I(wt71^2))
+  as.formula(y ~ trt * (sex + race + age + I(age^2) +
+               smokeintensity + I(smokeintensity^2) +
+               smokeyrs + I(smokeyrs^2) + wt71 + I(wt71^2)))
 
-##TODO: add explicit reference argument in set-up
+##TODO: add explicit reference argument in set-up?
 # reference = 0
 
 nhefs_strat <- 
   strategy_gcomp_ml(formula = lin_form,
                     family = gaussian(link = "identity"))
 
-res <- outstandR(BC.ALD = nhefs_ald, AC.IPD = nhefs_ipd, 
+res <- outstandR(BC.ALD = nhefs_ald,
+                 AC.IPD = nhefs_ipd,
+                 strategy = nhefs_strat,
                  scale = "risk_difference")
 res
 ```

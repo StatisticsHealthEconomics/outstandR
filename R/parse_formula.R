@@ -29,6 +29,7 @@ get_treatment_name <- function(formula) {
   formula <- as.formula(formula)
   term.labels <- attr(terms(formula), "term.labels")
   
+  # find interaction terms (assuming only for treatment)
   treat_nm <- term.labels[grepl(":", term.labels)]
   treat_nm <- gsub(":.+", "", treat_nm[1])
   
@@ -49,7 +50,7 @@ get_treatment_name <- function(formula) {
 get_mean_names <- function(ald, keep_nms) {
   
   dat_names <- names(ald)
-  # is_sd_name <- grepl(pattern = "\\.mean", dat_names)
+  # is_sd_name <- grepl(pattern = "\\.sd", dat_names)
   is_mean_name <- grepl(pattern = "mean\\.", dat_names)
   is_var_name <- grepl(pattern = paste(keep_nms, collapse = "|"), dat_names)
   keep_mean_nm <- is_mean_name & is_var_name
