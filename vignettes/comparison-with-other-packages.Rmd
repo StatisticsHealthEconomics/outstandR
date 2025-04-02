@@ -64,9 +64,14 @@ library(dplyr)
 # for now just remove them
 # use dummy variables like for {nmarunr}. copy code
 
+##TODO: check how {outstandR} handles factor vs not factors?
+
 # education, exercise, active
 
 ##TODO: doubly-robust, separate treatment models?
+
+##TODO: add explicit reference argument in set-up?
+# reference = 0
 
 nhefs_ipd <- nhefs_dat |> 
   select(qsmk, sex, race, age, smokeintensity, smokeyrs, wt71, wt82_71) |> 
@@ -96,15 +101,11 @@ nhefs.C <- dplyr::filter(nhefs_ipd, trt == 0) |>
 
 nhefs_ald <- cbind.data.frame(nhefs.X, nhefs.C, nhefs.B)
 
-##TODO: check how {outstandR} handles factor vs not factors?
 
 lin_form <-
   as.formula(y ~ trt * (sex + race + age + I(age^2) +
                smokeintensity + I(smokeintensity^2) +
                smokeyrs + I(smokeyrs^2) + wt71 + I(wt71^2)))
-
-##TODO: add explicit reference argument in set-up?
-# reference = 0
 
 nhefs_strat <- 
   strategy_gcomp_ml(formula = lin_form,
@@ -127,13 +128,52 @@ Of the packages considered, `{MAIC}` is not on CRAN so not included in our anays
 
 ## maicplus
 
-
 Roche developed `maic` which is now deprecated and replaced by `maicplus`.
+We will follow the article titled [Anchored Binary Analysis](https://hta-pharma.github.io/maicplus/main/articles/anchored_binary.html).
+
+```{r, warning=FALSE, message=FALSE}
+library(maicplus)
+
+data(centered_ipd_twt)
+data(adrs_twt)
+
+centered_colnames <- c("AGE", "AGE_SQUARED", "SEX_MALE", "ECOG0", "SMOKE", "N_PR_THER_MEDIAN")
+centered_colnames <- paste0(centered_colnames, "_CENTERED")
+
+weighted_data <- estimate_weights(
+  data = centered_ipd_twt,
+  centered_colnames = centered_colnames
+)
+
+# get dummy binary IPD
+pseudo_adrs <- get_pseudo_ipd_binary(
+  binary_agd = data.frame(
+    ARM = c("B", "C", "B", "C"),
+    RESPONSE = c("YES", "YES", "NO", "NO"),
+    COUNT = c(280, 120, 200, 200)
+  ),
+  format = "stacked"
+)
+
+result <- maic_anchored(
+  weights_object = weighted_data,
+  ipd = adrs_twt,
+  pseudo_ipd = pseudo_adrs,
+  trt_ipd = "A",
+  trt_agd = "B",
+  trt_common = "C",
+  normalize_weight = FALSE,
+  endpoint_type = "binary",
+  endpoint_name = "Binary Endpoint",
+  eff_measure = "OR",
+  # binary specific args
+  binary_robust_cov_type = "HC3"
+)
+```
 
 ## maicChecks
 
-
-`maicChecks`
+We now follow the examples for [`maicChecks`](https://clyau.github.io/maicChecks/).
 
 ```{r, warning=FALSE, message=FALSE}
 library(maicChecks)
