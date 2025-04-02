@@ -57,7 +57,7 @@ m2 <- standardize_glm(
 m2
 ```
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 library(dplyr)
 
 ##TODO: what to do with factors of more than 2 levels when aggregating?
@@ -197,7 +197,7 @@ result <- maic_anchored(
 result
 ```
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 library(dplyr)
 library(glue)
 
@@ -219,13 +219,19 @@ BC.ALD <- agd |>
          mean.ECOG0 = ECOG0_PROP,
          mean.SMOKE = SMOKE_PROP,
          mean.N_PR_THER = N_PR_THER_MEDIAN) |> 
-  mutate(N.B = 480, 
+  mutate(mean.AGE_SQUARED = sd.AGE^2 + mean.AGE^2,
+         sd.SEX_MALE = sqrt(mean.SEX_MALE * (1 - mean.SEX_MALE)), 
+         sd.ECOG0 = sqrt(mean.ECOG0 * (1 - mean.ECOG0)), 
+         sd.SMOKE = sqrt(mean.SMOKE * (1 - mean.SMOKE)), 
+         # outcomes
+         N.B = 480, 
          y.B.sum = binary_agd[binary_agd$ARM == "B" & binary_agd$RESPONSE == "YES", "COUNT"],
          y.B.bar = y.B.sum/N.B,
          N.C = 320, 
          y.C.sum = binary_agd[binary_agd$ARM == "C" & binary_agd$RESPONSE == "YES", "COUNT"],
          y.C.bar = y.C.sum/N.C)
 
+##TODO: haven't got all the agd sd
 outstandR_maic <-
   outstandR(AC.IPD, BC.ALD,
             strategy = strategy_maic(formula = lin_form,
