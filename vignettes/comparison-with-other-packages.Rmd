@@ -2,10 +2,10 @@
 title: "Comparison with other packages"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{comparison-with-other-packages}
+%\VignetteIndexEntry{comparison-with-other-packages}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
-editor_options: 
+  editor_options: 
   chunk_output_type: console
 ---
 
@@ -104,8 +104,8 @@ nhefs_ald <- cbind.data.frame(nhefs.X, nhefs.C, nhefs.B)
 
 lin_form <-
   as.formula(y ~ trt * (sex + race + age + I(age^2) +
-               smokeintensity + I(smokeintensity^2) +
-               smokeyrs + I(smokeyrs^2) + wt71 + I(wt71^2)))
+                          smokeintensity + I(smokeintensity^2) +
+                          smokeyrs + I(smokeyrs^2) + wt71 + I(wt71^2)))
 
 nhefs_strat <- 
   strategy_gcomp_ml(formula = lin_form,
@@ -137,21 +137,45 @@ library(maicplus)
 data(centered_ipd_twt)
 data(adrs_twt)
 
-centered_colnames <- c("AGE", "AGE_SQUARED", "SEX_MALE", "ECOG0", "SMOKE", "N_PR_THER_MEDIAN")
-centered_colnames <- paste0(centered_colnames, "_CENTERED")
+data("adsl_sat")
+
+# Data containing the matching variables
+adsl_sat <- adsl_sat %>%
+  mutate(SEX_MALE = ifelse(SEX == "Male", 1, 0)) %>%
+  mutate(AGE_SQUARED = AGE^2)
+
+# # could use built-in function for dummizing variables
+##TODO: can I used this myself?
+# adsl_sat <- dummize_ipd(adsl_sat,
+#                         dummize_cols = "SEX",
+#                         dummize_ref_level = c("Female"))
+
+adsl_colnames <- c("AGE", "AGE_SQUARED", "SEX_MALE", "ECOG0", "SMOKE", "N_PR_THER_MEDIAN")
+centered_colnames <- paste0(adsl_colnames, "_CENTERED")
 
 weighted_data <- estimate_weights(
   data = centered_ipd_twt,
   centered_colnames = centered_colnames
 )
 
+agd <- data.frame(
+  AGE_MEAN = 51,
+  AGE_SD = 3.25,
+  SEX_MALE_PROP = 147 / 300,
+  ECOG0_PROP = 0.40,
+  SMOKE_PROP = 58 / (300 - 5),
+  N_PR_THER_MEDIAN = 2
+)
+
+binary_agd <- data.frame(
+  ARM = c("B", "C", "B", "C"),
+  RESPONSE = c("YES", "YES", "NO", "NO"),
+  COUNT = c(280, 120, 200, 200)
+)
+
 # get dummy binary IPD
 pseudo_adrs <- get_pseudo_ipd_binary(
-  binary_agd = data.frame(
-    ARM = c("B", "C", "B", "C"),
-    RESPONSE = c("YES", "YES", "NO", "NO"),
-    COUNT = c(280, 120, 200, 200)
-  ),
+  binary_agd = binary_agd,
   format = "stacked"
 )
 
@@ -169,7 +193,45 @@ result <- maic_anchored(
   # binary specific args
   binary_robust_cov_type = "HC3"
 )
+
+result
 ```
+
+```{r}
+library(dplyr)
+library(glue)
+
+# why has this got median in name here?
+adsl_colnames[adsl_colnames == "N_PR_THER_MEDIAN"] <- "N_PR_THER"
+
+lin_form <- as.formula(glue("y ~ trt * ({paste(adsl_colnames, collapse = ' + ')})"))
+
+AC.IPD <- adsl_twt |>
+  merge(adrs_twt) |> 
+  rename(trt = ARM,
+         y = RESPONSE) |> 
+  mutate(AGE_SQUARED = AGE^2)
+
+BC.ALD <- agd |> 
+  rename(mean.AGE = AGE_MEAN,
+         sd.AGE = AGE_SD,
+         mean.SEX_MALE = SEX_MALE_PROP,
+         mean.ECOG0 = ECOG0_PROP,
+         mean.SMOKE = SMOKE_PROP,
+         mean.N_PR_THER = N_PR_THER_MEDIAN) |> 
+  mutate(N.B = 480, 
+         y.B.sum = binary_agd[binary_agd$ARM == "B" & binary_agd$RESPONSE == "YES", "COUNT"],
+         y.B.bar = y.B.sum/N.B,
+         N.C = 320, 
+         y.C.sum = binary_agd[binary_agd$ARM == "C" & binary_agd$RESPONSE == "YES", "COUNT"],
+         y.C.bar = y.C.sum/N.C)
+
+outstandR_maic <-
+  outstandR(AC.IPD, BC.ALD,
+            strategy = strategy_maic(formula = lin_form,
+                                     family = binomial(link = "logit")))
+```
+
 
 ## maicChecks
 
