@@ -9,7 +9,7 @@ marginal_treatment_effect(ald, treatments = list("B", "C"), scale)
 \arguments{
 \item{ald}{Aggregate-level data}
 
-\item{treatments}{Treatment labels list; default \emph{B} vs \emph{C}}
+\item{treatments}{Treatment labels list. Last variable is reference; default \emph{B} vs \emph{C}}
 }
 \value{
 Relative treatment effect

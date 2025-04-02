@@ -15,5 +15,6 @@ var_by_pooling(M, bar.v, b)
 }
 \description{
 Use combining rules to estimate
+2003
 }
 \keyword{internal}
