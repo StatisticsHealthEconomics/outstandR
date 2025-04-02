@@ -15,7 +15,7 @@ prep_ald <- function(form, data) {
   term.labels <- unique(gsub("I\\(([^)]+)\\^2\\)", "\\1", all_term_labels))
   
   mean_names <- paste0("mean.", term.labels)
-  sd_names <- paste0("sd.", term.labels)
+  sd_names <- paste0("sd.", term.labels)  ##TODO: for maic do we need these?
   term_names <- c(mean_names, sd_names)
   
   # remove treatment labels
@@ -28,5 +28,5 @@ prep_ald <- function(form, data) {
   
   keep_names <- c(term_names, response_names)
   
-  data[keep_names]
+  data[match(keep_names, names(data))]  # na.omit() will drop empty matches
 }
