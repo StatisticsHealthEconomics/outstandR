@@ -176,7 +176,7 @@ Of the packages considered, `{MAIC}` is not on CRAN so not included in our anays
 
 ## maicplus
 
-Roche developed `maic` which is now deprecated and replaced by `maicplus`.
+Roche developed `maic` package which is now deprecated and replaced by `maicplus`.
 We will follow the article titled [Anchored Binary Analysis](https://hta-pharma.github.io/maicplus/main/articles/anchored_binary.html).
 
 ```{r maicplus-original, warning=FALSE, message=FALSE}
@@ -185,6 +185,7 @@ library(maicplus)
 data(centered_ipd_twt)
 data(adrs_twt)
 
+# original ipd
 data("adsl_sat")
 
 # Data containing the matching variables
