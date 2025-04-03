@@ -189,8 +189,8 @@ data(adrs_twt)
 data("adsl_sat")
 
 # Data containing the matching variables
-adsl_sat <- adsl_sat %>%
-  mutate(SEX_MALE = ifelse(SEX == "Male", 1, 0)) %>%
+adsl_sat <- adsl_sat |> 
+  mutate(SEX_MALE = ifelse(SEX == "Male", 1, 0)) |> 
   mutate(AGE_SQUARED = AGE^2)
 
 # # could use built-in function for dummizing variables
@@ -278,7 +278,7 @@ BC.ALD <- agd |>
          y.C.sum = binary_agd[binary_agd$ARM == "C" & binary_agd$RESPONSE == "YES", "COUNT"],
          y.C.bar = y.C.sum/N.C)
 
-##TODO: haven't got all the agd sd
+##TODO: haven't got all the agd sd. do I need it?
 outstandR_maic <-
   outstandR(AC.IPD, BC.ALD,
             strategy = strategy_maic(formula = lin_form,
