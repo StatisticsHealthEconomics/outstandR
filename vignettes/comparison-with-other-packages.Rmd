@@ -35,7 +35,7 @@ library(marginaleffects)
 
 We shall follow the article [_Estimation of causal effects using stdReg2_](https://sachsmc.github.io/stdReg2/articles/overview.html)
 
-```{r, warning=FALSE, message=FALSE}
+```{r stdReg2-original, warning=FALSE, message=FALSE}
 library(stdReg2)
 library(causaldata)
 
@@ -57,16 +57,14 @@ m2 <- standardize_glm(
 m2
 ```
 
-```{r, warning=FALSE, message=FALSE}
+```{r stdReg2-alternative1, warning=FALSE, message=FALSE}
 library(dplyr)
 
-##TODO: what to do with factors of more than 2 levels when aggregating?
+# factor of more than 2 levels
+# education, exercise, active
 # for now just remove them
-# use dummy variables like for {nmarunr}. copy code
 
 ##TODO: check how {outstandR} handles factor vs not factors?
-
-# education, exercise, active
 
 ##TODO: doubly-robust, separate treatment models?
 
@@ -74,11 +72,11 @@ library(dplyr)
 # reference = 0
 
 nhefs_ipd <- nhefs_dat |> 
-  select(qsmk, sex, race, age, smokeintensity, smokeyrs, wt71, wt82_71) |> 
+  select(qsmk, sex, race, age, smokeintensity, smokeyrs, wt71, wt82_71) |>
   rename(trt = qsmk,
          y = wt82_71) |> 
-  mutate(sex = as.numeric(sex),
-         race = as.numeric(race))
+  mutate(sex = as.numeric(sex) - 1,
+         race = as.numeric(race) - 1)
 
 # create aggregate data
 
@@ -101,7 +99,6 @@ nhefs.C <- dplyr::filter(nhefs_ipd, trt == 0) |>
 
 nhefs_ald <- cbind.data.frame(nhefs.X, nhefs.C, nhefs.B)
 
-
 lin_form <-
   as.formula(y ~ trt * (sex + race + age + I(age^2) +
                           smokeintensity + I(smokeintensity^2) +
@@ -114,10 +111,61 @@ nhefs_strat <-
 res <- outstandR(BC.ALD = nhefs_ald,
                  AC.IPD = nhefs_ipd,
                  strategy = nhefs_strat,
-                 scale = "risk_difference")
+                 scale = "log_relative_risk")
 res
 ```
 
+Rather than dropping factors, create dummy variables.
+
+```{r stdReg2-alternative2, warning=FALSE, message=FALSE}
+nhefs_ipd <- nhefs_dat |> 
+  select(qsmk, sex, race, age, smokeintensity, smokeyrs, wt71,
+         wt82_71, education, exercise, active) |> 
+  rename(trt = qsmk,
+         y = wt82_71) |> 
+  mutate(sex = as.numeric(sex) - 1,
+         race = as.numeric(race) - 1) |> 
+  maicplus::dummize_ipd(dummize_cols = c("education", "exercise", "active"),
+                        dummize_ref_level = c("1","0","0")) |> 
+  select(-education, -exercise, -active)
+
+# create aggregate data
+
+nhefs.X <- nhefs_ipd %>%
+  summarise(across(-c(trt, y),
+                   list(mean = mean, sd = sd),
+                   .names = "{fn}.{col}"))
+
+nhefs.B <- dplyr::filter(nhefs_ipd, trt == 1) |> 
+  summarise(y.B.sum = sum(y),
+            y.B.bar = mean(y),
+            y.B.sd = sd(y),
+            N.B = n())
+
+nhefs.C <- dplyr::filter(nhefs_ipd, trt == 0) |> 
+  summarise(y.C.sum = sum(y),
+            y.C.bar = mean(y),
+            y.C.sd = sd(y),
+            N.C = n())
+
+nhefs_ald <- cbind.data.frame(nhefs.X, nhefs.C, nhefs.B)
+
+lin_form <-
+  as.formula(y ~ trt * (sex + race + age + I(age^2) +
+                          smokeintensity + I(smokeintensity^2) +
+                          EDUCATION_2 + EDUCATION_3 + EDUCATION_4 + EDUCATION_5 +
+                          EXERCISE_1 + EXERCISE_2 + ACTIVE_1 + ACTIVE_2 +
+                          smokeyrs + I(smokeyrs^2) + wt71 + I(wt71^2)))
+nhefs_strat <- 
+  strategy_gcomp_ml(formula = lin_form,
+                    family = gaussian(link = "identity"))
+
+res <- outstandR(BC.ALD = nhefs_ald,
+                 AC.IPD = nhefs_ipd,
+                 strategy = nhefs_strat,
+                 scale = "log_relative_risk")
+res
+```
 
 
 ---
@@ -131,7 +179,7 @@ Of the packages considered, `{MAIC}` is not on CRAN so not included in our anays
 Roche developed `maic` which is now deprecated and replaced by `maicplus`.
 We will follow the article titled [Anchored Binary Analysis](https://hta-pharma.github.io/maicplus/main/articles/anchored_binary.html).
 
-```{r, warning=FALSE, message=FALSE}
+```{r maicplus-original, warning=FALSE, message=FALSE}
 library(maicplus)
 
 data(centered_ipd_twt)
@@ -145,7 +193,6 @@ adsl_sat <- adsl_sat %>%
   mutate(AGE_SQUARED = AGE^2)
 
 # # could use built-in function for dummizing variables
-##TODO: can I used this myself?
 # adsl_sat <- dummize_ipd(adsl_sat,
 #                         dummize_cols = "SEX",
 #                         dummize_ref_level = c("Female"))
@@ -155,8 +202,7 @@ centered_colnames <- paste0(adsl_colnames, "_CENTERED")
 
 weighted_data <- estimate_weights(
   data = centered_ipd_twt,
-  centered_colnames = centered_colnames
-)
+  centered_colnames = centered_colnames)
 
 agd <- data.frame(
   AGE_MEAN = 51,
@@ -197,7 +243,7 @@ result <- maic_anchored(
 result
 ```
 
-```{r, warning=FALSE, message=FALSE}
+```{r maicplus-alternative, warning=FALSE, message=FALSE}
 library(dplyr)
 library(glue)
 
