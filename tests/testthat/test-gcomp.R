@@ -43,7 +43,7 @@ test_that("different combinations of covariates in formula", {
 })
 
 
-test_that("compare with stdReg2 package", {
+test_that("compare with stdReg2 package for continuous outcome", {
   
   # original
   library(stdReg2)
@@ -94,12 +94,76 @@ test_that("compare with stdReg2 package", {
   lin_form <- as.formula(y ~ trt * (sex + age))
   
   res_outstandr <- gcomp_ml_means(formula = lin_form,
-                                  family = "binomial",
+                                  family = "gaussian",
                                   ald = BC.ALD = nhefs_ald,
                                   ipd = nhefs_ipd)
   
   expect_equal(res_outstandr, res_stdReg2)
   
+  
+  # different output scales
+  ##TODO:
+  # calculate_ate()
+  
+})
+
+test_that("compare with stdReg2 package for binary outcome", {
+  
+  # Step 1: Simulate data
+  n <- 1000
+  data <- data.frame(
+    age = rnorm(n, mean = 50, sd = 10),
+    sex = rbinom(n, 1, 0.5),
+    trt = rbinom(n, 1, 0.5)
+  )
+  
+  # Generate a binary outcome with logit link
+  logit_p <- -2 + 0.05 * data$age + 0.5 * data$sex + 1.2 * data$treat
+  prob <- 1 / (1 + exp(-logit_p))
+  data$y <- rbinom(n, 1, prob)
+  
+  # Step 2: Fit logistic regression
+  fit <- glm(y ~ trt + age + sex, data = data, family = binomial)
+  
+  # Step 3: Standardize to whole sample (marginal treatment effect)
+  res_stdReg2 <- stdGlm(
+    fit = fit,
+    data = data,
+    X = "trt",
+    x = c(0, 1),  # treatment levels to compare
+    outcome.type = "binary"
+  )
+  
+  ## {outstandR}
+  
+  # create aggregate data
+  nhefs.X <- data |> 
+    summarise(across(-c(trt, y),
+                     list(mean = mean, sd = sd),
+                     .names = "{fn}.{col}"))
+  
+  nhefs.B <- dplyr::filter(data, trt == 1) |> 
+    summarise(y.B.sum = sum(y),
+              y.B.bar = mean(y),
+              y.B.sd = sd(y),
+              N.B = n())
+  
+  nhefs.C <- dplyr::filter(data, trt == 0) |> 
+    summarise(y.C.sum = sum(y),
+              y.C.bar = mean(y),
+              y.C.sd = sd(y),
+              N.C = n())
+  
+  data_ald <- cbind.data.frame(nhefs.X, nhefs.C, nhefs.B)
+  
+  lin_form <- as.formula(y ~ trt * (sex + age))
+  
+  res_outstandr <- gcomp_ml_means(formula = lin_form,
+                                  family = "binomial",
+                                  ald = BC.ALD = data_ald,
+                                  ipd = data)
+  
+  expect_equal(res_outstandr, res_stdReg2)
   
   # different output scales
   ##TODO:
