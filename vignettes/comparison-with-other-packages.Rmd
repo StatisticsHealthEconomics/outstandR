@@ -103,7 +103,6 @@ lin_form <-
   as.formula(y ~ trt * (sex + race + age + I(age^2) +
                           smokeintensity + I(smokeintensity^2) +
                           smokeyrs + I(smokeyrs^2) + wt71 + I(wt71^2)))
-
 nhefs_strat <- 
   strategy_gcomp_ml(formula = lin_form,
                     family = gaussian(link = "identity"))
@@ -165,6 +164,8 @@ res <- outstandR(BC.ALD = nhefs_ald,
                  strategy = nhefs_strat,
                  scale = "log_relative_risk")
 res
+
+##TODO: error se is negative
 ```
 
 

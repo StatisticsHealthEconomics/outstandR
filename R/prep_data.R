@@ -26,10 +26,8 @@ prep_ald <- function(form, data) {
   response_names <- gsub(pattern = "y", replacement = response_var,
                          x = c("y.B.sum", "y.B.bar", "N.B", "y.C.sum", "y.C.bar", "N.C")) 
   
-  keep_names <- sort(c(term_names, response_names))
-  data_names <- sort(names(data))
+  keep_names <- c(term_names, response_names)
+  data_names <- names(data)
   
-  col_ids <- na.omit(match(keep_names, data_names))
-  
-  data[col_ids]
+  data[data_names %in% keep_names]
 }
