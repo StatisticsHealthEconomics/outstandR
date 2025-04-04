@@ -27,8 +27,22 @@ calculate_ate <- function(mean_A, mean_C, effect) {
   ate
 }
 
-#
-calculate_trial_variance <- function(ald, tid, effect) {
+#' @export
+calculate_trial_variance <- function(ald, tid, effect, family) {
+
+  if (family == "binomial") {
+    return(
+      calculate_trial_variance_binary(ald, tid, effect))
+  } else if (family == "gaussian") {
+    return(
+      calculate_trial_variance_continuous(ald, tid, effect))
+  } else {
+    stop("family not recognised.")
+  } 
+}
+
+#' @export
+calculate_trial_variance_binary <- function(ald, tid, effect) {
   
   y <- ald[[paste0("y.", tid, ".sum")]]
   N <- ald[[paste0("N.", tid)]]
@@ -38,7 +52,8 @@ calculate_trial_variance <- function(ald, tid, effect) {
     # res <- y/N + (N-y)/N
     res <- 1/y + 1/(N-y)
   } else if (effect == "log_relative_risk") {
-    res <- 1/(N-y) - 1/N
+    # using delta method
+    res <- 1/y - 1/N
   } else if (effect == "risk_difference") {
     res <- y * (1 - y/N) / N
   } else if (effect == "delta_z") {
@@ -52,15 +67,55 @@ calculate_trial_variance <- function(ald, tid, effect) {
   res
 }
 
-#
-calculate_trial_mean <- function(ald, tid, effect) {
+#' @export
+calculate_trial_variance_continuous <- function(ald, tid, effect) {
+  
+  ybar <- ald[[paste0("y.", tid, ".bar")]]
+  ysd <- ald[[paste0("y.", tid, ".sd")]]
+  N <- ald[[paste0("N.", tid)]]
+  
+  if (effect == "log_odds") {
+    res <- pi^2/3 * (1/N)
+  } else if (effect == "log_relative_risk") {
+    message("log mean used\n")
+    res <- log(ybar)
+  } else if (effect == "risk_difference") {
+    res <- (ysd^2)/N
+  } else if (effect == "delta_z") {
+    ##TODO:
+    stop("Unsupported link function.")
+  } else if (effect == "log_relative_risk_rare_events") {
+    ##TODO:
+    stop("Unsupported link function.")
+  } else {
+    stop("Unsupported link function.")
+  }
+  
+  res
+}
+
+#' @export
+calculate_trial_mean <- function(ald, tid, effect, family) {
+  
+  if (family == "binomial") {
+    return(
+      calculate_trial_mean_binary(ald, tid, effect))
+  } else if (family == "gaussian") {
+    return(
+      calculate_trial_mean_continuous(ald, tid, effect))
+  } else {
+    stop("family not recognised.")
+  } 
+}
+
+#' @export
+calculate_trial_mean_binary <- function(ald, tid, effect) {
   
   y <- ald[[paste0("y.", tid, ".sum")]]
   N <- ald[[paste0("N.", tid)]]
   p <- y/N
   
   if (effect == "log_odds") {
-    # res <- log(p/(1-p)
     res <- qlogis(p)
   } else if (effect == "risk_difference") {
     res <- p
@@ -77,9 +132,37 @@ calculate_trial_mean <- function(ald, tid, effect) {
   res
 }
 
+#' @export
+calculate_trial_mean_continuous <- function(ald, tid, effect) {
+  
+  ybar <- ald[[paste0("y.", tid, ".bar")]]
+  ysd <- ald[[paste0("y.", tid, ".sd")]]
+  N <- ald[[paste0("N.", tid)]]
+  
+  if (effect == "log_odds") {
+    message("log mean used\n")
+    res <- log(ybar)
+  } else if (effect == "risk_difference") {
+    res <- ybar
+  } else if (effect == "delta_z") {
+    res <- ybar/ysd
+  } else if (effect == "log_relative_risk_rare_events") {
+    ##TODO:
+    stop("Unsupported link function.")
+  } else if (effect == "log_relative_risk") {
+    message("log mean used\n")
+    res <- log(ybar)
+  } else {
+    stop("Unsupported link function.")
+  }
+  
+  res
+}
+
 
 #' Get treatment effect scale corresponding to a link function
 #'
+#' @export
 get_treatment_effect <- function(link) {
 
   if (link == "logit") {

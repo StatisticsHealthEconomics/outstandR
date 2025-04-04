@@ -2,10 +2,10 @@
 title: "Comparison with other packages"
 output: rmarkdown::html_vignette
 vignette: >
-%\VignetteIndexEntry{comparison-with-other-packages}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
   editor_options: 
+    chunk_output_type: console
   chunk_output_type: console
 ---
 
@@ -117,6 +117,7 @@ res
 Rather than dropping factors, create dummy variables.
 
 ```{r stdReg2-alternative2, warning=FALSE, message=FALSE}
+
 nhefs_ipd <- nhefs_dat |> 
   select(qsmk, sex, race, age, smokeintensity, smokeyrs, wt71,
          wt82_71, education, exercise, active) |> 
@@ -127,6 +128,9 @@ nhefs_ipd <- nhefs_dat |>
   maicplus::dummize_ipd(dummize_cols = c("education", "exercise", "active"),
                         dummize_ref_level = c("1","0","0")) |> 
   select(-education, -exercise, -active)
+
+# # replace with this?
+# model.matrix()
 
 # create aggregate data
 
@@ -162,10 +166,8 @@ nhefs_strat <-
 res <- outstandR(BC.ALD = nhefs_ald,
                  AC.IPD = nhefs_ipd,
                  strategy = nhefs_strat,
-                 scale = "log_relative_risk")
+                 scale = "risk_difference")
 res
-
-##TODO: error se is negative
 ```
 
 
@@ -173,7 +175,7 @@ res
 
 [ISPOR poster by Hatswell](https://www.ispor.org/heor-resources/presentations-database/presentation/euro2024-4016/141209) make a comparison of different MAIC R packages.
 
-Of the packages considered, `{MAIC}` is not on CRAN so not included in our anaysis at the moment.
+Of the packages considered, `{MAIC}` is not on CRAN so not included in our analysis at the moment.
 
 ## maicplus
 

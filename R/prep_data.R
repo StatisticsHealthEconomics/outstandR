@@ -24,7 +24,8 @@ prep_ald <- function(form, data) {
   # replace outcome variable name
   response_var <- all.vars(form)[1]
   response_names <- gsub(pattern = "y", replacement = response_var,
-                         x = c("y.B.sum", "y.B.bar", "N.B", "y.C.sum", "y.C.bar", "N.C")) 
+                         x = c("y.B.sum", "y.B.bar", "y.B.sd", "N.B",
+                               "y.C.sum", "y.C.bar", "y.C.sd", "N.C")) 
   
   keep_names <- c(term_names, response_names)
   data_names <- names(data)
