@@ -42,3 +42,6 @@ test_that("different combinations of covariates in formula", {
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_1))
 })
 
+test_that("against other packages", {
+  
+})

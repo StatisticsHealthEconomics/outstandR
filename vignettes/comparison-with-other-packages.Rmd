@@ -185,50 +185,54 @@ We will follow the article titled [Anchored Binary Analysis](https://hta-pharma.
 ```{r maicplus-original, warning=FALSE, message=FALSE}
 library(maicplus)
 
+# Load required data
 data(centered_ipd_twt)
 data(adrs_twt)
+data("adsl_sat")  # Original IPD
 
-# original ipd
-data("adsl_sat")
+# Load required package
+library(dplyr)
 
-# Data containing the matching variables
+# Prepare matching variables (only using means, ignoring SDs)
 adsl_sat <- adsl_sat |> 
-  mutate(SEX_MALE = ifelse(SEX == "Male", 1, 0)) |> 
-  mutate(AGE_SQUARED = AGE^2)
+  mutate(
+    SEX_MALE = as.integer(SEX == "Male"),
+    AGE_SQUARED = AGE^2
+  )
 
-# # could use built-in function for dummizing variables
-# adsl_sat <- dummize_ipd(adsl_sat,
-#                         dummize_cols = "SEX",
-#                         dummize_ref_level = c("Female"))
-
+# Define variable names for matching (excluding SDs)
 adsl_colnames <- c("AGE", "AGE_SQUARED", "SEX_MALE", "ECOG0", "SMOKE", "N_PR_THER_MEDIAN")
 centered_colnames <- paste0(adsl_colnames, "_CENTERED")
 
+# Estimate weights based only on means
 weighted_data <- estimate_weights(
   data = centered_ipd_twt,
-  centered_colnames = centered_colnames)
+  centered_colnames = centered_colnames
+)
 
+# Aggregate summary data for AGD (ONLY MEANS, NO SDs)
 agd <- data.frame(
   AGE_MEAN = 51,
-  AGE_SD = 3.25,
   SEX_MALE_PROP = 147 / 300,
   ECOG0_PROP = 0.40,
   SMOKE_PROP = 58 / (300 - 5),
   N_PR_THER_MEDIAN = 2
 )
 
+# Binary AGD summary data
 binary_agd <- data.frame(
-  ARM = c("B", "C", "B", "C"),
-  RESPONSE = c("YES", "YES", "NO", "NO"),
-  COUNT = c(280, 120, 200, 200)
+  ARM = rep(c("B", "C"), each = 2),
+  RESPONSE = rep(c("YES", "NO"), 2),
+  COUNT = c(280, 200, 120, 200)
 )
 
-# get dummy binary IPD
+# Generate pseudo-IPD from binary AGD
 pseudo_adrs <- get_pseudo_ipd_binary(
   binary_agd = binary_agd,
   format = "stacked"
 )
 
+# Perform MAIC analysis (matching only on means)
 result <- maic_anchored(
   weights_object = weighted_data,
   ipd = adrs_twt,
@@ -240,9 +244,9 @@ result <- maic_anchored(
   endpoint_type = "binary",
   endpoint_name = "Binary Endpoint",
   eff_measure = "OR",
-  # binary specific args
   binary_robust_cov_type = "HC3"
 )
+
 
 result
 ```

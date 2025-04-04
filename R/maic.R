@@ -47,7 +47,10 @@ maic_weights <- function(X_EM) {
 #' @seealso [IPD_stats.maic()]
 #' @keywords internal
 #' 
-maic.boot <- function(ipd, indices, formula, family, ald) {
+maic.boot <- function(ipd, indices = 1:nrow(ipd),
+                      formula, family, ald,
+                      hat_w = NULL) {
+  
   dat <- ipd[indices, ]  # bootstrap sample
   
   effect_modifier_names <- get_effect_modifiers(formula)
@@ -62,7 +65,9 @@ maic.boot <- function(ipd, indices, formula, family, ald) {
   dat_ALD_means <- ald[, mean_names][rep(1, nrow(X_EM)), ]
   X_EM <- X_EM - dat_ALD_means
   
-  hat_w <- maic_weights(X_EM)
+  if (is.null(hat_w)) {
+    hat_w <- maic_weights(X_EM)
+  }
   
   treat_nm <- get_treatment_name(formula)
   formula_treat <- glue::glue("{formula[[2]]} ~ {treat_nm}")
@@ -82,10 +87,10 @@ maic.boot <- function(ipd, indices, formula, family, ald) {
   coef_fit <- coef(fit)
   
   # probabilities using inverse link
-  p0 <- family$linkinv(coef_fit[1])                # probability for control group
-  p1 <- family$linkinv(coef_fit[1] + coef_fit[2])  # probability for treatment group
+  pC <- unname(family$linkinv(coef_fit[1]))                # probability for control group
+  pA <- unname(family$linkinv(coef_fit[1] + coef_fit[2]))  # probability for treatment group
   
-  c(p0, p1)
+  c(pC = pC, pA = pA)
 }
 
 
