@@ -1,4 +1,4 @@
-# test-calculate_trial-stats
+# test-calculate_trial_stats
 
 # variances
 
@@ -61,7 +61,8 @@ test_that("calculate_trial_variance_continuous works correctly", {
 # means
 
 test_that("calculate_trial_mean_binary works correctly", {
-  ald <- list("y.B.sum" = 30, "N.B" = 100)
+  ald <- list("y.B.sum" = 30,
+              "N.B" = 100)
   p <- 30 / 100
   
   # log_odds

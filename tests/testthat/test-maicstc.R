@@ -47,7 +47,8 @@ test_that("different combinations of covariates in formula", {
 
 test_that("compare with maicplus package", {
   
-  ##
+  ## original
+  
   library(maicplus)
   
   data(centered_ipd_twt, package = "maicplus")
