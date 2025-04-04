@@ -141,4 +141,10 @@ test_that("compare with maicplus package", {
   
   expect_equal(maicplus_AC, outstandr_OR)
   expect_equal(maicplus_AC_unadjusted, outstandr_OR_unadjusted)
+  
+  
+  # different output scales
+  ##TODO:
+  # calculate_ate()
+  
 })

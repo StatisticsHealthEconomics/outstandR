@@ -52,16 +52,12 @@ test_that("compare with stdReg2 package", {
   # load dataset
   nhefs_dat <- causaldata::nhefs_complete
   
-  m <- glm(wt82_71 ~ qsmk + sex + race + age + I(age^2) + as.factor(education) +
-             smokeintensity + I(smokeintensity^2) + smokeyrs + I(smokeyrs^2) +
-             as.factor(exercise) + as.factor(active) + wt71 + I(wt71^2), 
+  m <- glm(wt82_71 ~ qsmk + sex + age, 
            data = nhefs_dat)
   
   res_stdReg2 <-
     standardize_glm(
-      wt82_71 ~ qsmk + sex + race + age + I(age^2) + as.factor(education) +
-        smokeintensity + I(smokeintensity^2) + smokeyrs + I(smokeyrs^2) +
-        as.factor(exercise) + as.factor(active) + wt71 + I(wt71^2),
+      wt82_71 ~ qsmk + sex + age,
       data = nhefs_dat, 
       values = list(qsmk = c(0,1)),
       contrasts = c("difference", "ratio"),
@@ -70,15 +66,10 @@ test_that("compare with stdReg2 package", {
   ## {outstandR}
   
   nhefs_ipd <- nhefs_dat |> 
-    select(qsmk, sex, race, age, smokeintensity, smokeyrs, wt71,
-           wt82_71, education, exercise, active) |> 
+    select(qsmk, sex, age, wt82_71) |> 
     rename(trt = qsmk,
            y = wt82_71) |> 
-    mutate(sex = as.numeric(sex) - 1,
-           race = as.numeric(race) - 1) |> 
-    maicplus::dummize_ipd(dummize_cols = c("education", "exercise", "active"),
-                          dummize_ref_level = c("1","0","0")) |> 
-    select(-education, -exercise, -active)
+    mutate(sex = as.numeric(sex) - 1)
   
   # create aggregate data
   nhefs.X <- nhefs_ipd |> 
@@ -100,20 +91,18 @@ test_that("compare with stdReg2 package", {
   
   nhefs_ald <- cbind.data.frame(nhefs.X, nhefs.C, nhefs.B)
   
-  lin_form <-
-    as.formula(y ~ trt * (sex + race + age + I(age^2) +
-                            smokeintensity + I(smokeintensity^2) +
-                            EDUCATION_2 + EDUCATION_3 + EDUCATION_4 + EDUCATION_5 +
-                            EXERCISE_1 + EXERCISE_2 + ACTIVE_1 + ACTIVE_2 +
-                            smokeyrs + I(smokeyrs^2) + wt71 + I(wt71^2)))
-  nhefs_strat <- 
-    strategy_gcomp_ml(formula = lin_form,
-                      family = gaussian(link = "identity"))
+  lin_form <- as.formula(y ~ trt * (sex + age))
   
-  res_outstandr <- outstandR(BC.ALD = nhefs_ald,
-                             AC.IPD = nhefs_ipd,
-                             strategy = nhefs_strat,
-                             scale = "risk_difference")
+  res_outstandr <- gcomp_ml_means(formula = lin_form,
+                                  family = "binomial",
+                                  ald = BC.ALD = nhefs_ald,
+                                  ipd = nhefs_ipd)
   
   expect_equal(res_outstandr, res_stdReg2)
+  
+  
+  # different output scales
+  ##TODO:
+  # calculate_ate()
+  
 })
