@@ -1,3 +1,4 @@
+#
 
 library(dplyr)
 
@@ -109,7 +110,7 @@ test_that("compare with stdReg2 package for continuous outcome", {
   expect_equal(unname(res_outstandr["0"]),
                stdReg2_estimates$estimates[stdReg2_estimates$qsmk == 0],
                tolerance = 0.1)
-
+  
   expect_equal(unname(res_outstandr["1"]),
                stdReg2_estimates$estimates[stdReg2_estimates$qsmk == 1],
                tolerance = 0.1)
@@ -118,8 +119,20 @@ test_that("compare with stdReg2 package for continuous outcome", {
   ##TODO:
   
   # different output scales
-  ##TODO:
-  # calculate_ate()
+  
+  expect_equal(
+    res_stdReg2$res_contrast[[2]]$est_table$Estimate[2],
+    calculate_ate(mean_A = unname(res_outstandr["1"]),
+                  mean_C = unname(res_outstandr["0"]),
+                  effect = "risk_difference"),
+    tolerance = 0.01)
+  
+  expect_equal(
+    res_stdReg2$res_contrast[[3]]$est_table$Estimate[2],
+    exp(calculate_ate(mean_A = unname(res_outstandr["1"]),
+                      mean_C = unname(res_outstandr["0"]),
+                      effect = "log_relative_risk")),
+    tolerance = 0.01)
   
 })
 
@@ -195,7 +208,19 @@ test_that("compare with stdReg2 package for binary outcome", {
   ##TODO:
   
   # different output scales
-  ##TODO:
-  # calculate_ate()
+  
+  expect_equal(
+    res_stdReg2$res_contrast[[2]]$est_table$Estimate[2],
+    calculate_ate(mean_A = unname(res_outstandr["1"]),
+                  mean_C = unname(res_outstandr["0"]),
+                  effect = "risk_difference"),
+    tolerance = 0.01)
+  
+  expect_equal(
+    res_stdReg2$res_contrast[[3]]$est_table$Estimate[2],
+    exp(calculate_ate(mean_A = unname(res_outstandr["1"]),
+                      mean_C = unname(res_outstandr["0"]),
+                      effect = "log_relative_risk")),
+    tolerance = 0.01)
   
 })
