@@ -87,7 +87,6 @@ gcomp_ml_means <- function(formula,
 simulate_ALD_pseudo_pop <- function(formula,
                                     ipd, ald,
                                     N = 1000) {
-  
   set.seed(1234)
   
   treat_name <- get_treatment_name(formula)
@@ -96,9 +95,8 @@ simulate_ALD_pseudo_pop <- function(formula,
   # remove treatment
   covariate_names <- covariate_names[covariate_names != treat_name]
   
-  ##TODO: this is a problem because we are only passing
-  ##      the AC.IPD data and not BC.ALD
   mean_names <- get_mean_names(ald, covariate_names)
+  
   sd_names <- get_sd_names(ald, covariate_names)
   
   n_covariates <- length(covariate_names)
@@ -113,10 +111,10 @@ simulate_ALD_pseudo_pop <- function(formula,
                          dim = n_covariates,
                          dispstr = "un")
   
-  # BC covariate means & standard deviations
+  # aggregate BC covariate means & standard deviations
   mean_sd_margins <- list()
   
-  for (i in seq_len(n_covariates)) {
+  for (i in covariate_names) {
     mean_sd_margins[[i]] <- list(mean = ald[[mean_names[i]]],
                                  sd = ald[[sd_names[i]]])
   }
@@ -131,6 +129,8 @@ simulate_ALD_pseudo_pop <- function(formula,
   x_star <- as.data.frame(copula::rMvdc(n = N, mvd))
   colnames(x_star) <- covariate_names
   
+  ##TODO: this assume all covariate continuous
+  ##      what about binary? threshold?
   x_star
 }
 

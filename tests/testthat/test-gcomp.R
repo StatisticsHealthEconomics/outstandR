@@ -1,6 +1,7 @@
 #
 
 library(dplyr)
+library(stdReg2)
 
 #
 test_that("different combinations of covariates in formula", {
@@ -49,7 +50,7 @@ test_that("different combinations of covariates in formula", {
 test_that("compare with stdReg2 package for continuous outcome", {
   
   # original
-  library(stdReg2)
+
   library(causaldata)
   
   # load dataset
@@ -63,6 +64,7 @@ test_that("compare with stdReg2 package for continuous outcome", {
       wt82_71 ~ qsmk + sex + age,
       data = nhefs_dat, 
       values = list(qsmk = c(0,1)),
+      family = "gaussian",
       contrasts = c("difference", "ratio"),
       reference = 0)
   
@@ -133,12 +135,11 @@ test_that("compare with stdReg2 package for continuous outcome", {
                       mean_C = unname(res_outstandr["0"]),
                       effect = "log_relative_risk")),
     tolerance = 0.01)
-  
 })
 
 test_that("compare with stdReg2 package for binary outcome", {
   
-  # Step 1: Simulate data
+  # simulate data
   n <- 1000
   data <- data.frame(
     age = rnorm(n, mean = 50, sd = 10),
@@ -146,22 +147,19 @@ test_that("compare with stdReg2 package for binary outcome", {
     trt = rbinom(n, 1, 0.5)
   )
   
-  # Generate a binary outcome with logit link
-  logit_p <- -2 + 0.05 * data$age + 0.5 * data$sex + 1.2 * data$treat
+  # generate a binary outcome with logit link
+  logit_p <- -1 + data$trt * (0.03 * data$age + 0.2 * data$sex)
   prob <- 1 / (1 + exp(-logit_p))
   data$y <- rbinom(n, 1, prob)
   
-  # Step 2: Fit logistic regression
-  fit <- glm(y ~ trt + age + sex, data = data, family = binomial)
-  
-  # Step 3: Standardize to whole sample (marginal treatment effect)
-  res_stdReg2 <- stdGlm(
-    fit = fit,
-    data = data,
-    X = "trt",
-    x = c(0, 1),  # treatment levels to compare
-    outcome.type = "binary"
-  )
+  res_stdReg2 <-
+    standardize_glm(
+      y ~ trt + age + sex,
+      family = "binomial",
+      data = data, 
+      values = list(trt = c(0,1)),
+      contrasts = c("difference", "ratio"),
+      reference = 0)
   
   ## {outstandR}
   
@@ -185,23 +183,27 @@ test_that("compare with stdReg2 package for binary outcome", {
   
   data_ald <- cbind.data.frame(nhefs.X, nhefs.C, nhefs.B)
   
+  ##TODO: check if we have covariates as EM and PF in outstandR? 
+  
   lin_form <- as.formula(y ~ trt * (sex + age))
   
-  res_outstandr <- gcomp_ml_means(formula = lin_form,
-                                  family = "binomial",
-                                  ald = data_ald,
-                                  ipd = data,
-                                  N = 10000)
+  res_outstandr <- gcomp_ml_means(
+    formula = lin_form,
+    family = "binomial",
+    ald = data_ald,
+    ipd = data,
+    N = 10000)
+  
   # means
   
   stdReg2_estimates <- res_stdReg2$res$estimates
   
   expect_equal(unname(res_outstandr["0"]),
-               stdReg2_estimates$estimates[stdReg2_estimates$qsmk == 0],
+               stdReg2_estimates$estimates[stdReg2_estimates$trt == 0],
                tolerance = 0.1)
   
   expect_equal(unname(res_outstandr["1"]),
-               stdReg2_estimates$estimates[stdReg2_estimates$qsmk == 1],
+               stdReg2_estimates$estimates[stdReg2_estimates$trt == 1],
                tolerance = 0.1)
   
   # std errors
@@ -222,5 +224,4 @@ test_that("compare with stdReg2 package for binary outcome", {
                       mean_C = unname(res_outstandr["0"]),
                       effect = "log_relative_risk")),
     tolerance = 0.01)
-  
 })

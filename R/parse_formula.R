@@ -50,7 +50,7 @@ get_treatment_name <- function(formula) {
 get_mean_names <- function(ald, keep_nms) {
   
   dat_names <- names(ald)
-  # is_sd_name <- grepl(pattern = "\\.sd", dat_names)
+  # is_sd_name <- grepl(pattern = "\\.mean", dat_names)
   is_mean_name <- grepl(pattern = "mean\\.", dat_names)
   is_var_name <- grepl(pattern = paste(keep_nms, collapse = "|"), dat_names)
   keep_mean_nm <- is_mean_name & is_var_name
@@ -58,7 +58,11 @@ get_mean_names <- function(ald, keep_nms) {
   if (all(!keep_mean_nm))
     warning("No matching mean names found.")
   
-  dat_names[keep_mean_nm]
+  mean_nms <- dat_names[keep_mean_nm]
+   
+  covariate_nms <- sub(".*mean\\.", "", mean_nms)
+  
+  setNames(mean_nms, covariate_nms)
 }
 
 #' Get standard deviation names
@@ -80,7 +84,11 @@ get_sd_names <- function(ald, keep_nms) {
   if (all(!keep_sd_nm))
     warning("No matching sd names found.")
   
-  dat_names[keep_sd_nm]
+  sd_nms <- dat_names[keep_sd_nm]
+  
+  covariate_nms <- sub(".*sd\\.", "", sd_nms)
+  
+  setNames(sd_nms, covariate_nms)
 }
 
 #' Get covariate names
