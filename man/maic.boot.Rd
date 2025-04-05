@@ -4,7 +4,7 @@
 \alias{maic.boot}
 \title{MAIC bootstrap sample}
 \usage{
-maic.boot(ipd, indices, formula, family, ald)
+maic.boot(ipd, indices = 1:nrow(ipd), formula, family, ald, hat_w = NULL)
 }
 \arguments{
 \item{ipd}{Individual-level data}

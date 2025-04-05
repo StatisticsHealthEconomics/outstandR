@@ -49,8 +49,8 @@ calc_gcomp_stan <- function(strategy,
   
   # posterior means for each treatment group
   list(
-    mean_A = rowMeans(y.star.A),
-    mean_C = rowMeans(y.star.C))
+    `0` = rowMeans(y.star.A),
+    `1` = rowMeans(y.star.C))
 }
 
 
@@ -63,6 +63,7 @@ calc_gcomp_ml <- function(strategy,
     list(R = strategy$R,
          formula = strategy$formula,
          family = strategy$family,
+         N = strategy$N,
          data = ipd,
          ald = ald)
   

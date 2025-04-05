@@ -4,12 +4,14 @@
 \alias{gcomp_ml_means}
 \title{G-computation Maximum Likelihood mean outcome}
 \usage{
-gcomp_ml_means(formula, family, ipd, ald)
+gcomp_ml_means(formula, family, N = 1000, ipd, ald)
 }
 \arguments{
 \item{formula}{Linear regression \code{formula} object}
 
 \item{family}{Family object}
+
+\item{N}{Synthetic sample size for g-computation}
 
 \item{ipd}{Individual-level data}
 

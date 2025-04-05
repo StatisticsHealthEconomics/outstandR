@@ -6,6 +6,7 @@
 #' @param data Trial data 
 #' @param indices Indices sampled from rows of `data`
 #' @param formula Linear regression `formula` object
+#' @param N Synthetic sample size for g-computation
 #'
 #' @return Mean difference in expected log-odds
 #' @seealso [strategy_gcomp_ml()], [gcomp_ml_log_odds_ratio()]
@@ -13,7 +14,7 @@
 #' 
 gcomp_ml.boot <- function(data, indices,
                           R, formula = NULL,
-                          family, ald) {
+                          family, N = 1000, ald) {
   dat <- data[indices, ]
   gcomp_ml_means(formula, family, dat, ald) 
 }
@@ -31,6 +32,7 @@ gcomp_ml.boot <- function(data, indices,
 #' @param family Family object
 #' @template args-ipd
 #' @template args-ald
+#' @param N Synthetic sample size for g-computation
 #'
 #' @return Difference on relative treatment effect scale 
 #' @seealso [strategy_gcomp_ml()], [gcomp_ml.boot()]
@@ -40,12 +42,13 @@ gcomp_ml.boot <- function(data, indices,
 #'
 gcomp_ml_means <- function(formula,
                            family,
+                           N = 1000,
                            ipd, ald) {
   
   if (!inherits(formula, "formula"))
     stop("formula argument must be of formula class.")
   
-  x_star <- simulate_ALD_pseudo_pop(formula, ipd, ald)
+  x_star <- simulate_ALD_pseudo_pop(formula, ipd, ald, N)
   
   # outcome logistic regression fitted to IPD using maximum likelihood
   fit <- glm(formula = formula,
@@ -66,8 +69,8 @@ gcomp_ml_means <- function(formula,
   hat.mu.C <- predict(fit, type="response", newdata=data.trtC)
   
   # (marginal) mean probability prediction under A and C
-  c(mean(hat.mu.A),
-    mean(hat.mu.C))
+  c(`0` = mean(hat.mu.A),
+    `1` = mean(hat.mu.C))
 }
 
 
@@ -76,10 +79,16 @@ gcomp_ml_means <- function(formula,
 #' @param formula Linear regression `formula` object
 #' @template args-ipd
 #' @template args-ald
+#' @param N Sample size
+#' 
 #' @importFrom copula normalCopula mvdc
 #' @keywords internal
 #' 
-simulate_ALD_pseudo_pop <- function(formula, ipd, ald) {
+simulate_ALD_pseudo_pop <- function(formula,
+                                    ipd, ald,
+                                    N = 1000) {
+  
+  set.seed(1234)
   
   treat_name <- get_treatment_name(formula)
   covariate_names <- get_covariate_names(formula)
@@ -119,7 +128,7 @@ simulate_ALD_pseudo_pop <- function(formula, ipd, ald) {
     paramMargins = mean_sd_margins)
 
   # simulated BC pseudo-population
-  x_star <- as.data.frame(copula::rMvdc(n = 1000, mvd))
+  x_star <- as.data.frame(copula::rMvdc(n = N, mvd))
   colnames(x_star) <- covariate_names
   
   x_star

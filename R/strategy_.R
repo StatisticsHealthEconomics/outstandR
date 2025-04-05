@@ -103,13 +103,16 @@ strategy_stc <- function(formula = NULL,
 #' }
 #'
 #' @param R The number of resamples used for the non-parametric bootstrap
+#' @param N Synthetic sample size for g-computation
+#' 
 #' @return `gcomp_ml` class object
 #' @importFrom utils modifyList
 #' @export
 #'
 strategy_gcomp_ml <- function(formula = NULL,
                               family = gaussian(link = "identity"),
-                              R = 1000) {
+                              R = 1000,
+                              N = 1000) {
   check_formula(formula)
   check_family(family)
   

@@ -1,4 +1,6 @@
 
+library(dplyr)
+
 #
 test_that("different combinations of covariates in formula", {
   
@@ -52,8 +54,8 @@ test_that("compare with stdReg2 package for continuous outcome", {
   # load dataset
   nhefs_dat <- causaldata::nhefs_complete
   
-  m <- glm(wt82_71 ~ qsmk + sex + age, 
-           data = nhefs_dat)
+  # m <- glm(wt82_71 ~ qsmk + sex + age, 
+  #          data = nhefs_dat)
   
   res_stdReg2 <-
     standardize_glm(
@@ -70,6 +72,8 @@ test_that("compare with stdReg2 package for continuous outcome", {
     rename(trt = qsmk,
            y = wt82_71) |> 
     mutate(sex = as.numeric(sex) - 1)
+  
+  lin_form <- as.formula(y ~ trt * (sex + age))
   
   # create aggregate data
   nhefs.X <- nhefs_ipd |> 
@@ -91,15 +95,27 @@ test_that("compare with stdReg2 package for continuous outcome", {
   
   nhefs_ald <- cbind.data.frame(nhefs.X, nhefs.C, nhefs.B)
   
-  lin_form <- as.formula(y ~ trt * (sex + age))
+  res_outstandr <- gcomp_ml_means(
+    formula = lin_form,
+    family = "gaussian",
+    ald = nhefs_ald,
+    ipd = nhefs_ipd,
+    N = 100000)
   
-  res_outstandr <- gcomp_ml_means(formula = lin_form,
-                                  family = "gaussian",
-                                  ald = BC.ALD = nhefs_ald,
-                                  ipd = nhefs_ipd)
+  # means
   
-  expect_equal(res_outstandr, res_stdReg2)
+  stdReg2_estimates <- res_stdReg2$res$estimates
   
+  expect_equal(unname(res_outstandr["0"]),
+               stdReg2_estimates$estimates[stdReg2_estimates$qsmk == 0],
+               tolerance = 0.1)
+
+  expect_equal(unname(res_outstandr["1"]),
+               stdReg2_estimates$estimates[stdReg2_estimates$qsmk == 1],
+               tolerance = 0.1)
+  
+  # std errors
+  ##TODO:
   
   # different output scales
   ##TODO:
@@ -160,10 +176,23 @@ test_that("compare with stdReg2 package for binary outcome", {
   
   res_outstandr <- gcomp_ml_means(formula = lin_form,
                                   family = "binomial",
-                                  ald = BC.ALD = data_ald,
-                                  ipd = data)
+                                  ald = data_ald,
+                                  ipd = data,
+                                  N = 10000)
+  # means
   
-  expect_equal(res_outstandr, res_stdReg2)
+  stdReg2_estimates <- res_stdReg2$res$estimates
+  
+  expect_equal(unname(res_outstandr["0"]),
+               stdReg2_estimates$estimates[stdReg2_estimates$qsmk == 0],
+               tolerance = 0.1)
+  
+  expect_equal(unname(res_outstandr["1"]),
+               stdReg2_estimates$estimates[stdReg2_estimates$qsmk == 1],
+               tolerance = 0.1)
+  
+  # std errors
+  ##TODO:
   
   # different output scales
   ##TODO:
