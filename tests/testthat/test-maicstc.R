@@ -204,3 +204,20 @@ test_that("compare with maicplus package with continuous outcome", {
   
 })
 
+
+#
+test_that("mismatch between covariates in ald and ipd / formula", {
+  
+  # different order between ald and ipd
+  # age sex; sex age
+  
+  # different order between ald and formula
+  # age + sex; mean.sex mean.age
+  
+  # same covariates as EM and PF
+  # age + trt * (age)
+  
+  # transformed covariates in formula
+  # I(X1^2)
+})
+
