@@ -105,3 +105,18 @@ get_covariate_names <- function(formula) {
   
   all.vars(formula)[-1]
 }
+
+
+#
+get_eff_mod_names <- function(strategy) {
+  
+  # assume format trt:cov
+  treat_var <- get_treatment_name(strategy$formula)
+  
+  term.labels <- attr(terms(strategy$formula), "term.labels")
+  
+  # effect modifier terms only
+  eff_mod_terms <- term.labels[grepl(":", term.labels)]
+  
+  gsub(paste0("^", treat_var, ":"), "", eff_mod_terms)
+}
