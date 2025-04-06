@@ -33,22 +33,24 @@ library(marginaleffects)
 
 `{StdReg}` has been rewritten to produce `{StdReg2}` which has "nicer output, more available methods, the possibility to include new methods, and mainly to make maintenance and updating easier." So, for this reason, we will use `{StdReg2}`.
 
-We shall follow the article [_Estimation of causal effects using stdReg2_](https://sachsmc.github.io/stdReg2/articles/overview.html)
+We shall follow the article [_Estimation of causal effects using stdReg2_](https://sachsmc.github.io/stdReg2/articles/overview.html).
+This is for continuous outcomes (change in weight) and includes transformed covariates.
 
 ```{r stdReg2-original, warning=FALSE, message=FALSE}
 library(stdReg2)
 library(causaldata)
 
 # load dataset
-# data(nhefs_complete, package = "causaldata")
 nhefs_dat <- causaldata::nhefs_complete
 
-m <- glm(wt82_71 ~ qsmk + sex + race + age + I(age^2) + as.factor(education) + smokeintensity + I(smokeintensity^2) + smokeyrs + I(smokeyrs^2) + as.factor(exercise) + as.factor(active) + wt71 + I(wt71^2), 
+m <- glm(wt82_71 ~ qsmk + sex + race + age + I(age^2) + as.factor(education) + smokeintensity + I(smokeintensity^2) +
+           smokeyrs + I(smokeyrs^2) + as.factor(exercise) + as.factor(active) + wt71 + I(wt71^2), 
          data = nhefs_dat)
 summary(m)
 
 m2 <- standardize_glm(
-  wt82_71 ~ qsmk + sex + race + age + I(age^2) + as.factor(education) + smokeintensity + I(smokeintensity^2) + smokeyrs + I(smokeyrs^2) + as.factor(exercise) + as.factor(active) + wt71 + I(wt71^2),
+  wt82_71 ~ qsmk + sex + race + age + I(age^2) + as.factor(education) + smokeintensity + I(smokeintensity^2) +
+    smokeyrs + I(smokeyrs^2) + as.factor(exercise) + as.factor(active) + wt71 + I(wt71^2),
   data = nhefs_dat, 
   values = list(qsmk = c(0,1)),
   contrasts = c("difference", "ratio"),
@@ -59,17 +61,6 @@ m2
 
 ```{r stdReg2-alternative1, warning=FALSE, message=FALSE}
 library(dplyr)
-
-# factor of more than 2 levels
-# education, exercise, active
-# for now just remove them
-
-##TODO: check how {outstandR} handles factor vs not factors?
-
-##TODO: doubly-robust, separate treatment models?
-
-##TODO: add explicit reference argument in set-up?
-# reference = 0
 
 nhefs_ipd <- nhefs_dat |> 
   select(qsmk, sex, race, age, smokeintensity, smokeyrs, wt71, wt82_71) |>
