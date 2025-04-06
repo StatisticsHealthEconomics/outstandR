@@ -53,7 +53,8 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
   
   dat <- ipd[indices, ]  # bootstrap sample
   
-  effect_modifier_names <- get_effect_modifiers(formula)
+  effect_modifier_names <- get_eff_mod_names(formula)
+  
   X_EM <- dat[, effect_modifier_names]
   
   ##TODO: why is this centering used in maic.boot() and not maic()?

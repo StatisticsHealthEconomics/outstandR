@@ -6,7 +6,7 @@
 calc_stc <- function(strategy, ipd, ...) {
   
   # centre covariates
-  centre_vars <- get_eff_mod_names(strategy)
+  centre_vars <- get_eff_mod_names(strategy$formula)
   
   ipd[, centre_vars] <- scale(ipd[, centre_vars], scale = FALSE)
   

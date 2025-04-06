@@ -1,22 +1,4 @@
 
-#' Get effect modifiers
-#'
-#' @param formula Linear regression formula string
-#'
-#' @return Effect modifiers names
-#' @keywords internal
-#'
-get_effect_modifiers <- function(formula) {
-  
-  formula <- as.formula(formula)
-  term.labels <- attr(terms(formula), "term.labels")
-  
-  modifiers <- term.labels[grepl(":", term.labels)]
-  modifiers <- gsub(".+:", "", modifiers)
-  
-  modifiers
-}
-
 #' Get treatment name
 #'
 #' @param formula Linear regression formula string
@@ -106,14 +88,21 @@ get_covariate_names <- function(formula) {
   all.vars(formula)[-1]
 }
 
-
-#
-get_eff_mod_names <- function(strategy) {
+#' Get effect modifiers
+#'
+#' @param formula Linear regression formula string
+#'
+#' @return Effect modifiers names
+#' @keywords internal
+#'
+get_eff_mod_names <- function(formula) {
+  
+  formula <- as.formula(formula)
   
   # assume format trt:cov
-  treat_var <- get_treatment_name(strategy$formula)
+  treat_var <- get_treatment_name(formula)
   
-  term.labels <- attr(terms(strategy$formula), "term.labels")
+  term.labels <- attr(terms(formula), "term.labels")
   
   # effect modifier terms only
   eff_mod_terms <- term.labels[grepl(":", term.labels)]
