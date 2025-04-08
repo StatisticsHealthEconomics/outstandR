@@ -88,8 +88,10 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
   coef_fit <- coef(fit)
   
   # probabilities using inverse link
-  pC <- unname(family$linkinv(coef_fit[1]))                # probability for control group
-  pA <- unname(family$linkinv(coef_fit[1] + coef_fit[2]))  # probability for treatment group
+  linkinv <- family$linkinv
+  
+  pC <- unname(linkinv(coef_fit[1]))                # probability for control group
+  pA <- unname(linkinv(coef_fit[1] + coef_fit[2]))  # probability for treatment group
   
   c(pC = pC, pA = pA)
 }
