@@ -9,7 +9,7 @@
 #' @export
 #'
 calculate_ate <- function(mean_A, mean_C, effect) {
-
+  
   if (effect == "log_odds") {
     ate <- qlogis(mean_A) - qlogis(mean_C)
   } else if (effect == "risk_difference") {
@@ -29,16 +29,16 @@ calculate_ate <- function(mean_A, mean_C, effect) {
 
 #' @export
 calculate_trial_variance <- function(ald, tid, effect, family) {
-
+  
   if (family == "binomial") {
     return(
       calculate_trial_variance_binary(ald, tid, effect))
   } else if (family == "gaussian") {
     return(
       calculate_trial_variance_continuous(ald, tid, effect))
-  } else {
-    stop("family not recognised.")
-  } 
+  }
+  
+  stop("family not recognised.")
 }
 
 #' @export
@@ -47,24 +47,20 @@ calculate_trial_variance_binary <- function(ald, tid, effect) {
   y <- ald[[paste0("y.", tid, ".sum")]]
   N <- ald[[paste0("N.", tid)]]
   
-  if (effect == "log_odds") {
-    ##TODO: double check these
-    # res <- y/N + (N-y)/N
-    res <- 1/y + 1/(N-y)
-  } else if (effect == "log_relative_risk") {
-    # using delta method
-    res <- 1/y - 1/N
-  } else if (effect == "risk_difference") {
-    res <- y * (1 - y/N) / N
-  } else if (effect == "delta_z") {
-    res <- 1/y + 1/(N - y)
-  } else if (effect == "log_relative_risk_rare_events") {
-    res <- 1/y - 1/N
-  } else {
-    stop("Unsupported link function.")
+  effect_functions <- list(
+    "log_odds" = function() 1/y + 1/(N-y),
+    "log_relative_risk" = function() 1/y - 1/N,
+    "risk_difference" = function() y * (1 - y/N) / N,
+    "delta_z" = function() 1/y + 1/(N - y),
+    "log_relative_risk_rare_events" = function() 1/y - 1/N
+  )
+  
+  if (!effect %in% names(effect_functions)) {
+    stop(paste0("Unsupported effect function. Choose from ",
+                names(effect_functions)))
   }
   
-  res
+  effect_functions[[effect]]()
 }
 
 #' @export
@@ -74,24 +70,21 @@ calculate_trial_variance_continuous <- function(ald, tid, effect) {
   ysd <- ald[[paste0("y.", tid, ".sd")]]
   N <- ald[[paste0("N.", tid)]]
   
-  if (effect == "log_odds") {
-    res <- pi^2/3 * (1/N)
-  } else if (effect == "log_relative_risk") {
-    message("log mean used\n")
-    res <- log(ybar)
-  } else if (effect == "risk_difference") {
-    res <- (ysd^2)/N
-  } else if (effect == "delta_z") {
-    ##TODO:
-    stop("Unsupported link function.")
-  } else if (effect == "log_relative_risk_rare_events") {
-    ##TODO:
-    stop("Unsupported link function.")
-  } else {
-    stop("Unsupported link function.")
+  effect_functions <- list(
+    "log_odds" = function() pi^2/3 * (1/N),
+    "log_relative_risk" = function() {
+      message("log mean used\n")
+      log(ybar)
+    },
+    "risk_difference" = function() (ysd^2)/N
+  )
+  
+  if (!effect %in% names(effect_functions)) {
+    stop(paste0("Unsupported effect function. Choose from ",
+                names(effect_functions)))
   }
   
-  res
+  effect_functions[[effect]]()
 }
 
 #' @export
@@ -103,9 +96,9 @@ calculate_trial_mean <- function(ald, tid, effect, family) {
   } else if (family == "gaussian") {
     return(
       calculate_trial_mean_continuous(ald, tid, effect))
-  } else {
-    stop("family not recognised.")
-  } 
+  }
+  
+  stop("family not recognised.")
 }
 
 #' @export
@@ -115,21 +108,20 @@ calculate_trial_mean_binary <- function(ald, tid, effect) {
   N <- ald[[paste0("N.", tid)]]
   p <- y/N
   
-  if (effect == "log_odds") {
-    res <- qlogis(p)
-  } else if (effect == "risk_difference") {
-    res <- p
-  } else if (effect == "delta_z") {
-    res <- qnorm(p)
-  } else if (effect == "log_relative_risk_rare_events") {
-    res <- log(-log(1 - p))
-  } else if (effect == "log_relative_risk") {
-    res <- log(p)
-  } else {
-    stop("Unsupported link function.")
+  effect_fns <- list(
+    log_odds = function() qlogis(p),
+    risk_difference = function() p,
+    delta_z = function() qnorm(p),
+    log_relative_risk_rare_events = function() log(-log(1 - p)),
+    log_relative_risk = function() log(p)
+  )
+  
+  if (!effect %in% names(effect_fns)) {
+    stop(paste0("Unsupported link function. Choose from ",
+                names(effect_fns)))
   }
   
-  res
+  effect_fns[[effect]]()
 }
 
 #' @export
@@ -139,24 +131,26 @@ calculate_trial_mean_continuous <- function(ald, tid, effect) {
   ysd <- ald[[paste0("y.", tid, ".sd")]]
   N <- ald[[paste0("N.", tid)]]
   
-  if (effect == "log_odds") {
-    message("log mean used\n")
-    res <- log(ybar)
-  } else if (effect == "risk_difference") {
-    res <- ybar
-  } else if (effect == "delta_z") {
-    res <- ybar/ysd
-  } else if (effect == "log_relative_risk_rare_events") {
-    ##TODO:
-    stop("Unsupported link function.")
-  } else if (effect == "log_relative_risk") {
-    message("log mean used\n")
-    res <- log(ybar)
-  } else {
-    stop("Unsupported link function.")
+  effect_fns <- list(
+    log_odds = function() {
+      message("log mean used\n")
+      log(ybar)
+    },
+    risk_difference = function() ybar,
+    delta_z = function() ybar / ysd,
+    log_relative_risk = function() {
+      message("log mean used\n")
+      log(ybar)
+    }
+    # log_relative_risk_rare_events intentionally unsupported
+  )
+  
+  if (!effect %in% names(effect_fns)) {
+    stop(paste0("Unsupported link function. Choose from ",
+         names(effect_fns)))
   }
   
-  res
+  effect_fns[[effect]]()
 }
 
 
@@ -164,24 +158,24 @@ calculate_trial_mean_continuous <- function(ald, tid, effect) {
 #'
 #' @export
 get_treatment_effect <- function(link) {
-
-  if (link == "logit") {
-    rte <- "log_odds"
-  } else if (link == "identity") {
-    rte <- "risk_difference"
-  } else if (link == "probit") {
-    rte <- "delta_z"
-  } else if (link == "cloglog") {  # binomial
-    rte <- "log_relative_risk_rare_events"
-  } else if (link == "log") {  # Poisson log link
-    rte <- "log_relative_risk"
-  } else {
-    stop("Unsupported link function. Choose from
-         'logit', 'identity', 'probit', 'cloglog', or 'log'.")
+  
+  link_map <- list(
+    logit = "log_odds",
+    identity = "risk_difference",
+    probit = "delta_z",
+    cloglog = "log_relative_risk_rare_events",
+    log = "log_relative_risk"
+  )
+  
+  if (!link %in% names(link_map)) {
+    stop(paste0("Unsupported link function. Choose from ",
+         names(link_map)))
   }
   
-  rte
+  link_map[[link]]
 }
+
+# individual effects
 
 calc_log_odds_ratio <- function(mean_A, mean_C) {
   qlogis(mean_A) - qlogis(mean_C)
