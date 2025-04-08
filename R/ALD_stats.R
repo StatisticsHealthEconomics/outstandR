@@ -9,8 +9,12 @@
 #' @export
 #'
 ALD_stats <- function(strategy, ald, treatments = list("B", "C"), scale) {
-  list(mean = marginal_treatment_effect(ald, treatments, scale, strategy$family$family),
-       var = marginal_variance(ald, treatments, scale, strategy$family$family))
+  family <- strategy$family$family
+  
+  mean_eff <- marginal_treatment_effect(ald, treatments, scale, family)
+  var_eff <- marginal_variance(ald, treatments, scale, family)
+  
+  list(mean = mean_eff, var = var_eff)
 }
 
 
@@ -25,8 +29,10 @@ ALD_stats <- function(strategy, ald, treatments = list("B", "C"), scale) {
 #' @export
 #' 
 marginal_variance <- function(ald, treatments = list("B", "C"), scale, family) {
-  trial_vars <- purrr::map_dbl(treatments, ~calculate_trial_variance(ald, .x, scale, family))
-  sum(trial_vars)
+  v1 <- calculate_trial_variance(ald, treatments[[1]], scale, family)
+  v2 <- calculate_trial_variance(ald, treatments[[2]], scale, family)
+  
+  v1 + v2
 }
 
 
@@ -45,7 +51,9 @@ marginal_variance <- function(ald, treatments = list("B", "C"), scale, family) {
 #' @export
 #' 
 marginal_treatment_effect <- function(ald, treatments = list("B", "C"), scale, family) {
-  trial_means <- purrr::map_dbl(treatments, ~calculate_trial_mean(ald, .x, scale, family))
-  trial_means[1] - trial_means[2]
+  m1 <- calculate_trial_mean(ald, treatments[[1]], scale, family)
+  m2 <- calculate_trial_mean(ald, treatments[[2]], scale, family)
+  
+  m1 - m2
 }
 
