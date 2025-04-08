@@ -24,8 +24,9 @@ calc_stc <- function(strategy, ipd, ...) {
   
   # probability for control and treatment group
   # estimating treatment effect at means because of centring
-  mean_C <- strategy$family$linkinv(coef_fit[1])
-  mean_A <- strategy$family$linkinv(coef_fit[1] + coef_fit[treat_coef_name])
+  linkinv <- strategy$family$linkinv
+  mean_C <- linkinv(coef_fit[1])
+  mean_A <- linkinv(coef_fit[1] + coef_fit[treat_coef_name])
   
   list(mean_A = mean_A,
        mean_C = mean_C)
