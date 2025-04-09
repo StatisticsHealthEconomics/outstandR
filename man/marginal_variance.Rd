@@ -4,7 +4,7 @@
 \alias{marginal_variance}
 \title{Marginal effect variance using the delta method}
 \usage{
-marginal_variance(ald, treatments = list("B", "C"), family)
+marginal_variance(ald, treatments = list("B", "C"), scale, family)
 }
 \arguments{
 \item{ald}{Aggregate-level data}
@@ -12,9 +12,9 @@ marginal_variance(ald, treatments = list("B", "C"), family)
 \item{treatments}{Treatment labels list; default \emph{B} vs \emph{C}}
 }
 \value{
-Sum of variances
+Total variance
 }
 \description{
-Calculate
+For binomial data calculate
 \deqn{\frac{1}{n_C} + \frac{1}{n_{\bar{C}}} + \frac{1}{n_B} + \frac{1}{n_{\bar{B}}}}.
 }

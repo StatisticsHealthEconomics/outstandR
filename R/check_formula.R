@@ -1,13 +1,15 @@
 
 #' @keywords internal
 #' 
-check_formula <- function(formula) {
+check_formula <- function(formula, treatment = "trt") {
   
   if (!inherits(formula, "formula"))
-    stop("formula argument must be of formula class.")
+    stop("`formula` must be of class 'formula'.")
+
+  terms_labels <- attr(terms(formula), "term.labels")
   
-  if (!"trt" %in% attr(terms(formula), "term.labels"))
-    stop("Treatment term, trt, is missing in the formula")
+  if (!(treatment %in% terms_labels))
+    stop(sprintf("Treatment term '%s' is missing in the formula", treatment))
   
   invisible()
 }

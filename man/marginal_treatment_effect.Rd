@@ -4,18 +4,18 @@
 \alias{marginal_treatment_effect}
 \title{Marginal treatment effect from reported event counts}
 \usage{
-marginal_treatment_effect(ald, treatments = list("B", "C"), family)
+marginal_treatment_effect(ald, treatments = list("B", "C"), scale, family)
 }
 \arguments{
 \item{ald}{Aggregate-level data}
 
-\item{treatments}{Treatment labels list; default \emph{B} vs \emph{C}}
+\item{treatments}{Treatment labels list. Last variable is reference; default \code{B}, \code{C} (common; e.g. placebo)}
 }
 \value{
-Trial effect difference
+Relative treatment effect
 }
 \description{
-Calculate
+For binomial data calculate
 \deqn{
 \log\left( \frac{n_B/(N_B-n_B)}{n_C/(N_B-n_{B})} \right) = \log(n_B n_{\bar{C}}) - \log(n_C n_{\bar{B}})
 }

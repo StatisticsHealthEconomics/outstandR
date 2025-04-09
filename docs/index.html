@@ -8,11 +8,11 @@
 <title>Model-based Standardisation • outstandR</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Model-based Standardisation">
-<meta name="description" content="Model-based standardisation with several different computation approaches. See Remiro‐Azócar A, Heath A, Baio G (2022). Parametric G‐computation for compatible indirect treatment comparisons with limited individual patient data. Res. Synth. Methods, 1–31. ISSN 1759-2879, &lt;doi:10.1002/jrsm.1565, 2108.12208&gt;.">
-<meta property="og:description" content="Model-based standardisation with several different computation approaches. See Remiro‐Azócar A, Heath A, Baio G (2022). Parametric G‐computation for compatible indirect treatment comparisons with limited individual patient data. Res. Synth. Methods, 1–31. ISSN 1759-2879, &lt;doi:10.1002/jrsm.1565, 2108.12208&gt;.">
+<meta name="description" content="Model-based standardisation with several different computation approaches. See Remiro‐Azócar A, Heath A, Baio G (2022. Parametric G‐computation for compatible indirect treatment comparisons with limited individual patient data, Res. Synth. Methods, 1–31. ISSN 1759-2879, &lt;doi:10.1002/jrsm.1565, 2108.12208&gt;.">
+<meta property="og:description" content="Model-based standardisation with several different computation approaches. See Remiro‐Azócar A, Heath A, Baio G (2022. Parametric G‐computation for compatible indirect treatment comparisons with limited individual patient data, Res. Synth. Methods, 1–31. ISSN 1759-2879, &lt;doi:10.1002/jrsm.1565, 2108.12208&gt;.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -35,7 +35,12 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="articles/Basic_example.html">Basic Example</a></li>
+<li><a class="dropdown-item" href="articles/Binary_data_example.html">Binary data example</a></li>
+    <li><a class="dropdown-item" href="articles/Binary_data_Remiro-Azocar.html">Binary data example usind data from Remiro-Azocar et al. (2020)</a></li>
+    <li><a class="dropdown-item" href="articles/comparison-with-other-packages.html">Comparison with other packages</a></li>
+    <li><a class="dropdown-item" href="articles/Continuous_data_example.html">Continuous data example</a></li>
+    <li><a class="dropdown-item" href="articles/copd_analysis.html">COPD Analysis</a></li>
+    <li><a class="dropdown-item" href="articles/Count_data_example.html">Count data example</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
@@ -59,18 +64,33 @@
 <!-- badges: start -->
 
 <blockquote>
-<p>Model-based Standardisation with G-estimation</p>
+<p>Model-based Standardisation with G-computation</p>
 </blockquote>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
+<p><code>outstandR</code> is an R package designed to facilitate <strong>outcome regression standardisation</strong> using model-based approaches, particularly focusing on G-estimation. The package provides tools to apply standardisation techniques for indirect treatment comparisons, especially in scenarios with limited individual patient data.</p>
+<p>Key features include: - <strong>G-computation methods</strong> - <strong>Multiple imputation marginalisation</strong> - <strong>MAIC, STC</strong> for comparison</p>
+</div>
+<div class="section level2">
+<h2 id="who-is-this-package-for">Who is this package for?<a class="anchor" aria-label="anchor" href="#who-is-this-package-for"></a>
+</h2>
+<p>The target audience of <code>outstandR</code> is those who want to perform model-based standardization in the specific context of two-study indirect treatment comparisons with limited subject-level data. This is model-based standardization with two additional steps:</p>
+<ol style="list-style-type: decimal">
+<li>Covariate simulation (to overcome limited subject-level data for one of the studies)</li>
+<li>Indirect comparison across studies</li>
+</ol>
+</div>
+<div class="section level2">
+<h2 id="background">Background<a class="anchor" aria-label="anchor" href="#background"></a>
+</h2>
 <p>This R package contains code originally written for the papers:</p>
 <blockquote>
-<p>Antonio Remiro-Azócar, Anna Heath, Gianluca Baio. <em>Parametric G-computation for Compatible Indirect Treatment Comparisons with Limited Individual Patient Data.</em> Res Synth Methods. 2022;1–31.</p>
+<p>Remiro-Azócar, A., Heath, A. &amp; Baio, G. (2022) <em>Parametric G-computation for Compatible Indirect Treatment Comparisons with Limited Individual Patient Data.</em> Res Synth Methods;1–31.</p>
 </blockquote>
 <p>and</p>
 <blockquote>
-<p>Remiro-Azócar, A., Heath, A., &amp; Baio, G. (2023). <em>Model-based standardization using multiple imputation. BMC Medical Research Methodology</em>, 1–15. <a href="https://doi.org/10.1186/s12874-024-02157-x" class="external-link uri">https://doi.org/10.1186/s12874-024-02157-x</a></p>
+<p>Remiro-Azócar, A., Heath, A., &amp; Baio, G. (2023) <em>Model-based standardization using multiple imputation. BMC Medical Research Methodology</em>, 1–15. <a href="https://doi.org/10.1186/s12874-024-02157-x" class="external-link uri">https://doi.org/10.1186/s12874-024-02157-x</a></p>
 </blockquote>
 </div>
 <div class="section level2">
@@ -83,12 +103,12 @@
 <div class="section level2">
 <h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
 </h2>
-<p><a href="https://www.gnu.org/licenses/gpl-3.0" class="external-link"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License: GPL v3"></a></p>
+<p>This package is licensed under the GPLv3. For more information, see <a href="https://www.gnu.org/licenses/gpl-3.0" class="external-link">LICENSE</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="contributing">Contributing<a class="anchor" aria-label="anchor" href="#contributing"></a>
 </h2>
-<p>Please submit contributions through <code>Pull Requests</code>, following the <a href="https://github.com/n8thangreen/BCEA/blob/dev/CONTRIBUTING.md" class="external-link">contributing guidelines</a>. To report issues and/or seek support, please file a new ticket in the <a href="https://github.com/StatisticsHealthEconomics/outstandR/issues" class="external-link">issue</a> tracker.</p>
+<p>We welcome contributions! Please submit contributions through <code>Pull Requests</code>, following the <a href="https://github.com/n8thangreen/BCEA/blob/dev/CONTRIBUTING.md" class="external-link">contributing guidelines</a>. To report issues and/or seek support, please file a new ticket in the <a href="https://github.com/StatisticsHealthEconomics/outstandR/issues" class="external-link">issue</a> tracker.</p>
 <p>Please note that this project is released with a <a href="https://github.com/n8thangreen/BCEA/blob/dev/CONDUCT.md" class="external-link">Contributor Code of Conduct</a>. By participating in this project you agree to abide by its terms.</p>
 </div>
 </div>
@@ -129,6 +149,7 @@
 <ul class="list-unstyled">
 <li><a href="https://github.com/StatisticsHealthEconomics/outstandR/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/StatisticsHealthEconomics/outstandR/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
+<li><a href="https://www.gnu.org/licenses/gpl-3.0" class="external-link"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License: GPL v3"></a></li>
 </ul>
 </div>
 
@@ -141,7 +162,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>

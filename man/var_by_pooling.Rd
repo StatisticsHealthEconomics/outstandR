@@ -2,8 +2,7 @@
 % Please edit documentation in R/mim.R
 \name{var_by_pooling}
 \alias{var_by_pooling}
-\title{Variance estimate by pooling
-Use combining rules to estimate}
+\title{Variance estimate by pooling}
 \usage{
 var_by_pooling(M, bar.v, b)
 }
@@ -15,7 +14,7 @@ var_by_pooling(M, bar.v, b)
 \item{b}{"between" variance (sample variance of point estimates)}
 }
 \description{
-Variance estimate by pooling
 Use combining rules to estimate
+2003
 }
 \keyword{internal}

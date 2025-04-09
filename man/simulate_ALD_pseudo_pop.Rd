@@ -4,7 +4,7 @@
 \alias{simulate_ALD_pseudo_pop}
 \title{Synthetic cohort using normal copula}
 \usage{
-simulate_ALD_pseudo_pop(formula, ipd, ald)
+simulate_ALD_pseudo_pop(formula, ipd, ald, N = 1000)
 }
 \arguments{
 \item{formula}{Linear regression \code{formula} object}
@@ -12,6 +12,8 @@ simulate_ALD_pseudo_pop(formula, ipd, ald)
 \item{ipd}{Individual-level data}
 
 \item{ald}{Aggregate-level data}
+
+\item{N}{Sample size}
 }
 \description{
 Synthetic cohort using normal copula

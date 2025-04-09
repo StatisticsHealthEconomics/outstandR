@@ -14,7 +14,7 @@
 #' @return Mean and variance values
 #' @export
 #' 
-IPD_stats <- function(strategy, ipd, ald, ...)
+IPD_stats <- function(strategy, ipd, ald, scale, ...)
   UseMethod("IPD_stats", strategy)
 
 
@@ -29,138 +29,93 @@ IPD_stats.default <- function(...) {
 
 
 #' @rdname IPD_stats
-#' @section Matching-adjusted indirect comparison statistics:
-#' Marginal _A_ vs _C_ treatment effect estimates
-#' using bootstrapping sampling.
-#' @importFrom boot boot
-#' @export
 #' 
-IPD_stats.maic <- function(strategy,
-                           ipd, ald) {
-  # maic.boot(data = data,
-  #           indices = 1:nrow(data),
-  #           formula = strategy$formula,
-  #           dat_ALD = strategy$dat_ALD)
-  
-  maic_boot <- boot::boot(data = ipd,
-                          statistic = maic.boot,
-                          R = strategy$R,
-                          formula = strategy$formula,
-                          family = strategy$family,
-                          ald = ald)
-  
-  list(mean = mean(maic_boot$t),
-       var = var(maic_boot$t))
-}
-
-
-#' @rdname IPD_stats
-#' @section Simulated treatment comparison statistics: 
-#' IPD from the _AC_ trial are used to fit a regression model describing the
-#' observed outcomes \eqn{y} in terms of the relevant baseline characteristics \eqn{x} and
-#' the treatment variable \eqn{z}.
-#' @importFrom stats glm
-#' @export
-#' 
-IPD_stats.stc <- function(strategy,
-                          ipd, ald) {
-
-  # centre covariates
-  term.labels <- attr(terms(strategy$formula), "term.labels")
-  centre_vars <- gsub("trt:", "", term.labels[grepl(":", term.labels)])
-
-  ipd[, centre_vars] <- scale(ipd[, centre_vars], scale = FALSE)
-  
-  fit <- glm(strategy$formula,
-             data = ipd,
-             family = strategy$family)
-  
-  treat_nm <- get_treatment_name(strategy$formula)
-  
-  # fitted treatment coefficient is relative A vs C conditional effect
-  list(mean = coef(fit)[treat_nm],
-       var = vcov(fit)[treat_nm, treat_nm])
-}
-
-
-#' @rdname IPD_stats
-#' @section G-computation maximum likelihood statistics:
-#' Compute a non-parametric bootstrap with \eqn{R=1000} resamples.
-#' @importFrom boot boot
-#' @export
-#'
-IPD_stats.gcomp_ml <- function(strategy,
-                               ipd, ald) {
-
-  AC_maic_boot <- boot::boot(data = ipd,
-                             statistic = gcomp_ml.boot,
-                             R = strategy$R,
-                             formula = strategy$formula,
-                             family = strategy$family,
-                             ald = ald)
-  
-  list(mean = mean(AC_maic_boot$t),
-       var = var(AC_maic_boot$t))
-}
-
-
-#' @rdname IPD_stats
-#' @section G-computation Bayesian statistics:
-#' Using Stan, compute marginal log-odds ratio for _A_ vs _C_ for each MCMC sample
-#' by transforming from probability to linear predictor scale.
-#' @importFrom stats qlogis
-#' @export
-#'
-IPD_stats.gcomp_stan <- function(strategy,
-                                 ipd, ald) {
-  
-  ppv <- gcomp_stan(formula = strategy$formula,
-                    family = strategy$family,
-                    ipd = ipd, ald = ald)
-
-  # posterior means for each treatment group
-  mean_A <- rowMeans(ppv$y.star.A)
-  mean_C <- rowMeans(ppv$y.star.C)
-  
-  hat.delta.AC <- calculate_ate(mean_A, mean_C, family = strategy$family)
-  
-  list(mean = mean(hat.delta.AC),
-       var = var(hat.delta.AC))
-} 
-
-
-#' @rdname IPD_stats
 #' @section Multiple imputation marginalisation:
-#' Using Stan, compute marginal log-odds ratio for _A_ vs _C_ for each MCMC sample
+#' Using Stan, compute marginal relative treatment effect for _A_ vs _C_ for each MCMC sample
 #' by transforming from probability to linear predictor scale. Approximate by 
 #' using imputation and combining estimates using Rubin's rules, in contrast to [IPD_stats.gcomp_stan()].
 #' @import stats
 #' @export
 #'
 IPD_stats.mim <- function(strategy,
-                          ipd, ald) {
+                          ipd, ald,
+                          scale, ...) {
+  mis_res <-
+    calc_mim(strategy,
+             ipd, ald, ...)
   
-  mis_res <- mim(formula = strategy$formula,
-                 family = strategy$family,
-                 ipd, ald)
+  hat.delta.AC <-
+    calculate_ate(mis_res$mean_A, mis_res$mean_C,
+                  effect = scale)
   
   M <- mis_res$M
   
   # quantities originally defined by Rubin (1987) for multiple imputation
-  bar.delta <- mean(mis_res$hats.delta)  # average of treatment effect point estimates
-  bar.v <- mean(mis_res$hats.v)          # "within" variance (average of variance point estimates)
-  b <- var(mis_res$hats.delta)           # "between" variance (sample variance of point estimates)
+  coef_est <- mean(hat.delta.AC)   # average of treatment effect point estimates
+  bar.v <- mean(mis_res$hats.v)    # "within" variance (average of variance point estimates)
+  b <- var(hat.delta.AC)           # "between" variance (sample variance of point estimates)
   
-  # pooling: average of point estimates is marginal log odds ratio
-  hat.Delta <- bar.delta
-  
-  hat.var.Delta <- var_by_pooling(M, bar.v, b)
+  var_est <- var_by_pooling(M, bar.v, b)
   nu <- wald_type_interval(M, bar.v, b)
   
-  lci.Delta <- hat.Delta + qt(0.025, df = nu) * sqrt(hat.var.Delta)
-  uci.Delta <- hat.Delta + qt(0.975, df = nu) * sqrt(hat.var.Delta)
+  ##TODO: how are these used?
+  lci.Delta <- coef_est + qt(0.025, df = nu) * sqrt(var_est)
+  uci.Delta <- coef_est + qt(0.975, df = nu) * sqrt(var_est)
   
-  list(mean = hat.Delta,
-       var = hat.var.Delta)
+  list(mean = coef_est,
+       var = var_est)
 } 
+
+#' function operator
+#'
+IPD_stat_factory <- function(ipd_fun) {
+
+  function(strategy, ipd, ald, scale, ...) {
+    out <- ipd_fun(strategy, ipd, ald, ...)
+
+    hat.delta.AC <- calculate_ate(out$mean_A, out$mean_C,
+                                  effect = scale)
+
+    coef_est <- mean(hat.delta.AC)
+    var_est <- var(hat.delta.AC)
+
+    list(mean = coef_est,
+         var = var_est)
+  }
+}
+
+#' @rdname IPD_stats
+#' @section Simulated treatment comparison statistics:
+#' IPD from the _AC_ trial are used to fit a regression model describing the
+#' observed outcomes \eqn{y} in terms of the relevant baseline characteristics \eqn{x} and
+#' the treatment variable \eqn{z}.
+#' @export
+#'
+IPD_stats.stc <- IPD_stat_factory(outstandR:::calc_stc)
+
+#' @rdname IPD_stats
+#' @section Matching-adjusted indirect comparison statistics:
+#' Marginal _A_ vs _C_ treatment effect estimates
+#' using bootstrapping sampling.
+#' @export
+#'
+IPD_stats.maic <- IPD_stat_factory(outstandR:::calc_maic)
+
+#' @rdname IPD_stats
+#' @section G-computation maximum likelihood statistics:
+#' Compute a non-parametric bootstrap with default \eqn{R=1000} resamples.
+#' @export
+#'
+IPD_stats.gcomp_ml <- IPD_stat_factory(outstandR:::calc_gcomp_ml)
+
+#' @rdname IPD_stats
+#' @section G-computation Bayesian statistics:
+#' Using Stan, compute marginal log-odds ratio for _A_ vs _C_ for each MCMC sample
+#' by transforming from probability to linear predictor scale.
+#' @export
+#'
+IPD_stats.gcomp_stan <- IPD_stat_factory(outstandR:::calc_gcomp_stan)
+
+# #' @export
+#' IPD_stats.mim <- IPD_stat_factory(outstandR:::calc_mim)
 

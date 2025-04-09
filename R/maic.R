@@ -52,37 +52,74 @@ Q <- function(beta, X) {
 #' @param formula Linear regression formula
 #' @param family Family object
 #' @template args-ald
-#' @return Fitted treatment coefficient is marginal effect for _A_ vs _C_
+#' @return Fitted probabilities for _A_ and _C_
 #' @seealso [IPD_stats.maic()]
 #' @keywords internal
 #' 
-maic.boot <- function(ipd, indices, formula, family, ald) {
+maic.boot <- function(ipd, indices = 1:nrow(ipd),
+                      formula, family, ald,
+                      hat_w = NULL) {
+  
   dat <- ipd[indices, ]  # bootstrap sample
   
-  effect_modifier_names <- get_effect_modifiers(formula)
+  effect_modifier_names <- get_eff_mod_names(formula)
+  
   X_EM <- dat[, effect_modifier_names]
   
   ##TODO: why is this centering used in maic.boot() and not maic()?
   
   # BC effect modifier means, assumed fixed
   mean_names <- get_mean_names(ald, effect_modifier_names)
-
+  
   # centre AC effect modifiers on BC means
   dat_ALD_means <- ald[, mean_names][rep(1, nrow(X_EM)), ]
   X_EM <- X_EM - dat_ALD_means
- 
-  hat_w <- maic_weights(X_EM)
+  
+  if (is.null(hat_w)) {
+    hat_w <- maic_weights(X_EM)
+  }
   
   treat_nm <- get_treatment_name(formula)
   formula_treat <- glue::glue("{formula[[2]]} ~ {treat_nm}")
-
+  
+  # so can use non-integer weights
+  if (family$family == "binomial") {
+    family <- quasibinomial()
+  }
+  
   # fit weighted logistic regression model
-  fit <- glm(formula_treat,
+  fit <- glm(formula = formula_treat,
              family = family,
-             weights = hat_w,
+             weights = hat_w / mean(hat_w),
              data = cbind(dat, hat_w = hat_w))
   
-  coef(fit)[treat_nm]
+  # extract model coefficients
+  coef_fit <- coef(fit)
+  
+  # probabilities using inverse link
+  linkinv <- family$linkinv
+  
+  pC <- unname(linkinv(coef_fit[1]))                # probability for control group
+  pA <- unname(linkinv(coef_fit[1] + coef_fit[2]))  # probability for treatment group
+  
+  c(pC = pC, pA = pA)
 }
 
 
+#' @export
+#' @importFrom boot boot
+#' 
+calc_maic <- function(strategy,
+                      ipd, ald) {
+  args_list <- 
+    list(R = strategy$R,
+         formula = strategy$formula,
+         family = strategy$family,
+         data = ipd,
+         ald = ald)
+  
+  maic_boot <- do.call(boot::boot, c(statistic = maic.boot, args_list))
+  
+  list(mean_A = maic_boot$t[, 2],
+       mean_C = maic_boot$t[, 1])  
+}

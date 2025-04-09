@@ -29,17 +29,18 @@ library(boot)      # non-parametric bootstrap in MAIC and ML G-computation
 library(copula)    # simulating BC covariates from Gaussian copula
 library(rstanarm)  # fit outcome regression, draw outcomes in Bayesian G-computation
 library(outstandR)
-library(simcovariates)
 ```
 
 ### Data
 
 First, use the in-built `gen_data()` function.
 
-```{r}
+```{r warning=FALSE, message=FALSE}
 library(dplyr)
 library(MASS)
+```
 
+```{r}
 N <- 200
 allocation <- 2/3      # active treatment vs. placebo allocation ratio (2:1)
 b_trt <- log(0.17)     # conditional effect of active treatment vs. common comparator
@@ -52,7 +53,7 @@ meanX_EM_BC <- c(0.6, 0.6)      # mean of each normally-distributed EM covariate
 sdX <- c(0.4, 0.4)     # standard deviation of each covariate (same for AC and BC)
 sdX_EM <- c(0.4, 0.4)  # standard deviation of each EM covariate
 corX <- 0.2            # covariate correlation coefficient  
-b_0 <- 0.6             # baseline intercept coefficient; offset
+b_0 <- -0.6            # baseline intercept coefficient  ##TODO: fixed value
 
 AC.IPD <- gen_data(N, b_trt, b_X, b_EM, b_0,
                    meanX_AC, sdX, 
@@ -61,7 +62,7 @@ AC.IPD <- gen_data(N, b_trt, b_X, b_EM, b_0,
                    family = poisson(link = "log"))
 ```
 
-Similarly, simulate for the aggregate data but with the additional summarise step.
+Similarly, for the aggregate data but with the additional summarise step.
 
 ```{r generate-ald-data}
 BC.IPD <- gen_data(N, b_trt, b_X, b_EM, b_0,
@@ -88,21 +89,28 @@ out.B <- dplyr::filter(BC.IPD, trt == 0) %>%
 BC.ALD <- cbind.data.frame(cov.X, out.C, out.B)
 ```
 
+By definition, the true log-OR relative effect in the AC population
+between AC is `r `b_trt`. Between BC is `r b_trt` and between AB is `r b_trt - b_trt`.
+
+A naive indirect comparison, ignoring the presence of effect modifiers, would calculate the C vs B effect in the AC population as
+`b_trt - b_trt`.
+
+
 ### Output statistics
 
 We will implement for MAIC, STC, and G-computation methods to obtain the
-*marginal variance*, defined as (for large samples) Var(log RR),
+*marginal variance*, defined as
 
 $$
-\frac{1}{n_B} + \frac{1}{n_C} + \frac{1}{N_B} + \frac{1}{N_C}
 $$
 
-and the *marginal treatment effect*, defined as the log-relative risk,
+and the *marginal treatment effect*, defined as the log-odds ratio,
 
 $$
-\log\left( \frac{n_B/N_B}{n_C/N_C} \right) = \log(n_B N_C) - \log(n_C N_B)
 $$
 
+where $\bar{C}$ is the compliment of $C$ so e.g.
+$n_{\bar{C}} = N_C - n_c$.
 
 ## Model fitting in R
 
@@ -129,20 +137,21 @@ variance in the wrapper function `maic_boot_stats`.
 The formula used in this model is
 
 $$
-y = X_1 + X_2 + \beta_t X_3 + \beta_t X_4
+y = X_3 + X_4 + \beta_t X_1 + \beta_t X_2
 $$
 
 which corresponds to the following `R` `formula` object passed as an
 argument to the strategy function.
 
 ```{r}
-lin_form <- as.formula("y ~ X1 + X2 + trt*X3 + trt*X4")
+lin_form <- as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")
 ```
 
 ```{r outstandR_maic}
-outstandR_maic <- outstandR(AC.IPD, BC.ALD,
-                            strategy = strategy_maic(formula = lin_form,
-                                                     family = poisson(link = "log")))
+outstandR_maic <-
+  outstandR(AC.IPD, BC.ALD,
+            strategy = strategy_maic(formula = lin_form,
+                                     family = poisson(link = "log")))
 ```
 
 The returned object is of class `outstandR`.
@@ -177,16 +186,17 @@ the previous analysis but we now use the `strategy_stc()` strategy
 function instead and a formula with centered covariates.
 
 $$
-y = X_1 + X_2 + \beta_t(X_3 - \bar{X_3}) + \beta_t(X_4 - \bar{X_4})
+y = X_3 + X_4 + \beta_t(X_1 - \bar{X_1}) + \beta_t(X_2 - \bar{X_2})
 $$
 
 However, `outstandR()` knows how to handle this so we can simply pass
 the same (uncentred) formula as before.
 
 ```{r outstandR_stc}
-outstandR_stc <- outstandR(AC.IPD, BC.ALD,
-                           strategy = strategy_stc(formula = lin_form,
-                                                   family = poisson(link = "log")))
+outstandR_stc <-
+  outstandR(AC.IPD, BC.ALD,
+            strategy = strategy_stc(formula = lin_form,
+                                    family = poisson(link = "log")))
 outstandR_stc
 ```
 
@@ -232,9 +242,10 @@ $$
 $$
 
 ```{r outstandR_gcomp_ml}
-outstandR_gcomp_ml <- outstandR(AC.IPD, BC.ALD,
-                                strategy = strategy_gcomp_ml(formula = lin_form,
-                                                             family = poisson(link = "log")))
+outstandR_gcomp_ml <-
+  outstandR(AC.IPD, BC.ALD,
+            strategy = strategy_gcomp_ml(formula = lin_form,
+                                         family = poisson(link = "log")))
 outstandR_gcomp_ml
 ```
 
@@ -274,9 +285,10 @@ each set intervention $z^*$ from its posterior predictive distribution
 under the specific treatment.
 
 ```{r outstandR_gcomp_stan}
-outstandR_gcomp_stan <- outstandR(AC.IPD, BC.ALD,
-                                  strategy = strategy_gcomp_stan(formula = lin_form,
-                                                                 family = poisson(link = "log")))
+outstandR_gcomp_stan <-
+  outstandR(AC.IPD, BC.ALD,
+            strategy = strategy_gcomp_stan(formula = lin_form,
+                                           family = poisson(link = "log")))
 outstandR_gcomp_stan
 ```
 
@@ -289,9 +301,10 @@ equation here
 $$
 
 ```{r outstandR_mim}
-outstandR_mim <- outstandR(AC.IPD, BC.ALD,
-                           strategy = strategy_mim(formula = lin_form,
-                                                   family = poisson(link = "log")))
+outstandR_mim <-
+  outstandR(AC.IPD, BC.ALD,
+            strategy = strategy_mim(formula = lin_form,
+                                    family = poisson(link = "log")))
 outstandR_mim
 ```
 

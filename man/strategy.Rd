@@ -17,7 +17,8 @@ strategy_stc(formula = NULL, family = gaussian(link = "identity"))
 strategy_gcomp_ml(
   formula = NULL,
   family = gaussian(link = "identity"),
-  R = 1000
+  R = 1000,
+  N = 1000
 )
 
 strategy_gcomp_stan(formula = NULL, family = gaussian(link = "identity"))
@@ -32,6 +33,8 @@ new_strategy(strategy, ...)
 \item{family}{\code{family} object from the \code{stats} library}
 
 \item{R}{The number of resamples used for the non-parametric bootstrap}
+
+\item{N}{Synthetic sample size for g-computation}
 
 \item{strategy}{Class name from \code{strategy_maic}, \code{strategy_stc}, \code{strategy_gcomp_ml}, \code{strategy_gcomp_stan}}
 

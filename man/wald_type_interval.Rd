@@ -2,8 +2,7 @@
 % Please edit documentation in R/mim.R
 \name{wald_type_interval}
 \alias{wald_type_interval}
-\title{Wald-type interval estimates
-Constructed using t-distribution with nu degrees of freedom}
+\title{Wald-type interval estimates}
 \usage{
 wald_type_interval(M, bar.v, b)
 }
@@ -15,7 +14,6 @@ wald_type_interval(M, bar.v, b)
 \item{b}{"between" variance (sample variance of point estimates)}
 }
 \description{
-Wald-type interval estimates
 Constructed using t-distribution with nu degrees of freedom
 }
 \keyword{internal}
