@@ -63,13 +63,15 @@ provides estimators $\bar{Y}_{A(AB)}$ and $\bar{Y}_{B(AB)}$ of
 $\mu_{A( AB)}$, $\mu_{B(AB)}$, respectively, which are the summary
 outcomes. It is the same situation for the *AC* trial.
 
-For a suitable scale, for example a logit, or risk difference, we form
+For a suitable scale, for example a log-odds ratio, or risk difference, we form
 estimators $\Delta_{AB(AB)}$ and $\Delta_{AC(AC)}$ of the trial level
-(or marginal) relative treatment effects.
+(or marginal) relative treatment effects. This is always as a difference so, for example,
+for the risk ratio this is on the log scale.
 
 $$
 \Delta_{AB(AB)} = g(\bar{Y}_{B{(AB)}}) - g(\bar{Y}_{A{(AB)}})
 $$
+
 
 ## Example analysis
 
@@ -100,7 +102,7 @@ information to the analyst.
 
 Use the `gen_data()` function available with the `outstandR` package.
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 library(dplyr)
 library(MASS)
 
@@ -201,20 +203,21 @@ and the event total, average and sample size for each treatment *B*, and *C*.
 
 ### Output statistics
 
-We will implement for MAIC, STC, and G-computation methods to obtain the
-*marginal variance*, defined as
-
-$$
-\frac{1}{n_C} + \frac{1}{n_{\bar{C}}} + \frac{1}{n_B} + \frac{1}{n_{\bar{B}}}
-$$
-
-and the *marginal treatment effect*, defined as the log-odds ratio,
+We will implement for MAIC, STC, and G-computation methods to obtain the *marginal treatment effect* and *marginal variance*.
+The definition by which these are calculated depends on the type of data and outcome scale.
+For our current example of binary data and log-odds ratio the marginal treatment effect is
 
 $$
 \log\left( \frac{n_B/(N_B-n_B)}{n_C/(N_B-n_{B})} \right) = \log(n_B n_{\bar{C}}) - \log(n_C n_{\bar{B}})
 $$
 
+and marginal variance is
+
+$$
+\frac{1}{n_C} + \frac{1}{n_{\bar{C}}} + \frac{1}{n_B} + \frac{1}{n_{\bar{B}}}
+$$
 where $n_B, n_C$ are the number of events in each arm and $\bar{C}$ is the compliment of $C$ so e.g. $n_{\bar{C}} = N_C - n_c$.
+Other scales will be discussed below.
 
 ## Model fitting in R
 
@@ -260,19 +263,25 @@ outstandR_maic <-
 
 The returned object is of class `outstandR`.
 
-```{r outstandR_maic-print}
-outstandR_maic
+```{r outstandR_maic-print, warning=FALSE, message=FALSE}
+str(outstandR_maic)
 ```
 
 We see that this is a list object with 3 parts, each containing
 statistics between each pair of treatments. These are the mean
 contrasts, variances and confidence intervals (CI), respectively. The
-default CI is for 95% but can be altered in `outstandR` with the `CI`
-argument.
+default CI is for 95% but can be altered in `outstandR` with the `CI` argument.
+
+A `print` method is available for `outstandR` objects for more human-readable output
+
+```{r}
+outstandR_maic
+```
+
 
 #### Outcome scale
 
-If we do not explicitly specify the outcome scale, the default is that used for fit the data in the regression model. As we saw, in this case, the default is
+If we do not explicitly specify the outcome scale, the default is that used to fit to the data in the regression model. As we saw, in this case, the default is
 log-odds ratio corresponding to the `"logit"` link function for binary data.
 However, we can change this to some other scale which may be more appropriate for a particular analysis.
 So far implemented in the package, the links and their corresponding relative treatment effect scales are as follows:
@@ -284,7 +293,33 @@ So far implemented in the package, the links and their corresponding relative tr
 | Continuous | `mean`  | Mean difference   | `risk_difference`  |
 
 The full list of possible transformed treatment effect scales are:
-_log-odds ratio_, _log-risk ratio_, _mean difference_, risk difference, hazard ratio, hazard difference.
+log-odds ratio, log-risk ratio, mean difference, risk difference, hazard ratio, hazard difference.
+
+For binary data the marginal treatment effect and variance are
+
+* __Log-risk ratio__ 
+
+Treatment effect is
+$$
+\log(n_B/N_B) - \log(n_A/N_A)
+$$
+and variance
+$$
+\frac{1}{n_B} - \frac{1}{N_B} + \frac{1}{n_A} - \frac{1}{N_A}
+$$
+
+
+* __Risk difference__
+
+Treatment effect is
+$$
+\frac{n_B}{N_B} - \frac{n_A}{N_A}
+$$
+and variance
+$$
+\frac{n_B}{N_B} \left( 1 - \frac{n_B}{N_B} \right) + \frac{n_A}{N_A} \left( 1 - \frac{n_A}{N_A} \right)
+$$
+
 
 To change the outcome scale, we can pass the `scale` argument in the `outstandR()` function.
 For example, to change the scale to risk difference, we can use the following code.
@@ -301,9 +336,9 @@ outstandR_maic_lrr <-
 outstandR_maic_lrr
 ```
 
-### STC
+### Simulated treatment comparison
 
-STC is the conventional outcome regression method. It involves fitting a
+Simulated treatment comparison (STC) is the conventional outcome regression method. It involves fitting a
 regression model of outcome on treatment and covariates to the IPD. IPD
 effect modifiers are centred at the mean *BC* values.
 
@@ -605,12 +640,24 @@ res_tab_lrr <-
     `Gcomp Bayes` = unlist(outstandR_gcomp_stan_lrr$contrasts),
     `MIM` = unlist(outstandR_mim_lrr$contrasts))
 
+res_tab_var_lrr <- 
+  data.frame(
+    # d_true = c(NA, NA, NA),
+    # d_naive = c(var.d.AB.naive, d_AC_naive$var_AC, var.d.BC),
+    `MAIC` = unlist(outstandR_maic_lrr$variances),
+    `STC` = unlist(outstandR_stc_lrr$variances),
+    `Gcomp ML` = unlist(outstandR_gcomp_ml_lrr$variances),
+    `Gcomp Bayes` = unlist(outstandR_gcomp_stan_lrr$variances),
+    `MIM` = unlist(outstandR_mim_lrr$variances))
+
 knitr::kable(res_tab_lrr)
 ```
 
+#### Plots
+
 The same output in a forest plot is
 
-```{r fig.width=10, fig.height=10, warning=FALSE, message=FALSE}
+```{r forest-lor, fig.width=8, fig.height=6, warning=FALSE, message=FALSE}
 library(ggplot2)
 
 var_dat <- 
@@ -637,6 +684,38 @@ ggplot(aes(x = Estimate, y = id, col = type), data = plotdat) +
   geom_point(size = 2) +
   geom_segment(aes(y = id, yend = id, x = lo, xend = hi), na.rm = TRUE) +
   xlab("Estimate (Log OR)") +
+  facet_grid(Comparison~., switch = "y", scales = "free_y", space = "free_y") +
+  scale_y_reverse(name = "Comparison in BC population",
+                  breaks = NULL, expand = c(0, 0.6))
+```
+
+```{r forest-rr, fig.width=8, fig.height=6, warning=FALSE, message=FALSE}
+library(ggplot2)
+
+var_dat <- 
+  t(res_tab_var_lrr) |> 
+  as.data.frame() |> 
+  tibble::rownames_to_column("type") |>
+  reshape2::melt(variable.name = "Comparison",
+                 value.name = "var")
+
+plotdat <- 
+  t(res_tab_lrr) |> 
+  as.data.frame() |> 
+  tibble::rownames_to_column("type") |>
+  reshape2::melt(variable.name = "Comparison",
+                 value.name = "Estimate") |> 
+  mutate(id = 1:n(),
+         type = as.factor(type)) |> 
+  merge(var_dat) |> 
+  mutate(lo = Estimate + qnorm(0.025) * sqrt(var),
+         hi = Estimate + qnorm(0.975) * sqrt(var))
+
+ggplot(aes(x = Estimate, y = id, col = type), data = plotdat) +
+  geom_vline(xintercept = 0, lty = 2) +
+  geom_point(size = 2) +
+  geom_segment(aes(y = id, yend = id, x = lo, xend = hi), na.rm = TRUE) +
+  xlab("Estimate (Log RR)") +
   facet_grid(Comparison~., switch = "y", scales = "free_y", space = "free_y") +
   scale_y_reverse(name = "Comparison in BC population",
                   breaks = NULL, expand = c(0, 0.6))

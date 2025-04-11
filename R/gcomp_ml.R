@@ -16,7 +16,7 @@ gcomp_ml.boot <- function(data, indices,
                           R, formula = NULL,
                           family, N = 1000, ald) {
   dat <- data[indices, ]
-  gcomp_ml_means(formula, family, dat, ald) 
+  gcomp_ml_means(formula, family, dat, ald, N) 
 }
 
 
@@ -42,13 +42,14 @@ gcomp_ml.boot <- function(data, indices,
 #'
 gcomp_ml_means <- function(formula,
                            family,
-                           N = 1000,
-                           ipd, ald) {
+                           ipd, ald,
+                           N = 1000) {
   
   if (!inherits(formula, "formula"))
     stop("formula argument must be of formula class.")
   
-  x_star <- simulate_ALD_pseudo_pop(formula, ipd, ald, N)
+  x_star <- simulate_ALD_pseudo_pop(formula = formula,
+                                    ipd = ipd, ald = ald, N = N)
   
   # outcome logistic regression fitted to IPD using maximum likelihood
   fit <- glm(formula = formula,
