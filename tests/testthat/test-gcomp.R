@@ -49,7 +49,7 @@ test_that("different combinations of covariates in formula", {
 
 test_that("compare with stdReg2 package for continuous outcome", {
   
-  # original
+  ## original
 
   library(causaldata)
   
@@ -225,6 +225,142 @@ test_that("compare with stdReg2 package for binary outcome", {
                       effect = "log_relative_risk")),
     tolerance = 0.01)
 })
+
+
+test_that("compare with marginaleffects package for binary outcome", {
+  
+  # simulate data
+  n <- 1000
+  data <- data.frame(
+    age = rnorm(n, mean = 50, sd = 10),
+    sex = rbinom(n, 1, 0.5),
+    trt = rbinom(n, 1, 0.5)
+  )
+  
+  # generate a binary outcome with logit link
+  logit_p <- -1 + data$trt * (0.03 * data$age + 0.2 * data$sex)
+  prob <- 1 / (1 + exp(-logit_p))
+  data$y <- rbinom(n, 1, prob)
+  
+  lin_form <- as.formula(y ~ trt * (sex + age))
+  
+  fit <- glm(lin_form, family = binomial(link = "logit"), data = data)
+  
+  m_eff_pred <- marginaleffects::avg_predictions(fit, variables = "trt", by = "trt")
+  
+  ## {outstandR}
+  
+  # create aggregate data
+  nhefs.X <- data |> 
+    summarise(across(-c(trt, y),
+                     list(mean = mean, sd = sd),
+                     .names = "{fn}.{col}"))
+  
+  nhefs.B <- dplyr::filter(data, trt == 1) |> 
+    summarise(y.B.sum = sum(y),
+              y.B.bar = mean(y),
+              y.B.sd = sd(y),
+              N.B = n())
+  
+  nhefs.C <- dplyr::filter(data, trt == 0) |> 
+    summarise(y.C.sum = sum(y),
+              y.C.bar = mean(y),
+              y.C.sd = sd(y),
+              N.C = n())
+  
+  data_ald <- cbind.data.frame(nhefs.X, nhefs.C, nhefs.B)
+  
+  res_outstandr <- gcomp_ml_means(
+    formula = lin_form,
+    family = "binomial",
+    ald = data_ald,
+    ipd = data,
+    N = 10000)
+  
+  # means
+  
+  estimates <- m_eff_pred$estimate
+  
+  expect_equal(unname(res_outstandr["0"]),
+               estimates[1],
+               tolerance = 0.1)
+  
+  expect_equal(unname(res_outstandr["1"]),
+               estimates[2],
+               tolerance = 0.1)
+})
+
+
+test_that("compare with marginaleffects package for continuous outcome", {
+  ## original
+  
+  library(causaldata)
+  
+  # load dataset
+  nhefs_dat <- causaldata::nhefs_complete
+  
+  fit <- glm(wt82_71 ~ qsmk * (sex + age), family = "gaussian", data = nhefs_dat)
+  
+  m_eff_pred <- marginaleffects::avg_predictions(fit, variables = "qsmk", by = "qsmk")
+  
+  ## {outstandR}
+  
+  nhefs_ipd <- nhefs_dat |> 
+    select(qsmk, sex, age, wt82_71) |> 
+    rename(trt = qsmk,
+           y = wt82_71) |> 
+    mutate(sex = as.numeric(sex) - 1)
+  
+  lin_form <- as.formula(y ~ trt * (sex + age))
+  
+  # create aggregate data
+  nhefs.X <- nhefs_ipd |> 
+    summarise(across(-c(trt, y),
+                     list(mean = mean, sd = sd),
+                     .names = "{fn}.{col}"))
+  
+  nhefs.B <- dplyr::filter(nhefs_ipd, trt == 1) |> 
+    summarise(y.B.sum = sum(y),
+              y.B.bar = mean(y),
+              y.B.sd = sd(y),
+              N.B = n())
+  
+  nhefs.C <- dplyr::filter(nhefs_ipd, trt == 0) |> 
+    summarise(y.C.sum = sum(y),
+              y.C.bar = mean(y),
+              y.C.sd = sd(y),
+              N.C = n())
+  
+  nhefs_ald <- cbind.data.frame(nhefs.X, nhefs.C, nhefs.B)
+  
+  res_outstandr <- gcomp_ml_means(
+    formula = lin_form,
+    family = "gaussian",
+    ald = nhefs_ald,
+    ipd = nhefs_ipd,
+    N = 100000)
+  
+  # means
+  
+  expect_equal(unname(res_outstandr["0"]),
+               m_eff_pred$estimate[1],
+               tolerance = 0.1)
+  
+  expect_equal(unname(res_outstandr["1"]),
+               m_eff_pred$estimate[2],
+               tolerance = 0.1)
+  
+  # std errors
+  ##TODO:
+  
+  # different output scales
+  
+})
+
+
+
+
+
 
 #
 test_that("mismatch between covariates in ald and ipd / formula", {
