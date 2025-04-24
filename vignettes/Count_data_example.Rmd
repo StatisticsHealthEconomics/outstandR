@@ -35,7 +35,7 @@ library(simcovariates)
 
 ### Data
 
-First, use the in-built `gen_data()` function.
+First, use the `gen_data()` function available in the [simcovariates](https://github.com/n8thangreen/simcovariates) package.
 
 ```{r warning=FALSE, message=FALSE}
 library(dplyr)
