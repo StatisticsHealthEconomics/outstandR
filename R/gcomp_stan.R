@@ -38,13 +38,10 @@
 #' @export
 #'
 calc_gcomp_stan <- function(strategy,
-                            ipd, ald) {
+                            ipd, ald, ...) {
   
   formula <- strategy$formula
   family <- strategy$family
-  iter <- strategy$iter
-  warmup <- strategy$warmup
-  chain <- strategy$chians
   
   if (!inherits(formula, "formula"))
     stop("formula argument must be of formula class.")
@@ -57,9 +54,7 @@ calc_gcomp_stan <- function(strategy,
                        data = ipd,
                        family = family,
                        algorithm = "sampling",
-                       iter = iter,
-                       warmup = warmup,
-                       chains = chains)
+                       ...)
   
   # counterfactual datasets
   data.trtA <- data.trtC <- x_star
