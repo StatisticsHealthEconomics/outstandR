@@ -2,7 +2,7 @@
 title: "Comparison with other packages"
 output: rmarkdown::html_vignette
 vignette: >
-%\VignetteEncoding{UTF-8}
+  %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
   editor_options: 
   chunk_output_type: console
@@ -11,8 +11,8 @@ vignette: >
   
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
-collapse = TRUE,
-comment = "#>"
+  collapse = TRUE,
+  comment = "#>"
 )
 ```
 
@@ -20,19 +20,25 @@ comment = "#>"
 library(outstandR)
 ```
 
-There are already a few widely-used R packages in CRAN to perform model-based standardization, such as [`{marginaleffects}`](https://marginaleffects.com/) and [`{stdReg}/{StdReg2}`](https://sachsmc.github.io/stdReg2/).
+The aim of this document is to compare the results from various other R packages with those produced using `{outstandR}`.
+There are already a few widely-used R packages on CRAN to perform model-based standardization, such as [`{marginaleffects}`](https://marginaleffects.com/) and [`{stdReg}/{stdReg2}`](https://sachsmc.github.io/stdReg2/).
 
 ## marginaleffects
+
+The `{marginaleffects}` package has functions to calculate G-computation estimates.
 
 ```{r , warning=FALSE, message=FALSE}
 ##TODO: see unit tests
 library(marginaleffects)
+
+# marginaleffects::avg_predictions()
+# marginaleffects::avg_comparisons()
 ```
 
 
 ## stdReg[2]
 
-`{StdReg}` has been rewritten to produce `{StdReg2}` which has "nicer output, more available methods, the possibility to include new methods, and mainly to make maintenance and updating easier." So, for this reason, we will use `{StdReg2}`.
+The package `{stdReg}` has been rewritten to produce `{stdReg2}` which has "nicer output, more available methods, the possibility to include new methods, and mainly to make maintenance and updating easier." So, for this reason, we will use `{stdReg2}`.
 
 We shall follow the article [_Estimation of causal effects using stdReg2_](https://sachsmc.github.io/stdReg2/articles/overview.html).
 This is for continuous outcomes (change in weight) and includes transformed covariates.
@@ -82,13 +88,15 @@ nhefs.X <- nhefs_ipd %>%
                    list(mean = mean, sd = sd),
                    .names = "{fn}.{col}"))
 
-nhefs.B <- dplyr::filter(nhefs_ipd, trt == 1) |> 
+nhefs.B <- nhefs_ipd |> 
+  dplyr::filter(trt == 1) |> 
   summarise(y.B.sum = sum(y),
             y.B.bar = mean(y),
             y.B.sd = sd(y),
             N.B = n())
 
-nhefs.C <- dplyr::filter(nhefs_ipd, trt == 0) |> 
+nhefs.C <- nhefs_ipd |> 
+  dplyr::filter(trt == 0) |> 
   summarise(y.C.sum = sum(y),
             y.C.bar = mean(y),
             y.C.sd = sd(y),
@@ -117,15 +125,15 @@ Alternatively, rather than dropping factors, we can create dummy variables to re
 ```{r stdReg2-alternative2, warning=FALSE, message=FALSE}
 
 nhefs_ipd <- nhefs_dat |> 
-  select(qsmk, sex, race, age, smokeintensity, smokeyrs, wt71,
-         wt82_71, education, exercise, active) |> 
-  rename(trt = qsmk,
-         y = wt82_71) |> 
-  mutate(sex = as.numeric(sex) - 1,       # binary
-         race = as.numeric(race) - 1) |> 
+  dplyr::select(qsmk, sex, race, age, smokeintensity, smokeyrs, wt71,
+                wt82_71, education, exercise, active) |> 
+  dplyr::rename(trt = qsmk,
+                y = wt82_71) |> 
+  dplyr::mutate(sex = as.numeric(sex) - 1,       # binary
+                race = as.numeric(race) - 1) |> 
   maicplus::dummize_ipd(dummize_cols = c("education", "exercise", "active"),
                         dummize_ref_level = c("1","0","0")) |> 
-  select(-education, -exercise, -active)  # remove originals
+  dplyr::select(-education, -exercise, -active)  # remove originals
 
 # # replace with this?
 # model.matrix()
@@ -176,15 +184,15 @@ The 2024 [ISPOR poster by Hatswell](https://www.ispor.org/heor-resources/present
 ## maicplus
 
 Roche developed the `maic` package which is now deprecated and replaced by `maicplus`.
-We will follow the article titled [Anchored Binary Analysis](https://hta-pharma.github.io/maicplus/main/articles/anchored_binary.html) to make our comparison.
+We will follow the article titled [Anchored Binary Analysis](https://hta-pharma.github.io/maicplus/main/articles/anchored_binary.html) which is part of their package to make our comparison.
 
 ```{r maicplus-original, warning=FALSE, message=FALSE}
 library(maicplus)
 
 # Load required data
 data(centered_ipd_twt)
-data(adrs_twt)
-data("adsl_sat")  # Original IPD
+data(adrs_twt)  # response IPD
+data(adsl_sat)  # covariates IPD
 
 # Load required package
 library(dplyr)
@@ -262,6 +270,11 @@ AC.IPD <- adsl_twt |>
          y = RESPONSE) |> 
   mutate(AGE_SQUARED = AGE^2)
 
+# sd from IPD
+agd_sd <- AC.IPD |> 
+  summarise(across(c(AGE, AGE_SQUARED, SMOKE, ECOG0, N_PR_THER, SEX_MALE),
+                   .fns = sd, .names = "sd.{.col}"))
+
 # transform names to format needed in outstandR
 # mean.* and y.*
 # note that we're nto going to use sd in matching
@@ -274,7 +287,7 @@ BC.ALD <- agd |>
          mean.N_PR_THER = N_PR_THER_MEDIAN) |> 
   mutate(
     # mean.AGE_SQUARED = sd.AGE^2 + mean.AGE^2,
-    mean.AGE_SQUARED = mean.AGE^2,                 ##TODO: this is a fudge. Use from IPD?
+    # mean.AGE_SQUARED = mean.AGE^2,                 ##TODO: this is a fudge
     # sd.SEX_MALE = sqrt(mean.SEX_MALE * (1 - mean.SEX_MALE)), 
     # sd.ECOG0 = sqrt(mean.ECOG0 * (1 - mean.ECOG0)), 
     # sd.SMOKE = sqrt(mean.SMOKE * (1 - mean.SMOKE)), 
@@ -284,7 +297,9 @@ BC.ALD <- agd |>
     y.B.bar = y.B.sum/N.B,
     N.C = 320, 
     y.C.sum = binary_agd[binary_agd$ARM == "C" & binary_agd$RESPONSE == "YES", "COUNT"],
-    y.C.bar = y.C.sum/N.C)
+    y.C.bar = y.C.sum/N.C) |> 
+    cbind(agd_sd) |> 
+  relocate(N.B, y.B.sum, y.B.bar, N.C, y.C.sum, y.C.bar, .after = sd.SEX_MALE)
 
 BC.ALD
 ```
