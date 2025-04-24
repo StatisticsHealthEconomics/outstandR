@@ -19,6 +19,8 @@
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/bias.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/bias.mcse.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/calculate_ate.html</loc></url>
+<url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/calculate_trial_variance.html</loc></url>
+<url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_gcomp_ml.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_gcomp_stan.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_mim.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_stc.html</loc></url>
@@ -35,6 +37,7 @@
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/gen_data.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/get_covariate_names.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/get_effect_modifiers.html</loc></url>
+<url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/get_eff_mod_names.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/get_mean_names.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/get_sd_names.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/get_treatment_effect.html</loc></url>

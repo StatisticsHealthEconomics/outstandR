@@ -22,7 +22,6 @@
     <li><a class="dropdown-item" href="../articles/Binary_data_Remiro-Azocar.html">Binary data example usind data from Remiro-Azocar et al. (2020)</a></li>
     <li><a class="dropdown-item" href="../articles/comparison-with-other-packages.html">Comparison with other packages</a></li>
     <li><a class="dropdown-item" href="../articles/Continuous_data_example.html">Continuous data example</a></li>
-    <li><a class="dropdown-item" href="../articles/copd_analysis.html">COPD Analysis</a></li>
     <li><a class="dropdown-item" href="../articles/Count_data_example.html">Count data example</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -69,16 +68,20 @@ which define the bootstrap sample</p></dd>
 
 
 <dt id="arg-family">family<a class="anchor" aria-label="anchor" href="#arg-family"></a></dt>
-<dd><p>Family object</p></dd>
+<dd><p>A character string specifying the family distribution (e.g., "binomial").</p></dd>
 
 
 <dt id="arg-ald">ald<a class="anchor" aria-label="anchor" href="#arg-ald"></a></dt>
 <dd><p>Aggregate-level data</p></dd>
 
+
+<dt id="arg-hat-w">hat_w<a class="anchor" aria-label="anchor" href="#arg-hat-w"></a></dt>
+<dd><p>MAIC weights; default <code>NULL</code> which calls <code><a href="maic_weights.html">maic_weights()</a></code></p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Fitted probabilities for <em>A</em> and <em>C</em></p>
+    <p>Vector of fitted probabilities for treatments <em>A</em> and <em>C</em></p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

@@ -37,7 +37,6 @@
     <li><a class="dropdown-item" href="../articles/Binary_data_Remiro-Azocar.html">Binary data example usind data from Remiro-Azocar et al. (2020)</a></li>
     <li><a class="dropdown-item" href="../articles/comparison-with-other-packages.html">Comparison with other packages</a></li>
     <li><a class="dropdown-item" href="../articles/Continuous_data_example.html">Continuous data example</a></li>
-    <li><a class="dropdown-item" href="../articles/copd_analysis.html">COPD Analysis</a></li>
     <li><a class="dropdown-item" href="../articles/Count_data_example.html">Count data example</a></li>
   </ul>
 </li>
@@ -71,17 +70,538 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://StatisticsHealthEconomics.github.io/outstandR">outstandR</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in check_dep_version(): ABI version mismatch: </span></span>
-<span><span class="co">#&gt; lme4 was built with Matrix ABI version 2</span></span>
-<span><span class="co">#&gt; Current Matrix ABI version is 1</span></span>
-<span><span class="co">#&gt; Please re-install lme4 from source or restore original 'Matrix' package</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://StatisticsHealthEconomics.github.io/outstandR">outstandR</a></span><span class="op">)</span></span></code></pre></div>
 <p>There are already a few widely-used R packages in CRAN to perform
-model-based standardization, such as <a href="https://marginaleffects.com/" class="external-link">marginaleffects</a> and
-<code>{stdReg}</code>.</p>
-<p>ISPOR poster by Hatswell</p>
-<p><code>maic</code>, <code>MAIC</code>,</p>
-  </main>
+model-based standardization, such as <a href="https://marginaleffects.com/" class="external-link"><code>{marginaleffects}</code></a>
+and <a href="https://sachsmc.github.io/stdReg2/" class="external-link"><code>{stdReg}/{StdReg2}</code></a>.</p>
+<div class="section level2">
+<h2 id="marginaleffects">marginaleffects<a class="anchor" aria-label="anchor" href="#marginaleffects"></a>
+</h2>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">##TODO: see unit tests</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://marginaleffects.com/" class="external-link">marginaleffects</a></span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="stdreg2">stdReg[2]<a class="anchor" aria-label="anchor" href="#stdreg2"></a>
+</h2>
+<p><code>{StdReg}</code> has been rewritten to produce
+<code>{StdReg2}</code> which has “nicer output, more available methods,
+the possibility to include new methods, and mainly to make maintenance
+and updating easier.” So, for this reason, we will use
+<code>{StdReg2}</code>.</p>
+<p>We shall follow the article <a href="https://sachsmc.github.io/stdReg2/articles/overview.html" class="external-link"><em>Estimation
+of causal effects using stdReg2</em></a>. This is for continuous
+outcomes (change in weight) and includes transformed covariates. Note
+that the regression has transformed covariates using the
+<code><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I()</a></code> function. Two outcome scales are calculated, risk
+difference and risk ratio. The data also contains categorical variable
+with more than 2 levels, <code>education</code>,
+<code>smokeintensity</code>, <code>exercise</code> and
+<code>active</code>.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sachsmc.github.io/stdReg2/" class="external-link">stdReg2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/NickCH-K/causaldata" class="external-link">causaldata</a></span><span class="op">)</span>  <span class="co"># contains data set</span></span>
+<span></span>
+<span><span class="co"># load data set</span></span>
+<span><span class="va">nhefs_dat</span> <span class="op">&lt;-</span> <span class="fu">causaldata</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/causaldata/man/nhefs_complete.html" class="external-link">nhefs_complete</a></span></span>
+<span></span>
+<span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">wt82_71</span> <span class="op">~</span> <span class="va">qsmk</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">age</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">education</span><span class="op">)</span> <span class="op">+</span> <span class="va">smokeintensity</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">smokeintensity</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>           <span class="va">smokeyrs</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">smokeyrs</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">exercise</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">active</span><span class="op">)</span> <span class="op">+</span> <span class="va">wt71</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">wt71</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, </span>
+<span>         data <span class="op">=</span> <span class="va">nhefs_dat</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; glm(formula = wt82_71 ~ qsmk + sex + race + age + I(age^2) + </span></span>
+<span><span class="co">#&gt;     as.factor(education) + smokeintensity + I(smokeintensity^2) + </span></span>
+<span><span class="co">#&gt;     smokeyrs + I(smokeyrs^2) + as.factor(exercise) + as.factor(active) + </span></span>
+<span><span class="co">#&gt;     wt71 + I(wt71^2), data = nhefs_dat)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients:</span></span>
+<span><span class="co">#&gt;                         Estimate Std. Error t value Pr(&gt;|t|)    </span></span>
+<span><span class="co">#&gt; (Intercept)           -1.6586176  4.3137734  -0.384 0.700666    </span></span>
+<span><span class="co">#&gt; qsmk                   3.4626218  0.4384543   7.897 5.36e-15 ***</span></span>
+<span><span class="co">#&gt; sex1                  -1.4650496  0.4683410  -3.128 0.001792 ** </span></span>
+<span><span class="co">#&gt; race1                  0.5864117  0.5816949   1.008 0.313560    </span></span>
+<span><span class="co">#&gt; age                    0.3626624  0.1633431   2.220 0.026546 *  </span></span>
+<span><span class="co">#&gt; I(age^2)              -0.0061377  0.0017263  -3.555 0.000389 ***</span></span>
+<span><span class="co">#&gt; as.factor(education)2  0.8185263  0.6067815   1.349 0.177546    </span></span>
+<span><span class="co">#&gt; as.factor(education)3  0.5715004  0.5561211   1.028 0.304273    </span></span>
+<span><span class="co">#&gt; as.factor(education)4  1.5085173  0.8323778   1.812 0.070134 .  </span></span>
+<span><span class="co">#&gt; as.factor(education)5 -0.1708264  0.7413289  -0.230 0.817786    </span></span>
+<span><span class="co">#&gt; smokeintensity         0.0651533  0.0503115   1.295 0.195514    </span></span>
+<span><span class="co">#&gt; I(smokeintensity^2)   -0.0010468  0.0009373  -1.117 0.264261    </span></span>
+<span><span class="co">#&gt; smokeyrs               0.1333931  0.0917319   1.454 0.146104    </span></span>
+<span><span class="co">#&gt; I(smokeyrs^2)         -0.0018270  0.0015438  -1.183 0.236818    </span></span>
+<span><span class="co">#&gt; as.factor(exercise)1   0.3206824  0.5349616   0.599 0.548961    </span></span>
+<span><span class="co">#&gt; as.factor(exercise)2   0.3628786  0.5589557   0.649 0.516300    </span></span>
+<span><span class="co">#&gt; as.factor(active)1    -0.9429574  0.4100208  -2.300 0.021593 *  </span></span>
+<span><span class="co">#&gt; as.factor(active)2    -0.2580374  0.6847219  -0.377 0.706337    </span></span>
+<span><span class="co">#&gt; wt71                   0.0373642  0.0831658   0.449 0.653297    </span></span>
+<span><span class="co">#&gt; I(wt71^2)             -0.0009158  0.0005235  -1.749 0.080426 .  </span></span>
+<span><span class="co">#&gt; ---</span></span>
+<span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; (Dispersion parameter for gaussian family taken to be 53.59474)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     Null deviance: 97176  on 1565  degrees of freedom</span></span>
+<span><span class="co">#&gt; Residual deviance: 82857  on 1546  degrees of freedom</span></span>
+<span><span class="co">#&gt; AIC: 10701</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Number of Fisher Scoring iterations: 2</span></span>
+<span></span>
+<span><span class="va">res_stdReg2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://sachsmc.github.io/stdReg2/reference/standardize_glm.html" class="external-link">standardize_glm</a></span><span class="op">(</span></span>
+<span>  <span class="va">wt82_71</span> <span class="op">~</span> <span class="va">qsmk</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">age</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">education</span><span class="op">)</span> <span class="op">+</span> <span class="va">smokeintensity</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">smokeintensity</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="va">smokeyrs</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">smokeyrs</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">exercise</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">active</span><span class="op">)</span> <span class="op">+</span> <span class="va">wt71</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">wt71</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">nhefs_dat</span>, </span>
+<span>  values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>qsmk <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  contrasts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"difference"</span>, <span class="st">"ratio"</span><span class="op">)</span>,</span>
+<span>  reference <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">res_stdReg2</span></span>
+<span><span class="co">#&gt; Outcome formula: wt82_71 ~ qsmk + sex + race + age + I(age^2) + as.factor(education) + </span></span>
+<span><span class="co">#&gt;     smokeintensity + I(smokeintensity^2) + smokeyrs + I(smokeyrs^2) + </span></span>
+<span><span class="co">#&gt;     as.factor(exercise) + as.factor(active) + wt71 + I(wt71^2)</span></span>
+<span><span class="co">#&gt; Outcome family: gaussian </span></span>
+<span><span class="co">#&gt; Outcome link function: identity </span></span>
+<span><span class="co">#&gt; Exposure:  qsmk </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Tables: </span></span>
+<span><span class="co">#&gt;   qsmk Estimate Std.Error lower.0.95 upper.0.95</span></span>
+<span><span class="co">#&gt; 1    0     1.75     0.217       1.32       2.17</span></span>
+<span><span class="co">#&gt; 2    1     5.21     0.420       4.39       6.03</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Reference level:  qsmk = 0 </span></span>
+<span><span class="co">#&gt; Contrast:  difference </span></span>
+<span><span class="co">#&gt;   qsmk Estimate Std.Error lower.0.95 upper.0.95</span></span>
+<span><span class="co">#&gt; 1    0     0.00     0.000       0.00       0.00</span></span>
+<span><span class="co">#&gt; 2    1     3.46     0.466       2.55       4.38</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Reference level:  qsmk = 0 </span></span>
+<span><span class="co">#&gt; Contrast:  ratio </span></span>
+<span><span class="co">#&gt;   qsmk Estimate Std.Error lower.0.95 upper.0.95</span></span>
+<span><span class="co">#&gt; 1    0     1.00     0.000       1.00       1.00</span></span>
+<span><span class="co">#&gt; 2    1     2.98     0.435       2.13       3.83</span></span></code></pre></div>
+<p>Most simply, we can drop the variables with more than 2 levels and
+run <code><a href="../reference/outstandR.html">outstandR()</a></code>.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">nhefs_ipd</span> <span class="op">&lt;-</span> <span class="va">nhefs_dat</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="co"># drop categorical variables</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">qsmk</span>, <span class="va">sex</span>, <span class="va">race</span>, <span class="va">age</span>, <span class="va">smokeintensity</span>, <span class="va">smokeyrs</span>, <span class="va">wt71</span>, <span class="va">wt82_71</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>trt <span class="op">=</span> <span class="va">qsmk</span>,</span>
+<span>         y <span class="op">=</span> <span class="va">wt82_71</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">sex</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span>,</span>
+<span>         race <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">race</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># create aggregate data</span></span>
+<span></span>
+<span><span class="va">nhefs.X</span> <span class="op">&lt;-</span> <span class="va">nhefs_ipd</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">across</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">trt</span>, <span class="va">y</span><span class="op">)</span>,</span>
+<span>                   <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="va">mean</span>, sd <span class="op">=</span> <span class="va">sd</span><span class="op">)</span>,</span>
+<span>                   .names <span class="op">=</span> <span class="st">"{fn}.{col}"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">nhefs.B</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">nhefs_ipd</span>, <span class="va">trt</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>y.B.sum <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>,</span>
+<span>            y.B.bar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>,</span>
+<span>            y.B.sd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>,</span>
+<span>            N.B <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">nhefs.C</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">nhefs_ipd</span>, <span class="va">trt</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>y.C.sum <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>,</span>
+<span>            y.C.bar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>,</span>
+<span>            y.C.sd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>,</span>
+<span>            N.C <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">nhefs_ald</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind.data.frame</a></span><span class="op">(</span><span class="va">nhefs.X</span>, <span class="va">nhefs.C</span>, <span class="va">nhefs.B</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># simplified formula</span></span>
+<span><span class="va">lin_form</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/formula.html" class="external-link">as.formula</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">trt</span> <span class="op">*</span> <span class="op">(</span><span class="va">sex</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">age</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>                          <span class="va">smokeintensity</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">smokeintensity</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>                          <span class="va">smokeyrs</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">smokeyrs</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">+</span> <span class="va">wt71</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">wt71</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">nhefs_strat</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_ml</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
+<span>                    family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">gaussian</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"identity"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span>BC.ALD <span class="op">=</span> <span class="va">nhefs_ald</span>,</span>
+<span>                 AC.IPD <span class="op">=</span> <span class="va">nhefs_ipd</span>,</span>
+<span>                 strategy <span class="op">=</span> <span class="va">nhefs_strat</span>,</span>
+<span>                 scale <span class="op">=</span> <span class="st">"log_relative_risk"</span><span class="op">)</span></span>
+<span><span class="va">res</span></span>
+<span><span class="co">#&gt; Object of class 'outstandR' </span></span>
+<span><span class="co">#&gt; Scale: <span style="color: #949494;">log_relative_risk</span> </span></span>
+<span><span class="co">#&gt; Common treatment: <span style="color: #949494;">C</span> </span></span>
+<span><span class="co">#&gt; Individual patient data study: <span style="color: #949494;">AC</span> </span></span>
+<span><span class="co">#&gt; Aggregate level data study: <span style="color: #949494;">BC</span> </span></span>
+<span><span class="co">#&gt; Confidence interval level: <span style="color: #949494;">0.95</span> </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 5</span></span></span>
+<span><span class="co">#&gt;   Treatments Estimate Std.Error lower.0.95 upper.0.95</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AB            0.241    2.21       -<span style="color: #BB0000;">2.68</span>        3.16</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AC            1.07     0.019<span style="text-decoration: underline;">8</span>      0.790       1.34</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> BC            0.824    2.20       -<span style="color: #BB0000;">2.08</span>        3.73</span></span></code></pre></div>
+<p>Alternatively, rather than dropping factors, we can create dummy
+variables to replace them using
+<code><a href="https://hta-pharma.github.io/maicplus/main/reference/dummize_ipd.html" class="external-link">maicplus::dummize_ipd()</a></code>.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">nhefs_ipd</span> <span class="op">&lt;-</span> <span class="va">nhefs_dat</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">qsmk</span>, <span class="va">sex</span>, <span class="va">race</span>, <span class="va">age</span>, <span class="va">smokeintensity</span>, <span class="va">smokeyrs</span>, <span class="va">wt71</span>,</span>
+<span>         <span class="va">wt82_71</span>, <span class="va">education</span>, <span class="va">exercise</span>, <span class="va">active</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>trt <span class="op">=</span> <span class="va">qsmk</span>,</span>
+<span>         y <span class="op">=</span> <span class="va">wt82_71</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">sex</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span>,       <span class="co"># binary</span></span>
+<span>         race <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">race</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">maicplus</span><span class="fu">::</span><span class="fu"><a href="https://hta-pharma.github.io/maicplus/main/reference/dummize_ipd.html" class="external-link">dummize_ipd</a></span><span class="op">(</span>dummize_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"education"</span>, <span class="st">"exercise"</span>, <span class="st">"active"</span><span class="op">)</span>,</span>
+<span>                        dummize_ref_level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"1"</span>,<span class="st">"0"</span>,<span class="st">"0"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">education</span>, <span class="op">-</span><span class="va">exercise</span>, <span class="op">-</span><span class="va">active</span><span class="op">)</span>  <span class="co"># remove originals</span></span>
+<span></span>
+<span><span class="co"># # replace with this?</span></span>
+<span><span class="co"># model.matrix()</span></span>
+<span></span>
+<span><span class="co"># create aggregate data</span></span>
+<span></span>
+<span><span class="va">nhefs.X</span> <span class="op">&lt;-</span> <span class="va">nhefs_ipd</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">across</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">trt</span>, <span class="va">y</span><span class="op">)</span>,</span>
+<span>                   <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="va">mean</span>, sd <span class="op">=</span> <span class="va">sd</span><span class="op">)</span>,</span>
+<span>                   .names <span class="op">=</span> <span class="st">"{fn}.{col}"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">nhefs.B</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">nhefs_ipd</span>, <span class="va">trt</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>y.B.sum <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>,</span>
+<span>            y.B.bar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>,</span>
+<span>            y.B.sd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>,</span>
+<span>            N.B <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">nhefs.C</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">nhefs_ipd</span>, <span class="va">trt</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>y.C.sum <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>,</span>
+<span>            y.C.bar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>,</span>
+<span>            y.C.sd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>,</span>
+<span>            N.C <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">nhefs_ald</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind.data.frame</a></span><span class="op">(</span><span class="va">nhefs.X</span>, <span class="va">nhefs.C</span>, <span class="va">nhefs.B</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">lin_form</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/formula.html" class="external-link">as.formula</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">trt</span> <span class="op">*</span> <span class="op">(</span><span class="va">sex</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">age</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>                          <span class="va">smokeintensity</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">smokeintensity</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>                          <span class="va">EDUCATION_2</span> <span class="op">+</span> <span class="va">EDUCATION_3</span> <span class="op">+</span> <span class="va">EDUCATION_4</span> <span class="op">+</span> <span class="va">EDUCATION_5</span> <span class="op">+</span></span>
+<span>                          <span class="va">EXERCISE_1</span> <span class="op">+</span> <span class="va">EXERCISE_2</span> <span class="op">+</span> <span class="va">ACTIVE_1</span> <span class="op">+</span> <span class="va">ACTIVE_2</span> <span class="op">+</span></span>
+<span>                          <span class="va">smokeyrs</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">smokeyrs</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">+</span> <span class="va">wt71</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">wt71</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">nhefs_strat</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_ml</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
+<span>                    family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">gaussian</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"identity"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span>BC.ALD <span class="op">=</span> <span class="va">nhefs_ald</span>,</span>
+<span>                 AC.IPD <span class="op">=</span> <span class="va">nhefs_ipd</span>,</span>
+<span>                 strategy <span class="op">=</span> <span class="va">nhefs_strat</span>,</span>
+<span>                 scale <span class="op">=</span> <span class="st">"risk_difference"</span><span class="op">)</span></span>
+<span><span class="va">res</span></span>
+<span><span class="co">#&gt; Object of class 'outstandR' </span></span>
+<span><span class="co">#&gt; Scale: <span style="color: #949494;">risk_difference</span> </span></span>
+<span><span class="co">#&gt; Common treatment: <span style="color: #949494;">C</span> </span></span>
+<span><span class="co">#&gt; Individual patient data study: <span style="color: #949494;">AC</span> </span></span>
+<span><span class="co">#&gt; Aggregate level data study: <span style="color: #949494;">BC</span> </span></span>
+<span><span class="co">#&gt; Confidence interval level: <span style="color: #949494;">0.95</span> </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 5</span></span></span>
+<span><span class="co">#&gt;   Treatments Estimate Std.Error lower.0.95 upper.0.95</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AB             1.05     0.473     -<span style="color: #BB0000;">0.295</span>       2.40</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AC             3.59     0.235      2.64        4.54</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> BC             2.54     0.238      1.59        3.50</span></span></code></pre></div>
+<hr>
+<p>The 2024 <a href="https://www.ispor.org/heor-resources/presentations-database/presentation/euro2024-4016/141209" class="external-link">ISPOR
+poster by Hatswell</a> presents a comparison of different MAIC R
+packages. We shall use this as our starting point. Of the packages
+considered, <code>{MAIC}</code> is not on CRAN so not included in our
+analysis at the moment.</p>
+</div>
+<div class="section level2">
+<h2 id="maicplus">maicplus<a class="anchor" aria-label="anchor" href="#maicplus"></a>
+</h2>
+<p>Roche developed the <code>maic</code> package which is now deprecated
+and replaced by <code>maicplus</code>. We will follow the article titled
+<a href="https://hta-pharma.github.io/maicplus/main/articles/anchored_binary.html" class="external-link">Anchored
+Binary Analysis</a> to make our comparison.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/hta-pharma/maicplus/" class="external-link">maicplus</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Load required data</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">centered_ipd_twt</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">adrs_twt</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"adsl_sat"</span><span class="op">)</span>  <span class="co"># Original IPD</span></span>
+<span></span>
+<span><span class="co"># Load required package</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Prepare matching variables (only using means, ignoring SDs)</span></span>
+<span><span class="va">adsl_sat</span> <span class="op">&lt;-</span> <span class="va">adsl_sat</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    SEX_MALE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">SEX</span> <span class="op">==</span> <span class="st">"Male"</span><span class="op">)</span>,</span>
+<span>    AGE_SQUARED <span class="op">=</span> <span class="va">AGE</span><span class="op">^</span><span class="fl">2</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Define variable names for matching (excluding SDs)</span></span>
+<span><span class="va">adsl_colnames</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AGE"</span>, <span class="st">"AGE_SQUARED"</span>, <span class="st">"SEX_MALE"</span>, <span class="st">"ECOG0"</span>, <span class="st">"SMOKE"</span>, <span class="st">"N_PR_THER_MEDIAN"</span><span class="op">)</span></span>
+<span><span class="va">centered_colnames</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">adsl_colnames</span>, <span class="st">"_CENTERED"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Estimate weights based only on means</span></span>
+<span><span class="va">weighted_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://hta-pharma.github.io/maicplus/main/reference/estimate_weights.html" class="external-link">estimate_weights</a></span><span class="op">(</span></span>
+<span>  data <span class="op">=</span> <span class="va">centered_ipd_twt</span>,</span>
+<span>  centered_colnames <span class="op">=</span> <span class="va">centered_colnames</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Aggregate summary data for AGD (ONLY MEANS, NO SDs)</span></span>
+<span><span class="va">agd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  AGE_MEAN <span class="op">=</span> <span class="fl">51</span>,</span>
+<span>  SEX_MALE_PROP <span class="op">=</span> <span class="fl">147</span> <span class="op">/</span> <span class="fl">300</span>,</span>
+<span>  ECOG0_PROP <span class="op">=</span> <span class="fl">0.40</span>,</span>
+<span>  SMOKE_PROP <span class="op">=</span> <span class="fl">58</span> <span class="op">/</span> <span class="op">(</span><span class="fl">300</span> <span class="op">-</span> <span class="fl">5</span><span class="op">)</span>,</span>
+<span>  N_PR_THER_MEDIAN <span class="op">=</span> <span class="fl">2</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Binary AGD summary data</span></span>
+<span><span class="va">binary_agd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  ARM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"B"</span>, <span class="st">"C"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,</span>
+<span>  RESPONSE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"YES"</span>, <span class="st">"NO"</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span>,</span>
+<span>  COUNT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">280</span>, <span class="fl">200</span>, <span class="fl">120</span>, <span class="fl">200</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Generate pseudo-IPD from binary AGD</span></span>
+<span><span class="va">pseudo_adrs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://hta-pharma.github.io/maicplus/main/reference/get_pseudo_ipd_binary.html" class="external-link">get_pseudo_ipd_binary</a></span><span class="op">(</span></span>
+<span>  binary_agd <span class="op">=</span> <span class="va">binary_agd</span>,</span>
+<span>  format <span class="op">=</span> <span class="st">"stacked"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Perform MAIC analysis (matching only on means)</span></span>
+<span><span class="va">res_maicplus</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://hta-pharma.github.io/maicplus/main/reference/maic_anchored.html" class="external-link">maic_anchored</a></span><span class="op">(</span></span>
+<span>  weights_object <span class="op">=</span> <span class="va">weighted_data</span>,</span>
+<span>  ipd <span class="op">=</span> <span class="va">adrs_twt</span>,</span>
+<span>  pseudo_ipd <span class="op">=</span> <span class="va">pseudo_adrs</span>,</span>
+<span>  trt_ipd <span class="op">=</span> <span class="st">"A"</span>,</span>
+<span>  trt_agd <span class="op">=</span> <span class="st">"B"</span>,</span>
+<span>  trt_common <span class="op">=</span> <span class="st">"C"</span>,</span>
+<span>  normalize_weight <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  endpoint_type <span class="op">=</span> <span class="st">"binary"</span>,</span>
+<span>  endpoint_name <span class="op">=</span> <span class="st">"Binary Endpoint"</span>,</span>
+<span>  eff_measure <span class="op">=</span> <span class="st">"OR"</span>,</span>
+<span>  binary_robust_cov_type <span class="op">=</span> <span class="st">"HC3"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="va">res_maicplus</span></span>
+<span><span class="co">#&gt; $descriptive</span></span>
+<span><span class="co">#&gt; $descriptive$summary</span></span>
+<span><span class="co">#&gt;   trt_ind treatment                 type        n   events events_pct</span></span>
+<span><span class="co">#&gt; 1       C         C IPD, before matching 500.0000 338.0000   67.60000</span></span>
+<span><span class="co">#&gt; 2       A         A IPD, before matching 500.0000 390.0000   78.00000</span></span>
+<span><span class="co">#&gt; 3       C         C  IPD, after matching 199.4265 134.0364   67.21094</span></span>
+<span><span class="co">#&gt; 4       A         A  IPD, after matching 199.4265 142.8968   71.65386</span></span>
+<span><span class="co">#&gt; 5       C         C        AgD, external 320.0000 120.0000   37.50000</span></span>
+<span><span class="co">#&gt; 6       B         B        AgD, external 480.0000 280.0000   58.33333</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $inferential</span></span>
+<span><span class="co">#&gt; $inferential$fit</span></span>
+<span><span class="co">#&gt; $inferential$fit$model_before_ipd</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Call:  glm(formula = RESPONSE ~ ARM, family = binomial(link = glm_link), </span></span>
+<span><span class="co">#&gt;     data = ipd)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients:</span></span>
+<span><span class="co">#&gt; (Intercept)         ARMA  </span></span>
+<span><span class="co">#&gt;      0.7354       0.5302  </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Degrees of Freedom: 999 Total (i.e. Null);  998 Residual</span></span>
+<span><span class="co">#&gt; Null Deviance:       1170 </span></span>
+<span><span class="co">#&gt; Residual Deviance: 1157  AIC: 1161</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $inferential$fit$model_after_ipd</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Call:  glm(formula = RESPONSE ~ ARM, family = binomial(link = glm_link), </span></span>
+<span><span class="co">#&gt;     data = ipd, weights = weights)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients:</span></span>
+<span><span class="co">#&gt; (Intercept)         ARMA  </span></span>
+<span><span class="co">#&gt;      0.7177       0.2096  </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Degrees of Freedom: 999 Total (i.e. Null);  998 Residual</span></span>
+<span><span class="co">#&gt; Null Deviance:       491.1 </span></span>
+<span><span class="co">#&gt; Residual Deviance: 490.1     AIC: 458.4</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $inferential$fit$model_agd</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Call:  glm(formula = RESPONSE ~ ARM, family = binomial(link = glm_link), </span></span>
+<span><span class="co">#&gt;     data = pseudo_ipd)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients:</span></span>
+<span><span class="co">#&gt; (Intercept)         ARMB  </span></span>
+<span><span class="co">#&gt;     -0.5108       0.8473  </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Degrees of Freedom: 799 Total (i.e. Null);  798 Residual</span></span>
+<span><span class="co">#&gt; Null Deviance:       1109 </span></span>
+<span><span class="co">#&gt; Residual Deviance: 1075  AIC: 1079</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $inferential$fit$res_AC</span></span>
+<span><span class="co">#&gt; $inferential$fit$res_AC$est</span></span>
+<span><span class="co">#&gt; [1] 1.233204</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $inferential$fit$res_AC$se</span></span>
+<span><span class="co">#&gt; [1] 0.3085377</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $inferential$fit$res_AC$ci_l</span></span>
+<span><span class="co">#&gt; [1] 0.7710134</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $inferential$fit$res_AC$ci_u</span></span>
+<span><span class="co">#&gt; [1] 1.972458</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $inferential$fit$res_AC$pval</span></span>
+<span><span class="co">#&gt; [1] 0.3817109</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $inferential$fit$res_AC_unadj</span></span>
+<span><span class="co">#&gt; $inferential$fit$res_AC_unadj$est</span></span>
+<span><span class="co">#&gt; [1] 1.699301</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $inferential$fit$res_AC_unadj$se</span></span>
+<span><span class="co">#&gt; [1] 0.2488482</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $inferential$fit$res_AC_unadj$ci_l</span></span>
+<span><span class="co">#&gt; [1] 1.280998</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $inferential$fit$res_AC_unadj$ci_u</span></span>
+<span><span class="co">#&gt; [1] 2.254199</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $inferential$fit$res_AC_unadj$pval</span></span>
+<span><span class="co">#&gt; [1] 0.0002354448</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $inferential$fit$res_BC</span></span>
+<span><span class="co">#&gt; $inferential$fit$res_BC$est</span></span>
+<span><span class="co">#&gt; [1] 2.333333</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $inferential$fit$res_BC$se</span></span>
+<span><span class="co">#&gt; [1] 0.3510631</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $inferential$fit$res_BC$ci_l</span></span>
+<span><span class="co">#&gt; [1] 1.745809</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $inferential$fit$res_BC$ci_u</span></span>
+<span><span class="co">#&gt; [1] 3.118579</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $inferential$fit$res_BC$pval</span></span>
+<span><span class="co">#&gt; [1] 1.035032e-08</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $inferential$fit$res_AB</span></span>
+<span><span class="co">#&gt;             result             pvalue </span></span>
+<span><span class="co">#&gt; "0.53[0.30; 0.92]"            "0.024" </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $inferential$fit$res_AB_unadj</span></span>
+<span><span class="co">#&gt;             result             pvalue </span></span>
+<span><span class="co">#&gt; "0.73[0.49; 1.09]"            "0.125" </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $inferential$fit$boot_res</span></span>
+<span><span class="co">#&gt; NULL</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $inferential$fit$boot_res_AC</span></span>
+<span><span class="co">#&gt; NULL</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $inferential$fit$boot_res_AB_mc</span></span>
+<span><span class="co">#&gt; NULL</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $inferential$fit$boot_res_AB</span></span>
+<span><span class="co">#&gt; NULL</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $inferential$summary</span></span>
+<span><span class="co">#&gt;          case        OR       LCL       UCL         pval</span></span>
+<span><span class="co">#&gt; 1          AC 1.6993007 1.2809976 2.2541985 2.354448e-04</span></span>
+<span><span class="co">#&gt; 2 adjusted_AC 1.2332036 0.7710134 1.9724576 3.817109e-01</span></span>
+<span><span class="co">#&gt; 3          BC 2.3333333 1.7458092 3.1185794 1.035032e-08</span></span>
+<span><span class="co">#&gt; 4          AB 0.7282717 0.4857575 1.0918611 1.248769e-01</span></span>
+<span><span class="co">#&gt; 5 adjusted_AB 0.5285158 0.3043103 0.9179084 2.356848e-02</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://glue.tidyverse.org/" class="external-link">glue</a></span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">##TODO: why has this got median in name here?</span></span>
+<span><span class="va">adsl_colnames</span><span class="op">[</span><span class="va">adsl_colnames</span> <span class="op">==</span> <span class="st">"N_PR_THER_MEDIAN"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"N_PR_THER"</span></span>
+<span></span>
+<span><span class="va">lin_form</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/formula.html" class="external-link">as.formula</a></span><span class="op">(</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"y ~ trt * ({paste(adsl_colnames, collapse = ' + ')})"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">AC.IPD</span> <span class="op">&lt;-</span> <span class="va">adsl_twt</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">adrs_twt</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>trt <span class="op">=</span> <span class="va">ARM</span>,</span>
+<span>         y <span class="op">=</span> <span class="va">RESPONSE</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>AGE_SQUARED <span class="op">=</span> <span class="va">AGE</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># transform names to format needed in outstandR</span></span>
+<span><span class="co"># mean.* and y.*</span></span>
+<span><span class="co"># note that we're nto going to use sd in matching</span></span>
+<span><span class="va">BC.ALD</span> <span class="op">&lt;-</span> <span class="va">agd</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>mean.AGE <span class="op">=</span> <span class="va">AGE_MEAN</span>,</span>
+<span>         <span class="co"># sd.AGE = AGE_SD,</span></span>
+<span>         mean.SEX_MALE <span class="op">=</span> <span class="va">SEX_MALE_PROP</span>,</span>
+<span>         mean.ECOG0 <span class="op">=</span> <span class="va">ECOG0_PROP</span>,</span>
+<span>         mean.SMOKE <span class="op">=</span> <span class="va">SMOKE_PROP</span>,</span>
+<span>         mean.N_PR_THER <span class="op">=</span> <span class="va">N_PR_THER_MEDIAN</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    <span class="co"># mean.AGE_SQUARED = sd.AGE^2 + mean.AGE^2,</span></span>
+<span>    mean.AGE_SQUARED <span class="op">=</span> <span class="va">mean.AGE</span><span class="op">^</span><span class="fl">2</span>,                 <span class="co">##TODO: this is a fudge</span></span>
+<span>    <span class="co"># sd.SEX_MALE = sqrt(mean.SEX_MALE * (1 - mean.SEX_MALE)), </span></span>
+<span>    <span class="co"># sd.ECOG0 = sqrt(mean.ECOG0 * (1 - mean.ECOG0)), </span></span>
+<span>    <span class="co"># sd.SMOKE = sqrt(mean.SMOKE * (1 - mean.SMOKE)), </span></span>
+<span>    <span class="co"># outcomes</span></span>
+<span>    N.B <span class="op">=</span> <span class="fl">480</span>, </span>
+<span>    y.B.sum <span class="op">=</span> <span class="va">binary_agd</span><span class="op">[</span><span class="va">binary_agd</span><span class="op">$</span><span class="va">ARM</span> <span class="op">==</span> <span class="st">"B"</span> <span class="op">&amp;</span> <span class="va">binary_agd</span><span class="op">$</span><span class="va">RESPONSE</span> <span class="op">==</span> <span class="st">"YES"</span>, <span class="st">"COUNT"</span><span class="op">]</span>,</span>
+<span>    y.B.bar <span class="op">=</span> <span class="va">y.B.sum</span><span class="op">/</span><span class="va">N.B</span>,</span>
+<span>    N.C <span class="op">=</span> <span class="fl">320</span>, </span>
+<span>    y.C.sum <span class="op">=</span> <span class="va">binary_agd</span><span class="op">[</span><span class="va">binary_agd</span><span class="op">$</span><span class="va">ARM</span> <span class="op">==</span> <span class="st">"C"</span> <span class="op">&amp;</span> <span class="va">binary_agd</span><span class="op">$</span><span class="va">RESPONSE</span> <span class="op">==</span> <span class="st">"YES"</span>, <span class="st">"COUNT"</span><span class="op">]</span>,</span>
+<span>    y.C.bar <span class="op">=</span> <span class="va">y.C.sum</span><span class="op">/</span><span class="va">N.C</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">BC.ALD</span></span>
+<span><span class="co">#&gt;   mean.AGE mean.SEX_MALE mean.ECOG0 mean.SMOKE mean.N_PR_THER mean.AGE_SQUARED</span></span>
+<span><span class="co">#&gt; 1       51          0.49        0.4  0.1966102              2             2601</span></span>
+<span><span class="co">#&gt;   N.B y.B.sum   y.B.bar N.C y.C.sum y.C.bar</span></span>
+<span><span class="co">#&gt; 1 480     280 0.5833333 320     120   0.375</span></span></code></pre></div>
+<p>Now that we’ve prepared the input data we’re ready to run the
+model.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">##TODO: fix bug</span></span>
+<span><span class="va">outstandR_maic</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>,</span>
+<span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_maic</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
+<span>                                     family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="maicchecks">maicChecks<a class="anchor" aria-label="anchor" href="#maicchecks"></a>
+</h2>
+<p>We now follow the examples for the package <a href="https://clyau.github.io/maicChecks/" class="external-link"><code>maicChecks</code></a>.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">##TODO:</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">maicChecks</span><span class="op">)</span></span></code></pre></div>
+<hr>
+<p>For G-formula we will compare with the output from the packages
+<code>gFormulaMI</code> and <code>gfoRmula</code>.</p>
+</div>
+<div class="section level2">
+<h2 id="gformula">gfoRmula<a class="anchor" aria-label="anchor" href="#gformula"></a>
+</h2>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">##TODO:</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/CausalInference/gfoRmula" class="external-link">gfoRmula</a></span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="gformulami">gFormulaMI<a class="anchor" aria-label="anchor" href="#gformulami"></a>
+</h2>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">##TODO:</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://jwb133.github.io/gFormulaMI/" class="external-link">gFormulaMI</a></span><span class="op">)</span></span></code></pre></div>
+</div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 

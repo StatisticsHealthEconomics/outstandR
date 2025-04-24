@@ -18,6 +18,10 @@ maic_weights <- function(X_EM) {
   N <- nrow(X_EM)    # number of individuals
   K <- ncol(X_EM)    # number of covariates
   init <- rep(1, K)  # arbitrary starting point for optimizer
+  
+  ##TODO: what about scaling X_EM?
+  ##      because large values return error
+  
   Q.min <- optim(fn=Q, X=X_EM, par=init, method="BFGS")
   
   # finite solution is the logistic regression parameters
@@ -34,8 +38,8 @@ maic_weights <- function(X_EM) {
 
 #' Objective function to minimize for standard method of moments MAIC
 #'
-#' @param beta Beta
-#' @param X X
+#' @param beta Beta coefficient
+#' @param X Covariate value
 #' @keywords internal
 #' 
 Q <- function(beta, X) {
@@ -50,9 +54,11 @@ Q <- function(beta, X) {
 #' @param indices Vector of indices, same length as original,
 #'   which define the bootstrap sample
 #' @param formula Linear regression formula
-#' @param family Family object
+#' @param family A character string specifying the family distribution (e.g., "binomial").
 #' @template args-ald
-#' @return Fitted probabilities for _A_ and _C_
+#' @param hat_w MAIC weights; default `NULL` which calls [maic_weights()]
+#' 
+#' @return Vector of fitted probabilities for treatments _A_ and _C_
 #' @seealso [IPD_stats.maic()]
 #' @keywords internal
 #' 
@@ -61,6 +67,7 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
                       hat_w = NULL) {
   
   dat <- ipd[indices, ]  # bootstrap sample
+  n_ipd <- length(indices)
   
   effect_modifier_names <- get_eff_mod_names(formula)
   
@@ -72,7 +79,7 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
   mean_names <- get_mean_names(ald, effect_modifier_names)
   
   # centre AC effect modifiers on BC means
-  dat_ALD_means <- ald[, mean_names][rep(1, nrow(X_EM)), ]
+  dat_ALD_means <- ald[rep_len(1, n_ipd), mean_names, drop = FALSE]
   X_EM <- X_EM - dat_ALD_means
   
   if (is.null(hat_w)) {

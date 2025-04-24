@@ -4,18 +4,18 @@
 \alias{gcomp_ml_means}
 \title{G-computation Maximum Likelihood mean outcome}
 \usage{
-gcomp_ml_means(formula, family, N = 1000, ipd, ald)
+gcomp_ml_means(formula, family, ipd, ald, N = 1000)
 }
 \arguments{
 \item{formula}{Linear regression \code{formula} object}
 
 \item{family}{A family object specifying the distribution and link function (e.g., "binomial").}
 
-\item{N}{Synthetic sample size for g-computation}
-
 \item{ipd}{Individual-level data}
 
 \item{ald}{Aggregate-level data}
+
+\item{N}{Synthetic sample size for g-computation}
 }
 \value{
 A named vector containing the marginal mean probabilities under treatments A (\code{0}) and C (\code{1}).

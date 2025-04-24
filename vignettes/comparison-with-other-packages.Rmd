@@ -25,6 +25,7 @@ There are already a few widely-used R packages in CRAN to perform model-based st
 ## marginaleffects
 
 ```{r , warning=FALSE, message=FALSE}
+##TODO: see unit tests
 library(marginaleffects)
 ```
 
@@ -35,12 +36,14 @@ library(marginaleffects)
 
 We shall follow the article [_Estimation of causal effects using stdReg2_](https://sachsmc.github.io/stdReg2/articles/overview.html).
 This is for continuous outcomes (change in weight) and includes transformed covariates.
+Note that the regression has transformed covariates using the `I()` function. Two outcome scales are calculated, risk difference and risk ratio.
+The data also contains categorical variable with more than 2 levels, `education`, `smokeintensity`, `exercise` and `active`.
 
 ```{r stdReg2-original, warning=FALSE, message=FALSE}
 library(stdReg2)
-library(causaldata)
+library(causaldata)  # contains data set
 
-# load dataset
+# load data set
 nhefs_dat <- causaldata::nhefs_complete
 
 m <- glm(wt82_71 ~ qsmk + sex + race + age + I(age^2) + as.factor(education) + smokeintensity + I(smokeintensity^2) +
@@ -48,7 +51,7 @@ m <- glm(wt82_71 ~ qsmk + sex + race + age + I(age^2) + as.factor(education) + s
          data = nhefs_dat)
 summary(m)
 
-m2 <- standardize_glm(
+res_stdReg2 <- standardize_glm(
   wt82_71 ~ qsmk + sex + race + age + I(age^2) + as.factor(education) + smokeintensity + I(smokeintensity^2) +
     smokeyrs + I(smokeyrs^2) + as.factor(exercise) + as.factor(active) + wt71 + I(wt71^2),
   data = nhefs_dat, 
@@ -56,13 +59,16 @@ m2 <- standardize_glm(
   contrasts = c("difference", "ratio"),
   reference = 0)
 
-m2
+res_stdReg2
 ```
+
+Most simply, we can drop the variables with more than 2 levels and run `outstandR()`.
 
 ```{r stdReg2-alternative1, warning=FALSE, message=FALSE}
 library(dplyr)
 
 nhefs_ipd <- nhefs_dat |> 
+  # drop categorical variables
   select(qsmk, sex, race, age, smokeintensity, smokeyrs, wt71, wt82_71) |>
   rename(trt = qsmk,
          y = wt82_71) |> 
@@ -90,6 +96,7 @@ nhefs.C <- dplyr::filter(nhefs_ipd, trt == 0) |>
 
 nhefs_ald <- cbind.data.frame(nhefs.X, nhefs.C, nhefs.B)
 
+# simplified formula
 lin_form <-
   as.formula(y ~ trt * (sex + race + age + I(age^2) +
                           smokeintensity + I(smokeintensity^2) +
@@ -105,7 +112,7 @@ res <- outstandR(BC.ALD = nhefs_ald,
 res
 ```
 
-Rather than dropping factors, create dummy variables.
+Alternatively, rather than dropping factors, we can create dummy variables to replace them using `maicplus::dummize_ipd()`.
 
 ```{r stdReg2-alternative2, warning=FALSE, message=FALSE}
 
@@ -114,11 +121,11 @@ nhefs_ipd <- nhefs_dat |>
          wt82_71, education, exercise, active) |> 
   rename(trt = qsmk,
          y = wt82_71) |> 
-  mutate(sex = as.numeric(sex) - 1,
+  mutate(sex = as.numeric(sex) - 1,       # binary
          race = as.numeric(race) - 1) |> 
   maicplus::dummize_ipd(dummize_cols = c("education", "exercise", "active"),
                         dummize_ref_level = c("1","0","0")) |> 
-  select(-education, -exercise, -active)
+  select(-education, -exercise, -active)  # remove originals
 
 # # replace with this?
 # model.matrix()
@@ -164,14 +171,12 @@ res
 
 ---
 
-[ISPOR poster by Hatswell](https://www.ispor.org/heor-resources/presentations-database/presentation/euro2024-4016/141209) make a comparison of different MAIC R packages.
-
-Of the packages considered, `{MAIC}` is not on CRAN so not included in our analysis at the moment.
+The 2024 [ISPOR poster by Hatswell](https://www.ispor.org/heor-resources/presentations-database/presentation/euro2024-4016/141209) presents a comparison of different MAIC R packages. We shall use this as our starting point. Of the packages considered, `{MAIC}` is not on CRAN so not included in our analysis at the moment.
 
 ## maicplus
 
-Roche developed `maic` package which is now deprecated and replaced by `maicplus`.
-We will follow the article titled [Anchored Binary Analysis](https://hta-pharma.github.io/maicplus/main/articles/anchored_binary.html).
+Roche developed the `maic` package which is now deprecated and replaced by `maicplus`.
+We will follow the article titled [Anchored Binary Analysis](https://hta-pharma.github.io/maicplus/main/articles/anchored_binary.html) to make our comparison.
 
 ```{r maicplus-original, warning=FALSE, message=FALSE}
 library(maicplus)
@@ -224,7 +229,7 @@ pseudo_adrs <- get_pseudo_ipd_binary(
 )
 
 # Perform MAIC analysis (matching only on means)
-result <- maic_anchored(
+res_maicplus <- maic_anchored(
   weights_object = weighted_data,
   ipd = adrs_twt,
   pseudo_ipd = pseudo_adrs,
@@ -239,14 +244,14 @@ result <- maic_anchored(
 )
 
 
-result
+res_maicplus
 ```
 
 ```{r maicplus-alternative, warning=FALSE, message=FALSE}
-library(dplyr)
-library(glue)
+library(dplyr, verbose = FALSE, quietly = TRUE)
+library(glue, verbose = FALSE, quietly = TRUE)
 
-# why has this got median in name here?
+##TODO: why has this got median in name here?
 adsl_colnames[adsl_colnames == "N_PR_THER_MEDIAN"] <- "N_PR_THER"
 
 lin_form <- as.formula(glue("y ~ trt * ({paste(adsl_colnames, collapse = ' + ')})"))
@@ -257,26 +262,37 @@ AC.IPD <- adsl_twt |>
          y = RESPONSE) |> 
   mutate(AGE_SQUARED = AGE^2)
 
+# transform names to format needed in outstandR
+# mean.* and y.*
+# note that we're nto going to use sd in matching
 BC.ALD <- agd |> 
   rename(mean.AGE = AGE_MEAN,
-         sd.AGE = AGE_SD,
+         # sd.AGE = AGE_SD,
          mean.SEX_MALE = SEX_MALE_PROP,
          mean.ECOG0 = ECOG0_PROP,
          mean.SMOKE = SMOKE_PROP,
          mean.N_PR_THER = N_PR_THER_MEDIAN) |> 
-  mutate(mean.AGE_SQUARED = sd.AGE^2 + mean.AGE^2,
-         sd.SEX_MALE = sqrt(mean.SEX_MALE * (1 - mean.SEX_MALE)), 
-         sd.ECOG0 = sqrt(mean.ECOG0 * (1 - mean.ECOG0)), 
-         sd.SMOKE = sqrt(mean.SMOKE * (1 - mean.SMOKE)), 
-         # outcomes
-         N.B = 480, 
-         y.B.sum = binary_agd[binary_agd$ARM == "B" & binary_agd$RESPONSE == "YES", "COUNT"],
-         y.B.bar = y.B.sum/N.B,
-         N.C = 320, 
-         y.C.sum = binary_agd[binary_agd$ARM == "C" & binary_agd$RESPONSE == "YES", "COUNT"],
-         y.C.bar = y.C.sum/N.C)
+  mutate(
+    # mean.AGE_SQUARED = sd.AGE^2 + mean.AGE^2,
+    mean.AGE_SQUARED = mean.AGE^2,                 ##TODO: this is a fudge
+    # sd.SEX_MALE = sqrt(mean.SEX_MALE * (1 - mean.SEX_MALE)), 
+    # sd.ECOG0 = sqrt(mean.ECOG0 * (1 - mean.ECOG0)), 
+    # sd.SMOKE = sqrt(mean.SMOKE * (1 - mean.SMOKE)), 
+    # outcomes
+    N.B = 480, 
+    y.B.sum = binary_agd[binary_agd$ARM == "B" & binary_agd$RESPONSE == "YES", "COUNT"],
+    y.B.bar = y.B.sum/N.B,
+    N.C = 320, 
+    y.C.sum = binary_agd[binary_agd$ARM == "C" & binary_agd$RESPONSE == "YES", "COUNT"],
+    y.C.bar = y.C.sum/N.C)
 
-##TODO: haven't got all the agd sd. do I need it?
+BC.ALD
+```
+
+Now that we've prepared the input data we're ready to run the model.
+
+```{r eval=FALSE}
+##TODO: fix bug
 outstandR_maic <-
   outstandR(AC.IPD, BC.ALD,
             strategy = strategy_maic(formula = lin_form,
@@ -286,25 +302,28 @@ outstandR_maic <-
 
 ## maicChecks
 
-We now follow the examples for [`maicChecks`](https://clyau.github.io/maicChecks/).
+We now follow the examples for the package [`maicChecks`](https://clyau.github.io/maicChecks/).
 
 ```{r, warning=FALSE, message=FALSE}
+##TODO:
 library(maicChecks)
 ```
 
 ---
 
-For g-formula we will use `gFormulaMI` and `gfoRmula`.
+For G-formula we will compare with the output from the packages `gFormulaMI` and `gfoRmula`.
 
 ## gfoRmula
 
 ```{r, warning=FALSE, message=FALSE}
+##TODO:
 library(gfoRmula)
 ```
 
 ## gFormulaMI
 
 ```{r, warning=FALSE, message=FALSE}
+##TODO:
 library(gFormulaMI)
 ```
 

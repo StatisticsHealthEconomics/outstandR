@@ -7,9 +7,9 @@
 Q(beta, X)
 }
 \arguments{
-\item{beta}{Beta}
+\item{beta}{Beta coefficient}
 
-\item{X}{X}
+\item{X}{Covariate value}
 }
 \description{
 Objective function to minimize for standard method of moments MAIC

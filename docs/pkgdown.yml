@@ -1,4 +1,4 @@
-pandoc: '3.4'
+pandoc: '3.2'
 pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
@@ -6,9 +6,8 @@ articles:
   Binary_data_Remiro-Azocar: Binary_data_Remiro-Azocar.html
   comparison-with-other-packages: comparison-with-other-packages.html
   Continuous_data_example: Continuous_data_example.html
-  copd_analysis: copd_analysis.html
   Count_data_example: Count_data_example.html
-last_built: 2025-04-24T08:16Z
+last_built: 2025-04-24T11:15Z
 urls:
   reference: https://StatisticsHealthEconomics.github.io/outstandR/reference
   article: https://StatisticsHealthEconomics.github.io/outstandR/articles

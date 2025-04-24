@@ -14,12 +14,14 @@ which define the bootstrap sample}
 
 \item{formula}{Linear regression formula}
 
-\item{family}{Family object}
+\item{family}{A character string specifying the family distribution (e.g., "binomial").}
 
 \item{ald}{Aggregate-level data}
+
+\item{hat_w}{MAIC weights; default \code{NULL} which calls \code{\link[=maic_weights]{maic_weights()}}}
 }
 \value{
-Fitted probabilities for \emph{A} and \emph{C}
+Vector of fitted probabilities for treatments \emph{A} and \emph{C}
 }
 \description{
 Matching-adjusted indirect comparison bootstrap sampling.

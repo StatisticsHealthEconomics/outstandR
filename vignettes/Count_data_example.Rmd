@@ -14,6 +14,7 @@ editor_options:
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
+  eval = FALSE,  ##TODO:
   comment = "#>"
 )
 ```
@@ -29,6 +30,7 @@ library(boot)      # non-parametric bootstrap in MAIC and ML G-computation
 library(copula)    # simulating BC covariates from Gaussian copula
 library(rstanarm)  # fit outcome regression, draw outcomes in Bayesian G-computation
 library(outstandR)
+library(simcovariates)
 ```
 
 ### Data
@@ -87,13 +89,13 @@ out.B <- dplyr::filter(BC.IPD, trt == 0) %>%
             N.C = n())
 
 BC.ALD <- cbind.data.frame(cov.X, out.C, out.B)
+
+# By definition, the true log-OR relative effect in the AC population between AC is `r b_trt`. Between BC is `r b_trt` and between AB is `r b_trt - b_trt`.
+# A naive indirect comparison, ignoring the presence of effect modifiers, would calculate the C vs B effect in the AC population as
+# `b_trt - b_trt`.
 ```
 
-By definition, the true log-OR relative effect in the AC population
-between AC is `r `b_trt`. Between BC is `r b_trt` and between AB is `r b_trt - b_trt`.
 
-A naive indirect comparison, ignoring the presence of effect modifiers, would calculate the C vs B effect in the AC population as
-`b_trt - b_trt`.
 
 
 ### Output statistics
@@ -132,7 +134,7 @@ non-parametric bootstrap of the `maic.boot` function with `R = 1000`
 replicates. This function fits treatment coefficient for the marginal
 effect for *A* vs *C*. The returned value is an object of class `boot`
 from the `{boot}` package. We then calculate the bootstrap mean and
-variance in the wrapper function `maic_boot_stats`.
+variance in the wrapper function `maic_boot_stats()`.
 
 The formula used in this model is
 
