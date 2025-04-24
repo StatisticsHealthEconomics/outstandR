@@ -127,12 +127,14 @@ of
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>μ</mi><mrow><mi>B</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mi>B</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><annotation encoding="application/x-tex">\mu_{B(AB)}</annotation></semantics></math>,
 respectively, which are the summary outcomes. It is the same situation
 for the <em>AC</em> trial.</p>
-<p>For a suitable scale, for example a logit, or risk difference, we
-form estimators
+<p>For a suitable scale, for example a log-odds ratio, or risk
+difference, we form estimators
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Δ</mi><mrow><mi>A</mi><mi>B</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mi>B</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><annotation encoding="application/x-tex">\Delta_{AB(AB)}</annotation></semantics></math>
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Δ</mi><mrow><mi>A</mi><mi>C</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mi>C</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><annotation encoding="application/x-tex">\Delta_{AC(AC)}</annotation></semantics></math>
-of the trial level (or marginal) relative treatment effects.</p>
+of the trial level (or marginal) relative treatment effects. This is
+always as a difference so, for example, for the risk ratio this is on
+the log scale.</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Δ</mi><mrow><mi>A</mi><mi>B</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mi>B</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><mo>=</mo><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mover><mi>Y</mi><mo accent="true">‾</mo></mover><mrow><mi>B</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mi>B</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mover><mi>Y</mi><mo accent="true">‾</mo></mover><mrow><mi>A</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mi>B</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
 \Delta_{AB(AB)} = g(\bar{Y}_{B{(AB)}}) - g(\bar{Y}_{A{(AB)}})
 </annotation></semantics></math></p>
@@ -145,7 +147,8 @@ of the trial level (or marginal) relative treatment effects.</p>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span>      <span class="co"># non-parametric bootstrap in MAIC and ML G-computation</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://copula.r-forge.r-project.org/" class="external-link">copula</a></span><span class="op">)</span>    <span class="co"># simulating BC covariates from Gaussian copula</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mc-stan.org/rstanarm/" class="external-link">rstanarm</a></span><span class="op">)</span>  <span class="co"># fit outcome regression, draw outcomes in Bayesian G-computation</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://StatisticsHealthEconomics.github.io/outstandR">outstandR</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://StatisticsHealthEconomics.github.io/outstandR">outstandR</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">simcovariates</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="data">Data<a class="anchor" aria-label="anchor" href="#data"></a>
 </h3>
@@ -165,24 +168,11 @@ available to the analyst in the published study in a table of baseline
 characteristics in the RCT publication. The binary outcomes are
 summarized in an overall event table. Typically, the published study
 only provides aggregate information to the analyst.</p>
-<p>Use the <code><a href="../reference/gen_data.html">gen_data()</a></code> function available with the
+<p>Use the <code><a href="https://rdrr.io/pkg/simcovariates/man/gen_data.html" class="external-link">gen_data()</a></code> function available with the
 <code>outstandR</code> package.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attaching package: 'dplyr'</span></span>
-<span><span class="co">#&gt; The following objects are masked from 'package:stats':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     filter, lag</span></span>
-<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://www.stats.ox.ac.uk/pub/MASS4/" class="external-link">MASS</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attaching package: 'MASS'</span></span>
-<span><span class="co">#&gt; The following object is masked from 'package:dplyr':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     select</span></span>
 <span></span>
 <span><span class="va">N</span> <span class="op">&lt;-</span> <span class="fl">200</span></span>
 <span><span class="va">allocation</span> <span class="op">&lt;-</span> <span class="fl">2</span><span class="op">/</span><span class="fl">3</span>      <span class="co"># active treatment vs. placebo allocation ratio (2:1)</span></span>
@@ -198,7 +188,7 @@ only provides aggregate information to the analyst.</p>
 <span><span class="va">corX</span> <span class="op">&lt;-</span> <span class="fl">0.2</span>            <span class="co"># covariate correlation coefficient  </span></span>
 <span><span class="va">b_0</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fl">0.6</span>            <span class="co"># baseline intercept coefficient  ##TODO: fixed value</span></span>
 <span></span>
-<span><span class="va">AC.IPD</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gen_data.html">gen_data</a></span><span class="op">(</span><span class="va">N</span>, <span class="va">b_trt</span>, <span class="va">b_X</span>, <span class="va">b_EM</span>, <span class="va">b_0</span>,</span>
+<span><span class="va">AC.IPD</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/simcovariates/man/gen_data.html" class="external-link">gen_data</a></span><span class="op">(</span><span class="va">N</span>, <span class="va">b_trt</span>, <span class="va">b_X</span>, <span class="va">b_EM</span>, <span class="va">b_0</span>,</span>
 <span>                   <span class="va">meanX_AC</span>, <span class="va">sdX</span>, </span>
 <span>                   <span class="va">meanX_EM_AC</span>, <span class="va">sdX_EM</span>, </span>
 <span>                   <span class="va">corX</span>, <span class="va">allocation</span>,</span>
@@ -206,7 +196,7 @@ only provides aggregate information to the analyst.</p>
 <p>Similarly, for the aggregate data but with the additional summarise
 step.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">BC.IPD</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gen_data.html">gen_data</a></span><span class="op">(</span><span class="va">N</span>, <span class="va">b_trt</span>, <span class="va">b_X</span>, <span class="va">b_EM</span>, <span class="va">b_0</span>,</span>
+<code class="sourceCode R"><span><span class="va">BC.IPD</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/simcovariates/man/gen_data.html" class="external-link">gen_data</a></span><span class="op">(</span><span class="va">N</span>, <span class="va">b_trt</span>, <span class="va">b_X</span>, <span class="va">b_EM</span>, <span class="va">b_0</span>,</span>
 <span>                   <span class="va">meanX_BC</span>, <span class="va">sdX</span>, </span>
 <span>                   <span class="va">meanX_EM_BC</span>, <span class="va">sdX_EM</span>, </span>
 <span>                   <span class="va">corX</span>, <span class="va">allocation</span>,</span>
@@ -235,11 +225,8 @@ will be:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">logit</mtext><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>p</mi><mrow><mi>i</mi><mi>t</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>β</mi><mn>0</mn></msub><mo>+</mo><msub><mi>β</mi><mi>X</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mn>3</mn></msub><mo>+</mo><msub><mi>X</mi><mn>4</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>β</mi><mrow><mi>t</mi><mi>r</mi><mi>t</mi></mrow></msub><mo>+</mo><msub><mi>β</mi><mrow><mi>E</mi><mi>M</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mn>1</mn></msub><mo>+</mo><msub><mi>X</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mspace width="0.278em"></mspace><mtext mathvariant="normal">I</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mi>r</mi><mi>t</mi><mo>≠</mo><mi>C</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
 \text{logit}(p_{it}) = \beta_0 + \beta_X (X_3 + X_4) + [\beta_{trt} + \beta_{EM} (X_1 + X_2)] \; \text{I}(trt \neq C)
 </annotation></semantics></math></p>
-<p>So, the log OR for the treatment effect of interest,
-i.e. <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mi>C</mi></mrow><annotation encoding="application/x-tex">AC</annotation></semantics></math>
-or
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mi>C</mi></mrow><annotation encoding="application/x-tex">BC</annotation></semantics></math>,
-is
+<p>So, the log OR for the treatment effect of interest, i.e. <em>AC</em>
+or <em>BC</em>, is
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>β</mi><mrow><mi>t</mi><mi>r</mi><mi>t</mi></mrow></msub><annotation encoding="application/x-tex">\beta_{trt}</annotation></semantics></math>
 (<code>b_trt</code>).</p>
 <p>This general format of data sets consist of the following.</p>
@@ -287,10 +274,9 @@ observed</li>
 <span><span class="co">#&gt; 6 0.06916082 -0.3125090 0.99150666 -0.1102693   1 0</span></span></code></pre></div>
 <p>There are 4 correlated continuous covariates generated per subject,
 simulated from a multivariate normal distribution. Treatment
-<code>trt</code> 1 corresponds to new treatment
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math>,
-and 0 is standard of care or status quo
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>C</mi><annotation encoding="application/x-tex">C</annotation></semantics></math>.</p>
+<code>trt</code> 1 corresponds to new treatment <em>A</em>, and 0 is
+standard of care or status quo <em>C</em>. The ITC is ‘anchored’ via
+<em>C</em>, the common treatment.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">BC.ALD</span></span>
 <span><span class="co">#&gt;    mean.X1     sd.X1  mean.X2     sd.X2   mean.X3     sd.X3  mean.X4     sd.X4</span></span>
@@ -306,23 +292,25 @@ and the event total, average and sample size for each treatment
 <h3 id="output-statistics">Output statistics<a class="anchor" aria-label="anchor" href="#output-statistics"></a>
 </h3>
 <p>We will implement for MAIC, STC, and G-computation methods to obtain
-the <em>marginal variance</em>, defined as</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mn>1</mn><msub><mi>n</mi><mi>C</mi></msub></mfrac><mo>+</mo><mfrac><mn>1</mn><msub><mi>n</mi><mover><mi>C</mi><mo accent="true">‾</mo></mover></msub></mfrac><mo>+</mo><mfrac><mn>1</mn><msub><mi>n</mi><mi>B</mi></msub></mfrac><mo>+</mo><mfrac><mn>1</mn><msub><mi>n</mi><mover><mi>B</mi><mo accent="true">‾</mo></mover></msub></mfrac></mrow><annotation encoding="application/x-tex">
-\frac{1}{n_C} + \frac{1}{n_{\bar{C}}} + \frac{1}{n_B} + \frac{1}{n_{\bar{B}}}
-</annotation></semantics></math></p>
-<p>and the <em>marginal treatment effect</em>, defined as the log-odds
-ratio,</p>
+the <em>marginal treatment effect</em> and <em>marginal variance</em>.
+The definition by which these are calculated depends on the type of data
+and outcome scale. For our current example of binary data and log-odds
+ratio the marginal treatment effect is</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mrow><msub><mi>n</mi><mi>B</mi></msub><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>N</mi><mi>B</mi></msub><mo>−</mo><msub><mi>n</mi><mi>B</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mrow><msub><mi>n</mi><mi>C</mi></msub><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>N</mi><mi>B</mi></msub><mo>−</mo><msub><mi>n</mi><mi>B</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>n</mi><mi>B</mi></msub><msub><mi>n</mi><mover><mi>C</mi><mo accent="true">‾</mo></mover></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>n</mi><mi>C</mi></msub><msub><mi>n</mi><mover><mi>B</mi><mo accent="true">‾</mo></mover></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
 \log\left( \frac{n_B/(N_B-n_B)}{n_C/(N_B-n_{B})} \right) = \log(n_B n_{\bar{C}}) - \log(n_C n_{\bar{B}})
 </annotation></semantics></math></p>
-<p>where
+<p>and marginal variance is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mn>1</mn><msub><mi>n</mi><mi>C</mi></msub></mfrac><mo>+</mo><mfrac><mn>1</mn><msub><mi>n</mi><mover><mi>C</mi><mo accent="true">‾</mo></mover></msub></mfrac><mo>+</mo><mfrac><mn>1</mn><msub><mi>n</mi><mi>B</mi></msub></mfrac><mo>+</mo><mfrac><mn>1</mn><msub><mi>n</mi><mover><mi>B</mi><mo accent="true">‾</mo></mover></msub></mfrac></mrow><annotation encoding="application/x-tex">
+\frac{1}{n_C} + \frac{1}{n_{\bar{C}}} + \frac{1}{n_B} + \frac{1}{n_{\bar{B}}}
+</annotation></semantics></math> where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>n</mi><mi>B</mi></msub><mo>,</mo><msub><mi>n</mi><mi>C</mi></msub></mrow><annotation encoding="application/x-tex">n_B, n_C</annotation></semantics></math>
 are the number of events in each arm and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>C</mi><mo accent="true">‾</mo></mover><annotation encoding="application/x-tex">\bar{C}</annotation></semantics></math>
 is the compliment of
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>C</mi><annotation encoding="application/x-tex">C</annotation></semantics></math>
 so
-e.g. <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>n</mi><mover><mi>C</mi><mo accent="true">‾</mo></mover></msub><mo>=</mo><msub><mi>N</mi><mi>C</mi></msub><mo>−</mo><msub><mi>n</mi><mi>c</mi></msub></mrow><annotation encoding="application/x-tex">n_{\bar{C}} = N_C - n_c</annotation></semantics></math>.</p>
+e.g. <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>n</mi><mover><mi>C</mi><mo accent="true">‾</mo></mover></msub><mo>=</mo><msub><mi>N</mi><mi>C</mi></msub><mo>−</mo><msub><mi>n</mi><mi>c</mi></msub></mrow><annotation encoding="application/x-tex">n_{\bar{C}} = N_C - n_c</annotation></semantics></math>.
+Other scales will be discussed below.</p>
 </div>
 </div>
 <div class="section level2">
@@ -369,17 +357,50 @@ function.</p>
 <span>                                     family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>The returned object is of class <code>outstandR</code>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outstandR_maic</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">outstandR_maic</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 3</span></span>
+<span><span class="co">#&gt;  $ contrasts:List of 3</span></span>
+<span><span class="co">#&gt;   ..$ AB: num -1</span></span>
+<span><span class="co">#&gt;   ..$ AC: num -2.1</span></span>
+<span><span class="co">#&gt;   ..$ BC: num -1.1</span></span>
+<span><span class="co">#&gt;  $ variances:List of 3</span></span>
+<span><span class="co">#&gt;   ..$ AB: num 0.259</span></span>
+<span><span class="co">#&gt;   ..$ AC: num 0.16</span></span>
+<span><span class="co">#&gt;   ..$ BC: num 0.0992</span></span>
+<span><span class="co">#&gt;  $ CI       :List of 3</span></span>
+<span><span class="co">#&gt;   ..$ AB: num [1:2] -1.99888 -0.00345</span></span>
+<span><span class="co">#&gt;   ..$ AC: num [1:2] -2.88 -1.32</span></span>
+<span><span class="co">#&gt;   ..$ BC: num [1:2] -1.716 -0.481</span></span>
+<span><span class="co">#&gt;  - attr(*, "CI")= num 0.95</span></span>
+<span><span class="co">#&gt;  - attr(*, "scale")= chr "log_odds"</span></span>
+<span><span class="co">#&gt;  - attr(*, "class")= chr [1:2] "outstandR" "list"</span></span></code></pre></div>
 <p>We see that this is a list object with 3 parts, each containing
 statistics between each pair of treatments. These are the mean
 contrasts, variances and confidence intervals (CI), respectively. The
 default CI is for 95% but can be altered in <code>outstandR</code> with
 the <code>CI</code> argument.</p>
+<p>A <code>print</code> method is available for <code>outstandR</code>
+objects for more human-readable output</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">outstandR_maic</span></span>
+<span><span class="co">#&gt; Object of class 'outstandR' </span></span>
+<span><span class="co">#&gt; Scale: <span style="color: #949494;">log_odds</span> </span></span>
+<span><span class="co">#&gt; Common treatment: <span style="color: #949494;">C</span> </span></span>
+<span><span class="co">#&gt; Individual patient data study: <span style="color: #949494;">AC</span> </span></span>
+<span><span class="co">#&gt; Aggregate level data study: <span style="color: #949494;">BC</span> </span></span>
+<span><span class="co">#&gt; Confidence interval level: <span style="color: #949494;">0.95</span> </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 5</span></span></span>
+<span><span class="co">#&gt;   Treatments Estimate Std.Error lower.0.95 upper.0.95</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AB            -<span style="color: #BB0000;">1.00</span>    0.259       -<span style="color: #BB0000;">2.00</span>   -<span style="color: #BB0000;">0.003</span><span style="color: #BB0000; text-decoration: underline;">45</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AC            -<span style="color: #BB0000;">2.10</span>    0.160       -<span style="color: #BB0000;">2.88</span>   -<span style="color: #BB0000;">1.32</span>   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> BC            -<span style="color: #BB0000;">1.10</span>    0.099<span style="text-decoration: underline;">2</span>      -<span style="color: #BB0000;">1.72</span>   -<span style="color: #BB0000;">0.481</span></span></span></code></pre></div>
 <div class="section level4">
 <h4 id="outcome-scale">Outcome scale<a class="anchor" aria-label="anchor" href="#outcome-scale"></a>
 </h4>
 <p>If we do not explicitly specify the outcome scale, the default is
-that used for fit the data in the regression model. As we saw, in this
+that used to fit to the data in the regression model. As we saw, in this
 case, the default is log-odds ratio corresponding to the
 <code>"logit"</code> link function for binary data. However, we can
 change this to some other scale which may be more appropriate for a
@@ -414,28 +435,62 @@ their corresponding relative treatment effect scales are as follows:</p>
 </tbody>
 </table>
 <p>The full list of possible transformed treatment effect scales are:
-<em>log-odds ratio</em>, <em>log-risk ratio</em>, <em>mean
-difference</em>, risk difference, hazard ratio, hazard difference.</p>
+log-odds ratio, log-risk ratio, mean difference, risk difference, hazard
+ratio, hazard difference.</p>
+<p>For binary data the marginal treatment effect and variance are</p>
+<ul>
+<li><strong>Log-risk ratio</strong></li>
+</ul>
+<p>Treatment effect is
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>n</mi><mi>B</mi></msub><mi>/</mi><msub><mi>N</mi><mi>B</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>n</mi><mi>A</mi></msub><mi>/</mi><msub><mi>N</mi><mi>A</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+\log(n_B/N_B) - \log(n_A/N_A)
+</annotation></semantics></math> and variance
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mn>1</mn><msub><mi>n</mi><mi>B</mi></msub></mfrac><mo>−</mo><mfrac><mn>1</mn><msub><mi>N</mi><mi>B</mi></msub></mfrac><mo>+</mo><mfrac><mn>1</mn><msub><mi>n</mi><mi>A</mi></msub></mfrac><mo>−</mo><mfrac><mn>1</mn><msub><mi>N</mi><mi>A</mi></msub></mfrac></mrow><annotation encoding="application/x-tex">
+\frac{1}{n_B} - \frac{1}{N_B} + \frac{1}{n_A} - \frac{1}{N_A}
+</annotation></semantics></math></p>
+<ul>
+<li><strong>Risk difference</strong></li>
+</ul>
+<p>Treatment effect is
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><msub><mi>n</mi><mi>B</mi></msub><msub><mi>N</mi><mi>B</mi></msub></mfrac><mo>−</mo><mfrac><msub><mi>n</mi><mi>A</mi></msub><msub><mi>N</mi><mi>A</mi></msub></mfrac></mrow><annotation encoding="application/x-tex">
+\frac{n_B}{N_B} - \frac{n_A}{N_A}
+</annotation></semantics></math> and variance
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><msub><mi>n</mi><mi>B</mi></msub><msub><mi>N</mi><mi>B</mi></msub></mfrac><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mfrac><msub><mi>n</mi><mi>B</mi></msub><msub><mi>N</mi><mi>B</mi></msub></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mfrac><msub><mi>n</mi><mi>A</mi></msub><msub><mi>N</mi><mi>A</mi></msub></mfrac><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mfrac><msub><mi>n</mi><mi>A</mi></msub><msub><mi>N</mi><mi>A</mi></msub></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+\frac{n_B}{N_B} \left( 1 - \frac{n_B}{N_B} \right) + \frac{n_A}{N_A} \left( 1 - \frac{n_A}{N_A} \right)
+</annotation></semantics></math></p>
 <p>To change the outcome scale, we can pass the <code>scale</code>
 argument in the <code><a href="../reference/outstandR.html">outstandR()</a></code> function. For example, to
 change the scale to risk difference, we can use the following code.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outstandR_maic_lrr</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>,</span>
 <span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_maic</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
 <span>                                     family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>            scale <span class="op">=</span> <span class="st">"log_relative_risk"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outstandR_maic_lrr</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">outstandR_maic_lrr</span></span>
+<span><span class="co">#&gt; Object of class 'outstandR' </span></span>
+<span><span class="co">#&gt; Scale: <span style="color: #949494;">log_relative_risk</span> </span></span>
+<span><span class="co">#&gt; Common treatment: <span style="color: #949494;">C</span> </span></span>
+<span><span class="co">#&gt; Individual patient data study: <span style="color: #949494;">AC</span> </span></span>
+<span><span class="co">#&gt; Aggregate level data study: <span style="color: #949494;">BC</span> </span></span>
+<span><span class="co">#&gt; Confidence interval level: <span style="color: #949494;">0.95</span> </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 5</span></span></span>
+<span><span class="co">#&gt;   Treatments Estimate Std.Error lower.0.95 upper.0.95</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AB           -<span style="color: #BB0000;">0.458</span>    0.087<span style="text-decoration: underline;">0</span>      -<span style="color: #BB0000;">1.04</span>      0.120</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AC           -<span style="color: #BB0000;">1.14</span>     0.050<span style="text-decoration: underline;">7</span>      -<span style="color: #BB0000;">1.59</span>     -<span style="color: #BB0000;">0.703</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> BC           -<span style="color: #BB0000;">0.686</span>    0.036<span style="text-decoration: underline;">4</span>      -<span style="color: #BB0000;">1.06</span>     -<span style="color: #BB0000;">0.312</span></span></span></code></pre></div>
 </div>
 </div>
 <div class="section level3">
-<h3 id="stc">STC<a class="anchor" aria-label="anchor" href="#stc"></a>
+<h3 id="simulated-treatment-comparison">Simulated treatment comparison<a class="anchor" aria-label="anchor" href="#simulated-treatment-comparison"></a>
 </h3>
-<p>STC is the conventional outcome regression method. It involves
-fitting a regression model of outcome on treatment and covariates to the
-IPD. IPD effect modifiers are centred at the mean <em>BC</em>
-values.</p>
+<p>Simulated treatment comparison (STC) is the conventional outcome
+regression method. It involves fitting a regression model of outcome on
+treatment and covariates to the IPD. IPD effect modifiers are centred at
+the mean <em>BC</em> values.</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>μ</mi><mi>n</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>β</mi><mn>0</mn></msub><mo>+</mo><msub><mi>β</mi><mi>X</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>𝐱</mi><mi>n</mi></msub><mo>−</mo><mi>𝛉</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><msub><mi>𝛃</mi><mrow><mi>𝐄</mi><mi>𝐌</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>β</mi><mrow><mi>t</mi><mi>r</mi><mi>t</mi></mrow></msub><mo>+</mo><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mi>𝐱</mi><mi>𝐧</mi><mrow><mi>𝐄</mi><mi>𝐌</mi></mrow></msubsup><mo>−</mo><msup><mi>𝛉</mi><mrow><mi>𝐄</mi><mi>𝐌</mi></mrow></msup><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mspace width="0.278em"></mspace><mtext mathvariant="normal">I</mtext><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mi>r</mi><mi>t</mi><mo>≠</mo><mi>C</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
 g(\mu_n) = \beta_0 + \beta_X (\boldsymbol{x}_n - \boldsymbol{\theta}) + \boldsymbol{\beta_{EM}} (\beta_{trt} + (\boldsymbol{x_n^{EM}} - \boldsymbol{\theta^{EM}}) ) \; \mbox{I}(trt \neq C)
 </annotation></semantics></math></p>
@@ -461,23 +516,49 @@ y = X_3 + X_4 + \beta_t(X_1 - \bar{X_1}) + \beta_t(X_2 - \bar{X_2})
 </annotation></semantics></math></p>
 <p>However, <code><a href="../reference/outstandR.html">outstandR()</a></code> knows how to handle this so we can
 simply pass the same (uncentred) formula as before.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outstandR_stc</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>,</span>
 <span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_stc</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
 <span>                                    family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">outstandR_stc</span></span></code></pre></div>
+<span><span class="va">outstandR_stc</span></span>
+<span><span class="co">#&gt; Object of class 'outstandR' </span></span>
+<span><span class="co">#&gt; Scale: <span style="color: #949494;">log_odds</span> </span></span>
+<span><span class="co">#&gt; Common treatment: <span style="color: #949494;">C</span> </span></span>
+<span><span class="co">#&gt; Individual patient data study: <span style="color: #949494;">AC</span> </span></span>
+<span><span class="co">#&gt; Aggregate level data study: <span style="color: #949494;">BC</span> </span></span>
+<span><span class="co">#&gt; Confidence interval level: <span style="color: #949494;">0.95</span> </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 5</span></span></span>
+<span><span class="co">#&gt;   Treatments Estimate Std.Error lower.0.95 upper.0.95</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AB            0.366    1.85        -<span style="color: #BB0000;">2.30</span>      3.03 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AC           -<span style="color: #BB0000;">0.733</span>    1.75        -<span style="color: #BB0000;">3.33</span>      1.86 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> BC           -<span style="color: #BB0000;">1.10</span>     0.099<span style="text-decoration: underline;">2</span>      -<span style="color: #BB0000;">1.72</span>     -<span style="color: #BB0000;">0.481</span></span></span></code></pre></div>
 <p>Change the outcome scale</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outstandR_stc_lrr</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>,</span>
 <span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_stc</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
 <span>                                     family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>            scale <span class="op">=</span> <span class="st">"log_relative_risk"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outstandR_stc_lrr</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">outstandR_stc_lrr</span></span>
+<span><span class="co">#&gt; Object of class 'outstandR' </span></span>
+<span><span class="co">#&gt; Scale: <span style="color: #949494;">log_relative_risk</span> </span></span>
+<span><span class="co">#&gt; Common treatment: <span style="color: #949494;">C</span> </span></span>
+<span><span class="co">#&gt; Individual patient data study: <span style="color: #949494;">AC</span> </span></span>
+<span><span class="co">#&gt; Aggregate level data study: <span style="color: #949494;">BC</span> </span></span>
+<span><span class="co">#&gt; Confidence interval level: <span style="color: #949494;">0.95</span> </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 5</span></span></span>
+<span><span class="co">#&gt;   Treatments Estimate Std.Error lower.0.95 upper.0.95</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AB            0.212    0.699       -<span style="color: #BB0000;">1.43</span>      1.85 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AC           -<span style="color: #BB0000;">0.474</span>    0.662       -<span style="color: #BB0000;">2.07</span>      1.12 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> BC           -<span style="color: #BB0000;">0.686</span>    0.036<span style="text-decoration: underline;">4</span>      -<span style="color: #BB0000;">1.06</span>     -<span style="color: #BB0000;">0.312</span></span></span></code></pre></div>
 <p>For the last two approaches, we perform G-computation firstly with a
-frequentist MLE approach and then a Bayesian approach.</p>
+frequentist MLE and then a Bayesian approach.</p>
 </div>
 <div class="section level3">
 <h3 id="parametric-g-computation-with-maximum-likelihood-estimation">Parametric G-computation with maximum-likelihood estimation<a class="anchor" aria-label="anchor" href="#parametric-g-computation-with-maximum-likelihood-estimation"></a>
@@ -519,21 +600,47 @@ between the average linear predictions:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mover><mi>Δ</mi><mo accent="true">̂</mo></mover><mn>10</mn><mrow><mo stretchy="true" form="prefix">(</mo><mn>2</mn><mo stretchy="true" form="postfix">)</mo></mrow></msubsup><mo>=</mo><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mover><mi>μ</mi><mo accent="true">̂</mo></mover><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mover><mi>μ</mi><mo accent="true">̂</mo></mover><mn>0</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
 \hat{\Delta}^{(2)}_{10} = g(\hat{\mu}_1) - g(\hat{\mu}_0)
 </annotation></semantics></math></p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outstandR_gcomp_ml</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>,</span>
 <span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_ml</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
 <span>                                         family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">outstandR_gcomp_ml</span></span></code></pre></div>
+<span><span class="va">outstandR_gcomp_ml</span></span>
+<span><span class="co">#&gt; Object of class 'outstandR' </span></span>
+<span><span class="co">#&gt; Scale: <span style="color: #949494;">log_odds</span> </span></span>
+<span><span class="co">#&gt; Common treatment: <span style="color: #949494;">C</span> </span></span>
+<span><span class="co">#&gt; Individual patient data study: <span style="color: #949494;">AC</span> </span></span>
+<span><span class="co">#&gt; Aggregate level data study: <span style="color: #949494;">BC</span> </span></span>
+<span><span class="co">#&gt; Confidence interval level: <span style="color: #949494;">0.95</span> </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 5</span></span></span>
+<span><span class="co">#&gt;   Treatments Estimate Std.Error lower.0.95 upper.0.95</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AB           -<span style="color: #BB0000;">0.966</span>    0.242       -<span style="color: #BB0000;">1.93</span>   -<span style="color: #BB0000;">0.002</span><span style="color: #BB0000; text-decoration: underline;">74</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AC           -<span style="color: #BB0000;">2.06</span>     0.142       -<span style="color: #BB0000;">2.80</span>   -<span style="color: #BB0000;">1.33</span>   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> BC           -<span style="color: #BB0000;">1.10</span>     0.099<span style="text-decoration: underline;">2</span>      -<span style="color: #BB0000;">1.72</span>   -<span style="color: #BB0000;">0.481</span></span></span></code></pre></div>
 <p>Change the outcome scale</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outstandR_gcomp_ml_lrr</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>,</span>
 <span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_ml</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
 <span>                                         family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>            scale <span class="op">=</span> <span class="st">"log_relative_risk"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outstandR_gcomp_ml_lrr</span></span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">outstandR_gcomp_ml_lrr</span></span>
+<span><span class="co">#&gt; Object of class 'outstandR' </span></span>
+<span><span class="co">#&gt; Scale: <span style="color: #949494;">log_relative_risk</span> </span></span>
+<span><span class="co">#&gt; Common treatment: <span style="color: #949494;">C</span> </span></span>
+<span><span class="co">#&gt; Individual patient data study: <span style="color: #949494;">AC</span> </span></span>
+<span><span class="co">#&gt; Aggregate level data study: <span style="color: #949494;">BC</span> </span></span>
+<span><span class="co">#&gt; Confidence interval level: <span style="color: #949494;">0.95</span> </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 5</span></span></span>
+<span><span class="co">#&gt;   Treatments Estimate Std.Error lower.0.95 upper.0.95</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AB           -<span style="color: #BB0000;">0.463</span>    0.086<span style="text-decoration: underline;">9</span>      -<span style="color: #BB0000;">1.04</span>      0.115</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AC           -<span style="color: #BB0000;">1.15</span>     0.050<span style="text-decoration: underline;">5</span>      -<span style="color: #BB0000;">1.59</span>     -<span style="color: #BB0000;">0.708</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> BC           -<span style="color: #BB0000;">0.686</span>    0.036<span style="text-decoration: underline;">4</span>      -<span style="color: #BB0000;">1.06</span>     -<span style="color: #BB0000;">0.312</span></span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="bayesian-g-computation-with-mcmc">Bayesian G-computation with MCMC<a class="anchor" aria-label="anchor" href="#bayesian-g-computation-with-mcmc"></a>
@@ -579,7 +686,7 @@ under each set intervention
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>z</mi><mo>*</mo></msup><annotation encoding="application/x-tex">z^*</annotation></semantics></math>
 from its posterior predictive distribution under the specific
 treatment.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outstandR_gcomp_stan</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>,</span>
 <span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_stan</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
@@ -587,56 +694,119 @@ treatment.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 1).</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1: Gradient evaluation took 0.000755 seconds</span></span>
-<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 7.55 seconds.</span></span>
+<span><span class="co">#&gt; Chain 1: Gradient evaluation took 4.6e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.46 seconds.</span></span>
 <span><span class="co">#&gt; Chain 1: Adjust your expectations accordingly!</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1: Iteration:    1 / 4000 [  0%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration:  400 / 4000 [ 10%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration:  800 / 4000 [ 20%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 1200 / 4000 [ 30%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 1600 / 4000 [ 40%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 2000 / 4000 [ 50%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 2001 / 4000 [ 50%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 2400 / 4000 [ 60%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 2800 / 4000 [ 70%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 3200 / 4000 [ 80%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 3600 / 4000 [ 90%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 4000 / 4000 [100%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration:    1 / 2000 [  0%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration:  200 / 2000 [ 10%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration:  400 / 2000 [ 20%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration:  600 / 2000 [ 30%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration:  800 / 2000 [ 40%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 1000 / 2000 [ 50%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 1200 / 2000 [ 60%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 1400 / 2000 [ 70%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.378 seconds (Warm-up)</span></span>
-<span><span class="co">#&gt; Chain 1:                0.465 seconds (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1:                0.843 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.24 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 1:                0.257 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1:                0.497 seconds (Total)</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 2).</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
-<span><span class="co">#&gt; Chain 2: Gradient evaluation took 1.4e-05 seconds</span></span>
-<span><span class="co">#&gt; Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.14 seconds.</span></span>
+<span><span class="co">#&gt; Chain 2: Gradient evaluation took 1.6e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.16 seconds.</span></span>
 <span><span class="co">#&gt; Chain 2: Adjust your expectations accordingly!</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
-<span><span class="co">#&gt; Chain 2: Iteration:    1 / 4000 [  0%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration:  400 / 4000 [ 10%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration:  800 / 4000 [ 20%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 1200 / 4000 [ 30%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 1600 / 4000 [ 40%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 2000 / 4000 [ 50%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 2001 / 4000 [ 50%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 2400 / 4000 [ 60%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 2800 / 4000 [ 70%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 3200 / 4000 [ 80%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 3600 / 4000 [ 90%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 4000 / 4000 [100%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration:    1 / 2000 [  0%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration:  200 / 2000 [ 10%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration:  400 / 2000 [ 20%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration:  600 / 2000 [ 30%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration:  800 / 2000 [ 40%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 1000 / 2000 [ 50%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 1200 / 2000 [ 60%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 1400 / 2000 [ 70%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
-<span><span class="co">#&gt; Chain 2:  Elapsed Time: 0.374 seconds (Warm-up)</span></span>
-<span><span class="co">#&gt; Chain 2:                0.394 seconds (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2:                0.768 seconds (Total)</span></span>
-<span><span class="co">#&gt; Chain 2:</span></span>
-<span><span class="va">outstandR_gcomp_stan</span></span></code></pre></div>
+<span><span class="co">#&gt; Chain 2:  Elapsed Time: 0.231 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 2:                0.235 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2:                0.466 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 2: </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 3).</span></span>
+<span><span class="co">#&gt; Chain 3: </span></span>
+<span><span class="co">#&gt; Chain 3: Gradient evaluation took 1.5e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.15 seconds.</span></span>
+<span><span class="co">#&gt; Chain 3: Adjust your expectations accordingly!</span></span>
+<span><span class="co">#&gt; Chain 3: </span></span>
+<span><span class="co">#&gt; Chain 3: </span></span>
+<span><span class="co">#&gt; Chain 3: Iteration:    1 / 2000 [  0%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration:  200 / 2000 [ 10%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration:  400 / 2000 [ 20%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration:  600 / 2000 [ 30%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration:  800 / 2000 [ 40%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration: 1000 / 2000 [ 50%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration: 1200 / 2000 [ 60%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration: 1400 / 2000 [ 70%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 3: </span></span>
+<span><span class="co">#&gt; Chain 3:  Elapsed Time: 0.223 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 3:                0.221 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 3:                0.444 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 3: </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 4).</span></span>
+<span><span class="co">#&gt; Chain 4: </span></span>
+<span><span class="co">#&gt; Chain 4: Gradient evaluation took 1.5e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.15 seconds.</span></span>
+<span><span class="co">#&gt; Chain 4: Adjust your expectations accordingly!</span></span>
+<span><span class="co">#&gt; Chain 4: </span></span>
+<span><span class="co">#&gt; Chain 4: </span></span>
+<span><span class="co">#&gt; Chain 4: Iteration:    1 / 2000 [  0%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration:  200 / 2000 [ 10%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration:  400 / 2000 [ 20%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration:  600 / 2000 [ 30%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration:  800 / 2000 [ 40%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration: 1000 / 2000 [ 50%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration: 1200 / 2000 [ 60%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration: 1400 / 2000 [ 70%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 4: </span></span>
+<span><span class="co">#&gt; Chain 4:  Elapsed Time: 0.244 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 4:                0.228 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 4:                0.472 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 4:</span></span>
+<span><span class="va">outstandR_gcomp_stan</span></span>
+<span><span class="co">#&gt; Object of class 'outstandR' </span></span>
+<span><span class="co">#&gt; Scale: <span style="color: #949494;">log_odds</span> </span></span>
+<span><span class="co">#&gt; Common treatment: <span style="color: #949494;">C</span> </span></span>
+<span><span class="co">#&gt; Individual patient data study: <span style="color: #949494;">AC</span> </span></span>
+<span><span class="co">#&gt; Aggregate level data study: <span style="color: #949494;">BC</span> </span></span>
+<span><span class="co">#&gt; Confidence interval level: <span style="color: #949494;">0.95</span> </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 5</span></span></span>
+<span><span class="co">#&gt;   Treatments Estimate Std.Error lower.0.95 upper.0.95</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AB           -<span style="color: #BB0000;">0.980</span>    0.234       -<span style="color: #BB0000;">1.93</span>    -<span style="color: #BB0000;">0.031</span><span style="color: #BB0000; text-decoration: underline;">5</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AC           -<span style="color: #BB0000;">2.08</span>     0.135       -<span style="color: #BB0000;">2.80</span>    -<span style="color: #BB0000;">1.36</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> BC           -<span style="color: #BB0000;">1.10</span>     0.099<span style="text-decoration: underline;">2</span>      -<span style="color: #BB0000;">1.72</span>    -<span style="color: #BB0000;">0.481</span></span></span></code></pre></div>
 <p>Change the outcome scale</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outstandR_gcomp_stan_lrr</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>,</span>
 <span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_stan</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
@@ -645,55 +815,118 @@ treatment.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 1).</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1: Gradient evaluation took 1.8e-05 seconds</span></span>
-<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.18 seconds.</span></span>
+<span><span class="co">#&gt; Chain 1: Gradient evaluation took 2e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.2 seconds.</span></span>
 <span><span class="co">#&gt; Chain 1: Adjust your expectations accordingly!</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1: Iteration:    1 / 4000 [  0%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration:  400 / 4000 [ 10%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration:  800 / 4000 [ 20%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 1200 / 4000 [ 30%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 1600 / 4000 [ 40%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 2000 / 4000 [ 50%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 2001 / 4000 [ 50%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 2400 / 4000 [ 60%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 2800 / 4000 [ 70%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 3200 / 4000 [ 80%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 3600 / 4000 [ 90%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 4000 / 4000 [100%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration:    1 / 2000 [  0%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration:  200 / 2000 [ 10%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration:  400 / 2000 [ 20%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration:  600 / 2000 [ 30%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration:  800 / 2000 [ 40%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 1000 / 2000 [ 50%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 1200 / 2000 [ 60%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 1400 / 2000 [ 70%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.352 seconds (Warm-up)</span></span>
-<span><span class="co">#&gt; Chain 1:                0.437 seconds (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1:                0.789 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.24 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 1:                0.25 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1:                0.49 seconds (Total)</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 2).</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
-<span><span class="co">#&gt; Chain 2: Gradient evaluation took 1.3e-05 seconds</span></span>
-<span><span class="co">#&gt; Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.13 seconds.</span></span>
+<span><span class="co">#&gt; Chain 2: Gradient evaluation took 1.6e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.16 seconds.</span></span>
 <span><span class="co">#&gt; Chain 2: Adjust your expectations accordingly!</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
-<span><span class="co">#&gt; Chain 2: Iteration:    1 / 4000 [  0%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration:  400 / 4000 [ 10%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration:  800 / 4000 [ 20%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 1200 / 4000 [ 30%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 1600 / 4000 [ 40%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 2000 / 4000 [ 50%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 2001 / 4000 [ 50%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 2400 / 4000 [ 60%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 2800 / 4000 [ 70%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 3200 / 4000 [ 80%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 3600 / 4000 [ 90%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 4000 / 4000 [100%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration:    1 / 2000 [  0%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration:  200 / 2000 [ 10%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration:  400 / 2000 [ 20%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration:  600 / 2000 [ 30%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration:  800 / 2000 [ 40%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 1000 / 2000 [ 50%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 1200 / 2000 [ 60%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 1400 / 2000 [ 70%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
-<span><span class="co">#&gt; Chain 2:  Elapsed Time: 0.378 seconds (Warm-up)</span></span>
-<span><span class="co">#&gt; Chain 2:                0.408 seconds (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2:                0.786 seconds (Total)</span></span>
-<span><span class="co">#&gt; Chain 2:</span></span></code></pre></div>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outstandR_gcomp_stan_lrr</span></span></code></pre></div>
+<span><span class="co">#&gt; Chain 2:  Elapsed Time: 0.231 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 2:                0.234 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2:                0.465 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 2: </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 3).</span></span>
+<span><span class="co">#&gt; Chain 3: </span></span>
+<span><span class="co">#&gt; Chain 3: Gradient evaluation took 1.5e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.15 seconds.</span></span>
+<span><span class="co">#&gt; Chain 3: Adjust your expectations accordingly!</span></span>
+<span><span class="co">#&gt; Chain 3: </span></span>
+<span><span class="co">#&gt; Chain 3: </span></span>
+<span><span class="co">#&gt; Chain 3: Iteration:    1 / 2000 [  0%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration:  200 / 2000 [ 10%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration:  400 / 2000 [ 20%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration:  600 / 2000 [ 30%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration:  800 / 2000 [ 40%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration: 1000 / 2000 [ 50%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration: 1200 / 2000 [ 60%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration: 1400 / 2000 [ 70%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 3: </span></span>
+<span><span class="co">#&gt; Chain 3:  Elapsed Time: 0.221 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 3:                0.22 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 3:                0.441 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 3: </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 4).</span></span>
+<span><span class="co">#&gt; Chain 4: </span></span>
+<span><span class="co">#&gt; Chain 4: Gradient evaluation took 1.6e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.16 seconds.</span></span>
+<span><span class="co">#&gt; Chain 4: Adjust your expectations accordingly!</span></span>
+<span><span class="co">#&gt; Chain 4: </span></span>
+<span><span class="co">#&gt; Chain 4: </span></span>
+<span><span class="co">#&gt; Chain 4: Iteration:    1 / 2000 [  0%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration:  200 / 2000 [ 10%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration:  400 / 2000 [ 20%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration:  600 / 2000 [ 30%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration:  800 / 2000 [ 40%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration: 1000 / 2000 [ 50%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration: 1200 / 2000 [ 60%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration: 1400 / 2000 [ 70%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 4: </span></span>
+<span><span class="co">#&gt; Chain 4:  Elapsed Time: 0.243 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 4:                0.228 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 4:                0.471 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 4:</span></span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">outstandR_gcomp_stan_lrr</span></span>
+<span><span class="co">#&gt; Object of class 'outstandR' </span></span>
+<span><span class="co">#&gt; Scale: <span style="color: #949494;">log_relative_risk</span> </span></span>
+<span><span class="co">#&gt; Common treatment: <span style="color: #949494;">C</span> </span></span>
+<span><span class="co">#&gt; Individual patient data study: <span style="color: #949494;">AC</span> </span></span>
+<span><span class="co">#&gt; Aggregate level data study: <span style="color: #949494;">BC</span> </span></span>
+<span><span class="co">#&gt; Confidence interval level: <span style="color: #949494;">0.95</span> </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 5</span></span></span>
+<span><span class="co">#&gt;   Treatments Estimate Std.Error lower.0.95 upper.0.95</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AB           -<span style="color: #BB0000;">0.457</span>    0.082<span style="text-decoration: underline;">9</span>      -<span style="color: #BB0000;">1.02</span>      0.107</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AC           -<span style="color: #BB0000;">1.14</span>     0.046<span style="text-decoration: underline;">5</span>      -<span style="color: #BB0000;">1.57</span>     -<span style="color: #BB0000;">0.720</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> BC           -<span style="color: #BB0000;">0.686</span>    0.036<span style="text-decoration: underline;">4</span>      -<span style="color: #BB0000;">1.06</span>     -<span style="color: #BB0000;">0.312</span></span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="multiple-imputation-marginalisation">Multiple imputation marginalisation<a class="anchor" aria-label="anchor" href="#multiple-imputation-marginalisation"></a>
@@ -702,7 +935,7 @@ treatment.</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi><mi>q</mi><mi>u</mi><mi>a</mi><mi>t</mi><mi>i</mi><mi>o</mi><mi>n</mi><mi>h</mi><mi>e</mi><mi>r</mi><mi>e</mi></mrow><annotation encoding="application/x-tex">
 equation here
 </annotation></semantics></math></p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outstandR_mim</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>,</span>
 <span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_mim</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
@@ -710,8 +943,8 @@ equation here
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 1).</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1: Gradient evaluation took 4.3e-05 seconds</span></span>
-<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.43 seconds.</span></span>
+<span><span class="co">#&gt; Chain 1: Gradient evaluation took 2.1e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.21 seconds.</span></span>
 <span><span class="co">#&gt; Chain 1: Adjust your expectations accordingly!</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
@@ -728,15 +961,15 @@ equation here
 <span><span class="co">#&gt; Chain 1: Iteration: 3800 / 4000 [ 95%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 1: Iteration: 4000 / 4000 [100%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.195 seconds (Warm-up)</span></span>
-<span><span class="co">#&gt; Chain 1:                0.587 seconds (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1:                0.782 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.238 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 1:                0.719 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1:                0.957 seconds (Total)</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 2).</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
-<span><span class="co">#&gt; Chain 2: Gradient evaluation took 1.3e-05 seconds</span></span>
-<span><span class="co">#&gt; Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.13 seconds.</span></span>
+<span><span class="co">#&gt; Chain 2: Gradient evaluation took 1.6e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.16 seconds.</span></span>
 <span><span class="co">#&gt; Chain 2: Adjust your expectations accordingly!</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
@@ -753,13 +986,26 @@ equation here
 <span><span class="co">#&gt; Chain 2: Iteration: 3800 / 4000 [ 95%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 2: Iteration: 4000 / 4000 [100%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
-<span><span class="co">#&gt; Chain 2:  Elapsed Time: 0.195 seconds (Warm-up)</span></span>
-<span><span class="co">#&gt; Chain 2:                0.52 seconds (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2:                0.715 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 2:  Elapsed Time: 0.229 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 2:                0.678 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2:                0.907 seconds (Total)</span></span>
 <span><span class="co">#&gt; Chain 2:</span></span>
-<span><span class="va">outstandR_mim</span></span></code></pre></div>
+<span><span class="va">outstandR_mim</span></span>
+<span><span class="co">#&gt; Object of class 'outstandR' </span></span>
+<span><span class="co">#&gt; Scale: <span style="color: #949494;">log_odds</span> </span></span>
+<span><span class="co">#&gt; Common treatment: <span style="color: #949494;">C</span> </span></span>
+<span><span class="co">#&gt; Individual patient data study: <span style="color: #949494;">AC</span> </span></span>
+<span><span class="co">#&gt; Aggregate level data study: <span style="color: #949494;">BC</span> </span></span>
+<span><span class="co">#&gt; Confidence interval level: <span style="color: #949494;">0.95</span> </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 5</span></span></span>
+<span><span class="co">#&gt;   Treatments Estimate Std.Error lower.0.95 upper.0.95</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AB           -<span style="color: #BB0000;">0.960</span>    0.230       -<span style="color: #BB0000;">1.90</span>    -<span style="color: #BB0000;">0.020</span><span style="color: #BB0000; text-decoration: underline;">6</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AC           -<span style="color: #BB0000;">2.06</span>     0.130       -<span style="color: #BB0000;">2.77</span>    -<span style="color: #BB0000;">1.35</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> BC           -<span style="color: #BB0000;">1.10</span>     0.099<span style="text-decoration: underline;">2</span>      -<span style="color: #BB0000;">1.72</span>    -<span style="color: #BB0000;">0.481</span></span></span></code></pre></div>
 <p>Change the outcome scale</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outstandR_mim_lrr</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>,</span>
 <span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_mim</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
@@ -768,8 +1014,8 @@ equation here
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 1).</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1: Gradient evaluation took 3.4e-05 seconds</span></span>
-<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.34 seconds.</span></span>
+<span><span class="co">#&gt; Chain 1: Gradient evaluation took 2.1e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.21 seconds.</span></span>
 <span><span class="co">#&gt; Chain 1: Adjust your expectations accordingly!</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
@@ -786,15 +1032,15 @@ equation here
 <span><span class="co">#&gt; Chain 1: Iteration: 3800 / 4000 [ 95%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 1: Iteration: 4000 / 4000 [100%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.189 seconds (Warm-up)</span></span>
-<span><span class="co">#&gt; Chain 1:                0.551 seconds (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1:                0.74 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.238 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 1:                0.746 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1:                0.984 seconds (Total)</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 2).</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
-<span><span class="co">#&gt; Chain 2: Gradient evaluation took 1.3e-05 seconds</span></span>
-<span><span class="co">#&gt; Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.13 seconds.</span></span>
+<span><span class="co">#&gt; Chain 2: Gradient evaluation took 2.3e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.23 seconds.</span></span>
 <span><span class="co">#&gt; Chain 2: Adjust your expectations accordingly!</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
@@ -811,12 +1057,25 @@ equation here
 <span><span class="co">#&gt; Chain 2: Iteration: 3800 / 4000 [ 95%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 2: Iteration: 4000 / 4000 [100%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
-<span><span class="co">#&gt; Chain 2:  Elapsed Time: 0.174 seconds (Warm-up)</span></span>
-<span><span class="co">#&gt; Chain 2:                0.519 seconds (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2:                0.693 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 2:  Elapsed Time: 0.233 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 2:                0.678 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2:                0.911 seconds (Total)</span></span>
 <span><span class="co">#&gt; Chain 2:</span></span></code></pre></div>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outstandR_mim_lrr</span></span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">outstandR_mim_lrr</span></span>
+<span><span class="co">#&gt; Object of class 'outstandR' </span></span>
+<span><span class="co">#&gt; Scale: <span style="color: #949494;">log_relative_risk</span> </span></span>
+<span><span class="co">#&gt; Common treatment: <span style="color: #949494;">C</span> </span></span>
+<span><span class="co">#&gt; Individual patient data study: <span style="color: #949494;">AC</span> </span></span>
+<span><span class="co">#&gt; Aggregate level data study: <span style="color: #949494;">BC</span> </span></span>
+<span><span class="co">#&gt; Confidence interval level: <span style="color: #949494;">0.95</span> </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 5</span></span></span>
+<span><span class="co">#&gt;   Treatments Estimate Std.Error lower.0.95 upper.0.95</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AB           -<span style="color: #BB0000;">0.445</span>    0.073<span style="text-decoration: underline;">4</span>     -<span style="color: #BB0000;">0.976</span>     0.085<span style="text-decoration: underline;">8</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AC           -<span style="color: #BB0000;">1.13</span>     0.037<span style="text-decoration: underline;">0</span>     -<span style="color: #BB0000;">1.51</span>     -<span style="color: #BB0000;">0.754</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> BC           -<span style="color: #BB0000;">0.686</span>    0.036<span style="text-decoration: underline;">4</span>     -<span style="color: #BB0000;">1.06</span>     -<span style="color: #BB0000;">0.312</span></span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="model-comparison">Model comparison<a class="anchor" aria-label="anchor" href="#model-comparison"></a>
@@ -835,11 +1094,11 @@ effect on the log OR scale in the
 (aggregate trial data) population is
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>β</mi><mrow><mi>t</mi><mi>r</mi><mi>t</mi></mrow><mrow><mi>A</mi><mi>C</mi></mrow></msubsup><mo>+</mo><msub><mi>β</mi><mrow><mi>E</mi><mi>M</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><msubsup><mover><mi>X</mi><mo accent="true">‾</mo></mover><mn>1</mn><mrow><mi>A</mi><mi>C</mi></mrow></msubsup><mo>+</mo><msubsup><mover><mi>X</mi><mo accent="true">‾</mo></mover><mn>2</mn><mrow><mi>A</mi><mi>C</mi></mrow></msubsup><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\beta_{trt}^{AC} + \beta_{EM} (\bar{X}^{AC}_1 + \bar{X}_2^{AC})</annotation></semantics></math>.
 Calculated by</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">d_AC_true</span> <span class="op">&lt;-</span> <span class="va">b_trt</span> <span class="op">+</span> <span class="va">b_EM</span> <span class="op">*</span> <span class="op">(</span><span class="va">BC.ALD</span><span class="op">$</span><span class="va">mean.X1</span> <span class="op">+</span> <span class="va">BC.ALD</span><span class="op">$</span><span class="va">mean.X2</span><span class="op">)</span></span></code></pre></div>
 <p>The naive approach is to just convert directly from one population to
 another, ignoring the imbalance in effect modifiers.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">d_AC_naive</span> <span class="op">&lt;-</span> </span>
 <span>  <span class="va">AC.IPD</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">trt</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
@@ -871,7 +1130,7 @@ out and the true effect is zero.</p>
 effect in the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mi>C</mi></mrow><annotation encoding="application/x-tex">BC</annotation></semantics></math>
 population is</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">d_BC</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">BC.ALD</span>, <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">y.B.bar</span><span class="op">/</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">y.B.bar</span><span class="op">)</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">y.C.bar</span><span class="op">/</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">y.C.bar</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -891,7 +1150,7 @@ contrast is calculated directly.</p>
 contrasts and methods in the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mi>C</mi></mrow><annotation encoding="application/x-tex">BC</annotation></semantics></math>
 population.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res_tab</span> <span class="op">&lt;-</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>    d_true <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">d_AB_true</span>, <span class="va">d_AC_true</span>, <span class="va">d_BC</span><span class="op">)</span>,</span>
@@ -913,16 +1172,16 @@ population.</p>
 <span>    `MIM` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_mim</span><span class="op">$</span><span class="va">variances</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">res_tab</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
+<table style="width:100%;" class="table">
 <colgroup>
 <col width="3%">
 <col width="12%">
 <col width="14%">
 <col width="12%">
-<col width="12%">
+<col width="14%">
 <col width="14%">
 <col width="15%">
-<col width="14%">
+<col width="12%">
 </colgroup>
 <thead><tr class="header">
 <th align="left"></th>
@@ -940,38 +1199,38 @@ population.</p>
 <td align="right">0.000000</td>
 <td align="right">-0.9477894</td>
 <td align="right">-1.001163</td>
-<td align="right">-1.115556</td>
-<td align="right">-0.9490864</td>
-<td align="right">-0.9652464</td>
-<td align="right">-0.9631067</td>
+<td align="right">0.3656568</td>
+<td align="right">-0.9660545</td>
+<td align="right">-0.9795259</td>
+<td align="right">-0.959866</td>
 </tr>
 <tr class="even">
 <td align="left">AC</td>
 <td align="right">-1.294548</td>
 <td align="right">-2.0464017</td>
 <td align="right">-2.099775</td>
-<td align="right">-2.214168</td>
-<td align="right">-2.0476987</td>
-<td align="right">-2.0638587</td>
-<td align="right">-2.0617190</td>
+<td align="right">-0.7329555</td>
+<td align="right">-2.0646668</td>
+<td align="right">-2.0781382</td>
+<td align="right">-2.058478</td>
 </tr>
 <tr class="odd">
 <td align="left">BC</td>
 <td align="right">-1.098612</td>
 <td align="right">-1.0986123</td>
 <td align="right">-1.098612</td>
+<td align="right">-1.0986123</td>
+<td align="right">-1.0986123</td>
+<td align="right">-1.0986123</td>
 <td align="right">-1.098612</td>
-<td align="right">-1.0986123</td>
-<td align="right">-1.0986123</td>
-<td align="right">-1.0986123</td>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">d_AB_true_lrr</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
 <span><span class="va">d_AC_true_lrr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Logistic.html" class="external-link">plogis</a></span><span class="op">(</span><span class="va">d_A_true</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/stats/Logistic.html" class="external-link">plogis</a></span><span class="op">(</span><span class="va">d_C_true</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>On log relative risk scale the table is</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res_tab_lrr</span> <span class="op">&lt;-</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>    <span class="co"># d_true = c(d_AB_true_lrr, d_AC_true_lrr, d_BC_lrr),</span></span>
@@ -981,6 +1240,16 @@ population.</p>
 <span>    `Gcomp ML` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_gcomp_ml_lrr</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span>,</span>
 <span>    `Gcomp Bayes` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_gcomp_stan_lrr</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span>,</span>
 <span>    `MIM` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_mim_lrr</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">res_tab_var_lrr</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>    <span class="co"># d_true = c(NA, NA, NA),</span></span>
+<span>    <span class="co"># d_naive = c(var.d.AB.naive, d_AC_naive$var_AC, var.d.BC),</span></span>
+<span>    `MAIC` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_maic_lrr</span><span class="op">$</span><span class="va">variances</span><span class="op">)</span>,</span>
+<span>    `STC` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_stc_lrr</span><span class="op">$</span><span class="va">variances</span><span class="op">)</span>,</span>
+<span>    `Gcomp ML` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_gcomp_ml_lrr</span><span class="op">$</span><span class="va">variances</span><span class="op">)</span>,</span>
+<span>    `Gcomp Bayes` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_gcomp_stan_lrr</span><span class="op">$</span><span class="va">variances</span><span class="op">)</span>,</span>
+<span>    `MIM` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_mim_lrr</span><span class="op">$</span><span class="va">variances</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">res_tab_lrr</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
@@ -996,18 +1265,18 @@ population.</p>
 <tr class="odd">
 <td align="left">AB</td>
 <td align="right">-0.4582824</td>
-<td align="right">-0.7175896</td>
-<td align="right">-0.4333469</td>
-<td align="right">-0.4356224</td>
-<td align="right">-0.4310393</td>
+<td align="right">0.2117284</td>
+<td align="right">-0.4626977</td>
+<td align="right">-0.4574343</td>
+<td align="right">-0.4450257</td>
 </tr>
 <tr class="even">
 <td align="left">AC</td>
 <td align="right">-1.1439389</td>
-<td align="right">-1.4032461</td>
-<td align="right">-1.1190034</td>
-<td align="right">-1.1212789</td>
-<td align="right">-1.1166958</td>
+<td align="right">-0.4739281</td>
+<td align="right">-1.1483542</td>
+<td align="right">-1.1430909</td>
+<td align="right">-1.1306822</td>
 </tr>
 <tr class="odd">
 <td align="left">BC</td>
@@ -1019,8 +1288,11 @@ population.</p>
 </tr>
 </tbody>
 </table>
-<p>The same output in a forest plot is</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="section level4">
+<h4 id="plots">Plots<a class="anchor" aria-label="anchor" href="#plots"></a>
+</h4>
+<p>The same output in forest plots is</p>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">var_dat</span> <span class="op">&lt;-</span> </span>
@@ -1050,7 +1322,39 @@ population.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">facet_grid</a></span><span class="op">(</span><span class="va">Comparison</span><span class="op">~</span><span class="va">.</span>, switch <span class="op">=</span> <span class="st">"y"</span>, scales <span class="op">=</span> <span class="st">"free_y"</span>, space <span class="op">=</span> <span class="st">"free_y"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_reverse</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Comparison in BC population"</span>,</span>
 <span>                  breaks <span class="op">=</span> <span class="cn">NULL</span>, expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.6</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Binary_data_example_files/figure-html/unnamed-chunk-19-1.png" width="960"></p>
+<p><img src="Binary_data_example_files/figure-html/forest-lor-1.png" width="768"></p>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">var_dat</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">res_tab_var_lrr</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html" class="external-link">rownames_to_column</a></span><span class="op">(</span><span class="st">"type"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">reshape2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/reshape2/man/melt.html" class="external-link">melt</a></span><span class="op">(</span>variable.name <span class="op">=</span> <span class="st">"Comparison"</span>,</span>
+<span>                 value.name <span class="op">=</span> <span class="st">"var"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">plotdat</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">res_tab_lrr</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html" class="external-link">rownames_to_column</a></span><span class="op">(</span><span class="st">"type"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">reshape2</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/reshape2/man/melt.html" class="external-link">melt</a></span><span class="op">(</span>variable.name <span class="op">=</span> <span class="st">"Comparison"</span>,</span>
+<span>                 value.name <span class="op">=</span> <span class="st">"Estimate"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>id <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>         type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">type</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">var_dat</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>lo <span class="op">=</span> <span class="va">Estimate</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">qnorm</a></span><span class="op">(</span><span class="fl">0.025</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">var</span><span class="op">)</span>,</span>
+<span>         hi <span class="op">=</span> <span class="va">Estimate</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">qnorm</a></span><span class="op">(</span><span class="fl">0.975</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">var</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Estimate</span>, y <span class="op">=</span> <span class="va">id</span>, col <span class="op">=</span> <span class="va">type</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">plotdat</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fl">0</span>, lty <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">id</span>, yend <span class="op">=</span> <span class="va">id</span>, x <span class="op">=</span> <span class="va">lo</span>, xend <span class="op">=</span> <span class="va">hi</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Estimate (Log RR)"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">facet_grid</a></span><span class="op">(</span><span class="va">Comparison</span><span class="op">~</span><span class="va">.</span>, switch <span class="op">=</span> <span class="st">"y"</span>, scales <span class="op">=</span> <span class="st">"free_y"</span>, space <span class="op">=</span> <span class="st">"free_y"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_reverse</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Comparison in BC population"</span>,</span>
+<span>                  breaks <span class="op">=</span> <span class="cn">NULL</span>, expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.6</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="Binary_data_example_files/figure-html/forest-rr-1.png" width="768"></p>
+</div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

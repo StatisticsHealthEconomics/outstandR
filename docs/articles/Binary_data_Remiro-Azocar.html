@@ -287,7 +287,20 @@ function.</p>
 <span>                                                     family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>The returned object is of class <code>outstandR</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outstandR_maic</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">outstandR_maic</span></span>
+<span><span class="co">#&gt; Object of class 'outstandR' </span></span>
+<span><span class="co">#&gt; Scale: <span style="color: #949494;">log_odds</span> </span></span>
+<span><span class="co">#&gt; Common treatment: <span style="color: #949494;">C</span> </span></span>
+<span><span class="co">#&gt; Individual patient data study: <span style="color: #949494;">AC</span> </span></span>
+<span><span class="co">#&gt; Aggregate level data study: <span style="color: #949494;">BC</span> </span></span>
+<span><span class="co">#&gt; Confidence interval level: <span style="color: #949494;">0.95</span> </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 5</span></span></span>
+<span><span class="co">#&gt;   Treatments Estimate Std.Error lower.0.95 upper.0.95</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AB            0.101    0.173      -<span style="color: #BB0000;">0.715</span>      0.917</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AC           -<span style="color: #BB0000;">1.15</span>     0.137      -<span style="color: #BB0000;">1.88</span>      -<span style="color: #BB0000;">0.427</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> BC           -<span style="color: #BB0000;">1.25</span>     0.036<span style="text-decoration: underline;">4</span>     -<span style="color: #BB0000;">1.63</span>      -<span style="color: #BB0000;">0.879</span></span></span></code></pre></div>
 <p>We see that this is a list object with 3 parts, each containing
 statistics between each pair of treatments. These are the mean
 contrasts, variances and confidence intervals (CI), respectively. The
@@ -344,7 +357,20 @@ change the scale to risk difference, we can use the following code.</p>
 <span>                                     family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>            scale <span class="op">=</span> <span class="st">"log_relative_risk"</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outstandR_maic_lrr</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">outstandR_maic_lrr</span></span>
+<span><span class="co">#&gt; Object of class 'outstandR' </span></span>
+<span><span class="co">#&gt; Scale: <span style="color: #949494;">log_relative_risk</span> </span></span>
+<span><span class="co">#&gt; Common treatment: <span style="color: #949494;">C</span> </span></span>
+<span><span class="co">#&gt; Individual patient data study: <span style="color: #949494;">AC</span> </span></span>
+<span><span class="co">#&gt; Aggregate level data study: <span style="color: #949494;">BC</span> </span></span>
+<span><span class="co">#&gt; Confidence interval level: <span style="color: #949494;">0.95</span> </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 5</span></span></span>
+<span><span class="co">#&gt;   Treatments Estimate Std.Error lower.0.95 upper.0.95</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AB          0.001<span style="text-decoration: underline;">44</span>   0.028<span style="text-decoration: underline;">9</span>      -<span style="color: #BB0000;">0.332</span>      0.334</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AC         -<span style="color: #BB0000;">0.492</span>     0.024<span style="text-decoration: underline;">2</span>      -<span style="color: #BB0000;">0.796</span>     -<span style="color: #BB0000;">0.187</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> BC         -<span style="color: #BB0000;">0.493</span>     0.004<span style="text-decoration: underline;">71</span>     -<span style="color: #BB0000;">0.628</span>     -<span style="color: #BB0000;">0.359</span></span></span></code></pre></div>
 </div>
 </div>
 <div class="section level3">
@@ -383,7 +409,20 @@ simply pass the same (uncentred) formula as before.</p>
 <code class="sourceCode R"><span><span class="va">outstandR_stc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>,</span>
 <span>                           strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_stc</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
 <span>                                                   family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">outstandR_stc</span></span></code></pre></div>
+<span><span class="va">outstandR_stc</span></span>
+<span><span class="co">#&gt; Object of class 'outstandR' </span></span>
+<span><span class="co">#&gt; Scale: <span style="color: #949494;">log_odds</span> </span></span>
+<span><span class="co">#&gt; Common treatment: <span style="color: #949494;">C</span> </span></span>
+<span><span class="co">#&gt; Individual patient data study: <span style="color: #949494;">AC</span> </span></span>
+<span><span class="co">#&gt; Aggregate level data study: <span style="color: #949494;">BC</span> </span></span>
+<span><span class="co">#&gt; Confidence interval level: <span style="color: #949494;">0.95</span> </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 5</span></span></span>
+<span><span class="co">#&gt;   Treatments Estimate Std.Error lower.0.95 upper.0.95</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AB            0.787    1.12        -<span style="color: #BB0000;">1.29</span>      2.86 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AC           -<span style="color: #BB0000;">0.466</span>    1.08        -<span style="color: #BB0000;">2.50</span>      1.57 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> BC           -<span style="color: #BB0000;">1.25</span>     0.036<span style="text-decoration: underline;">4</span>      -<span style="color: #BB0000;">1.63</span>     -<span style="color: #BB0000;">0.879</span></span></span></code></pre></div>
 <p>Change the outcome scale</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outstandR_stc_lrr</span> <span class="op">&lt;-</span></span>
@@ -392,7 +431,20 @@ simply pass the same (uncentred) formula as before.</p>
 <span>                                     family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>            scale <span class="op">=</span> <span class="st">"log_relative_risk"</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outstandR_stc_lrr</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">outstandR_stc_lrr</span></span>
+<span><span class="co">#&gt; Object of class 'outstandR' </span></span>
+<span><span class="co">#&gt; Scale: <span style="color: #949494;">log_relative_risk</span> </span></span>
+<span><span class="co">#&gt; Common treatment: <span style="color: #949494;">C</span> </span></span>
+<span><span class="co">#&gt; Individual patient data study: <span style="color: #949494;">AC</span> </span></span>
+<span><span class="co">#&gt; Aggregate level data study: <span style="color: #949494;">BC</span> </span></span>
+<span><span class="co">#&gt; Confidence interval level: <span style="color: #949494;">0.95</span> </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 5</span></span></span>
+<span><span class="co">#&gt;   Treatments Estimate Std.Error lower.0.95 upper.0.95</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AB           0.099<span style="text-decoration: underline;">7</span>   0.549       -<span style="color: #BB0000;">1.35</span>       1.55 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AC          -<span style="color: #BB0000;">0.393</span>    0.544       -<span style="color: #BB0000;">1.84</span>       1.05 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> BC          -<span style="color: #BB0000;">0.493</span>    0.004<span style="text-decoration: underline;">71</span>     -<span style="color: #BB0000;">0.628</span>     -<span style="color: #BB0000;">0.359</span></span></span></code></pre></div>
 <p>For the last two approaches, we perform G-computation firstly with a
 frequentist MLE approach and then a Bayesian approach.</p>
 </div>
@@ -440,7 +492,20 @@ between the average linear predictions:</p>
 <code class="sourceCode R"><span><span class="va">outstandR_gcomp_ml</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>,</span>
 <span>                                strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_ml</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
 <span>                                                             family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">outstandR_gcomp_ml</span></span></code></pre></div>
+<span><span class="va">outstandR_gcomp_ml</span></span>
+<span><span class="co">#&gt; Object of class 'outstandR' </span></span>
+<span><span class="co">#&gt; Scale: <span style="color: #949494;">log_odds</span> </span></span>
+<span><span class="co">#&gt; Common treatment: <span style="color: #949494;">C</span> </span></span>
+<span><span class="co">#&gt; Individual patient data study: <span style="color: #949494;">AC</span> </span></span>
+<span><span class="co">#&gt; Aggregate level data study: <span style="color: #949494;">BC</span> </span></span>
+<span><span class="co">#&gt; Confidence interval level: <span style="color: #949494;">0.95</span> </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 5</span></span></span>
+<span><span class="co">#&gt;   Treatments Estimate Std.Error lower.0.95 upper.0.95</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AB            0.141    0.154      -<span style="color: #BB0000;">0.627</span>      0.910</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AC           -<span style="color: #BB0000;">1.11</span>     0.117      -<span style="color: #BB0000;">1.78</span>      -<span style="color: #BB0000;">0.440</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> BC           -<span style="color: #BB0000;">1.25</span>     0.036<span style="text-decoration: underline;">4</span>     -<span style="color: #BB0000;">1.63</span>      -<span style="color: #BB0000;">0.879</span></span></span></code></pre></div>
 <p>Change the outcome scale</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outstandR_gcomp_ml_lrr</span> <span class="op">&lt;-</span></span>
@@ -449,7 +514,20 @@ between the average linear predictions:</p>
 <span>                                         family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>            scale <span class="op">=</span> <span class="st">"log_relative_risk"</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outstandR_gcomp_ml_lrr</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">outstandR_gcomp_ml_lrr</span></span>
+<span><span class="co">#&gt; Object of class 'outstandR' </span></span>
+<span><span class="co">#&gt; Scale: <span style="color: #949494;">log_relative_risk</span> </span></span>
+<span><span class="co">#&gt; Common treatment: <span style="color: #949494;">C</span> </span></span>
+<span><span class="co">#&gt; Individual patient data study: <span style="color: #949494;">AC</span> </span></span>
+<span><span class="co">#&gt; Aggregate level data study: <span style="color: #949494;">BC</span> </span></span>
+<span><span class="co">#&gt; Confidence interval level: <span style="color: #949494;">0.95</span> </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 5</span></span></span>
+<span><span class="co">#&gt;   Treatments Estimate Std.Error lower.0.95 upper.0.95</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AB           0.075<span style="text-decoration: underline;">5</span>   0.020<span style="text-decoration: underline;">1</span>      -<span style="color: #BB0000;">0.203</span>      0.354</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AC          -<span style="color: #BB0000;">0.418</span>    0.015<span style="text-decoration: underline;">4</span>      -<span style="color: #BB0000;">0.661</span>     -<span style="color: #BB0000;">0.174</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> BC          -<span style="color: #BB0000;">0.493</span>    0.004<span style="text-decoration: underline;">71</span>     -<span style="color: #BB0000;">0.628</span>     -<span style="color: #BB0000;">0.359</span></span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="bayesian-g-computation-with-mcmc">Bayesian G-computation with MCMC<a class="anchor" aria-label="anchor" href="#bayesian-g-computation-with-mcmc"></a>
@@ -503,54 +581,117 @@ treatment.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 1).</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1: Gradient evaluation took 6e-05 seconds</span></span>
-<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.6 seconds.</span></span>
+<span><span class="co">#&gt; Chain 1: Gradient evaluation took 5.2e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.52 seconds.</span></span>
 <span><span class="co">#&gt; Chain 1: Adjust your expectations accordingly!</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1: Iteration:    1 / 4000 [  0%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration:  400 / 4000 [ 10%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration:  800 / 4000 [ 20%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 1200 / 4000 [ 30%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 1600 / 4000 [ 40%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 2000 / 4000 [ 50%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 2001 / 4000 [ 50%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 2400 / 4000 [ 60%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 2800 / 4000 [ 70%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 3200 / 4000 [ 80%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 3600 / 4000 [ 90%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 4000 / 4000 [100%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration:    1 / 2000 [  0%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration:  200 / 2000 [ 10%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration:  400 / 2000 [ 20%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration:  600 / 2000 [ 30%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration:  800 / 2000 [ 40%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 1000 / 2000 [ 50%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 1200 / 2000 [ 60%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 1400 / 2000 [ 70%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.41 seconds (Warm-up)</span></span>
-<span><span class="co">#&gt; Chain 1:                0.449 seconds (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1:                0.859 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.244 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 1:                0.273 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1:                0.517 seconds (Total)</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 2).</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
-<span><span class="co">#&gt; Chain 2: Gradient evaluation took 1.5e-05 seconds</span></span>
-<span><span class="co">#&gt; Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.15 seconds.</span></span>
+<span><span class="co">#&gt; Chain 2: Gradient evaluation took 1.6e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.16 seconds.</span></span>
 <span><span class="co">#&gt; Chain 2: Adjust your expectations accordingly!</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
-<span><span class="co">#&gt; Chain 2: Iteration:    1 / 4000 [  0%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration:  400 / 4000 [ 10%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration:  800 / 4000 [ 20%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 1200 / 4000 [ 30%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 1600 / 4000 [ 40%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 2000 / 4000 [ 50%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 2001 / 4000 [ 50%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 2400 / 4000 [ 60%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 2800 / 4000 [ 70%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 3200 / 4000 [ 80%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 3600 / 4000 [ 90%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 4000 / 4000 [100%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration:    1 / 2000 [  0%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration:  200 / 2000 [ 10%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration:  400 / 2000 [ 20%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration:  600 / 2000 [ 30%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration:  800 / 2000 [ 40%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 1000 / 2000 [ 50%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 1200 / 2000 [ 60%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 1400 / 2000 [ 70%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
-<span><span class="co">#&gt; Chain 2:  Elapsed Time: 0.422 seconds (Warm-up)</span></span>
-<span><span class="co">#&gt; Chain 2:                0.412 seconds (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2:                0.834 seconds (Total)</span></span>
-<span><span class="co">#&gt; Chain 2:</span></span>
-<span><span class="va">outstandR_gcomp_stan</span></span></code></pre></div>
+<span><span class="co">#&gt; Chain 2:  Elapsed Time: 0.247 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 2:                0.276 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2:                0.523 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 2: </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 3).</span></span>
+<span><span class="co">#&gt; Chain 3: </span></span>
+<span><span class="co">#&gt; Chain 3: Gradient evaluation took 1.7e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.17 seconds.</span></span>
+<span><span class="co">#&gt; Chain 3: Adjust your expectations accordingly!</span></span>
+<span><span class="co">#&gt; Chain 3: </span></span>
+<span><span class="co">#&gt; Chain 3: </span></span>
+<span><span class="co">#&gt; Chain 3: Iteration:    1 / 2000 [  0%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration:  200 / 2000 [ 10%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration:  400 / 2000 [ 20%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration:  600 / 2000 [ 30%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration:  800 / 2000 [ 40%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration: 1000 / 2000 [ 50%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration: 1200 / 2000 [ 60%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration: 1400 / 2000 [ 70%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 3: </span></span>
+<span><span class="co">#&gt; Chain 3:  Elapsed Time: 0.255 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 3:                0.264 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 3:                0.519 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 3: </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 4).</span></span>
+<span><span class="co">#&gt; Chain 4: </span></span>
+<span><span class="co">#&gt; Chain 4: Gradient evaluation took 1.6e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.16 seconds.</span></span>
+<span><span class="co">#&gt; Chain 4: Adjust your expectations accordingly!</span></span>
+<span><span class="co">#&gt; Chain 4: </span></span>
+<span><span class="co">#&gt; Chain 4: </span></span>
+<span><span class="co">#&gt; Chain 4: Iteration:    1 / 2000 [  0%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration:  200 / 2000 [ 10%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration:  400 / 2000 [ 20%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration:  600 / 2000 [ 30%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration:  800 / 2000 [ 40%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration: 1000 / 2000 [ 50%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration: 1200 / 2000 [ 60%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration: 1400 / 2000 [ 70%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 4: </span></span>
+<span><span class="co">#&gt; Chain 4:  Elapsed Time: 0.251 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 4:                0.217 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 4:                0.468 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 4:</span></span>
+<span><span class="va">outstandR_gcomp_stan</span></span>
+<span><span class="co">#&gt; Object of class 'outstandR' </span></span>
+<span><span class="co">#&gt; Scale: <span style="color: #949494;">log_odds</span> </span></span>
+<span><span class="co">#&gt; Common treatment: <span style="color: #949494;">C</span> </span></span>
+<span><span class="co">#&gt; Individual patient data study: <span style="color: #949494;">AC</span> </span></span>
+<span><span class="co">#&gt; Aggregate level data study: <span style="color: #949494;">BC</span> </span></span>
+<span><span class="co">#&gt; Confidence interval level: <span style="color: #949494;">0.95</span> </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 5</span></span></span>
+<span><span class="co">#&gt;   Treatments Estimate Std.Error lower.0.95 upper.0.95</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AB            0.151    0.141      -<span style="color: #BB0000;">0.585</span>      0.887</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AC           -<span style="color: #BB0000;">1.10</span>     0.105      -<span style="color: #BB0000;">1.74</span>      -<span style="color: #BB0000;">0.467</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> BC           -<span style="color: #BB0000;">1.25</span>     0.036<span style="text-decoration: underline;">4</span>     -<span style="color: #BB0000;">1.63</span>      -<span style="color: #BB0000;">0.879</span></span></span></code></pre></div>
 <p>Change the outcome scale</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outstandR_gcomp_stan_lrr</span> <span class="op">&lt;-</span></span>
@@ -561,55 +702,118 @@ treatment.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 1).</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1: Gradient evaluation took 2.6e-05 seconds</span></span>
-<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.26 seconds.</span></span>
+<span><span class="co">#&gt; Chain 1: Gradient evaluation took 2.2e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.22 seconds.</span></span>
 <span><span class="co">#&gt; Chain 1: Adjust your expectations accordingly!</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1: Iteration:    1 / 4000 [  0%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration:  400 / 4000 [ 10%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration:  800 / 4000 [ 20%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 1200 / 4000 [ 30%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 1600 / 4000 [ 40%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 2000 / 4000 [ 50%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 2001 / 4000 [ 50%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 2400 / 4000 [ 60%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 2800 / 4000 [ 70%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 3200 / 4000 [ 80%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 3600 / 4000 [ 90%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 4000 / 4000 [100%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration:    1 / 2000 [  0%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration:  200 / 2000 [ 10%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration:  400 / 2000 [ 20%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration:  600 / 2000 [ 30%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration:  800 / 2000 [ 40%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 1000 / 2000 [ 50%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 1200 / 2000 [ 60%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 1400 / 2000 [ 70%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.385 seconds (Warm-up)</span></span>
-<span><span class="co">#&gt; Chain 1:                0.433 seconds (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1:                0.818 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.244 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 1:                0.273 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1:                0.517 seconds (Total)</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 2).</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
-<span><span class="co">#&gt; Chain 2: Gradient evaluation took 1.3e-05 seconds</span></span>
-<span><span class="co">#&gt; Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.13 seconds.</span></span>
+<span><span class="co">#&gt; Chain 2: Gradient evaluation took 1.6e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.16 seconds.</span></span>
 <span><span class="co">#&gt; Chain 2: Adjust your expectations accordingly!</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
-<span><span class="co">#&gt; Chain 2: Iteration:    1 / 4000 [  0%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration:  400 / 4000 [ 10%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration:  800 / 4000 [ 20%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 1200 / 4000 [ 30%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 1600 / 4000 [ 40%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 2000 / 4000 [ 50%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 2001 / 4000 [ 50%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 2400 / 4000 [ 60%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 2800 / 4000 [ 70%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 3200 / 4000 [ 80%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 3600 / 4000 [ 90%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2: Iteration: 4000 / 4000 [100%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration:    1 / 2000 [  0%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration:  200 / 2000 [ 10%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration:  400 / 2000 [ 20%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration:  600 / 2000 [ 30%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration:  800 / 2000 [ 40%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 1000 / 2000 [ 50%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 1200 / 2000 [ 60%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 1400 / 2000 [ 70%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
-<span><span class="co">#&gt; Chain 2:  Elapsed Time: 0.396 seconds (Warm-up)</span></span>
-<span><span class="co">#&gt; Chain 2:                0.423 seconds (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2:                0.819 seconds (Total)</span></span>
-<span><span class="co">#&gt; Chain 2:</span></span></code></pre></div>
+<span><span class="co">#&gt; Chain 2:  Elapsed Time: 0.248 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 2:                0.269 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2:                0.517 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 2: </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 3).</span></span>
+<span><span class="co">#&gt; Chain 3: </span></span>
+<span><span class="co">#&gt; Chain 3: Gradient evaluation took 1.5e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.15 seconds.</span></span>
+<span><span class="co">#&gt; Chain 3: Adjust your expectations accordingly!</span></span>
+<span><span class="co">#&gt; Chain 3: </span></span>
+<span><span class="co">#&gt; Chain 3: </span></span>
+<span><span class="co">#&gt; Chain 3: Iteration:    1 / 2000 [  0%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration:  200 / 2000 [ 10%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration:  400 / 2000 [ 20%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration:  600 / 2000 [ 30%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration:  800 / 2000 [ 40%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration: 1000 / 2000 [ 50%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration: 1200 / 2000 [ 60%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration: 1400 / 2000 [ 70%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 3: </span></span>
+<span><span class="co">#&gt; Chain 3:  Elapsed Time: 0.255 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 3:                0.264 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 3:                0.519 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 3: </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 4).</span></span>
+<span><span class="co">#&gt; Chain 4: </span></span>
+<span><span class="co">#&gt; Chain 4: Gradient evaluation took 1.6e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.16 seconds.</span></span>
+<span><span class="co">#&gt; Chain 4: Adjust your expectations accordingly!</span></span>
+<span><span class="co">#&gt; Chain 4: </span></span>
+<span><span class="co">#&gt; Chain 4: </span></span>
+<span><span class="co">#&gt; Chain 4: Iteration:    1 / 2000 [  0%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration:  200 / 2000 [ 10%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration:  400 / 2000 [ 20%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration:  600 / 2000 [ 30%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration:  800 / 2000 [ 40%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration: 1000 / 2000 [ 50%]  (Warmup)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration: 1200 / 2000 [ 60%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration: 1400 / 2000 [ 70%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 4: </span></span>
+<span><span class="co">#&gt; Chain 4:  Elapsed Time: 0.252 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 4:                0.217 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 4:                0.469 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 4:</span></span></code></pre></div>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outstandR_gcomp_stan_lrr</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">outstandR_gcomp_stan_lrr</span></span>
+<span><span class="co">#&gt; Object of class 'outstandR' </span></span>
+<span><span class="co">#&gt; Scale: <span style="color: #949494;">log_relative_risk</span> </span></span>
+<span><span class="co">#&gt; Common treatment: <span style="color: #949494;">C</span> </span></span>
+<span><span class="co">#&gt; Individual patient data study: <span style="color: #949494;">AC</span> </span></span>
+<span><span class="co">#&gt; Aggregate level data study: <span style="color: #949494;">BC</span> </span></span>
+<span><span class="co">#&gt; Confidence interval level: <span style="color: #949494;">0.95</span> </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 5</span></span></span>
+<span><span class="co">#&gt;   Treatments Estimate Std.Error lower.0.95 upper.0.95</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AB           0.073<span style="text-decoration: underline;">7</span>   0.019<span style="text-decoration: underline;">3</span>      -<span style="color: #BB0000;">0.199</span>      0.346</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AC          -<span style="color: #BB0000;">0.419</span>    0.014<span style="text-decoration: underline;">6</span>      -<span style="color: #BB0000;">0.656</span>     -<span style="color: #BB0000;">0.182</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> BC          -<span style="color: #BB0000;">0.493</span>    0.004<span style="text-decoration: underline;">71</span>     -<span style="color: #BB0000;">0.628</span>     -<span style="color: #BB0000;">0.359</span></span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="multiple-imputation-marginalisation">Multiple imputation marginalisation<a class="anchor" aria-label="anchor" href="#multiple-imputation-marginalisation"></a>
@@ -626,8 +830,8 @@ equation here
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 1).</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1: Gradient evaluation took 1.9e-05 seconds</span></span>
-<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.19 seconds.</span></span>
+<span><span class="co">#&gt; Chain 1: Gradient evaluation took 2.3e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.23 seconds.</span></span>
 <span><span class="co">#&gt; Chain 1: Adjust your expectations accordingly!</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
@@ -644,15 +848,15 @@ equation here
 <span><span class="co">#&gt; Chain 1: Iteration: 3800 / 4000 [ 95%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 1: Iteration: 4000 / 4000 [100%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.202 seconds (Warm-up)</span></span>
-<span><span class="co">#&gt; Chain 1:                0.631 seconds (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1:                0.833 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.242 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 1:                0.773 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1:                1.015 seconds (Total)</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 2).</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
-<span><span class="co">#&gt; Chain 2: Gradient evaluation took 1.3e-05 seconds</span></span>
-<span><span class="co">#&gt; Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.13 seconds.</span></span>
+<span><span class="co">#&gt; Chain 2: Gradient evaluation took 1.6e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.16 seconds.</span></span>
 <span><span class="co">#&gt; Chain 2: Adjust your expectations accordingly!</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
@@ -669,11 +873,24 @@ equation here
 <span><span class="co">#&gt; Chain 2: Iteration: 3800 / 4000 [ 95%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 2: Iteration: 4000 / 4000 [100%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
-<span><span class="co">#&gt; Chain 2:  Elapsed Time: 0.211 seconds (Warm-up)</span></span>
-<span><span class="co">#&gt; Chain 2:                0.523 seconds (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2:                0.734 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 2:  Elapsed Time: 0.247 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 2:                0.772 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2:                1.019 seconds (Total)</span></span>
 <span><span class="co">#&gt; Chain 2:</span></span>
-<span><span class="va">outstandR_mim</span></span></code></pre></div>
+<span><span class="va">outstandR_mim</span></span>
+<span><span class="co">#&gt; Object of class 'outstandR' </span></span>
+<span><span class="co">#&gt; Scale: <span style="color: #949494;">log_odds</span> </span></span>
+<span><span class="co">#&gt; Common treatment: <span style="color: #949494;">C</span> </span></span>
+<span><span class="co">#&gt; Individual patient data study: <span style="color: #949494;">AC</span> </span></span>
+<span><span class="co">#&gt; Aggregate level data study: <span style="color: #949494;">BC</span> </span></span>
+<span><span class="co">#&gt; Confidence interval level: <span style="color: #949494;">0.95</span> </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 5</span></span></span>
+<span><span class="co">#&gt;   Treatments Estimate Std.Error lower.0.95 upper.0.95</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AB            0.139    0.132      -<span style="color: #BB0000;">0.573</span>      0.852</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AC           -<span style="color: #BB0000;">1.11</span>     0.095<span style="text-decoration: underline;">9</span>     -<span style="color: #BB0000;">1.72</span>      -<span style="color: #BB0000;">0.506</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> BC           -<span style="color: #BB0000;">1.25</span>     0.036<span style="text-decoration: underline;">4</span>     -<span style="color: #BB0000;">1.63</span>      -<span style="color: #BB0000;">0.879</span></span></span></code></pre></div>
 <p>Change the outcome scale</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outstandR_mim_lrr</span> <span class="op">&lt;-</span></span>
@@ -684,8 +901,8 @@ equation here
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 1).</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1: Gradient evaluation took 1.8e-05 seconds</span></span>
-<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.18 seconds.</span></span>
+<span><span class="co">#&gt; Chain 1: Gradient evaluation took 3.8e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.38 seconds.</span></span>
 <span><span class="co">#&gt; Chain 1: Adjust your expectations accordingly!</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
@@ -702,15 +919,15 @@ equation here
 <span><span class="co">#&gt; Chain 1: Iteration: 3800 / 4000 [ 95%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 1: Iteration: 4000 / 4000 [100%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.212 seconds (Warm-up)</span></span>
-<span><span class="co">#&gt; Chain 1:                0.634 seconds (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1:                0.846 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 1:  Elapsed Time: 0.243 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 1:                0.772 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 1:                1.015 seconds (Total)</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 2).</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
-<span><span class="co">#&gt; Chain 2: Gradient evaluation took 1.3e-05 seconds</span></span>
-<span><span class="co">#&gt; Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.13 seconds.</span></span>
+<span><span class="co">#&gt; Chain 2: Gradient evaluation took 1.6e-05 seconds</span></span>
+<span><span class="co">#&gt; Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.16 seconds.</span></span>
 <span><span class="co">#&gt; Chain 2: Adjust your expectations accordingly!</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
@@ -727,12 +944,25 @@ equation here
 <span><span class="co">#&gt; Chain 2: Iteration: 3800 / 4000 [ 95%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 2: Iteration: 4000 / 4000 [100%]  (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
-<span><span class="co">#&gt; Chain 2:  Elapsed Time: 0.198 seconds (Warm-up)</span></span>
-<span><span class="co">#&gt; Chain 2:                0.588 seconds (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 2:                0.786 seconds (Total)</span></span>
+<span><span class="co">#&gt; Chain 2:  Elapsed Time: 0.246 seconds (Warm-up)</span></span>
+<span><span class="co">#&gt; Chain 2:                0.772 seconds (Sampling)</span></span>
+<span><span class="co">#&gt; Chain 2:                1.018 seconds (Total)</span></span>
 <span><span class="co">#&gt; Chain 2:</span></span></code></pre></div>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outstandR_mim_lrr</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">outstandR_mim_lrr</span></span>
+<span><span class="co">#&gt; Object of class 'outstandR' </span></span>
+<span><span class="co">#&gt; Scale: <span style="color: #949494;">log_relative_risk</span> </span></span>
+<span><span class="co">#&gt; Common treatment: <span style="color: #949494;">C</span> </span></span>
+<span><span class="co">#&gt; Individual patient data study: <span style="color: #949494;">AC</span> </span></span>
+<span><span class="co">#&gt; Aggregate level data study: <span style="color: #949494;">BC</span> </span></span>
+<span><span class="co">#&gt; Confidence interval level: <span style="color: #949494;">0.95</span> </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 5</span></span></span>
+<span><span class="co">#&gt;   Treatments Estimate Std.Error lower.0.95 upper.0.95</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AB           0.066<span style="text-decoration: underline;">9</span>   0.010<span style="text-decoration: underline;">1</span>      -<span style="color: #BB0000;">0.130</span>      0.264</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AC          -<span style="color: #BB0000;">0.426</span>    0.005<span style="text-decoration: underline;">37</span>     -<span style="color: #BB0000;">0.570</span>     -<span style="color: #BB0000;">0.282</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> BC          -<span style="color: #BB0000;">0.493</span>    0.004<span style="text-decoration: underline;">71</span>     -<span style="color: #BB0000;">0.628</span>     -<span style="color: #BB0000;">0.359</span></span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="model-comparison">Model comparison<a class="anchor" aria-label="anchor" href="#model-comparison"></a>
@@ -761,18 +991,18 @@ methods.</p>
 <tr class="odd">
 <td align="left">AB</td>
 <td align="right">0.1007707</td>
-<td align="right">-0.1758708</td>
-<td align="right">0.1430367</td>
-<td align="right">0.1434527</td>
-<td align="right">0.1337746</td>
+<td align="right">0.7870719</td>
+<td align="right">0.1412301</td>
+<td align="right">0.1513437</td>
+<td align="right">0.1394869</td>
 </tr>
 <tr class="even">
 <td align="left">AC</td>
 <td align="right">-1.1518383</td>
-<td align="right">-1.4284798</td>
-<td align="right">-1.1095723</td>
-<td align="right">-1.1091563</td>
-<td align="right">-1.1188345</td>
+<td align="right">-0.4655372</td>
+<td align="right">-1.1113789</td>
+<td align="right">-1.1012654</td>
+<td align="right">-1.1131221</td>
 </tr>
 <tr class="odd">
 <td align="left">BC</td>
@@ -807,18 +1037,18 @@ methods.</p>
 <tr class="odd">
 <td align="left">AB</td>
 <td align="right">0.0014444</td>
-<td align="right">-0.6195648</td>
-<td align="right">0.0769295</td>
-<td align="right">0.0782031</td>
-<td align="right">0.0656178</td>
+<td align="right">0.0997345</td>
+<td align="right">0.0754845</td>
+<td align="right">0.0736951</td>
+<td align="right">0.0669339</td>
 </tr>
 <tr class="even">
 <td align="left">AC</td>
 <td align="right">-0.4916424</td>
-<td align="right">-1.1126516</td>
-<td align="right">-0.4161573</td>
-<td align="right">-0.4148837</td>
-<td align="right">-0.4274690</td>
+<td align="right">-0.3933523</td>
+<td align="right">-0.4176023</td>
+<td align="right">-0.4193917</td>
+<td align="right">-0.4261529</td>
 </tr>
 <tr class="odd">
 <td align="left">BC</td>
