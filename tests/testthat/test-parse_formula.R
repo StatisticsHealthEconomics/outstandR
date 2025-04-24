@@ -2,12 +2,12 @@
 # unit test functions in parse_formula.R
 
 
-test_that("test get_effect_modifiers", {
-  expect_equal(get_effect_modifiers(y ~ x), character(0))
-  expect_equal(get_effect_modifiers(y ~ x + z), character(0))
-  expect_equal(get_effect_modifiers(y ~ x*z), "z") 
-  expect_equal(get_effect_modifiers(y ~ x + x*z), "z") 
-  expect_equal(get_effect_modifiers(y ~ x*z + c), "z") 
+test_that("test get_eff_mod_names", {
+  expect_equal(get_eff_mod_names(y ~ x), character(0))
+  expect_equal(get_eff_mod_names(y ~ x + z), character(0))
+  expect_equal(get_eff_mod_names(y ~ x*z), "z") 
+  expect_equal(get_eff_mod_names(y ~ x + x*z), "z") 
+  expect_equal(get_eff_mod_names(y ~ x*z + c), "z") 
 })
 
 test_that("test get_treatment_name", {
