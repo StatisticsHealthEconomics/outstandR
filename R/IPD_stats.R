@@ -3,15 +3,28 @@
 #' @title Calculate individual-level patient data statistics
 #' 
 #' @description
-#' Separate methods for each approach
-#' MAIC, STC, G-computation via MLE or Bayesian inference.
+#' Computes mean and variance statistics for individual-level patient data using various approaches,
+#' including Matching-Adjusted Indirect Comparison (MAIC), Simulated Treatment Comparison (STC),
+#' and G-computation via Maximum Likelihood Estimation (MLE) or Bayesian inference.
 #' 
 #' @param strategy A list corresponding to different approaches
 #' @template args-ipd
 #' @template args-ald
+#' @param scale A scaling parameter for the effect calculation.
 #' @param ... Additional arguments
 #' 
-#' @return Mean and variance values
+#' @return A list containing:
+#' \describe{
+#'   \item{mean}{Estimated mean treatment effect.}
+#'   \item{var}{Estimated variance of the treatment effect.}
+#' }
+#' @examples
+#' \dontrun{
+#' strategy <- strategy_maic()
+#' ipd <- data.frame(id = 1:100, treatment = sample(c("A", "C"), 100, replace = TRUE), outcome = rnorm(100))
+#' ald <- data.frame(treatment = c("A", "C"), mean = c(0.2, 0.1), var = c(0.05, 0.03))
+#' IPD_stats(strategy, ipd, ald, scale = "log")
+#' }
 #' @export
 #' 
 IPD_stats <- function(strategy, ipd, ald, scale, ...)
@@ -20,6 +33,7 @@ IPD_stats <- function(strategy, ipd, ald, scale, ...)
 
 #' @rdname IPD_stats
 #' @importFrom utils methods
+#' @inheritParams IPD_stats
 #' @export
 IPD_stats.default <- function(...) {
   strategy_classes <- sub("IPD_stats\\.", "", methods(IPD_stats)[-1])
@@ -35,6 +49,7 @@ IPD_stats.default <- function(...) {
 #' by transforming from probability to linear predictor scale. Approximate by 
 #' using imputation and combining estimates using Rubin's rules, in contrast to [IPD_stats.gcomp_stan()].
 #' @import stats
+#' @inheritParams IPD_stats
 #' @export
 #'
 IPD_stats.mim <- function(strategy,
@@ -66,7 +81,13 @@ IPD_stats.mim <- function(strategy,
        var = var_est)
 } 
 
-#' function operator
+#' Factory function for creating IPD_stats methods
+#'
+#' Creates a method for computing mean and variance statistics based on the supplied function.
+#'
+#' @param ipd_fun A function that computes mean and variance statistics for individual-level patient data.
+#' @return A function that computes mean and variance statistics for a given strategy.
+#' @keywords internal
 #'
 IPD_stat_factory <- function(ipd_fun) {
 
@@ -89,6 +110,7 @@ IPD_stat_factory <- function(ipd_fun) {
 #' IPD from the _AC_ trial are used to fit a regression model describing the
 #' observed outcomes \eqn{y} in terms of the relevant baseline characteristics \eqn{x} and
 #' the treatment variable \eqn{z}.
+#' @inheritParams IPD_stats
 #' @export
 #'
 IPD_stats.stc <- IPD_stat_factory(outstandR:::calc_stc)
@@ -97,6 +119,7 @@ IPD_stats.stc <- IPD_stat_factory(outstandR:::calc_stc)
 #' @section Matching-adjusted indirect comparison statistics:
 #' Marginal _A_ vs _C_ treatment effect estimates
 #' using bootstrapping sampling.
+#' @inheritParams IPD_stats
 #' @export
 #'
 IPD_stats.maic <- IPD_stat_factory(outstandR:::calc_maic)
@@ -104,6 +127,7 @@ IPD_stats.maic <- IPD_stat_factory(outstandR:::calc_maic)
 #' @rdname IPD_stats
 #' @section G-computation maximum likelihood statistics:
 #' Compute a non-parametric bootstrap with default \eqn{R=1000} resamples.
+#' @inheritParams IPD_stats
 #' @export
 #'
 IPD_stats.gcomp_ml <- IPD_stat_factory(outstandR:::calc_gcomp_ml)
@@ -112,6 +136,7 @@ IPD_stats.gcomp_ml <- IPD_stat_factory(outstandR:::calc_gcomp_ml)
 #' @section G-computation Bayesian statistics:
 #' Using Stan, compute marginal log-odds ratio for _A_ vs _C_ for each MCMC sample
 #' by transforming from probability to linear predictor scale.
+#' @inheritParams IPD_stats
 #' @export
 #'
 IPD_stats.gcomp_stan <- IPD_stat_factory(outstandR:::calc_gcomp_stan)
