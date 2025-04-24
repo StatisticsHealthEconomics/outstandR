@@ -102,7 +102,7 @@ event table. Typically, the published study only provides aggregate
 information to the analyst.
 
 
-Use the `gen_data()` function available with the `outstandR` package.
+Use the `gen_data()` function available with the [simcovariates](https://github.com/n8thangreen/simcovariates) package.
 
 ```{r, warning=FALSE, message=FALSE}
 library(dplyr)
