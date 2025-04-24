@@ -4,14 +4,37 @@
 #' Calculate draws of binary responses from posterior predictive distribution
 #' from the Bayesian G-computation method using Hamiltonian Monte Carlo.
 #' 
-#' @param formula Linear regression `formula` object
-#' @param family A `family` object
+#' @param strategy A list specifying the model strategy, including:
+#'   \describe{
+#'     \item{formula}{A linear regression `formula` object.}
+#'     \item{family}{A `family` object specifying the distribution and link function (e.g., `binomial`).}
+#'     \item{iter}{Number of iterations for the MCMC sampling.}
+#'     \item{warmup}{Number of warmup iterations for the MCMC sampling.}
+#'     \item{chains}{Number of MCMC chains.}
+#'   }
 #' @template args-ipd
 #' @template args-ald
 #'
-#' @return A list of \eqn{y^*_A} and \eqn{y^*_C} posterior predictions
+#' @return A list of \eqn{y^*_A} and \eqn{y^*_C} posterior predictions:
+#' \describe{
+#'   \item{\code{`0`}}{Posterior means for treatment group C.}
+#'   \item{\code{`1`}}{Posterior means for treatment group A.}
+#' }
 #' @importFrom copula normalCopula mvdc rMvdc
 #' @importFrom rstanarm stan_glm posterior_predict
+#' @examples
+#' \dontrun{
+#' strategy <- list(
+#'   formula = outcome ~ treatment + age,
+#'   family = binomial(),
+#'   iter = 2000,
+#'   warmup = 500,
+#'   chains = 4
+#' )
+#' ipd <- data.frame(treatment = c(0, 1), outcome = c(1, 0), age = c(30, 40))
+#' ald <- data.frame()
+#' calc_gcomp_stan(strategy, ipd, ald)
+#' }
 #' @export
 #'
 calc_gcomp_stan <- function(strategy,
@@ -59,9 +82,40 @@ calc_gcomp_stan <- function(strategy,
 }
 
 
-#' @export
+#' G-computation Maximum Likelihood Bootstrap
+#'
+#' Computes the mean difference in treatment effects using bootstrap resampling.
+#'
+#' @param strategy A list specifying the model strategy, including:
+#'   \describe{
+#'     \item{R}{Number of bootstrap replications.}
+#'     \item{formula}{A linear regression `formula` object.}
+#'     \item{family}{A `family` object specifying the distribution and link function (e.g., `binomial`).}
+#'     \item{N}{Synthetic sample size for g-computation.}
+#'   }
+#' @param ipd Individual patient data.
+#' @param ald Aggregate-level data.
+#'
+#' @return A list containing:
+#' \describe{
+#'   \item{mean_A}{Bootstrap estimates for treatment group A.}
+#'   \item{mean_C}{Bootstrap estimates for treatment group C.}
+#' }
 #' @importFrom boot boot
-#' 
+#' @examples
+#' \dontrun{
+#' strategy <- list(
+#'   R = 1000,
+#'   formula = outcome ~ treatment + age,
+#'   family = binomial(),
+#'   N = 1000
+#' )
+#' ipd <- data.frame(treatment = c(0, 1), outcome = c(1, 0), age = c(30, 40))
+#' ald <- data.frame()
+#' calc_gcomp_ml(strategy, ipd, ald)
+#' }
+#' @export
+#'
 calc_gcomp_ml <- function(strategy,
                           ipd, ald) {
   args_list <- 
