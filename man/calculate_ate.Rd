@@ -2,18 +2,31 @@
 % Please edit documentation in R/calculate_ate.R
 \name{calculate_ate}
 \alias{calculate_ate}
-\title{Calculate average treatment effect}
+\title{Calculate Average Treatment Effect}
 \usage{
 calculate_ate(mean_A, mean_C, effect)
 }
 \arguments{
-\item{ppv}{model prediction samples}
+\item{mean_A, mean_C}{Mean of the outcome for the treatment and control}
 
-\item{family}{family object of the model}
+\item{effect}{A character string specifying the effect scale. Options are:
+\describe{
+\item{"log_odds"}{Log-odds difference.}
+\item{"risk_difference"}{Risk difference.}
+\item{"delta_z"}{Probit scale difference (z-scores).}
+\item{"log_relative_risk_rare_events"}{Log relative risk for rare events.}
+\item{"log_relative_risk"}{Log relative risk.}
+}}
 }
 \value{
-ATE
+The computed average treatment effect on the specified scale.
 }
 \description{
-Calculate average treatment effect
+Computes the average treatment effect (ATE) based on the specified effect scale.
+}
+\examples{
+\dontrun{
+calculate_ate(mean_A = 0.7, mean_C = 0.5, effect = "log_odds")
+calculate_ate(mean_A = 0.7, mean_C = 0.5, effect = "risk_difference")
+}
 }

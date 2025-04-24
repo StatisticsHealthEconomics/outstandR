@@ -9,16 +9,27 @@ marginal_treatment_effect(ald, treatments = list("B", "C"), scale, family)
 \arguments{
 \item{ald}{Aggregate-level data}
 
-\item{treatments}{Treatment labels list. Last variable is reference; default \code{B}, \code{C} (common; e.g. placebo)}
+\item{treatments}{A list of treatment labels. Last variable is reference; default \code{B}, \code{C} (common; e.g. placebo)}
+
+\item{scale}{A scaling parameter for the calculation.}
+
+\item{family}{A character string specifying the family distribution (e.g., "binomial").}
 }
 \value{
-Relative treatment effect
+The relative treatment effect.
 }
 \description{
-For binomial data calculate
+Computes the relative treatment effect from aggregate-level data using event counts.
+For binomial data, calculates:
 \deqn{
 \log\left( \frac{n_B/(N_B-n_B)}{n_C/(N_B-n_{B})} \right) = \log(n_B n_{\bar{C}}) - \log(n_C n_{\bar{B}})
 }
 where \eqn{\bar{C}} is the compliment of \eqn{C}
 so e.g. \eqn{n_{\bar{C}} = N_C - n_c}.
+}
+\examples{
+\dontrun{
+ald <- data.frame(trial = 1:5, n_B = c(10, 20, 15, 30, 25), n_C = c(12, 18, 20, 25, 22))
+marginal_treatment_effect(ald, treatments = list("B", "C"), scale = "log", family = "binomial")
+}
 }

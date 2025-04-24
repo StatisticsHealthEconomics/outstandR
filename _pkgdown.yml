@@ -1,5 +1,8 @@
 url: https://StatisticsHealthEconomics.github.io/outstandR/
-  
+
+build:
+  vignettes: false
+
 news:
   cran_dates: false
 
@@ -28,11 +31,13 @@ reference:
   - IPD_stats
   - marginal_treatment_effect
   - marginal_variance
+  - calculate_trial_variance
   - calculate_ate
   - calc_gcomp_stan
+  - calc_gcomp_ml
   - calc_stc
   - find_conversion_path
-  - gen_data
+  # - gen_data
   - get_treatment_effect
   - IPD_stat_factory
 - title: "Data"

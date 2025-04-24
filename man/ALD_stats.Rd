@@ -7,15 +7,31 @@
 ALD_stats(strategy, ald, treatments = list("B", "C"), scale)
 }
 \arguments{
+\item{strategy}{A list containing the strategy details, including the family distribution.}
+
 \item{ald}{Aggregate-level trial data}
 
 \item{treatments}{Treatment labels list; default \code{B}, \code{C} (common; e.g. placebo)}
+
+\item{scale}{A scaling parameter for the calculation.}
 }
 \value{
-List of marginal treatment effect mean and variance
+A list containing:
+\describe{
+\item{mean}{The marginal treatment effect mean.}
+\item{var}{The marginal treatment effect variance.}
+}
 }
 \description{
-Aggregate-level data mean and variance statistics
+Computes the mean and variance of marginal treatment effects for aggregate-level trial data.
+}
+\examples{
+\dontrun{
+strategy <- list(family = list(family = "binomial"))  # basic version
+ald <- data.frame(trial = 1:5, n_B = c(10, 20, 15, 30, 25), n_C = c(12, 18, 20, 25, 22))
+ALD_stats(strategy, ald, treatments = list("B", "C"), scale = "log")
+}
+
 }
 \seealso{
 \code{\link[=marginal_treatment_effect]{marginal_treatment_effect()}}, \code{\link[=marginal_variance]{marginal_variance()}}

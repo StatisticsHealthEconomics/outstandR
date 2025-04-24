@@ -6,6 +6,25 @@
 \usage{
 get_treatment_effect(link)
 }
+\arguments{
+\item{link}{A character string specifying the link function. Options are:
+\describe{
+\item{"logit"}{Log-odds scale.}
+\item{"identity"}{Risk difference.}
+\item{"probit"}{Probit scale.}
+\item{"cloglog"}{Log relative risk for rare events.}
+\item{"log"}{Log relative risk.}
+}}
+}
+\value{
+A character string representing the treatment effect scale.
+}
 \description{
-Get treatment effect scale corresponding to a link function
+Maps a given link function to its corresponding treatment effect scale.
+}
+\examples{
+\dontrun{
+get_treatment_effect(link = "logit")
+get_treatment_effect(link = "identity")
+}
 }

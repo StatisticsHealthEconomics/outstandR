@@ -14,12 +14,21 @@ gcomp_ml.boot(data, indices, R, formula = NULL, family, N = 1000, ald)
 \item{formula}{Linear regression \code{formula} object}
 
 \item{N}{Synthetic sample size for g-computation}
+
+\item{ald}{Aggregate-level data for covariates.}
 }
 \value{
 Mean difference in expected log-odds
 }
 \description{
 Using bootstrap resampling, calculates the log odds ratio.
+}
+\examples{
+\dontrun{
+data <- data.frame(treatment = c(0, 1), outcome = c(1, 0))
+gcomp_ml.boot(data, indices = 1:2, formula = outcome ~ treatment,
+              R = 100, family = binomial(), N = 1000, ald = NULL)
+}
 }
 \seealso{
 \code{\link[=strategy_gcomp_ml]{strategy_gcomp_ml()}}, \code{\link[=gcomp_ml_log_odds_ratio]{gcomp_ml_log_odds_ratio()}}

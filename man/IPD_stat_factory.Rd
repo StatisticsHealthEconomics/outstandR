@@ -2,10 +2,17 @@
 % Please edit documentation in R/IPD_stats.R
 \name{IPD_stat_factory}
 \alias{IPD_stat_factory}
-\title{function operator}
+\title{Factory function for creating IPD_stats methods}
 \usage{
 IPD_stat_factory(ipd_fun)
 }
-\description{
-function operator
+\arguments{
+\item{ipd_fun}{A function that computes mean and variance statistics for individual-level patient data.}
 }
+\value{
+A function that computes mean and variance statistics for a given strategy.
+}
+\description{
+Creates a method for computing mean and variance statistics based on the supplied function.
+}
+\keyword{internal}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/gcomp_ml.R
 \name{simulate_ALD_pseudo_pop}
 \alias{simulate_ALD_pseudo_pop}
-\title{Synthetic cohort using normal copula}
+\title{Simulate Aggregate-Level Data Pseudo-Population}
 \usage{
 simulate_ALD_pseudo_pop(formula, ipd, ald, N = 1000)
 }
@@ -13,9 +13,20 @@ simulate_ALD_pseudo_pop(formula, ipd, ald, N = 1000)
 
 \item{ald}{Aggregate-level data}
 
-\item{N}{Sample size}
+\item{N}{Sample size for the synthetic cohort. Default is 1000.}
+}
+\value{
+A data frame representing the synthetic pseudo-population.
 }
 \description{
-Synthetic cohort using normal copula
+Generates a synthetic cohort using a normal copula based on aggregate-level data.
+}
+\examples{
+\dontrun{
+formula <- outcome ~ treatment + age
+ipd <- data.frame(treatment = c(0, 1), outcome = c(1, 0), age = c(30, 40))
+ald <- data.frame()
+simulate_ALD_pseudo_pop(formula, ipd, ald, N = 1000)
+}
 }
 \keyword{internal}

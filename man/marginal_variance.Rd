@@ -9,12 +9,23 @@ marginal_variance(ald, treatments = list("B", "C"), scale, family)
 \arguments{
 \item{ald}{Aggregate-level data}
 
-\item{treatments}{Treatment labels list; default \emph{B} vs \emph{C}}
+\item{treatments}{A list of treatment labels; default \emph{B} vs \emph{C}}
+
+\item{scale}{A scaling parameter for the calculation.}
+
+\item{family}{A character string specifying the family distribution (e.g., "binomial").}
 }
 \value{
-Total variance
+The total variance of marginal treatment effects.
 }
 \description{
-For binomial data calculate
+Computes the total variance of marginal treatment effects using the delta method.
+For binomial data, calculates:
 \deqn{\frac{1}{n_C} + \frac{1}{n_{\bar{C}}} + \frac{1}{n_B} + \frac{1}{n_{\bar{B}}}}.
+}
+\examples{
+\dontrun{
+ald <- data.frame(trial = 1:5, n_B = c(10, 20, 15, 30, 25), n_C = c(12, 18, 20, 25, 22))
+marginal_variance(ald, treatments = list("B", "C"), scale = "log", family = "binomial")
+}
 }

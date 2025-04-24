@@ -31,14 +31,21 @@ IPD_stats(strategy, ipd, ald, scale, ...)
 
 \item{ald}{Aggregate-level data}
 
+\item{scale}{A scaling parameter for the effect calculation.}
+
 \item{...}{Additional arguments}
 }
 \value{
-Mean and variance values
+A list containing:
+\describe{
+\item{mean}{Estimated mean treatment effect.}
+\item{var}{Estimated variance of the treatment effect.}
+}
 }
 \description{
-Separate methods for each approach
-MAIC, STC, G-computation via MLE or Bayesian inference.
+Computes mean and variance statistics for individual-level patient data using various approaches,
+including Matching-Adjusted Indirect Comparison (MAIC), Simulated Treatment Comparison (STC),
+and G-computation via Maximum Likelihood Estimation (MLE) or Bayesian inference.
 }
 \section{Multiple imputation marginalisation}{
 
@@ -71,3 +78,11 @@ Using Stan, compute marginal log-odds ratio for \emph{A} vs \emph{C} for each MC
 by transforming from probability to linear predictor scale.
 }
 
+\examples{
+\dontrun{
+strategy <- strategy_maic()
+ipd <- data.frame(id = 1:100, treatment = sample(c("A", "C"), 100, replace = TRUE), outcome = rnorm(100))
+ald <- data.frame(treatment = c("A", "C"), mean = c(0.2, 0.1), var = c(0.05, 0.03))
+IPD_stats(strategy, ipd, ald, scale = "log")
+}
+}

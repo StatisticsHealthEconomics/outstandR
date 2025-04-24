@@ -9,7 +9,7 @@ gcomp_ml_means(formula, family, N = 1000, ipd, ald)
 \arguments{
 \item{formula}{Linear regression \code{formula} object}
 
-\item{family}{Family object}
+\item{family}{A family object specifying the distribution and link function (e.g., "binomial").}
 
 \item{N}{Synthetic sample size for g-computation}
 
@@ -18,7 +18,7 @@ gcomp_ml_means(formula, family, N = 1000, ipd, ald)
 \item{ald}{Aggregate-level data}
 }
 \value{
-Difference on relative treatment effect scale
+A named vector containing the marginal mean probabilities under treatments A (\code{0}) and C (\code{1}).
 }
 \description{
 G-computation Maximum Likelihood mean outcome
@@ -31,6 +31,15 @@ estimated by transforming from probability to linear predictor scale.
 \eqn{\log(\hat{\mu}_A/(1 - \hat{\mu}_A)) - \log(\hat{\mu}_C/(1 - \hat{\mu}_C))}
 }
 
+\examples{
+\dontrun{
+formula <- outcome ~ treatment
+family <- binomial()
+ipd <- data.frame(treatment = c(0, 1), outcome = c(1, 0))
+ald <- data.frame()
+gcomp_ml_means(formula, family, N = 1000, ipd = ipd, ald = ald)
+}
+}
 \seealso{
 \code{\link[=strategy_gcomp_ml]{strategy_gcomp_ml()}}, \code{\link[=gcomp_ml.boot]{gcomp_ml.boot()}}
 }

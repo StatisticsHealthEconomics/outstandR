@@ -22,7 +22,10 @@
 #' ALD_stats(strategy, ald, treatments = list("B", "C"), scale = "log")
 #' }
 #'
-ALD_stats <- function(strategy, ald, treatments = list("B", "C"), scale) {
+ALD_stats <- function(strategy,
+                      ald,
+                      treatments = list("B", "C"),
+                      scale) {
   family <- strategy$family$family
   
   mean_eff <- marginal_treatment_effect(ald, treatments, scale, family)
@@ -51,7 +54,10 @@ ALD_stats <- function(strategy, ald, treatments = list("B", "C"), scale) {
 #' }
 #' @export
 #' 
-marginal_variance <- function(ald, treatments = list("B", "C"), scale, family) {
+marginal_variance <- function(ald,
+                              treatments = list("B", "C"),
+                              scale,
+                              family) {
   v1 <- calculate_trial_variance(ald, treatments[[1]], scale, family)
   v2 <- calculate_trial_variance(ald, treatments[[2]], scale, family)
   
@@ -82,7 +88,10 @@ marginal_variance <- function(ald, treatments = list("B", "C"), scale, family) {
 #' }
 #' @export
 #' 
-marginal_treatment_effect <- function(ald, treatments = list("B", "C"), scale, family) {
+marginal_treatment_effect <- function(ald,
+                                      treatments = list("B", "C"),
+                                      scale,
+                                      family) {
   m1 <- calculate_trial_mean(ald, treatments[[1]], scale, family)
   m2 <- calculate_trial_mean(ald, treatments[[2]], scale, family)
   
