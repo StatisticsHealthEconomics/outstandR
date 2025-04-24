@@ -163,7 +163,7 @@ $$
 \text{logit}(p_{it}) = \beta_0 + \beta_X (X_3 + X_4) + [\beta_{trt} + \beta_{EM} (X_1 + X_2)] \; \text{I}(trt \neq C)
 $$
 
-So, the log OR for the treatment effect of interest, i.e. $AC$ or $BC$, is $\beta_{trt}$ (`b_trt`).
+So, the log OR for the treatment effect of interest, i.e. *AC* or *BC*, is $\beta_{trt}$ (`b_trt`).
 
 This general format of data sets consist of the following.
 
@@ -192,7 +192,8 @@ head(AC.IPD)
 
 There are 4 correlated continuous covariates generated per subject,
 simulated from a multivariate normal distribution.
-Treatment `trt` 1 corresponds to new treatment $A$, and 0 is standard of care or status quo $C$. 
+Treatment `trt` 1 corresponds to new treatment *A*, and 0 is standard of care or status quo *C*. The ITC is 'anchored' via *C*, the common treatment.
+
 
 ```{r}
 BC.ALD
@@ -385,7 +386,7 @@ outstandR_stc_lrr
 ```
 
 For the last two approaches, we perform G-computation firstly with a
-frequentist MLE approach and then a Bayesian approach.
+frequentist MLE and then a Bayesian approach.
 
 ### Parametric G-computation with maximum-likelihood estimation
 
@@ -655,7 +656,7 @@ knitr::kable(res_tab_lrr)
 
 #### Plots
 
-The same output in a forest plot is
+The same output in forest plots is
 
 ```{r forest-lor, fig.width=8, fig.height=6, warning=FALSE, message=FALSE}
 library(ggplot2)
