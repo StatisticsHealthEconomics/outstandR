@@ -2,7 +2,7 @@
 title: "Binary data example usind data from Remiro-Azocar et al. (2020)"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Binary data Remiro-Azocar}
+  %\VignetteIndexEntry{Binary data example usind data from Remiro-Azocar et al. (2020)}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
