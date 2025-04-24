@@ -7,9 +7,16 @@
 #' @param indices Indices sampled from rows of `data`
 #' @param formula Linear regression `formula` object
 #' @param N Synthetic sample size for g-computation
+#' @param ald Aggregate-level data for covariates.
 #'
 #' @return Mean difference in expected log-odds
 #' @seealso [strategy_gcomp_ml()], [gcomp_ml_log_odds_ratio()]
+#' @examples
+#' \dontrun{
+#' data <- data.frame(treatment = c(0, 1), outcome = c(1, 0))
+#' gcomp_ml.boot(data, indices = 1:2, formula = outcome ~ treatment,
+#'               R = 100, family = binomial(), N = 1000, ald = NULL)
+#' }
 #' @keywords internal
 #' 
 gcomp_ml.boot <- function(data, indices,
@@ -29,15 +36,23 @@ gcomp_ml.boot <- function(data, indices,
 #' \eqn{\log(\hat{\mu}_A/(1 - \hat{\mu}_A)) - \log(\hat{\mu}_C/(1 - \hat{\mu}_C))}
 #'
 #' @param formula Linear regression `formula` object
-#' @param family Family object
+#' @param family A family object specifying the distribution and link function (e.g., "binomial").
+#' @param N Synthetic sample size for g-computation
 #' @template args-ipd
 #' @template args-ald
-#' @param N Synthetic sample size for g-computation
 #'
-#' @return Difference on relative treatment effect scale 
+#' @return A named vector containing the marginal mean probabilities under treatments A (`0`) and C (`1`).
 #' @seealso [strategy_gcomp_ml()], [gcomp_ml.boot()]
 #' @importFrom copula normalCopula mvdc rMvdc
 #' @importFrom stats predict glm
+#' @examples
+#' \dontrun{
+#' formula <- outcome ~ treatment
+#' family <- binomial()
+#' ipd <- data.frame(treatment = c(0, 1), outcome = c(1, 0))
+#' ald <- data.frame()
+#' gcomp_ml_means(formula, family, N = 1000, ipd = ipd, ald = ald)
+#' }
 #' @keywords internal
 #'
 gcomp_ml_means <- function(formula,
@@ -74,14 +89,24 @@ gcomp_ml_means <- function(formula,
 }
 
 
-#' Synthetic cohort using normal copula
+#' Simulate Aggregate-Level Data Pseudo-Population
+#'
+#' Generates a synthetic cohort using a normal copula based on aggregate-level data.
 #'
 #' @param formula Linear regression `formula` object
 #' @template args-ipd
 #' @template args-ald
-#' @param N Sample size
+#' @param N Sample size for the synthetic cohort. Default is 1000.
 #' 
+#' @return A data frame representing the synthetic pseudo-population.
 #' @importFrom copula normalCopula mvdc
+#' @examples
+#' \dontrun{
+#' formula <- outcome ~ treatment + age
+#' ipd <- data.frame(treatment = c(0, 1), outcome = c(1, 0), age = c(30, 40))
+#' ald <- data.frame()
+#' simulate_ALD_pseudo_pop(formula, ipd, ald, N = 1000)
+#' }
 #' @keywords internal
 #' 
 simulate_ALD_pseudo_pop <- function(formula,
