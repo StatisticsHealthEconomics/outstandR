@@ -4,7 +4,7 @@
 \alias{outstandR}
 \title{Calculate the difference between treatments using all evidence}
 \usage{
-outstandR(AC.IPD, BC.ALD, strategy, CI = 0.95, ...)
+outstandR(AC.IPD, BC.ALD, strategy, CI = 0.95, scale = NULL, ...)
 }
 \arguments{
 \item{AC.IPD}{Individual-level patient data. Suppose between studies \emph{A} and \emph{C}.}
@@ -15,6 +15,8 @@ outstandR(AC.IPD, BC.ALD, strategy, CI = 0.95, ...)
 \code{strategy_maic()}, \code{strategy_stc()}, \code{strategy_gcomp_ml()} and  \code{strategy_gcomp_stan()}}
 
 \item{CI}{Confidence interval; between 0,1}
+
+\item{scale}{Relative treatment effect scale. If \code{NULL}, the scale is automatically determined from the model.}
 
 \item{...}{Additional arguments}
 }

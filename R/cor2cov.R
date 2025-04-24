@@ -7,5 +7,6 @@
 #' @keywords internal
 #'
 cor2cov <- function(R, S) {
+  # R * S %*% t(S)  # alternative
   sweep(sweep(R, 1, S, "*"), 2, S, "*")
 }
