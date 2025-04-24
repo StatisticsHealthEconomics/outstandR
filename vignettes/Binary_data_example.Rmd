@@ -485,7 +485,7 @@ We can draw a vector of size $N^*$ of predicted outcomes $y^*_z$ under
 each set intervention $z^*$ from its posterior predictive distribution
 under the specific treatment.
 
-```{r outstandR_gcomp_stan}
+```{r outstandR_gcomp_stan, message=FALSE}
 outstandR_gcomp_stan <-
   outstandR(AC.IPD, BC.ALD,
             strategy = strategy_gcomp_stan(formula = lin_form,
@@ -610,7 +610,8 @@ res_tab <-
     `STC` = unlist(outstandR_stc$contrasts),
     `Gcomp ML` = unlist(outstandR_gcomp_ml$contrasts),
     `Gcomp Bayes` = unlist(outstandR_gcomp_stan$contrasts),
-    `MIM` = unlist(outstandR_mim$contrasts))
+    `MIM` = unlist(outstandR_mim$contrasts)) |> 
+  round(2)
 
 res_tab_var <- 
   data.frame(
@@ -620,7 +621,8 @@ res_tab_var <-
     `STC` = unlist(outstandR_stc$variances),
     `Gcomp ML` = unlist(outstandR_gcomp_ml$variances),
     `Gcomp Bayes` = unlist(outstandR_gcomp_stan$variances),
-    `MIM` = unlist(outstandR_mim$variances))
+    `MIM` = unlist(outstandR_mim$variances)) |> 
+  round(2)
 
 knitr::kable(res_tab)
 ```
@@ -641,7 +643,8 @@ res_tab_lrr <-
     `STC` = unlist(outstandR_stc_lrr$contrasts),
     `Gcomp ML` = unlist(outstandR_gcomp_ml_lrr$contrasts),
     `Gcomp Bayes` = unlist(outstandR_gcomp_stan_lrr$contrasts),
-    `MIM` = unlist(outstandR_mim_lrr$contrasts))
+    `MIM` = unlist(outstandR_mim_lrr$contrasts)) |> 
+  round(2)
 
 res_tab_var_lrr <- 
   data.frame(
@@ -651,7 +654,8 @@ res_tab_var_lrr <-
     `STC` = unlist(outstandR_stc_lrr$variances),
     `Gcomp ML` = unlist(outstandR_gcomp_ml_lrr$variances),
     `Gcomp Bayes` = unlist(outstandR_gcomp_stan_lrr$variances),
-    `MIM` = unlist(outstandR_mim_lrr$variances))
+    `MIM` = unlist(outstandR_mim_lrr$variances)) |> 
+  round(2)
 
 knitr::kable(res_tab_lrr)
 ```
