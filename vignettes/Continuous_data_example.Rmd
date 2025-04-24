@@ -51,7 +51,7 @@ the RCT publication. The binary outcomes are summarized in an overall
 event table. Typically, the published study only provides aggregate
 information to the analyst.
 
-Use the in-built `gen_data()` function.
+Use the `gen_data()` function available in the [simcovariates](https://github.com/n8thangreen/simcovariates) package.
 
 ```{r}
 library(dplyr)
