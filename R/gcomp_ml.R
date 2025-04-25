@@ -65,9 +65,6 @@ gcomp_ml_means <- function(formula,
                            rho = NA,
                            N = 1000) {
   
-  if (!inherits(formula, "formula"))
-    stop("formula argument must be of formula class.")
-  
   x_star <- simulate_ALD_pseudo_pop(formula = formula,
                                     ipd = ipd, ald = ald,
                                     rho = rho, N = N)
