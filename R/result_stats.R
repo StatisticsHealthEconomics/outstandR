@@ -1,6 +1,13 @@
 
-#
-contrast_stats <- function(AC_stats,
+#' Result Statistics
+#'
+#' @param AC_stats,BC_stats 
+#' @param CI Confidence interval 1-alpha
+#'
+#' @returns List
+#' @export
+#'
+result_stats <- function(AC_stats,
                            BC_stats,
                            CI = 0.95) {
   upper <- 0.5 + CI/2
@@ -23,7 +30,12 @@ contrast_stats <- function(AC_stats,
     BC = contrasts$BC + z_vals*as.vector(sqrt(contrast_variances$BC)))
   
   list(
-    contrasts = contrasts,
-    variances = contrast_variances,
-    CI = contrast_ci)
+    contrasts = list(
+      means = contrasts,
+      variances = contrast_variances,
+      CI = contrast_ci),
+    absolute = list(   ##TODO:
+      means = contrasts,
+      variances = contrast_variances,
+      CI = contrast_ci))
 }

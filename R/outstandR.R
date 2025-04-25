@@ -15,8 +15,8 @@
 #' @param ... Additional arguments
 #' @return List of length 3 of statistics as a `outstandR` class object.
 #'   Containing statistics between each pair of treatments.
-#'   These are the mean contrasts, variances and confidence intervals,
-#'   respectively.
+#'   These are the mean, variances and confidence intervals,
+#'   for contrasts and absolute values.
 #' @importFrom Rdpack reprompt
 #' 
 #' @references
@@ -63,10 +63,11 @@ outstandR <- function(AC.IPD, BC.ALD, strategy, CI = 0.95, scale = NULL, ...) {
   AC_stats <- IPD_stats(strategy, ipd = ipd, ald = ald, scale, ...) 
   BC_stats <- ALD_stats(strategy, ald = ald, scale = scale) 
   
-  stats <- contrast_stats(AC_stats, BC_stats, CI)
+  stats <- result_stats(AC_stats, BC_stats, CI)
   
   structure(stats,
             CI = CI,
             scale = scale,
+            model = strategy$family$family,
             class = c("outstandR", class(stats)))
 }

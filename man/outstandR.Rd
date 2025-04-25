@@ -23,8 +23,8 @@ outstandR(AC.IPD, BC.ALD, strategy, CI = 0.95, scale = NULL, ...)
 \value{
 List of length 3 of statistics as a \code{outstandR} class object.
 Containing statistics between each pair of treatments.
-These are the mean contrasts, variances and confidence intervals,
-respectively.
+These are the mean, variances and confidence intervals,
+for contrasts and absolute values.
 }
 \description{
 This is the main, top-level wrapper for \code{{outstandR}}.

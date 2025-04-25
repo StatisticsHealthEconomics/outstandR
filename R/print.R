@@ -7,6 +7,7 @@ print.outstandR <- function(x, ...) {
   }
   
   cat(pillar::style_bold("Object of class 'outstandR'"), "\n")
+  cat("Model:", pillar::style_subtle(attr(x, "model")), "\n")
   cat("Scale:", pillar::style_subtle(attr(x, "scale")), "\n")
   cat("Common treatment:", pillar::style_subtle("C"), "\n")
   # cat(pillar::style_subtle("Common treatment:"), attr(x, "reference"), "\n")
@@ -22,15 +23,30 @@ print.outstandR <- function(x, ...) {
     else sprintf("%.3f", value)
   }
   
-  tib <- tibble::tibble(
-    Treatments = names(x$contrasts),
-    Estimate = unlist(x$contrasts),
-    Std.Error = unlist(x$variances),
-    lower.0.95 = sapply(x$CI, \(x) x[1]),
-    upper.0.95 = sapply(x$CI, \(x) x[2])
+  contrasts <- x$contrasts
+  absolute <- x$absolute
+  
+  con_tab <- tibble::tibble(
+    Treatments = names(contrasts$means),
+    Estimate = unlist(contrasts$means),
+    Std.Error = unlist(contrasts$variances),
+    lower.0.95 = sapply(contrasts$CI, \(x) x[1]),
+    upper.0.95 = sapply(contrasts$CI, \(x) x[2])
   )
   
-  print(tib, n = Inf)
+  abs_tab <- tibble::tibble(
+    Treatments = names(absolute$means),
+    Estimate = unlist(absolute$means),
+    Std.Error = unlist(absolute$variances),
+    lower.0.95 = sapply(absolute$CI, \(x) x[1]),
+    upper.0.95 = sapply(absolute$CI, \(x) x[2])
+  )
   
-  invisible(tib)
+  cat("Contrasts:\n\n")
+  print(con_tab, n = Inf)
+
+  cat("\nAbsolute:\n\n")
+  print(abs_tab, n = Inf)
+  
+  invisible()
 }
