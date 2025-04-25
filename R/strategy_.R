@@ -29,9 +29,13 @@
 #'
 strategy_maic <- function(formula = NULL,
                           family = gaussian(link = "identity"),
-                          R = 1000) {
+                          R = 1000L) {
   check_formula(formula)
   check_family(family)
+   
+  if (R <= 0 || R %% 1 != 0) {
+    stop("R not positive whole number.")
+  }
   
   default_args <- formals()
   args <- c(formula = formula, as.list(match.call())[-c(1,2)])
