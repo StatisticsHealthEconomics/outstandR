@@ -46,13 +46,7 @@
 #' 
 outstandR <- function(AC.IPD, BC.ALD, strategy, CI = 0.95, scale = NULL, ...) {
   
-  if (CI <= 0 || CI >= 1) stop("CI argument must be between 0 and 1.")
-  
-  if (!is.null(scale) & !any(scale %in% c("log_odds", "log_relative_risk", "risk_difference")))
-      stop("scale not in available list.")
-      
-  if (!inherits(strategy, "strategy"))
-    stop("strategy argument must be a class strategy.")
+  validate_outstandr(AC.IPD, BC.ALD, strategy, CI, scale)
   
   ipd <- prep_ipd(strategy$formula, AC.IPD)
   ald <- prep_ald(strategy$formula, BC.ALD)

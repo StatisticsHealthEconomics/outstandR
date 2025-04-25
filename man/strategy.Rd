@@ -18,8 +18,8 @@ strategy_gcomp_ml(
   formula = NULL,
   family = gaussian(link = "identity"),
   rho = NA,
-  R = 1000,
-  N = 1000
+  R = 1000L,
+  N = 1000L
 )
 
 strategy_gcomp_stan(formula = NULL, family = gaussian(link = "identity"))
