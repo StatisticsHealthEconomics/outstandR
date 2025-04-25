@@ -1,4 +1,12 @@
 
+#' Print a Summary of a OutstandR Object
+#' 
+#' This is a method for the function [print()] for objects of the
+#' class "outstandR" created by a call to [outstandR()]
+#' 
+#' @param x Objects of the class "outstandR"
+#' @param ... Additional arguments passed to other methods
+#' @seealso [outstandR()]
 #' @export
 #' 
 print.outstandR <- function(x, ...) {
@@ -10,7 +18,7 @@ print.outstandR <- function(x, ...) {
   cat("Model:", pillar::style_subtle(attr(x, "model")), "\n")
   cat("Scale:", pillar::style_subtle(attr(x, "scale")), "\n")
   cat("Common treatment:", pillar::style_subtle("C"), "\n")
-  # cat(pillar::style_subtle("Common treatment:"), attr(x, "reference"), "\n")
+  # cat(pillar::style_subtle("Common treatment:"), attr(x, "reference"), "\n")  ##TODO:
   cat("Individual patient data study:", pillar::style_subtle("AC"), "\n")
   cat("Aggregate level data study:", pillar::style_subtle("BC"), "\n")
   cat("Confidence interval level:", pillar::style_subtle(attr(x, "CI")), "\n\n")
