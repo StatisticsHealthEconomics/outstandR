@@ -4,7 +4,7 @@
 \alias{simulate_ALD_pseudo_pop}
 \title{Simulate Aggregate-Level Data Pseudo-Population}
 \usage{
-simulate_ALD_pseudo_pop(formula, ipd, ald, N = 1000)
+simulate_ALD_pseudo_pop(formula, ipd, ald, rho = NA, N = 1000)
 }
 \arguments{
 \item{formula}{Linear regression \code{formula} object}
@@ -12,6 +12,8 @@ simulate_ALD_pseudo_pop(formula, ipd, ald, N = 1000)
 \item{ipd}{Individual-level data}
 
 \item{ald}{Aggregate-level data}
+
+\item{rho}{A named square matrix of covariate correlations; default NA.}
 
 \item{N}{Sample size for the synthetic cohort. Default is 1000.}
 }

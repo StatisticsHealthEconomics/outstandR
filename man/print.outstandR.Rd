@@ -2,7 +2,7 @@
 % Please edit documentation in R/print.R
 \name{print.outstandR}
 \alias{print.outstandR}
-\title{Print a Summary of a OutstandR Object}
+\title{Print a Summary of a outstandR Object}
 \usage{
 \method{print}{outstandR}(x, ...)
 }

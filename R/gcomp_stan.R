@@ -117,6 +117,7 @@ calc_gcomp_ml <- function(strategy,
     list(R = strategy$R,
          formula = strategy$formula,
          family = strategy$family,
+         rho = strategy$rho,
          N = strategy$N,
          data = ipd,
          ald = ald)

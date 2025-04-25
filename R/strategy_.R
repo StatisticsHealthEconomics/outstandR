@@ -102,6 +102,7 @@ strategy_stc <- function(formula = NULL,
 #' \hat{\Delta}^{(2)}_{10} = g(\hat{\mu}_1) - g(\hat{\mu}_0)
 #' }
 #'
+#' @param rho A named square matrix of covariate correlations; default NA.
 #' @param R The number of resamples used for the non-parametric bootstrap
 #' @param N Synthetic sample size for g-computation
 #' 
@@ -111,10 +112,18 @@ strategy_stc <- function(formula = NULL,
 #'
 strategy_gcomp_ml <- function(formula = NULL,
                               family = gaussian(link = "identity"),
-                              R = 1000,
-                              N = 1000) {
+                              rho = NA,
+                              R = 1000L,
+                              N = 1000L) {
   check_formula(formula)
   check_family(family)
+  
+  if (R <= 0 || R %% 1 != 0) {
+    stop("R not positive whole number.")
+  }
+  if (N <= 0 || N %% 1 != 0) {
+    stop("N not positive whole number.")
+  }
   
   default_args <- formals()
   args <- c(formula = formula, as.list(match.call())[-c(1,2)])

@@ -1,5 +1,5 @@
 
-#' Print a Summary of a OutstandR Object
+#' Print a Summary of a outstandR Object
 #' 
 #' This is a method for the function [print()] for objects of the
 #' class "outstandR" created by a call to [outstandR()]

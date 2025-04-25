@@ -4,7 +4,7 @@
 \alias{gcomp_ml_means}
 \title{G-computation Maximum Likelihood mean outcome}
 \usage{
-gcomp_ml_means(formula, family, ipd, ald, N = 1000)
+gcomp_ml_means(formula, family, ipd, ald, rho = NA, N = 1000)
 }
 \arguments{
 \item{formula}{Linear regression \code{formula} object}
@@ -14,6 +14,8 @@ gcomp_ml_means(formula, family, ipd, ald, N = 1000)
 \item{ipd}{Individual-level data}
 
 \item{ald}{Aggregate-level data}
+
+\item{rho}{A named square matrix of covariate correlations; default NA.}
 
 \item{N}{Synthetic sample size for g-computation}
 }

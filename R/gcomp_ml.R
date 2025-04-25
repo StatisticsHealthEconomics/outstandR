@@ -6,6 +6,8 @@
 #' @param data Trial data 
 #' @param indices Indices sampled from rows of `data`
 #' @param formula Linear regression `formula` object
+#' @param family A family object specifying the distribution and link function (e.g., "binomial").
+#' @param rho A named square matrix of covariate correlations; default NA.
 #' @param N Synthetic sample size for g-computation
 #' @param ald Aggregate-level data for covariates.
 #'
@@ -21,9 +23,10 @@
 #' 
 gcomp_ml.boot <- function(data, indices,
                           R, formula = NULL,
-                          family, N = 1000, ald) {
+                          family, rho = NA,
+                          N = 1000, ald) {
   dat <- data[indices, ]
-  gcomp_ml_means(formula, family, dat, ald, N) 
+  gcomp_ml_means(formula, family, dat, ald, rho, N) 
 }
 
 
@@ -37,9 +40,10 @@ gcomp_ml.boot <- function(data, indices,
 #'
 #' @param formula Linear regression `formula` object
 #' @param family A family object specifying the distribution and link function (e.g., "binomial").
-#' @param N Synthetic sample size for g-computation
 #' @template args-ipd
 #' @template args-ald
+#' @param rho A named square matrix of covariate correlations; default NA.
+#' @param N Synthetic sample size for g-computation
 #'
 #' @return A named vector containing the marginal mean probabilities under treatments A (`0`) and C (`1`).
 #' @seealso [strategy_gcomp_ml()], [gcomp_ml.boot()]
@@ -58,13 +62,15 @@ gcomp_ml.boot <- function(data, indices,
 gcomp_ml_means <- function(formula,
                            family,
                            ipd, ald,
+                           rho = NA,
                            N = 1000) {
   
   if (!inherits(formula, "formula"))
     stop("formula argument must be of formula class.")
   
   x_star <- simulate_ALD_pseudo_pop(formula = formula,
-                                    ipd = ipd, ald = ald, N = N)
+                                    ipd = ipd, ald = ald,
+                                    rho = rho, N = N)
   
   # outcome logistic regression fitted to IPD using maximum likelihood
   fit <- glm(formula = formula,
@@ -97,6 +103,7 @@ gcomp_ml_means <- function(formula,
 #' @param formula Linear regression `formula` object
 #' @template args-ipd
 #' @template args-ald
+#' @param rho A named square matrix of covariate correlations; default NA.
 #' @param N Sample size for the synthetic cohort. Default is 1000.
 #' 
 #' @return A data frame representing the synthetic pseudo-population.
@@ -112,6 +119,7 @@ gcomp_ml_means <- function(formula,
 #' 
 simulate_ALD_pseudo_pop <- function(formula,
                                     ipd, ald,
+                                    rho = NA,
                                     N = 1000) {
   set.seed(1234)
   
@@ -128,12 +136,32 @@ simulate_ALD_pseudo_pop <- function(formula,
   n_covariates <- length(covariate_names)
   
   # covariate simulation for BC trial using copula package
-  # AC IPD pairwise correlations
-  rho <- cor(ipd[, covariate_names])
-  t_rho <- t(rho)  # extract along rows
+  
+  # don't require copula for single covariate
+  if (length(covariate_names) <= 1) {
+    x_star <- 
+      rnorm(n = N,
+            mean = ald[[mean_names]],
+            sd = ald[[sd_names]]) |> 
+      matrix(ncol = 1, dimnames = list(NULL, covariate_names))
+  
+    return(x_star)
+  }
+  
+  if (is.na(rho)) {
+    # AC IPD pairwise correlations
+    rho <- cor(ipd[, covariate_names])
+  } else {
+    # ensure in correct order
+    rho <- rho[covariate_names, covariate_names]
+  }
+  # t_rho <- t(rho)  # extract along rows  ##TODO: isn't this symmetrical though?
+  
+  cor_ipd <- rho[lower.tri(rho, diag = FALSE)]
+  # cor_ipd <- t_rho[lower.tri(t_rho, diag = FALSE)]
   
   cop <-
-    copula::normalCopula(param = t_rho[lower.tri(t_rho)],
+    copula::normalCopula(param = cor_ipd,
                          dim = n_covariates,
                          dispstr = "un")
   

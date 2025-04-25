@@ -4,7 +4,16 @@
 \alias{gcomp_ml.boot}
 \title{G-computation maximum likelihood bootstrap}
 \usage{
-gcomp_ml.boot(data, indices, R, formula = NULL, family, N = 1000, ald)
+gcomp_ml.boot(
+  data,
+  indices,
+  R,
+  formula = NULL,
+  family,
+  rho = NA,
+  N = 1000,
+  ald
+)
 }
 \arguments{
 \item{data}{Trial data}
@@ -12,6 +21,10 @@ gcomp_ml.boot(data, indices, R, formula = NULL, family, N = 1000, ald)
 \item{indices}{Indices sampled from rows of \code{data}}
 
 \item{formula}{Linear regression \code{formula} object}
+
+\item{family}{A family object specifying the distribution and link function (e.g., "binomial").}
+
+\item{rho}{A named square matrix of covariate correlations; default NA.}
 
 \item{N}{Synthetic sample size for g-computation}
 
