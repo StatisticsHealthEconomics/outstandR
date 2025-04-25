@@ -79,7 +79,7 @@ gcomp_ml_means <- function(formula,
   
   treat_name <- get_treatment_name(formula)
   
-  # # intervene on treatment while keeping set covariates fixed
+  # intervene on treatment while keeping set covariates fixed
   data.trtA[[treat_name]] <- 0  # all receive A
   data.trtC[[treat_name]] <- 1  # all receive C
   
