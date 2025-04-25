@@ -5,7 +5,7 @@
 #' @param CI Confidence interval 1-alpha
 #'
 #' @returns List
-#' @export
+#' @keywords internal
 #'
 result_stats <- function(AC_stats,
                            BC_stats,

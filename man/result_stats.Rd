@@ -17,3 +17,4 @@ List
 \description{
 Result Statistics
 }
+\keyword{internal}

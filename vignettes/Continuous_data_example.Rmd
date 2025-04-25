@@ -330,11 +330,23 @@ We can draw a vector of size $N^*$ of predicted outcomes $y^*_z$ under
 each set intervention $z^*$ from its posterior predictive distribution
 under the specific treatment.
 
-```{r outstandR_gcomp_stan}
+```{r outstandR_gcomp_stan, eval=FALSE}
 outstandR_gcomp_stan <-
   outstandR(AC.IPD, BC.ALD,
             strategy = strategy_gcomp_stan(formula = lin_form,
                                            family = gaussian(link = "identity")))
+```
+
+```{r outstandR_gcomp_stan_eval, echo=FALSE}
+xx <- capture.output(
+  outstandR_gcomp_stan <-
+    outstandR(AC.IPD, BC.ALD,
+              strategy = strategy_gcomp_stan(
+                formula = lin_form,
+                family = gaussian(link = "identity"))))
+```
+
+```{r}
 outstandR_gcomp_stan
 ```
 
@@ -346,11 +358,23 @@ $$
 equation here
 $$
 
-```{r outstandR_mim}
+```{r outstandR_mim, eval=FALSE}
 outstandR_mim <-
   outstandR(AC.IPD, BC.ALD,
             strategy = strategy_mim(formula = lin_form,
                                     family = gaussian(link = "identity")))
+```
+
+```{r outstandR_mim_eval, echo=FALSE}
+xx <- capture.output(
+  outstandR_mim <-
+    outstandR(AC.IPD, BC.ALD,
+              strategy = strategy_mim(
+                formula = lin_form,
+                family = gaussian(link = "identity"))))
+```
+
+```{r}
 outstandR_mim
 ```
 
@@ -361,11 +385,11 @@ Combine all outputs for relative effects table of all contrasts and methods.
 ```{r}
 knitr::kable(
   data.frame(
-  `MAIC` = unlist(outstandR_maic$contrasts),
-  `STC` = unlist(outstandR_stc$contrasts),
-  `Gcomp ML` = unlist(outstandR_gcomp_ml$contrasts),
-  `Gcomp Bayes` = unlist(outstandR_gcomp_stan$contrasts),
-  `MIM` = unlist(outstandR_mim$contrasts))
+  `MAIC` = unlist(outstandR_maic$contrasts$means),
+  `STC` = unlist(outstandR_stc$contrasts$means),
+  `Gcomp ML` = unlist(outstandR_gcomp_ml$contrasts$means),
+  `Gcomp Bayes` = unlist(outstandR_gcomp_stan$contrasts$means),
+  `MIM` = unlist(outstandR_mim$contrasts$means))
 ) |> 
   round(2)
 ```

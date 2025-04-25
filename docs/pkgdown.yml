@@ -1,4 +1,4 @@
-pandoc: '3.2'
+pandoc: '3.4'
 pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
@@ -7,7 +7,7 @@ articles:
   comparison-with-other-packages: comparison-with-other-packages.html
   Continuous_data_example: Continuous_data_example.html
   Count_data_example: Count_data_example.html
-last_built: 2025-04-24T11:15Z
+last_built: 2025-04-25T16:24Z
 urls:
   reference: https://StatisticsHealthEconomics.github.io/outstandR/reference
   article: https://StatisticsHealthEconomics.github.io/outstandR/articles

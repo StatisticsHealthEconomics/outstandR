@@ -485,22 +485,43 @@ We can draw a vector of size $N^*$ of predicted outcomes $y^*_z$ under
 each set intervention $z^*$ from its posterior predictive distribution
 under the specific treatment.
 
-```{r outstandR_gcomp_stan, message=FALSE}
+```{r outstandR_gcomp_stan, message=FALSE, eval=FALSE}
 outstandR_gcomp_stan <-
   outstandR(AC.IPD, BC.ALD,
             strategy = strategy_gcomp_stan(formula = lin_form,
                                            family = binomial(link = "logit")))
+```
+
+```{r outstandR_gcomp_stan_eval, echo=FALSE, message=FALSE}
+xx <- capture.output(
+  outstandR_gcomp_stan <-
+    outstandR(AC.IPD, BC.ALD,
+              strategy = strategy_gcomp_stan(
+                formula = lin_form,
+                family = binomial(link = "logit"))))
+```
+
+```{r}
 outstandR_gcomp_stan
 ```
 
-Change the outcome scale
+As before, we can change the outcome scale.
 
-```{r outstandR_gcomp_stan_lrr}
+```{r outstandR_gcomp_stan_lrr, eval=FALSE}
 outstandR_gcomp_stan_lrr <-
   outstandR(AC.IPD, BC.ALD,
             strategy = strategy_gcomp_stan(formula = lin_form,
                                            family = binomial(link = "logit")),
             scale = "log_relative_risk")
+```
+
+```{r outstandR_gcomp_stan_lrr_eval, echo=FALSE}
+xx <- capture.output(
+  outstandR_gcomp_stan_lrr <-
+    outstandR(AC.IPD, BC.ALD,
+              strategy = strategy_gcomp_stan(formula = lin_form,
+                                             family = binomial(link = "logit")),
+              scale = "log_relative_risk"))
 ```
 
 ```{r}
@@ -515,7 +536,7 @@ $$
 equation here
 $$
 
-```{r outstandR_mim}
+```{r outstandR_mim, eval=FALSE}
 outstandR_mim <-
   outstandR(AC.IPD, BC.ALD,
             strategy = strategy_mim(formula = lin_form,
@@ -523,14 +544,35 @@ outstandR_mim <-
 outstandR_mim
 ```
 
-Change the outcome scale
+```{r outstandR_mim_eval, echo=FALSE}
+xx <- capture.output(
+  outstandR_mim <-
+    outstandR(AC.IPD, BC.ALD,
+              strategy = strategy_mim(formula = lin_form,
+                                      family = binomial(link = "logit"))))
+```
 
-```{r outstandR_mim_lrr}
+```{r}
+outstandR_mim
+```
+
+Change the outcome scale again.
+
+```{r outstandR_mim_lrr, eval=FALSE}
 outstandR_mim_lrr <-
   outstandR(AC.IPD, BC.ALD,
             strategy = strategy_mim(formula = lin_form,
                                     family = binomial(link = "logit")),
             scale = "log_relative_risk")
+```
+
+```{r outstandR_mim_lrr_eval, echo=FALSE}
+xx <- capture.output(
+  outstandR_mim_lrr <-
+    outstandR(AC.IPD, BC.ALD,
+              strategy = strategy_mim(formula = lin_form,
+                                      family = binomial(link = "logit")),
+              scale = "log_relative_risk"))
 ```
 
 ```{r}
@@ -606,22 +648,22 @@ res_tab <-
   data.frame(
     d_true = c(d_AB_true, d_AC_true, d_BC),
     d_naive = c(d_AB_naive, d_AC_naive$d_AC, d_BC),
-    `MAIC` = unlist(outstandR_maic$contrasts),
-    `STC` = unlist(outstandR_stc$contrasts),
-    `Gcomp ML` = unlist(outstandR_gcomp_ml$contrasts),
-    `Gcomp Bayes` = unlist(outstandR_gcomp_stan$contrasts),
-    `MIM` = unlist(outstandR_mim$contrasts)) |> 
+    `MAIC` = unlist(outstandR_maic$contrasts$means),
+    `STC` = unlist(outstandR_stc$contrasts$means),
+    `Gcomp ML` = unlist(outstandR_gcomp_ml$contrasts$means),
+    `Gcomp Bayes` = unlist(outstandR_gcomp_stan$contrasts$means),
+    `MIM` = unlist(outstandR_mim$contrasts$means)) |> 
   round(2)
 
 res_tab_var <- 
   data.frame(
     d_true = c(NA, NA, NA),
     d_naive = c(var.d.AB.naive, d_AC_naive$var_AC, var.d.BC),
-    `MAIC` = unlist(outstandR_maic$variances),
-    `STC` = unlist(outstandR_stc$variances),
-    `Gcomp ML` = unlist(outstandR_gcomp_ml$variances),
-    `Gcomp Bayes` = unlist(outstandR_gcomp_stan$variances),
-    `MIM` = unlist(outstandR_mim$variances)) |> 
+    `MAIC` = unlist(outstandR_maic$contrasts$variances),
+    `STC` = unlist(outstandR_stc$contrasts$variances),
+    `Gcomp ML` = unlist(outstandR_gcomp_ml$contrasts$variances),
+    `Gcomp Bayes` = unlist(outstandR_gcomp_stan$contrasts$variances),
+    `MIM` = unlist(outstandR_mim$contrasts$variances)) |> 
   round(2)
 
 knitr::kable(res_tab)
@@ -639,22 +681,22 @@ res_tab_lrr <-
   data.frame(
     # d_true = c(d_AB_true_lrr, d_AC_true_lrr, d_BC_lrr),
     # d_naive = c(d_AB_naive_lrr, d_AC_naive_lrr$d_AC, d_BC_lrr),
-    `MAIC` = unlist(outstandR_maic_lrr$contrasts),
-    `STC` = unlist(outstandR_stc_lrr$contrasts),
-    `Gcomp ML` = unlist(outstandR_gcomp_ml_lrr$contrasts),
-    `Gcomp Bayes` = unlist(outstandR_gcomp_stan_lrr$contrasts),
-    `MIM` = unlist(outstandR_mim_lrr$contrasts)) |> 
+    `MAIC` = unlist(outstandR_maic_lrr$contrasts$means),
+    `STC` = unlist(outstandR_stc_lrr$contrasts$means),
+    `Gcomp ML` = unlist(outstandR_gcomp_ml_lrr$contrasts$means),
+    `Gcomp Bayes` = unlist(outstandR_gcomp_stan_lrr$contrasts$means),
+    `MIM` = unlist(outstandR_mim_lrr$contrasts$means)) |> 
   round(2)
 
 res_tab_var_lrr <- 
   data.frame(
     # d_true = c(NA, NA, NA),
     # d_naive = c(var.d.AB.naive, d_AC_naive$var_AC, var.d.BC),
-    `MAIC` = unlist(outstandR_maic_lrr$variances),
-    `STC` = unlist(outstandR_stc_lrr$variances),
-    `Gcomp ML` = unlist(outstandR_gcomp_ml_lrr$variances),
-    `Gcomp Bayes` = unlist(outstandR_gcomp_stan_lrr$variances),
-    `MIM` = unlist(outstandR_mim_lrr$variances)) |> 
+    `MAIC` = unlist(outstandR_maic_lrr$contrasts$variances),
+    `STC` = unlist(outstandR_stc_lrr$contrasts$variances),
+    `Gcomp ML` = unlist(outstandR_gcomp_ml_lrr$contrasts$variances),
+    `Gcomp Bayes` = unlist(outstandR_gcomp_stan_lrr$contrasts$variances),
+    `MIM` = unlist(outstandR_mim_lrr$contrasts$variances)) |> 
   round(2)
 
 knitr::kable(res_tab_lrr)
