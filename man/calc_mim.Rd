@@ -4,15 +4,7 @@
 \alias{calc_mim}
 \title{Multiple imputation marginalization (MIM)}
 \usage{
-calc_mim(
-  strategy,
-  ipd,
-  ald,
-  M = 1000,
-  n.chains = 2,
-  warmup = 1000,
-  iters = 4000
-)
+calc_mim(strategy, ipd, ald, ...)
 }
 \arguments{
 \item{strategy}{Strategy object}
@@ -21,13 +13,7 @@ calc_mim(
 
 \item{ald}{Aggregate-level data}
 
-\item{M}{Number of syntheses used in analysis stage (high for low Monte Carlo error)}
-
-\item{warmup}{Number of warm-up iterations}
-
-\item{iters}{Number of total iterations}
-
-\item{n.chain}{Number of chains}
+\item{...}{Argument to pass to Stan model}
 }
 \description{
 Multiple imputation marginalization (MIM)

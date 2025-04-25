@@ -4,28 +4,20 @@
 #' @param strategy Strategy object
 #' @template args-ipd
 #' @template args-ald
-#' @param M Number of syntheses used in analysis stage (high for low Monte Carlo error)
-#' @param n.chain Number of chains
-#' @param warmup Number of warm-up iterations
-#' @param iters Number of total iterations
+#' @param ... Argument to pass to Stan model
 #' 
 #' @importFrom rstanarm posterior_predict stan_glm
 #' @keywords internal
 #' 
 calc_mim <- function(strategy,
-                     ipd, ald,
-                     M = 1000,
-                     n.chains = 2,
-                     warmup = 1000,
-                     iters = 4000) {
+                     ipd, ald, ...) {
   
   formula <- strategy$formula
   family <- strategy$family
+  rho <- strategy$rho
+  N <- strategy$N
   
-  if (!inherits(formula, "formula"))
-    stop("formula argument must be of formula class.")
-  
-  x_star <- simulate_ALD_pseudo_pop(formula, ipd, ald)
+  x_star <- simulate_ALD_pseudo_pop(formula, ipd, ald, rho, N)
   
   ## SYNTHESIS STAGE ##
   
@@ -34,11 +26,7 @@ calc_mim <- function(strategy,
     formula = formula,
     data = ipd,
     family = family,
-    algorithm = "sampling",
-    iter = iters,
-    warmup = warmup,
-    chains = n.chains,
-    thin = (n.chains * (iters - warmup)) / M)
+    algorithm = "sampling", ...)
   
   # create augmented target dataset
   target.t1 <- target.t0 <- x_star
@@ -49,13 +37,18 @@ calc_mim <- function(strategy,
   
   # complete syntheses by drawing binary outcomes
   # from their posterior predictive distribution
-  y_star <- rstanarm::posterior_predict(outcome.model, newdata = aug.target)
+  y_star <-
+    rstanarm::posterior_predict(
+      outcome.model, newdata = aug.target)
   
   ## ANALYSIS STAGE ##
   
+  M <- nrow(y_star)
+  
   # fit second-stage regression to each synthesis using maximum-likelihood estimation
-  reg2.fits <- lapply(1:M, function(m)
-    glm(y_star[m, ] ~ trt, data = aug.target, family = family))
+  reg2.fits <- lapply(1:M, function(m) {
+    glm(y_star[m, ] ~ trt, data = aug.target, family = family)
+  })
   
   # treatment effect point estimates in each synthesis
   coef_fit <- do.call(rbind, lapply(reg2.fits, function(fit) coef(fit)))

@@ -42,11 +42,10 @@ calc_gcomp_stan <- function(strategy,
   
   formula <- strategy$formula
   family <- strategy$family
+  rho <- strategy$rho
+  N <- strategy$N
   
-  if (!inherits(formula, "formula"))
-    stop("formula argument must be of formula class.")
-  
-  x_star <- simulate_ALD_pseudo_pop(formula, ipd, ald)
+  x_star <- simulate_ALD_pseudo_pop(formula, ipd, ald, rho, N)
   
   # outcome logistic regression fitted to IPD using MCMC (Stan)
   outcome.model <-

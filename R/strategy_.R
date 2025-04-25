@@ -163,14 +163,24 @@ strategy_gcomp_ml <- function(formula = NULL,
 #' }
 #' In practice, the integrals above can be approximated numerically, using full Bayesian
 #' estimation via Markov chain Monte Carlo (MCMC) sampling.
+#' 
+#' @param rho A named square matrix of covariate correlations; default NA.
+#' @param N Synthetic sample size for g-computation
+#' 
 #' @return `gcomp_stan` class object
 #' @importFrom utils modifyList
 #' @export
 #'
 strategy_gcomp_stan <- function(formula = NULL,
-                                family = gaussian(link = "identity")) {
+                                family = gaussian(link = "identity"),
+                                rho = NA,
+                                N = 1000L) {
   check_formula(formula)
   check_family(family)
+  
+  if (N <= 0 || N %% 1 != 0) {
+    stop("N not positive whole number.")
+  }
   
   default_args <- formals()
   args <- c(formula = formula, as.list(match.call())[-c(1,2)])
@@ -186,9 +196,15 @@ strategy_gcomp_stan <- function(formula = NULL,
 #' @export
 # 
 strategy_mim <- function(formula = NULL,
-                         family = gaussian(link = "identity")) {
+                         family = gaussian(link = "identity"),
+                         rho = NA,
+                         N = 1000L) {
   check_formula(formula)
   check_family(family)
+  
+  if (N <= 0 || N %% 1 != 0) {
+    stop("N not positive whole number.")
+  }
   
   default_args <- formals()
   args <- c(formula = formula, as.list(match.call())[-c(1,2)])
