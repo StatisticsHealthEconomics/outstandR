@@ -10,16 +10,20 @@ prep_ipd <- function(form, data) {
 prep_ald <- function(form, data) {
   
   all_term_labels <- attr(terms(form), "term.labels")
+  trt_name <- get_treatment_name(form)
   
-  # Remove duplicates (since age and I(age^2) will both appear)
+  # pull out original of transformed variable
+  # remove duplicates (since X and I(X^2) will both appear)
   term.labels <- unique(gsub("I\\(([^)]+)\\^2\\)", "\\1", all_term_labels))
+  
+  # remove treatment
+  # interaction separate by :
+  term.labels <- unlist(strsplit(term.labels, ":", fixed = TRUE))
+  term.labels <- setdiff(term.labels, trt_name)
   
   mean_names <- paste0("mean.", term.labels)
   sd_names <- paste0("sd.", term.labels)  ##TODO: for maic do we need these?
   term_names <- c(mean_names, sd_names)
-  
-  # remove treatment labels
-  term_names <- sort(term_names[!grepl(pattern = "trt", term_names)])
   
   # replace outcome variable name
   response_var <- all.vars(form)[1]

@@ -235,6 +235,33 @@ A `strategy` argument of `outstandR` takes functions called
 particular method required, e.g. `strategy_maic()` for MAIC. Each
 specific example is provided below.
 
+### Model formula
+
+Defining $X_1, X_2$ as effect modifiers, $X_3, X_4$ as prognostic variables and $Z$ the treatment indicator then the formula used in this model is
+
+$$
+y = X_3 + X_4 + Z + Z X_1 + Z X_2
+$$
+
+which corresponds to the following `R` `formula` object passed as an
+argument to the strategy function.
+
+```{r}
+lin_form <- as.formula("y ~ X3 + X4 + trt + trt:X1 + trt:X2")
+```
+
+Note that the more succinct formula
+
+```{r, eval=FALSE}
+y ~ X3 + X4 + trt*(X1 + X2)
+```
+
+Would also include $X_1, X_2$ as prognostic factors so in not equivalent, but could be modified as follows.
+
+```{r, eval=FALSE}
+y ~ X3 + X4 + trt*(X1 + X2) - X1 - X2
+```
+
 ### MAIC
 
 Using the individual level data for *AC* firstly we perform
@@ -243,19 +270,6 @@ replicates. This function fits treatment coefficient for the marginal
 effect for *A* vs *C*. The returned value is an object of class `boot`
 from the `{boot}` package. We then calculate the bootstrap mean and
 variance in the wrapper function `maic_boot_stats`.
-
-Defining $X_1,X2$ as effect modifiers and $X_3,X_4$ as prognostic variables then the formula used in this model is
-
-$$
-y = X_3 + X_4 + \beta_t X_1 + \beta_t X_2
-$$
-
-which corresponds to the following `R` `formula` object passed as an
-argument to the strategy function.
-
-```{r}
-lin_form <- as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")
-```
 
 ```{r outstandR_maic}
 outstandR_maic <-
@@ -359,7 +373,7 @@ the previous analysis but we now use the `strategy_stc()` strategy
 function instead and a formula with centered covariates.
 
 $$
-y = X_3 + X_4 + \beta_t(X_1 - \bar{X_1}) + \beta_t(X_2 - \bar{X_2})
+y = X_3 + X_4 + Z + Z (X_1 - \bar{X_1}) + Z (X_2 - \bar{X_2})
 $$
 
 However, `outstandR()` knows how to handle this so we can simply pass
