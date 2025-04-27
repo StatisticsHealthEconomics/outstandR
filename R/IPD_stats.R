@@ -89,14 +89,22 @@ IPD_stats.mim <- function(strategy,
 #'
 IPD_stat_factory <- function(ipd_fun) {
 
-  function(strategy, ipd, ald, scale, ...) {
+  function(strategy, ipd, ald, scale,
+           var_method = "sample", ...) {
+    
     out <- ipd_fun(strategy, ipd, ald, ...)
 
     hat.delta.AC <- calculate_ate(out$mean_A, out$mean_C,
                                   effect = scale)
 
     coef_est <- mean(hat.delta.AC)
-    var_est <- var(hat.delta.AC)
+    
+    if (var_method == "sandwich") {
+      ##TODO:
+      var_est <- estimate_var_sandwich(strategy, ipd_data, ...)
+    } else if (var_method == "sample") {
+      var_est <- var(hat.delta.AC)
+    }
 
     list(mean = coef_est,
          var = var_est)
