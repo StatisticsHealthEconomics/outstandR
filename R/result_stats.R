@@ -1,6 +1,9 @@
 
 #' Result Statistics
 #'
+#' Combining output from aggregate level data studies BC and 
+#' adjusted individual level data studies AC into a single object.
+#'
 #' @param AC_stats,BC_stats 
 #' @param CI Confidence interval 1-alpha
 #'
