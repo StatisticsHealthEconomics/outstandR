@@ -94,9 +94,10 @@ IPD_stat_factory <- function(ipd_fun) {
     
     out <- ipd_fun(strategy, ipd, ald, ...)
 
+    # relative treatment effect
     hat.delta.AC <- calculate_ate(out$mean_A, out$mean_C,
                                   effect = scale)
-
+    
     coef_est <- mean(hat.delta.AC)
     
     if (var_method == "sandwich") {
@@ -106,8 +107,17 @@ IPD_stat_factory <- function(ipd_fun) {
       var_est <- var(hat.delta.AC)
     }
 
-    list(mean = coef_est,
-         var = var_est)
+    p_est <- sapply(out, mean)
+    p_var <- sapply(out, var)
+    
+    list(
+      contrasts = list(
+        mean = coef_est,
+        var = var_est),
+      absolute = list(
+        mean = p_est,
+        var = p_var)
+    )
   }
 }
 
