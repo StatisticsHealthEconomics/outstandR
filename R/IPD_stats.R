@@ -23,7 +23,7 @@
 #' strategy <- strategy_maic()
 #' ipd <- data.frame(id = 1:100, treatment = sample(c("A", "C"), 100, replace = TRUE), outcome = rnorm(100))
 #' ald <- data.frame(treatment = c("A", "C"), mean = c(0.2, 0.1), var = c(0.05, 0.03))
-#' IPD_stats(strategy, ipd, ald, scale = "log")
+#' IPD_stats(strategy, ipd, ald, scale = "log_odds")
 #' }
 #' @export
 #' 
