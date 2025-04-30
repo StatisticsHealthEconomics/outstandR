@@ -36,6 +36,9 @@ strategy_maic <- function(formula = NULL,
   if (R <= 0 || R %% 1 != 0) {
     stop("R not positive whole number.")
   }
+
+  force(family)
+  force(formula)
   
   default_args <- formals()
   args <- c(formula = formula, as.list(match.call())[-c(1,2)])
@@ -68,6 +71,9 @@ strategy_stc <- function(formula = NULL,
                          family = gaussian(link = "identity")) {
   check_formula(formula)
   check_family(family)
+  
+  force(family)
+  force(formula)
   
   default_args <- formals()
   args <- c(formula = formula, as.list(match.call())[-c(1,2)])
@@ -129,6 +135,9 @@ strategy_gcomp_ml <- function(formula = NULL,
     stop("N not positive whole number.")
   }
   
+  force(family)
+  force(formula)
+
   default_args <- formals()
   args <- c(formula = formula, as.list(match.call())[-c(1,2)])
   args <- modifyList(default_args, args)
@@ -182,6 +191,9 @@ strategy_gcomp_stan <- function(formula = NULL,
     stop("N not positive whole number.")
   }
   
+  force(family)
+  force(formula) 
+
   default_args <- formals()
   args <- c(formula = formula, as.list(match.call())[-c(1,2)])
   args <- modifyList(default_args, args)
@@ -206,6 +218,9 @@ strategy_mim <- function(formula = NULL,
     stop("N not positive whole number.")
   }
   
+  force(family)
+  force(formula)
+
   default_args <- formals()
   args <- c(formula = formula, as.list(match.call())[-c(1,2)])
   args <- modifyList(default_args, args)
