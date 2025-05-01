@@ -242,3 +242,23 @@ calc_log_relative_risk_rare_events <- function(mean_A, mean_C) {
 calc_log_relative_risk <- function(mean_A, mean_C) {
   log(mean_A) - log(mean_C)
 }
+
+#' @keywords internal
+continuity_correction <- function(ald,
+                                  treatments = list("B", "C"),
+                                  correction = 0.5) {
+  for (t in treatments) {
+    y_name <- paste0("y.", t, ".sum")
+    N_name <- paste0("N.", t)
+    
+    y <- ald[[y_name]]
+    N <- ald[[N_name]]
+    failures <- N - y
+    
+    # apply correction to both successes and failures
+    ald[[y_name]] <- y + correction
+    ald[[N_name]] <- N + 2 * correction  # since both y and failures are adjusted
+  }
+  
+  ald
+}

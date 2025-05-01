@@ -92,7 +92,7 @@ where the weight \eqn{w_{it}} assigned to the \eqn{i}-th individual receiving tr
 
 Outcome regression-based method which targets a conditional treatment effect.
 STC is a modification of the covariate adjustment method.
-An outcome model is fitted using IPD in the \emph{AB} trial
+An outcome model is fitted using IPD in the \emph{AB} trial. For example,
 
 \deqn{
 g(\mu_{t(AB)}(X)) = \beta_0 + \beta_1^T X + (\beta_B + \beta_2^T X^{EM}) I(t=B)
@@ -111,12 +111,13 @@ chosen linear predictor scale with link function \eqn{g(\cdot)}.
 
 G-computation marginalizes the conditional estimates by separating the regression modelling
 from the estimation of the marginal treatment effect for \emph{A} versus \emph{C}.
-First, a regression model of the observed outcome \eqn{y} on the covariates \eqn{x} and treatment \eqn{z} is fitted to the \emph{AC} IPD:
+For example, a regression model of the observed outcome \eqn{y} on the covariates \eqn{x} and
+treatment \eqn{z} is fitted to the \emph{AC} IPD:
 
 \deqn{
 g(\mu_n) = \beta_0 + \boldsymbol{x}_n \boldsymbol{\beta_1} + (\beta_z + \boldsymbol{x_n^{EM}} \boldsymbol{\beta_2}) \mbox{I}(z_n=1)
 }
-In the context of G-computation, this regression model is often called the “Q-model.”
+In the context of G-computation, this regression model is called the “Q-model".
 Having fitted the Q-model, the regression coefficients are treated as nuisance parameters.
 The parameters are applied to the simulated covariates \eqn{x*} to predict hypothetical outcomes
 for each subject under both possible treatments. Namely, a pair of predicted outcomes,
@@ -170,3 +171,8 @@ estimation via Markov chain Monte Carlo (MCMC) sampling.
 
 }
 
+\seealso{
+\code{\link[=strategy_gcomp_stan]{strategy_gcomp_stan()}}
+
+\code{\link[=strategy_gcomp_ml]{strategy_gcomp_ml()}}
+}

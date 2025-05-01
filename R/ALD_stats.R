@@ -28,10 +28,13 @@ ALD_stats <- function(strategy,
                       scale) {
   family <- strategy$family$family
   
-  mean_eff <- marginal_treatment_effect(ald, treatments, scale, family)
-  var_eff <- marginal_variance(ald, treatments, scale, family)
+  ald_cc <- continuity_correction(ald, treatments)
   
-  list(mean = mean_eff, var = var_eff)
+  mean_eff <- marginal_treatment_effect(ald_cc, treatments, scale, family)
+  var_eff <- marginal_variance(ald_cc, treatments, scale, family)
+  
+  list(mean = mean_eff,
+       var = var_eff)
 }
 
 

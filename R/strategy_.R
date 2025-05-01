@@ -49,7 +49,7 @@ strategy_maic <- function(formula = NULL,
 #' @section Simulated treatment comparison (STC):
 #' Outcome regression-based method which targets a conditional treatment effect.
 #' STC is a modification of the covariate adjustment method.
-#' An outcome model is fitted using IPD in the _AB_ trial
+#' An outcome model is fitted using IPD in the _AB_ trial. For example,
 #' 
 #' \deqn{
 #' g(\mu_{t(AB)}(X)) = \beta_0 + \beta_1^T X + (\beta_B + \beta_2^T X^{EM}) I(t=B)
@@ -61,6 +61,7 @@ strategy_maic <- function(formula = NULL,
 #' \eqn{\mu_{t(AB)}(X)} is the expected outcome of an individual assigned
 #' treatment \eqn{t} with covariate values \eqn{X} which is transformed onto a
 #' chosen linear predictor scale with link function \eqn{g(\cdot)}.
+#' 
 #' @return `stc` class object
 #' @importFrom utils modifyList
 #' @export
@@ -82,12 +83,13 @@ strategy_stc <- function(formula = NULL,
 #'
 #' G-computation marginalizes the conditional estimates by separating the regression modelling
 #' from the estimation of the marginal treatment effect for _A_ versus _C_.
-#' First, a regression model of the observed outcome \eqn{y} on the covariates \eqn{x} and treatment \eqn{z} is fitted to the _AC_ IPD:
+#' For example, a regression model of the observed outcome \eqn{y} on the covariates \eqn{x} and
+#' treatment \eqn{z} is fitted to the _AC_ IPD:
 #' 
 #' \deqn{
 #' g(\mu_n) = \beta_0 + \boldsymbol{x}_n \boldsymbol{\beta_1} + (\beta_z + \boldsymbol{x_n^{EM}} \boldsymbol{\beta_2}) \mbox{I}(z_n=1)
 #' }
-#' In the context of G-computation, this regression model is often called the “Q-model.”
+#' In the context of G-computation, this regression model is called the “Q-model".
 #' Having fitted the Q-model, the regression coefficients are treated as nuisance parameters.
 #' The parameters are applied to the simulated covariates \eqn{x*} to predict hypothetical outcomes
 #' for each subject under both possible treatments. Namely, a pair of predicted outcomes,
@@ -113,6 +115,7 @@ strategy_stc <- function(formula = NULL,
 #' 
 #' @return `gcomp_ml` class object
 #' @importFrom utils modifyList
+#' @seealso [strategy_gcomp_stan()]
 #' @export
 #'
 strategy_gcomp_ml <- function(formula = NULL,
@@ -173,6 +176,7 @@ strategy_gcomp_ml <- function(formula = NULL,
 #' 
 #' @return `gcomp_stan` class object
 #' @importFrom utils modifyList
+#' @seealso [strategy_gcomp_ml()]
 #' @export
 #'
 strategy_gcomp_stan <- function(formula = NULL,
