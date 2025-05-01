@@ -65,7 +65,7 @@ gcomp_ml_means <- function(formula,
                            N = 1000) {
   
   x_star <- simulate_ALD_pseudo_pop(formula = formula,
-                                    ipd = ipd, ald = ald,
+                                    ipd = ipd, ald = ald, trt_var = trt_var, 
                                     rho = rho, N = N)
   
   # outcome logistic regression fitted to IPD using maximum likelihood
