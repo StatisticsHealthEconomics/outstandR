@@ -87,8 +87,8 @@ convert_effect <- function(value, link, to, P0) {
   
   for (i in seq_along(path)[-1]) {
     prev <- path[i - 1]
-    next <- path[i]
-    result <- conv_map[[prev]][[next]](result, P0)
+    nxt <- path[i]
+    result <- conv_map[[prev]][[nxt]](result, P0)
   }
   
   result

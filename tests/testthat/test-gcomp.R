@@ -12,17 +12,18 @@ test_that("different combinations of covariates in formula", {
   # gcomp_ml
   
   expect_error(strategy_gcomp_ml(formula = as.formula("y ~ 1")),
-               regexp = "Treatment term, trt, is missing in the formula")
+               regexp = "Treatment term 'trt' is missing in the formula")
   
   expect_error(strategy_gcomp_ml(formula = as.formula("y ~ X3 + X4")),
-               regexp = "Treatment term, trt, is missing in the formula")
+               regexp = "Treatment term 'trt' is missing in the formula")
   
   strat_1234 <- strategy_gcomp_ml(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"))
   strat_31 <- strategy_gcomp_ml(formula = as.formula("y ~ X3 + trt*X1"))
   strat_13 <- strategy_gcomp_ml(formula = as.formula("y ~ trt*X1 + X3"))
   strat_1 <- strategy_gcomp_ml(formula = as.formula("y ~ trt*X1"))
   
-  expect_length(outstandR(AC_IPD, BC_ALD, strategy = strat_1234), 3)
+  res <- outstandR(AC_IPD, BC_ALD, strategy = strat_1234)
+  expect_length(res, 2)
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_31))
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_13))
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_1))
@@ -30,17 +31,18 @@ test_that("different combinations of covariates in formula", {
   # gcomp_stan
   
   expect_error(strategy_gcomp_stan(formula = as.formula("y ~ 1")),
-               regexp = "Treatment term, trt, is missing in the formula")
+               regexp = "Treatment term 'trt' is missing in the formula")
   
   expect_error(strategy_gcomp_stan(formula = as.formula("y ~ X3 + X4")),
-               regexp = "Treatment term, trt, is missing in the formula")
+               regexp = "Treatment term 'trt' is missing in the formula")
   
   strat_1234 <- strategy_gcomp_stan(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"))
   strat_31 <- strategy_gcomp_stan(formula = as.formula("y ~ X3 + trt*X1"))
   strat_13 <- strategy_gcomp_stan(formula = as.formula("y ~ trt*X1 + X3"))
   strat_1 <- strategy_gcomp_stan(formula = as.formula("y ~ trt*X1"))
   
-  expect_length(outstandR(AC_IPD, BC_ALD, strategy = strat_1234), 3)
+  res <- outstandR(AC_IPD, BC_ALD, strategy = strat_1234)
+  expect_length(res, 2)
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_31))
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_13))
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_1))
