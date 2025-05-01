@@ -247,17 +247,31 @@ calc_log_relative_risk <- function(mean_A, mean_C) {
 continuity_correction <- function(ald,
                                   treatments = list("B", "C"),
                                   correction = 0.5) {
+  # check if correction is needed in any group
+  needs_correction <- any(sapply(treatments, function(t) {
+    y <- ald[[paste0("y.", t, ".sum")]]
+    N <- ald[[paste0("N.", t)]]
+    y == 0 || y == N
+  }))
+  
+  if (!needs_correction) {
+    return(ald)
+  }
+  
+  # apply correction to all groups
   for (t in treatments) {
     y_name <- paste0("y.", t, ".sum")
     N_name <- paste0("N.", t)
-    
     y <- ald[[y_name]]
     N <- ald[[N_name]]
-    failures <- N - y
     
-    # apply correction to both successes and failures
+    message(sprintf(
+      "Applying continuity correction to group %s: y = %d to %.1f, N = %d to %.1f",
+      t, y, y + correction, N, N + 2 * correction
+    ))
+    
     ald[[y_name]] <- y + correction
-    ald[[N_name]] <- N + 2 * correction  # since both y and failures are adjusted
+    ald[[N_name]] <- N + 2 * correction
   }
   
   ald
