@@ -6,8 +6,9 @@ prep_ipd <- function(form, data) {
   model.frame(form, data = data)
 }
 
-#
-prep_ald <- function(form, data, trt_var) {
+#' @param trt_var Treatment variable name
+#' 
+prep_ald <- function(form, data, trt_var = "trt") {
   
   all_term_labels <- attr(terms(form), "term.labels")
   
@@ -18,7 +19,7 @@ prep_ald <- function(form, data, trt_var) {
   # remove treatment
   # interaction separate by :
   term.labels <- unlist(strsplit(term.labels, ":", fixed = TRUE))
-  term.labels <- setdiff(term.labels, trt_name)
+  term.labels <- setdiff(term.labels, trt_var)
   
   mean_names <- paste0("mean.", term.labels)
   sd_names <- paste0("sd.", term.labels)  ##TODO: for maic do we need these?

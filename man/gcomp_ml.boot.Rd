@@ -10,6 +10,7 @@ gcomp_ml.boot(
   R,
   formula = NULL,
   family,
+  trt_var,
   rho = NA,
   N = 1000,
   ald
@@ -21,9 +22,10 @@ gcomp_ml.boot(
 \item{indices}{Indices sampled from rows of \code{data}}
 
 \item{formula}{Linear regression \code{formula} object. Prognostic factors (PF) are main effects and effect modifiers (EM) are
-interactions with the treatment variable, i.e., y ~ X1 + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
+interactions with the treatment variable, i.e., y ~ X1 + trt + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
 
-\item{family}{A 'family' object specifying the distribution and link function (e.g., 'binomial').}
+\item{family}{A 'family' object specifying the distribution and link function (e.g., 'binomial').
+See stats::family() for more details.}
 
 \item{rho}{A named square matrix of covariate correlations; default NA.}
 

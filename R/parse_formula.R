@@ -24,7 +24,7 @@ guess_treatment_name <- function(formula) {
   treat_nm <- vars[duplicated(vars)][1]
   
   # no duplicate
-  if (length(treat_nm) == 0) {
+  if (is.na(treat_nm) || length(treat_nm) == 0) {
     if (length(interaction_terms) > 0) {
       # take the first term
       treat_nm <- strsplit(interaction_terms[1], ":")[[1]][1]
@@ -118,12 +118,13 @@ get_covariate_names <- function(formula) {
 
 #' Get effect modifiers
 #'
+#' @param trt_var Treatment variable name; Default 'trt'.
 #' @eval reg_args(include_formula = TRUE, include_family = FALSE)
 #' 
 #' @return Effect modifiers names
 #' @keywords internal
 #'
-get_eff_mod_names <- function(formula, trt_var) {
+get_eff_mod_names <- function(formula, trt_var = "trt") {
   
   formula <- as.formula(formula)
   

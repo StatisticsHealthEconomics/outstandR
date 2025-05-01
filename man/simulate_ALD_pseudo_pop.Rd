@@ -4,11 +4,11 @@
 \alias{simulate_ALD_pseudo_pop}
 \title{Simulate Aggregate-Level Data Pseudo-Population}
 \usage{
-simulate_ALD_pseudo_pop(formula, ipd, ald, rho = NA, N = 1000)
+simulate_ALD_pseudo_pop(formula, ipd, ald, trt_var, rho = NA, N = 1000)
 }
 \arguments{
 \item{formula}{Linear regression \code{formula} object. Prognostic factors (PF) are main effects and effect modifiers (EM) are
-interactions with the treatment variable, i.e., y ~ X1 + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
+interactions with the treatment variable, i.e., y ~ X1 + trt + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
 
 \item{ipd}{Individual-level patient data. Dataframe with one row per patient with outcome, treatment and covariate columns.}
 

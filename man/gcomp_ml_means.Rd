@@ -4,13 +4,14 @@
 \alias{gcomp_ml_means}
 \title{G-computation Maximum Likelihood mean outcome}
 \usage{
-gcomp_ml_means(formula, family, ipd, ald, rho = NA, N = 1000)
+gcomp_ml_means(formula, family, ipd, ald, trt_var, rho = NA, N = 1000)
 }
 \arguments{
 \item{formula}{Linear regression \code{formula} object. Prognostic factors (PF) are main effects and effect modifiers (EM) are
-interactions with the treatment variable, i.e., y ~ X1 + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
+interactions with the treatment variable, i.e., y ~ X1 + trt + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
 
-\item{family}{A 'family' object specifying the distribution and link function (e.g., 'binomial').}
+\item{family}{A 'family' object specifying the distribution and link function (e.g., 'binomial').
+See stats::family() for more details.}
 
 \item{ipd}{Individual-level patient data. Dataframe with one row per patient with outcome, treatment and covariate columns.}
 

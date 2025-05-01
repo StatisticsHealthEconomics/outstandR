@@ -8,12 +8,14 @@ guess_treatment_name(formula)
 }
 \arguments{
 \item{formula}{Linear regression \code{formula} object. Prognostic factors (PF) are main effects and effect modifiers (EM) are
-interactions with the treatment variable, i.e., y ~ X1 + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
+interactions with the treatment variable, i.e., y ~ X1 + trt + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
 }
 \value{
 Treatment name
 }
 \description{
-Guess treatment name
+Does a variable appear more than once in interactions?
+If not then pick first LHS interaction term.
+Finally, if there are no interactions then pick last main effect term.
 }
 \keyword{internal}
