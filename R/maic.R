@@ -120,6 +120,7 @@ calc_maic <- function(strategy,
     list(R = strategy$R,
          formula = strategy$formula,
          family = strategy$family,
+         trt_var = strategy$trt_var,
          data = ipd,
          ald = ald)
   

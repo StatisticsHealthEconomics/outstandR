@@ -1,6 +1,10 @@
 
 #' Guess treatment name
-#'
+#' 
+#' Does a variable appear more than once in interactions?
+#' Otherwise pick first LHS interaction term.
+#' So this doesnt work without an effect modifier.
+#' 
 #' @eval reg_args(include_formula = TRUE, include_family = FALSE)
 #'
 #' @return Treatment name
@@ -25,7 +29,7 @@ guess_treatment_name <- function(formula) {
       # take the first term
       treat_nm <- strsplit(interaction_terms[1], ":")[[1]][1]
     } else {
-      stop("Treatment name missing from formula.")
+      stop("Unable to guess the treatment name from formula.")
     }
   }
   
