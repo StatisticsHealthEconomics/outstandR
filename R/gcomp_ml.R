@@ -22,10 +22,11 @@
 #' 
 gcomp_ml.boot <- function(data, indices,
                           R, formula = NULL,
-                          family, rho = NA,
+                          family, trt_var,
+                          rho = NA,
                           N = 1000, ald) {
   dat <- data[indices, ]
-  gcomp_ml_means(formula, family, dat, ald, rho, N) 
+  gcomp_ml_means(formula, family, dat, ald, trt_var, rho, N) 
 }
 
 
@@ -59,6 +60,7 @@ gcomp_ml.boot <- function(data, indices,
 gcomp_ml_means <- function(formula,
                            family,
                            ipd, ald,
+                           trt_var,
                            rho = NA,
                            N = 1000) {
   
@@ -74,11 +76,9 @@ gcomp_ml_means <- function(formula,
   # counterfactual datasets
   data.trtA <- data.trtC <- x_star
   
-  treat_name <- get_treatment_name(formula)
-  
   # intervene on treatment while keeping set covariates fixed
-  data.trtA[[treat_name]] <- 0  # all receive A
-  data.trtC[[treat_name]] <- 1  # all receive C
+  data.trtA[[trt_var]] <- 0  # all receive A
+  data.trtC[[trt_var]] <- 1  # all receive C
   
   # predict counterfactual event probs, conditional on treatment/covariates
   hat.mu.A <- predict(fit, type="response", newdata=data.trtA)
@@ -112,15 +112,15 @@ gcomp_ml_means <- function(formula,
 #' 
 simulate_ALD_pseudo_pop <- function(formula,
                                     ipd, ald,
+                                    trt_var,
                                     rho = NA,
                                     N = 1000) {
   set.seed(1234)
   
-  treat_name <- get_treatment_name(formula)
   covariate_names <- get_covariate_names(formula)
   
   # remove treatment
-  covariate_names <- covariate_names[covariate_names != treat_name]
+  covariate_names <- covariate_names[covariate_names != trt_var]
   
   mean_names <- get_mean_names(ald, covariate_names)
   

@@ -43,6 +43,7 @@ calc_gcomp_stan <- function(strategy,
   family <- strategy$family
   rho <- strategy$rho
   N <- strategy$N
+  trt_var <- strategy$trt_var
   
   x_star <- simulate_ALD_pseudo_pop(formula, ipd, ald, rho, N)
   
@@ -57,11 +58,9 @@ calc_gcomp_stan <- function(strategy,
   # counterfactual datasets
   data.trtA <- data.trtC <- x_star
   
-  treat_name <- get_treatment_name(formula)
-  
   # intervene on treatment while keeping set covariates fixed
-  data.trtA[[treat_name]] <- 1  # everyone receives treatment A
-  data.trtC[[treat_name]] <- 0  # receive treatment C
+  data.trtA[[trt_var]] <- 1  # everyone receives treatment A
+  data.trtC[[trt_var]] <- 0  # receive treatment C
   
   ##TODO: is this going to work for all of the different data types?
   # draw responses from posterior predictive distribution
@@ -115,6 +114,7 @@ calc_gcomp_ml <- function(strategy,
     list(R = strategy$R,
          formula = strategy$formula,
          family = strategy$family,
+         trt_var = strategy$trt_var,
          rho = strategy$rho,
          N = strategy$N,
          data = ipd,

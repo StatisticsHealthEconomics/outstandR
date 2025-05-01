@@ -62,6 +62,7 @@ Q <- function(beta, X) {
 #' 
 maic.boot <- function(ipd, indices = 1:nrow(ipd),
                       formula, family, ald,
+                      trt_var,
                       hat_w = NULL) {
   
   dat <- ipd[indices, ]  # bootstrap sample
@@ -84,8 +85,7 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
     hat_w <- maic_weights(X_EM)
   }
   
-  treat_nm <- get_treatment_name(formula)
-  formula_treat <- glue::glue("{formula[[2]]} ~ {treat_nm}")
+  formula_treat <- glue::glue("{formula[[2]]} ~ {trt_var}")
   
   # so can use non-integer weights
   if (family$family == "binomial") {

@@ -21,6 +21,7 @@
 #' where the weight \eqn{w_{it}} assigned to the \eqn{i}-th individual receiving treatment
 #' \eqn{t} is equal to the odds of being enrolled in the _AC_ trial vs the _AB_ trial.
 #' 
+#' @param trt_var Treatment variable name
 #' @param R The number of resamples used for the non-parametric bootstrap
 #' @return `maic` class object
 #' 
@@ -29,6 +30,7 @@
 #'
 strategy_maic <- function(formula = NULL,
                           family = gaussian(link = "identity"),
+                          trt_var = NULL,
                           R = 1000L) {
   check_formula(formula)
   check_family(family)
@@ -39,6 +41,7 @@ strategy_maic <- function(formula = NULL,
 
   args <- list(formula = formula,
                family = family,
+               trt_var = get_treatment_name(formula, trt_var),
                R = R)
   
   do.call(new_strategy, c(strategy = "maic", args))
@@ -62,17 +65,21 @@ strategy_maic <- function(formula = NULL,
 #' treatment \eqn{t} with covariate values \eqn{X} which is transformed onto a
 #' chosen linear predictor scale with link function \eqn{g(\cdot)}.
 #' 
+#' @param trt_var Treatment variable name
+#'
 #' @return `stc` class object
 #' @importFrom utils modifyList
 #' @export
 # 
 strategy_stc <- function(formula = NULL,
-                         family = gaussian(link = "identity")) {
+                         family = gaussian(link = "identity"),
+                         trt_var = NULL) {
   check_formula(formula)
   check_family(family)
   
   args <- list(formula = formula,
-               family = family)
+               family = family,
+               trt_var = get_treatment_name(formula, trt_var))
   
   do.call(new_strategy, c(strategy = "stc", args))
 }
@@ -109,6 +116,7 @@ strategy_stc <- function(formula = NULL,
 #' \hat{\Delta}^{(2)}_{10} = g(\hat{\mu}_1) - g(\hat{\mu}_0)
 #' }
 #'
+#' @param trt_var Treatment variable name
 #' @param rho A named square matrix of covariate correlations; default NA.
 #' @param R The number of resamples used for the non-parametric bootstrap
 #' @param N Synthetic sample size for g-computation
@@ -120,6 +128,7 @@ strategy_stc <- function(formula = NULL,
 #'
 strategy_gcomp_ml <- function(formula = NULL,
                               family = gaussian(link = "identity"),
+                              trt_var = NULL,
                               rho = NA,
                               R = 1000L,
                               N = 1000L) {
@@ -136,6 +145,7 @@ strategy_gcomp_ml <- function(formula = NULL,
   args <- list(formula = formula,
                family = family,
                rho = rho,
+               trt_var = get_treatment_name(formula, trt_var),
                R = R,
                N = N)
   
@@ -171,6 +181,7 @@ strategy_gcomp_ml <- function(formula = NULL,
 #' In practice, the integrals above can be approximated numerically, using full Bayesian
 #' estimation via Markov chain Monte Carlo (MCMC) sampling.
 #' 
+#' @param trt_var Treatment variable name
 #' @param rho A named square matrix of covariate correlations; default NA.
 #' @param N Synthetic sample size for g-computation
 #' 
@@ -181,6 +192,7 @@ strategy_gcomp_ml <- function(formula = NULL,
 #'
 strategy_gcomp_stan <- function(formula = NULL,
                                 family = gaussian(link = "identity"),
+                                trt_var = NULL,
                                 rho = NA,
                                 N = 1000L) {
   check_formula(formula)
@@ -192,6 +204,7 @@ strategy_gcomp_stan <- function(formula = NULL,
   
   args <- list(formula = formula,
                family = family,
+               trt_var = get_treatment_name(formula, trt_var),
                rho = rho,
                N = N)
   
@@ -199,6 +212,8 @@ strategy_gcomp_stan <- function(formula = NULL,
 }
 
 #' @rdname strategy
+#'
+#' @param trt_var Treatment variable name
 #' 
 #' @section Multiple imputation marginalization (MIM):
 #' @return `mim` class object
@@ -207,6 +222,7 @@ strategy_gcomp_stan <- function(formula = NULL,
 # 
 strategy_mim <- function(formula = NULL,
                          family = gaussian(link = "identity"),
+                         trt_var= NULL,
                          rho = NA,
                          N = 1000L) {
   check_formula(formula)
@@ -218,6 +234,7 @@ strategy_mim <- function(formula = NULL,
   
   args <- list(formula = formula,
                family = family,
+               trt_var = get_treatment_name(formula, trt_var),
                rho = rho,
                N = N)
   

@@ -7,10 +7,9 @@ prep_ipd <- function(form, data) {
 }
 
 #
-prep_ald <- function(form, data) {
+prep_ald <- function(form, data, trt_var) {
   
   all_term_labels <- attr(terms(form), "term.labels")
-  trt_name <- get_treatment_name(form)
   
   # pull out original of transformed variable
   # remove duplicates (since X and I(X^2) will both appear)

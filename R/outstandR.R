@@ -49,7 +49,7 @@ outstandR <- function(AC.IPD, BC.ALD, strategy, CI = 0.95, scale = NULL, ...) {
   validate_outstandr(AC.IPD, BC.ALD, strategy, CI, scale)
   
   ipd <- prep_ipd(strategy$formula, AC.IPD)
-  ald <- prep_ald(strategy$formula, BC.ALD)
+  ald <- prep_ald(strategy$formula, BC.ALD, trt_var = strategy$trt_var)
 
   if (is.null(scale)) scale <- get_treatment_effect(strategy$family$link)
   

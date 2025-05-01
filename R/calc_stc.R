@@ -5,6 +5,8 @@
 #' 
 calc_stc <- function(strategy, ipd, ...) {
   
+  treat_nm <- strategy$trt_var
+  
   # centre covariates
   centre_vars <- get_eff_mod_names(strategy$formula)
   
@@ -16,8 +18,6 @@ calc_stc <- function(strategy, ipd, ...) {
   
   # extract model coefficients
   coef_fit <- coef(fit)
-  
-  treat_nm <- get_treatment_name(strategy$formula)
   
   # safer than treat_nm in case of factor level append
   treat_coef_name <- grep(paste0("^", treat_nm), names(coef_fit), value = TRUE)

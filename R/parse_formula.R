@@ -1,24 +1,44 @@
 
-#' Get treatment name
+#' Guess treatment name
 #'
 #' @eval reg_args(include_formula = TRUE, include_family = FALSE)
 #'
 #' @return Treatment name
 #' @keywords internal
 #'
-get_treatment_name <- function(formula) {
+guess_treatment_name <- function(formula) {
   
   formula <- as.formula(formula)
   term.labels <- attr(terms(formula), "term.labels")
   
-  # find interaction terms (assuming only for treatment)
-  treat_nm <- term.labels[grepl(":", term.labels)]
-  treat_nm <- gsub(":.+", "", treat_nm[1])
+  interaction_terms <- term.labels[grepl(":", term.labels)]
   
-  if (is.na(treat_nm))
-    warning("Treatment name missing from formula.")
+  # Split each interaction term by ":" and flatten
+  vars <- unlist(strsplit(interaction_terms, ":"))
+  
+  # Find the first duplicated variable (assumed to be treatment)
+  treat_nm <- vars[duplicated(vars)][1]
+  
+  # no duplicate
+  if (length(treat_nm) == 0) {
+    if (length(interaction_terms) > 0) {
+      # take the first term
+      treat_nm <- strsplit(interaction_terms[1], ":")[[1]][1]
+    } else {
+      stop("Treatment name missing from formula.")
+    }
+  }
   
   treat_nm
+}
+
+#
+get_treatment_name <- function(formula, trt_var = NULL) {
+  if (!is.null(trt_var) && is.character(trt_var)) {
+    return(trt_var)
+  }
+  
+  guess_treatment_name(formula)
 }
 
 #' Get mean names
@@ -95,17 +115,14 @@ get_covariate_names <- function(formula) {
 #' @return Effect modifiers names
 #' @keywords internal
 #'
-get_eff_mod_names <- function(formula) {
+get_eff_mod_names <- function(formula, trt_var) {
   
   formula <- as.formula(formula)
-  
-  # assume format trt:cov
-  treat_var <- get_treatment_name(formula)
   
   term.labels <- attr(terms(formula), "term.labels")
   
   # effect modifier terms only
   eff_mod_terms <- term.labels[grepl(":", term.labels)]
   
-  gsub(paste0("^", treat_var, ":"), "", eff_mod_terms)
+  gsub(paste0("^", trt_var, ":"), "", eff_mod_terms)
 }

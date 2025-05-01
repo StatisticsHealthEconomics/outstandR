@@ -10,13 +10,23 @@
 \alias{new_strategy}
 \title{New strategy objects}
 \usage{
-strategy_maic(formula = NULL, family = gaussian(link = "identity"), R = 1000L)
+strategy_maic(
+  formula = NULL,
+  family = gaussian(link = "identity"),
+  trt_var = NULL,
+  R = 1000L
+)
 
-strategy_stc(formula = NULL, family = gaussian(link = "identity"))
+strategy_stc(
+  formula = NULL,
+  family = gaussian(link = "identity"),
+  trt_var = NULL
+)
 
 strategy_gcomp_ml(
   formula = NULL,
   family = gaussian(link = "identity"),
+  trt_var = NULL,
   rho = NA,
   R = 1000L,
   N = 1000L
@@ -25,6 +35,7 @@ strategy_gcomp_ml(
 strategy_gcomp_stan(
   formula = NULL,
   family = gaussian(link = "identity"),
+  trt_var = NULL,
   rho = NA,
   N = 1000L
 )
@@ -32,6 +43,7 @@ strategy_gcomp_stan(
 strategy_mim(
   formula = NULL,
   family = gaussian(link = "identity"),
+  trt_var = NULL,
   rho = NA,
   N = 1000L
 )
@@ -43,6 +55,8 @@ new_strategy(strategy, ...)
 interactions with the treatment variable, i.e., y ~ X1 + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
 
 \item{family}{A 'family' object specifying the distribution and link function (e.g., 'binomial').}
+
+\item{trt_var}{Treatment variable name}
 
 \item{R}{The number of resamples used for the non-parametric bootstrap}
 
