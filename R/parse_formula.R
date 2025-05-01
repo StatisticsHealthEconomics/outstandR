@@ -2,8 +2,8 @@
 #' Guess treatment name
 #' 
 #' Does a variable appear more than once in interactions?
-#' Otherwise pick first LHS interaction term.
-#' So this doesnt work without an effect modifier.
+#' If not then pick first LHS interaction term.
+#' Finally, if there are no interactions then pick last main effect term.
 #' 
 #' @eval reg_args(include_formula = TRUE, include_family = FALSE)
 #'
@@ -29,7 +29,11 @@ guess_treatment_name <- function(formula) {
       # take the first term
       treat_nm <- strsplit(interaction_terms[1], ":")[[1]][1]
     } else {
-      stop("Unable to guess the treatment name from formula.")
+      # Identify main effect terms (i.e., no colon)
+      main_effect_terms <- term.labels[!grepl(":", term.labels)]
+
+      # Pick the last main effect term
+      treat_nm <- tail(main_effect_terms, 1)
     }
   }
   
