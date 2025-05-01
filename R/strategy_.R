@@ -32,7 +32,7 @@ strategy_maic <- function(formula = NULL,
                           family = gaussian(link = "identity"),
                           trt_var = NULL,
                           R = 1000L) {
-  check_formula(formula)
+  check_formula(formula, trt_var)
   check_family(family)
    
   if (R <= 0 || R %% 1 != 0) {
@@ -74,7 +74,7 @@ strategy_maic <- function(formula = NULL,
 strategy_stc <- function(formula = NULL,
                          family = gaussian(link = "identity"),
                          trt_var = NULL) {
-  check_formula(formula)
+  check_formula(formula, trt_var)
   check_family(family)
   
   args <- list(formula = formula,
@@ -132,7 +132,7 @@ strategy_gcomp_ml <- function(formula = NULL,
                               rho = NA,
                               R = 1000L,
                               N = 1000L) {
-  check_formula(formula)
+  check_formula(formula, trt_var)
   check_family(family)
   
   if (R <= 0 || R %% 1 != 0) {
@@ -195,7 +195,7 @@ strategy_gcomp_stan <- function(formula = NULL,
                                 trt_var = NULL,
                                 rho = NA,
                                 N = 1000L) {
-  check_formula(formula)
+  check_formula(formula, trt_var)
   check_family(family)
   
   if (N <= 0 || N %% 1 != 0) {
@@ -225,7 +225,7 @@ strategy_mim <- function(formula = NULL,
                          trt_var= NULL,
                          rho = NA,
                          N = 1000L) {
-  check_formula(formula)
+  check_formula(formula, trt_var)
   check_family(family)
   
   if (N <= 0 || N %% 1 != 0) {
