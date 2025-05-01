@@ -16,20 +16,22 @@ IPD_stats(strategy, ipd, ald, scale, ...)
 
 \method{IPD_stats}{mim}(strategy, ipd, ald, scale, ...)
 
-\method{IPD_stats}{stc}(strategy, ipd, ald, scale, ...)
+\method{IPD_stats}{stc}(strategy, ipd, ald, scale, var_method = "sample", ...)
 
-\method{IPD_stats}{maic}(strategy, ipd, ald, scale, ...)
+\method{IPD_stats}{maic}(strategy, ipd, ald, scale, var_method = "sample", ...)
 
-\method{IPD_stats}{gcomp_ml}(strategy, ipd, ald, scale, ...)
+\method{IPD_stats}{gcomp_ml}(strategy, ipd, ald, scale, var_method = "sample", ...)
 
-\method{IPD_stats}{gcomp_stan}(strategy, ipd, ald, scale, ...)
+\method{IPD_stats}{gcomp_stan}(strategy, ipd, ald, scale, var_method = "sample", ...)
 }
 \arguments{
 \item{strategy}{A list corresponding to different approaches}
 
-\item{ipd}{Individual-level data}
+\item{ipd}{Individual-level patient data. Dataframe with one row per patient with outcome, treatment and covariate columns.}
 
-\item{ald}{Aggregate-level data}
+\item{ald}{Aggregate-level data. Single row matrix with summary statistics for each covariate and treatment outcomes.
+The format is 'mean.\emph{' and 'sd.}' for covariates and 'y.\emph{.sum', 'y.}.bar', 'y.*.sd' for treatments B and C.
+We assume a common distribution for each treatment arm.}
 
 \item{scale}{A scaling parameter for the effect calculation.}
 
@@ -83,6 +85,6 @@ by transforming from probability to linear predictor scale.
 strategy <- strategy_maic()
 ipd <- data.frame(id = 1:100, treatment = sample(c("A", "C"), 100, replace = TRUE), outcome = rnorm(100))
 ald <- data.frame(treatment = c("A", "C"), mean = c(0.2, 0.1), var = c(0.05, 0.03))
-IPD_stats(strategy, ipd, ald, scale = "log")
+IPD_stats(strategy, ipd, ald, scale = "log_odds")
 }
 }

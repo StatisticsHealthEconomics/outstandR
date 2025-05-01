@@ -15,6 +15,7 @@ result_stats(AC_stats, BC_stats, CI = 0.95)
 List
 }
 \description{
-Result Statistics
+Combining output from aggregate level data studies BC and
+adjusted individual level data studies AC into a single object.
 }
 \keyword{internal}

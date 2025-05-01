@@ -2,8 +2,7 @@
 #' Multiple imputation marginalization (MIM)
 #' 
 #' @param strategy Strategy object
-#' @template args-ipd
-#' @template args-ald
+#' @eval study_data_args(include_ipd = TRUE, include_ald = TRUE)
 #' @param ... Argument to pass to Stan model
 #' 
 #' @importFrom rstanarm posterior_predict stan_glm

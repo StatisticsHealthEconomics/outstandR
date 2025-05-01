@@ -37,12 +37,10 @@ strategy_maic <- function(formula = NULL,
     stop("R not positive whole number.")
   }
 
-  force(family)
-  force(formula)
+  args <- list(formula = formula,
+               family = family,
+               R = R)
   
-  default_args <- formals()
-  args <- c(formula = formula, as.list(match.call())[-c(1,2)])
-  args <- modifyList(default_args, args)
   do.call(new_strategy, c(strategy = "maic", args))
 }
 
@@ -72,12 +70,9 @@ strategy_stc <- function(formula = NULL,
   check_formula(formula)
   check_family(family)
   
-  force(family)
-  force(formula)
+  args <- list(formula = formula,
+               family = family)
   
-  default_args <- formals()
-  args <- c(formula = formula, as.list(match.call())[-c(1,2)])
-  args <- modifyList(default_args, args)
   do.call(new_strategy, c(strategy = "stc", args))
 }
 
@@ -135,12 +130,12 @@ strategy_gcomp_ml <- function(formula = NULL,
     stop("N not positive whole number.")
   }
   
-  force(family)
-  force(formula)
-
-  default_args <- formals()
-  args <- c(formula = formula, as.list(match.call())[-c(1,2)])
-  args <- modifyList(default_args, args)
+  args <- list(formula = formula,
+               family = family,
+               rho = rho,
+               R = R,
+               N = N)
+  
   do.call(new_strategy, c(strategy = "gcomp_ml", args))
 }
 
@@ -191,12 +186,11 @@ strategy_gcomp_stan <- function(formula = NULL,
     stop("N not positive whole number.")
   }
   
-  force(family)
-  force(formula) 
-
-  default_args <- formals()
-  args <- c(formula = formula, as.list(match.call())[-c(1,2)])
-  args <- modifyList(default_args, args)
+  args <- list(formula = formula,
+               family = family,
+               rho = rho,
+               N = N)
+  
   do.call(new_strategy, c(strategy = "gcomp_stan", args))
 }
 
@@ -218,12 +212,11 @@ strategy_mim <- function(formula = NULL,
     stop("N not positive whole number.")
   }
   
-  force(family)
-  force(formula)
-
-  default_args <- formals()
-  args <- c(formula = formula, as.list(match.call())[-c(1,2)])
-  args <- modifyList(default_args, args)
+  args <- list(formula = formula,
+               family = family,
+               rho = rho,
+               N = N)
+  
   do.call(new_strategy, c(strategy = "mim", args))
 }
 
@@ -234,8 +227,7 @@ strategy_mim <- function(formula = NULL,
 #' Create a type of strategy class for each modelling approach.
 #'
 #' @param strategy Class name from `strategy_maic`, `strategy_stc`, `strategy_gcomp_ml`, `strategy_gcomp_stan`
-#' @param formula Linear regression `formula` object
-#' @param family `family` object from the `stats` library
+#' @eval reg_args(include_formula = TRUE, include_family = TRUE)
 #' @param ... Additional arguments
 #'
 #' @export
@@ -253,3 +245,29 @@ check_family <- function(obj) {
     stop("family must be a family object")
   }
 }
+
+
+## generic construction 
+## could be useful if number of method gets big
+#
+# strategy_gcomp_stan <- function(formula = NULL,
+#                                 family = gaussian(link = "identity"),
+#                                 rho = NA,
+#                                 N = 1000L) {
+#   check_formula(formula)
+#   check_family(family)
+#   
+#   if (N <= 0 || N %% 1 != 0) {
+#     stop("N not positive whole number.")
+#   }
+#   
+#   force(family)
+#   force(formula) 
+#   
+#   default_args <- formals()
+#   args <- c(formula = formula, as.list(match.call())[-c(1,2)])
+#   args <- modifyList(default_args, args)
+#   do.call(new_strategy, c(strategy = "gcomp_stan", args))
+# }
+
+

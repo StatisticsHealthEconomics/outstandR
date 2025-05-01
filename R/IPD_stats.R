@@ -8,8 +8,7 @@
 #' and G-computation via Maximum Likelihood Estimation (MLE) or Bayesian inference.
 #' 
 #' @param strategy A list corresponding to different approaches
-#' @template args-ipd
-#' @template args-ald
+#' @eval study_data_args(include_ipd = TRUE, include_ald = TRUE)
 #' @param scale A scaling parameter for the effect calculation.
 #' @param ... Additional arguments
 #' 

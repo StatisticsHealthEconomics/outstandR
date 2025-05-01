@@ -7,16 +7,19 @@
 maic.boot(ipd, indices = 1:nrow(ipd), formula, family, ald, hat_w = NULL)
 }
 \arguments{
-\item{ipd}{Individual-level data}
+\item{ipd}{Individual-level patient data. Dataframe with one row per patient with outcome, treatment and covariate columns.}
 
 \item{indices}{Vector of indices, same length as original,
 which define the bootstrap sample}
 
-\item{formula}{Linear regression formula}
+\item{formula}{Linear regression \code{formula} object. Prognostic factors (PF) are main effects and effect modifiers (EM) are
+interactions with the treatment variable, i.e., y ~ X1 + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
 
-\item{family}{A character string specifying the family distribution (e.g., "binomial").}
+\item{family}{A 'family' object specifying the distribution and link function (e.g., 'binomial').}
 
-\item{ald}{Aggregate-level data}
+\item{ald}{Aggregate-level data. Single row matrix with summary statistics for each covariate and treatment outcomes.
+The format is 'mean.\emph{' and 'sd.}' for covariates and 'y.\emph{.sum', 'y.}.bar', 'y.*.sd' for treatments B and C.
+We assume a common distribution for each treatment arm.}
 
 \item{hat_w}{MAIC weights; default \code{NULL} which calls \code{\link[=maic_weights]{maic_weights()}}}
 }

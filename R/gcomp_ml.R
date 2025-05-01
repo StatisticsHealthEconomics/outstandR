@@ -5,8 +5,7 @@
 #'     
 #' @param data Trial data 
 #' @param indices Indices sampled from rows of `data`
-#' @param formula Linear regression `formula` object
-#' @param family A family object specifying the distribution and link function (e.g., "binomial").
+#' @eval reg_args(include_formula = TRUE, include_family = TRUE)
 #' @param rho A named square matrix of covariate correlations; default NA.
 #' @param N Synthetic sample size for g-computation
 #' @param ald Aggregate-level data for covariates.
@@ -38,10 +37,8 @@ gcomp_ml.boot <- function(data, indices,
 #'
 #' \eqn{\log(\hat{\mu}_A/(1 - \hat{\mu}_A)) - \log(\hat{\mu}_C/(1 - \hat{\mu}_C))}
 #'
-#' @param formula Linear regression `formula` object
-#' @param family A family object specifying the distribution and link function (e.g., "binomial").
-#' @template args-ipd
-#' @template args-ald
+#' @eval reg_args(include_formula = TRUE, include_family = TRUE)
+#' @eval study_data_args(include_ipd = TRUE, include_ald = TRUE)
 #' @param rho A named square matrix of covariate correlations; default NA.
 #' @param N Synthetic sample size for g-computation
 #'
@@ -97,9 +94,8 @@ gcomp_ml_means <- function(formula,
 #'
 #' Generates a synthetic cohort using a normal copula based on aggregate-level data.
 #'
-#' @param formula Linear regression `formula` object
-#' @template args-ipd
-#' @template args-ald
+#' @eval reg_args(include_formula = TRUE, include_family = FALSE)
+#' @eval study_data_args(include_ipd = TRUE, include_ald = TRUE)
 #' @param rho A named square matrix of covariate correlations; default NA.
 #' @param N Sample size for the synthetic cohort. Default is 1000.
 #' 

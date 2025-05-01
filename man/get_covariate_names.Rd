@@ -7,7 +7,8 @@
 get_covariate_names(formula)
 }
 \arguments{
-\item{formula}{Linear regression formula object}
+\item{formula}{Linear regression \code{formula} object. Prognostic factors (PF) are main effects and effect modifiers (EM) are
+interactions with the treatment variable, i.e., y ~ X1 + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
 }
 \value{
 covariate names vector

@@ -39,9 +39,10 @@ strategy_mim(
 new_strategy(strategy, ...)
 }
 \arguments{
-\item{formula}{Linear regression \code{formula} object}
+\item{formula}{Linear regression \code{formula} object. Prognostic factors (PF) are main effects and effect modifiers (EM) are
+interactions with the treatment variable, i.e., y ~ X1 + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
 
-\item{family}{\code{family} object from the \code{stats} library}
+\item{family}{A 'family' object specifying the distribution and link function (e.g., 'binomial').}
 
 \item{R}{The number of resamples used for the non-parametric bootstrap}
 

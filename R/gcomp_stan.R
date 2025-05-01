@@ -12,8 +12,7 @@
 #'     \item{warmup}{Number of warmup iterations for the MCMC sampling.}
 #'     \item{chains}{Number of MCMC chains.}
 #'   }
-#' @template args-ipd
-#' @template args-ald
+#' @eval study_data_args(include_ipd = TRUE, include_ald = TRUE)
 #'
 #' @return A list of \eqn{y^*_A} and \eqn{y^*_C} posterior predictions:
 #' \describe{

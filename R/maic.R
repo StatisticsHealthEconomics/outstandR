@@ -50,12 +50,10 @@ Q <- function(beta, X) {
 #' 
 #' Matching-adjusted indirect comparison bootstrap sampling.
 #' 
-#' @template args-ipd
+#' @eval study_data_args(include_ipd = TRUE, include_ald = TRUE)
 #' @param indices Vector of indices, same length as original,
 #'   which define the bootstrap sample
-#' @param formula Linear regression formula
-#' @param family A character string specifying the family distribution (e.g., "binomial").
-#' @template args-ald
+#' @eval reg_args(include_formula = TRUE, include_family = TRUE)
 #' @param hat_w MAIC weights; default `NULL` which calls [maic_weights()]
 #' 
 #' @return Vector of fitted probabilities for treatments _A_ and _C_

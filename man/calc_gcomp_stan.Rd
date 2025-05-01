@@ -16,9 +16,11 @@ calc_gcomp_stan(strategy, ipd, ald, ...)
 \item{chains}{Number of MCMC chains.}
 }}
 
-\item{ipd}{Individual-level data}
+\item{ipd}{Individual-level patient data. Dataframe with one row per patient with outcome, treatment and covariate columns.}
 
-\item{ald}{Aggregate-level data}
+\item{ald}{Aggregate-level data. Single row matrix with summary statistics for each covariate and treatment outcomes.
+The format is 'mean.\emph{' and 'sd.}' for covariates and 'y.\emph{.sum', 'y.}.bar', 'y.*.sd' for treatments B and C.
+We assume a common distribution for each treatment arm.}
 }
 \value{
 A list of \eqn{y^*_A} and \eqn{y^*_C} posterior predictions:

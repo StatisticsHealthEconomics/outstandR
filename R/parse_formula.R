@@ -1,7 +1,7 @@
 
 #' Get treatment name
 #'
-#' @param formula Linear regression formula string
+#' @eval reg_args(include_formula = TRUE, include_family = FALSE)
 #'
 #' @return Treatment name
 #' @keywords internal
@@ -23,7 +23,7 @@ get_treatment_name <- function(formula) {
 
 #' Get mean names
 #'
-#' @template args-ald
+#' @eval study_data_args(include_ipd = FALSE, include_ald = TRUE)
 #' @param keep_nms Variable names character vector
 #'
 #' @return Mean names vector
@@ -49,7 +49,7 @@ get_mean_names <- function(ald, keep_nms) {
 
 #' Get standard deviation names
 #'
-#' @template args-ald
+#' @eval study_data_args(include_ipd = FALSE, include_ald = TRUE)
 #' @param keep_nms Variable names character vector
 #'
 #' @return Standard deviation names vector
@@ -75,8 +75,8 @@ get_sd_names <- function(ald, keep_nms) {
 
 #' Get covariate names
 #'
-#' @param formula Linear regression formula object
-#'
+#' @eval reg_args(include_formula = TRUE, include_family = FALSE)
+#' 
 #' @return covariate names vector
 #' @keywords internal
 #'
@@ -90,8 +90,8 @@ get_covariate_names <- function(formula) {
 
 #' Get effect modifiers
 #'
-#' @param formula Linear regression formula string
-#'
+#' @eval reg_args(include_formula = TRUE, include_family = FALSE)
+#' 
 #' @return Effect modifiers names
 #' @keywords internal
 #'
