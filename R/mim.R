@@ -15,8 +15,9 @@ calc_mim <- function(strategy,
   family <- strategy$family
   rho <- strategy$rho
   N <- strategy$N
+  trt_var <- strategy$trt_var
   
-  x_star <- simulate_ALD_pseudo_pop(formula, ipd, ald, rho, N)
+  x_star <- simulate_ALD_pseudo_pop(formula, ipd, ald, trt_var, rho, N)
   
   ## SYNTHESIS STAGE ##
   

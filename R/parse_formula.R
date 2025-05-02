@@ -34,6 +34,10 @@ guess_treatment_name <- function(formula) {
 
       # Pick the last main effect term
       treat_nm <- tail(main_effect_terms, 1)
+      
+      if (length(treat_nm) == 0) {
+        stop("Treatment term 'trt' is missing in the formula")
+      }
     }
   }
   
@@ -65,8 +69,9 @@ get_mean_names <- function(ald, keep_nms) {
   is_var_name <- grepl(pattern = paste(keep_nms, collapse = "|"), dat_names)
   keep_mean_nm <- is_mean_name & is_var_name
   
-  if (all(!keep_mean_nm))
+  if (all(!keep_mean_nm)) {
     warning("No matching mean names found.")
+  }
   
   mean_nms <- dat_names[keep_mean_nm]
    
@@ -91,8 +96,9 @@ get_sd_names <- function(ald, keep_nms) {
   is_var_name <- grepl(pattern = paste(keep_nms, collapse = "|"), dat_names)
   keep_sd_nm <- is_sd_name & is_var_name
   
-  if (all(!keep_sd_nm))
+  if (all(!keep_sd_nm)) {
     warning("No matching sd names found.")
+  }
   
   sd_nms <- dat_names[keep_sd_nm]
   
@@ -110,8 +116,9 @@ get_sd_names <- function(ald, keep_nms) {
 #'
 get_covariate_names <- function(formula) {
   
-  if (!inherits(formula, "formula"))
+  if (!inherits(formula, "formula")) {
     stop("formula argument must be of formula class.")
+  }
   
   all.vars(formula)[-1]
 }
