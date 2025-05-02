@@ -30,8 +30,8 @@ calc_mim <- function(strategy,
   
   # create augmented target dataset
   target.t1 <- target.t0 <- x_star
-  target.t1$trt <- 1
-  target.t0$trt <- 0
+  target.t1$trt_var <- 1
+  target.t0$trt_var <- 0
   
   aug.target <- rbind(target.t0, target.t1)
   
@@ -47,8 +47,11 @@ calc_mim <- function(strategy,
   
   # fit second-stage regression to each synthesis using maximum-likelihood estimation
   reg2.fits <- lapply(1:M, function(m) {
-    glm(y_star[m, ] ~ trt, data = aug.target, family = family)
+    data_m <- aug.target
+    data_m$y <- y_star[m, ]
+    glm(as.formula(paste("y ~", trt_var)), data = data_m, family = family)
   })
+
   
   # treatment effect point estimates in each synthesis
   coef_fit <- do.call(rbind, lapply(reg2.fits, function(fit) coef(fit)))
@@ -57,7 +60,7 @@ calc_mim <- function(strategy,
   # point estimates for the variance in each synthesis
   hats.v <- unlist(lapply(reg2.fits,
                           function(fit)
-                            vcov(fit)["trt", "trt"]))
+                            vcov(fit)[trt_var, trt_var]))
   
   mean_C <- family$linkinv(coef_fit[, 1])                  # probability for control
   mean_A <- family$linkinv(coef_fit[, 1] + coef_fit[, 2])  # probability for treatment
