@@ -9,7 +9,9 @@
 #' @keywords internal
 #' 
 calc_mim <- function(strategy,
-                     ipd, ald, ...) {
+                     ipd, ald, 
+                     ref_trt = "C",
+                     comp_trt = "A", ...) {
   
   formula <- strategy$formula
   family <- strategy$family
@@ -29,11 +31,15 @@ calc_mim <- function(strategy,
     algorithm = "sampling", ...)
   
   # create augmented target dataset
-  target.t1 <- target.t0 <- x_star
-  target.t1$trt_var <- 1
-  target.t0$trt_var <- 0
+  target.comp <- target.ref <- x_star
+  target.comp[[trt_var]] <- comp_trt
+  target.ref[[trt_var]] <- ref_trt
   
-  aug.target <- rbind(target.t0, target.t1)
+  aug.target <- rbind(target.ref, target.comp)
+  
+  # set reference treatment as base level
+  aug.target[[trt_var]] <- factor(aug.target[[trt_var]],
+                                  levels = c(ref_trt, comp_trt))
   
   # complete syntheses by drawing binary outcomes
   # from their posterior predictive distribution
@@ -52,18 +58,21 @@ calc_mim <- function(strategy,
     glm(as.formula(paste("y ~", trt_var)), data = data_m, family = family)
   })
 
-  
   # treatment effect point estimates in each synthesis
   coef_fit <- do.call(rbind, lapply(reg2.fits, function(fit) coef(fit)))
+  
+  # safer than trt_var in case of factor level append
+  coef_names <- names(coef(reg2.fits[[1]]))
+  treat_coef_name <- grep(pattern = paste0("^", trt_var, "[^:]*$"), coef_names, value = TRUE)
   
   ##TODO: how to transform this to the prob scale?
   # point estimates for the variance in each synthesis
   hats.v <- unlist(lapply(reg2.fits,
                           function(fit)
-                            vcov(fit)[trt_var, trt_var]))
+                            vcov(fit)[treat_coef_name, treat_coef_name]))
   
-  mean_C <- family$linkinv(coef_fit[, 1])                  # probability for control
-  mean_A <- family$linkinv(coef_fit[, 1] + coef_fit[, 2])  # probability for treatment
+  mean_C <- family$linkinv(coef_fit[, 1])                  # probability for reference
+  mean_A <- family$linkinv(coef_fit[, 1] + coef_fit[, treat_coef_name])  # probability for comparator
   
   tibble::lst(mean_A, mean_C,
               hats.v, M)

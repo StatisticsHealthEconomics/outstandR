@@ -23,10 +23,12 @@
 gcomp_ml.boot <- function(data, indices,
                           R, formula = NULL,
                           family, trt_var,
+                          ref_trt = "C", comp_trt = "A",
                           rho = NA,
                           N = 1000, ald) {
   dat <- data[indices, ]
-  gcomp_ml_means(formula, family, dat, ald, trt_var, rho, N) 
+  gcomp_ml_means(formula, family, dat, ald, trt_var, rho, N,
+                 ref_trt, comp_trt) 
 }
 
 
@@ -62,7 +64,9 @@ gcomp_ml_means <- function(formula,
                            ipd, ald,
                            trt_var,
                            rho = NA,
-                           N = 1000) {
+                           N = 1000,
+                           ref_trt = "C",
+                           comp_trt = "A") {
   
   x_star <- simulate_ALD_pseudo_pop(formula = formula,
                                     ipd = ipd, ald = ald,
@@ -75,19 +79,19 @@ gcomp_ml_means <- function(formula,
              data = ipd)
   
   # counterfactual datasets
-  data.trtA <- data.trtC <- x_star
+  data.comp <- data.ref <- x_star
   
   # intervene on treatment while keeping set covariates fixed
-  data.trtA[[trt_var]] <- 0  # all receive A
-  data.trtC[[trt_var]] <- 1  # all receive C
+  data.comp[[trt_var]] <- comp_trt  # all receive A
+  data.ref[[trt_var]] <- ref_trt    # all receive C
   
   # predict counterfactual event probs, conditional on treatment/covariates
-  hat.mu.A <- predict(fit, type="response", newdata=data.trtA)
-  hat.mu.C <- predict(fit, type="response", newdata=data.trtC)
+  hat.mu.comp <- predict(fit, type="response", newdata=data.comp)
+  hat.mu.ref <- predict(fit, type="response", newdata=data.ref)
   
   # (marginal) mean probability prediction under A and C
-  c(`0` = mean(hat.mu.A),
-    `1` = mean(hat.mu.C))
+  c(`0` = mean(hat.mu.ref),
+    `1` = mean(hat.mu.comp))
 }
 
 

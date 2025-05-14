@@ -74,8 +74,14 @@ calc_IPD_stats.mim <- function(strategy,
   lci.Delta <- coef_est + qt(0.025, df = nu) * sqrt(var_est)
   uci.Delta <- coef_est + qt(0.975, df = nu) * sqrt(var_est)
   
-  list(mean = coef_est,
-       var = var_est)
+  list(
+    contrasts = list(
+      mean = coef_est,
+      var = var_est),
+    absolute = list(
+      mean = NA,  #p_est,  ##TODO:
+      var = NA)   #p_var)
+  )
 } 
 
 #' Factory function for creating calc_IPD_stats methods

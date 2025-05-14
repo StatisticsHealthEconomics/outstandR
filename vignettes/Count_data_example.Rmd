@@ -62,6 +62,8 @@ ipd_trial <- gen_data(N, b_trt, b_X, b_EM, b_0,
                       meanX_EM_AC, sdX_EM, 
                       corX, allocation,
                       family = poisson(link = "log"))
+
+ipd_trial$trt <- factor(ipd_trial$trt, labels = c("C", "A"))
 ```
 
 Similarly, for the aggregate data but with the additional summarise step.

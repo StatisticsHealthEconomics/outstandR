@@ -5,7 +5,7 @@
 #' 
 calc_stc <- function(strategy, ipd, ...) {
   
-  treat_nm <- strategy$trt_var
+  trt_var <- strategy$trt_var
   
   # centre covariates
   centre_vars <- get_eff_mod_names(strategy$formula)
@@ -19,8 +19,8 @@ calc_stc <- function(strategy, ipd, ...) {
   # extract model coefficients
   coef_fit <- coef(fit)
   
-  # safer than treat_nm in case of factor level append
-  treat_coef_name <- grep(paste0("^", treat_nm), names(coef_fit), value = TRUE)
+  # safer than trt_var in case of factor level append
+  treat_coef_name <- grep(paste0("^", trt_var, "[^:]*$"), names(coef_fit), value = TRUE)
   
   # probability for control and treatment group
   # estimating treatment effect at means because of centring

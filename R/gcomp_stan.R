@@ -37,7 +37,9 @@
 #' @export
 #'
 calc_gcomp_stan <- function(strategy,
-                            ipd, ald, ...) {
+                            ipd, ald, 
+                            ref_trt = "C",
+                            comp_trt = "A", ...) {
   
   formula <- strategy$formula
   family <- strategy$family
@@ -56,21 +58,21 @@ calc_gcomp_stan <- function(strategy,
                        ...)
   
   # counterfactual datasets
-  data.trtA <- data.trtC <- x_star
+  data.comp <- data.ref <- x_star
   
   # intervene on treatment while keeping set covariates fixed
-  data.trtA[[trt_var]] <- 1  # everyone receives treatment A
-  data.trtC[[trt_var]] <- 0  # receive treatment C
+  data.comp[[trt_var]] <- comp_trt  # all receive treatment A
+  data.ref[[trt_var]] <- ref_trt    # all receive treatment C
   
   ##TODO: is this going to work for all of the different data types?
   # draw responses from posterior predictive distribution
-  y.star.A <- rstanarm::posterior_predict(outcome.model, newdata = data.trtA)
-  y.star.C <- rstanarm::posterior_predict(outcome.model, newdata = data.trtC)
+  y.star.comp <- rstanarm::posterior_predict(outcome.model, newdata = data.comp)
+  y.star.ref <- rstanarm::posterior_predict(outcome.model, newdata = data.ref)
   
   # posterior means for each treatment group
   list(
-    mean_A = rowMeans(y.star.A),
-    mean_C = rowMeans(y.star.C))
+    mean_A = rowMeans(y.star.comp),
+    mean_C = rowMeans(y.star.ref))
 }
 
 
@@ -116,6 +118,8 @@ calc_gcomp_ml <- function(strategy,
          formula = strategy$formula,
          family = strategy$family,
          trt_var = strategy$trt_var,
+         ref_trt = "C",
+         comp_trt = "A",
          rho = strategy$rho,
          N = strategy$N,
          data = ipd,

@@ -7,20 +7,31 @@
 outstandR(
   ipd_trial,
   ald_trial,
-  ref_trt = "C",
   strategy,
+  ref_trt = "C",
   CI = 0.95,
   scale = NULL,
   ...
 )
 }
 \arguments{
-\item{ipd_trial}{Individual-level patient data. Suppose between studies \emph{A} and \emph{C}.}
+\item{ipd_trial}{Individual-level patient data. For example, suppose between studies \emph{A} and \emph{C}.
+In a long format and must contain a treatment column and outcome column consistent with the formula object.
+The labels in the treatment are used internally so there must be a common treatment with the aggregate-level data trial.}
 
-\item{ald_trial}{Aggregate-level data. Suppose between studies \emph{B} and \emph{C}.}
+\item{ald_trial}{Aggregate-level data. For example, suppose between studies \emph{B} and \emph{C}. The column names take the form
+\itemize{
+\item \verb{mean.X*}: mean patient measurement
+\item \verb{sd.X*}: standard deviation of patient measurement
+\item \code{y.*.sum}: total number of events
+\item \code{y.*.bar}: proportion of events
+\item \verb{N.*}: total number of individuals
+}}
 
 \item{strategy}{Computation strategy function. These can be
 \code{strategy_maic()}, \code{strategy_stc()}, \code{strategy_gcomp_ml()} and  \code{strategy_gcomp_stan()}}
+
+\item{ref_trt}{Reference / common / anchoring treatment name; default "C"}
 
 \item{CI}{Confidence interval; between 0,1}
 
@@ -43,22 +54,28 @@ Methods taken from
 data(AC_IPD)  # AC patient-level data
 data(BC_ALD)  # BC aggregate-level data
 
+# linear formula
 lin_form <- as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")
 
 # matching-adjusted indirect comparison
-outstandR_maic <- outstandR(AC_IPD, BC_ALD, strategy = strategy_maic(formula = lin_form))
+outstandR_maic <- outstandR(AC_IPD, BC_ALD,
+                            strategy = strategy_maic(formula = lin_form))
 
 # simulated treatment comparison
-outstandR_stc <- outstandR(AC_IPD, BC_ALD, strategy = strategy_stc(lin_form))
+outstandR_stc <- outstandR(AC_IPD, BC_ALD,
+                           strategy = strategy_stc(lin_form))
 
 # G-computation with maximum likelihood
-# outstandR_gcomp_ml <- outstandR(AC_IPD, BC_ALD, strategy = strategy_gcomp_ml(lin_form))
+# outstandR_gcomp_ml <- outstandR(AC_IPD, BC_ALD,
+                                  strategy = strategy_gcomp_ml(lin_form))
 
 # G-computation with Bayesian inference
-outstandR_gcomp_stan <- outstandR(AC_IPD, BC_ALD, strategy = strategy_gcomp_stan(lin_form))
+outstandR_gcomp_stan <- outstandR(AC_IPD, BC_ALD,
+                                  strategy = strategy_gcomp_stan(lin_form))
 
 # Multiple imputation marginalization
-outstandR_gcomp_stan <- outstandR(AC_IPD, BC_ALD, strategy = strategy_mim(lin_form))
+outstandR_mim <- outstandR(AC_IPD, BC_ALD,
+                           strategy = strategy_mim(lin_form))
 
 }
 \references{

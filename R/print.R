@@ -14,10 +14,12 @@ print.outstandR <- function(x, ...) {
     stop("Please install the 'tibble' and 'pillar' packages for colored tibble output.")
   }
   
+  ref_trt <- attr(x, "ref_trt")
+  
   cat(pillar::style_bold("Object of class 'outstandR'"), "\n")
   cat("Model:", pillar::style_subtle(attr(x, "model")), "\n")
   cat("Scale:", pillar::style_subtle(attr(x, "scale")), "\n")
-  cat("Common treatment:", pillar::style_subtle("C"), "\n")
+  cat("Common treatment:", pillar::style_subtle(ref_trt), "\n")
   # cat(pillar::style_subtle("Common treatment:"), attr(x, "reference"), "\n")  ##TODO:
   cat("Individual patient data study:", pillar::style_subtle("AC"), "\n")
   cat("Aggregate level data study:", pillar::style_subtle("BC"), "\n")
@@ -46,8 +48,8 @@ print.outstandR <- function(x, ...) {
     Treatments = names(absolute$means),
     Estimate = unlist(absolute$means),
     Std.Error = unlist(absolute$variances),
-    lower.0.95 = sapply(absolute$CI, \(x) x[1]),
-    upper.0.95 = sapply(absolute$CI, \(x) x[2])
+    lower.0.95 = c(NA,NA),  #sapply(absolute$CI, \(x) x[1]),  ##TODO:
+    upper.0.95 = c(NA,NA)   #sapply(absolute$CI, \(x) x[2])
   )
   
   cat("Contrasts:\n\n")

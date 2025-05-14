@@ -2,10 +2,10 @@
 title: "Continuous data example"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Continuous data example}
+%\VignetteIndexEntry{Continuous data example}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
-editor_options: 
+  editor_options: 
   markdown: 
     wrap: 72
   chunk_output_type: console
@@ -72,10 +72,12 @@ corX <- 0.2            # covariate correlation coefficient
 b_0 <- -0.6            # baseline intercept coefficient  ##TODO: fixed value
 
 ipd_trial <- gen_data(N, b_trt, b_X, b_EM, b_0,
-                   meanX_AC, sdX, 
-                   meanX_EM_AC, sdX_EM, 
-                   corX, allocation,
-                   family = gaussian(link = "identity"))
+                      meanX_AC, sdX, 
+                      meanX_EM_AC, sdX_EM, 
+                      corX, allocation,
+                      family = gaussian(link = "identity"))
+
+ipd_trial$trt <- factor(ipd_trial$trt, labels = c("C", "A"))
 ```
 
 Similarly, for the aggregate data but with the additional summarise step.
@@ -389,11 +391,11 @@ Combine all outputs for relative effects table of all contrasts and methods.
 ```{r}
 knitr::kable(
   data.frame(
-  `MAIC` = unlist(outstandR_maic$contrasts$means),
-  `STC` = unlist(outstandR_stc$contrasts$means),
-  `Gcomp ML` = unlist(outstandR_gcomp_ml$contrasts$means),
-  `Gcomp Bayes` = unlist(outstandR_gcomp_stan$contrasts$means),
-  `MIM` = unlist(outstandR_mim$contrasts$means))
+    `MAIC` = unlist(outstandR_maic$contrasts$means),
+    `STC` = unlist(outstandR_stc$contrasts$means),
+    `Gcomp ML` = unlist(outstandR_gcomp_ml$contrasts$means),
+    `Gcomp Bayes` = unlist(outstandR_gcomp_stan$contrasts$means),
+    `MIM` = unlist(outstandR_mim$contrasts$means))
 ) |> 
   round(2)
 ```

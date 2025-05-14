@@ -39,7 +39,6 @@ prep_ald <- function(form, data, trt_var = "trt") {
 
 #' Convert from long to wide format
 #'
-#' @import plyr
 #' @import tidyr
 #' @import stringr
 #' 
@@ -75,3 +74,25 @@ reshape_ald_to_wide <- function(df) {
     
     bind_cols(variable_df, y_df)
 }
+
+# Get study comparator treatment names
+
+#
+get_ald_comparator <- function(ald, ref_trt = "C") {
+  
+  pattern <- paste0("^y\\.(?!", ref_trt, ")")
+  
+  # filter for names starting with "y." but not with "y.C"
+  y_non_ref <- grep(pattern, colnames(ald),
+                    value = TRUE, perl = TRUE)
+  
+  # extract treatment of first match
+  sub("^y\\.([A-Z]).*", "\\1", y_non_ref[1])
+}
+
+#
+get_ipd_comparator <- function(ipd, ref_trt = "C", trt_var = "trt") {
+  all_trt <- levels(ipd[[trt_var]])
+  all_trt[all_trt != ref_trt]
+}
+
