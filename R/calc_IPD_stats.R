@@ -1,5 +1,5 @@
 
-#' @name IPD_stats
+#' @name calc_IPD_stats
 #' @title Calculate individual-level patient data statistics
 #' 
 #' @description
@@ -22,36 +22,36 @@
 #' strategy <- strategy_maic()
 #' ipd <- data.frame(id = 1:100, treatment = sample(c("A", "C"), 100, replace = TRUE), outcome = rnorm(100))
 #' ald <- data.frame(treatment = c("A", "C"), mean = c(0.2, 0.1), var = c(0.05, 0.03))
-#' IPD_stats(strategy, ipd, ald, scale = "log_odds")
+#' calc_IPD_stats(strategy, ipd, ald, scale = "log_odds")
 #' }
 #' @export
 #' 
-IPD_stats <- function(strategy, ipd, ald, scale, ...)
-  UseMethod("IPD_stats", strategy)
+calc_IPD_stats <- function(strategy, ipd, ald, scale, ...)
+  UseMethod("calc_IPD_stats", strategy)
 
 
-#' @rdname IPD_stats
+#' @rdname calc_IPD_stats
 #' @importFrom utils methods
 #' @export
-IPD_stats.default <- function(...) {
-  strategy_classes <- sub("IPD_stats\\.", "", methods(IPD_stats)[-1])
+calc_IPD_stats.default <- function(...) {
+  strategy_classes <- sub("calc_IPD_stats\\.", "", methods(calc_IPD_stats)[-1])
   avail_strategies <- paste0("strategy_", strategy_classes, "()", collapse = ", ")
   stop(paste0("strategy not available. Select from ", avail_strategies))
 }
 
 
-#' @rdname IPD_stats
+#' @rdname calc_IPD_stats
 #' 
 #' @section Multiple imputation marginalisation:
 #' Using Stan, compute marginal relative treatment effect for _A_ vs _C_ for each MCMC sample
 #' by transforming from probability to linear predictor scale. Approximate by 
-#' using imputation and combining estimates using Rubin's rules, in contrast to [IPD_stats.gcomp_stan()].
+#' using imputation and combining estimates using Rubin's rules, in contrast to [calc_IPD_stats.gcomp_stan()].
 #' @import stats
 #' @export
 #'
-IPD_stats.mim <- function(strategy,
-                          ipd, ald,
-                          scale, ...) {
+calc_IPD_stats.mim <- function(strategy,
+                               ipd, ald,
+                               scale, ...) {
   mis_res <-
     calc_mim(strategy,
              ipd, ald, ...)
@@ -78,7 +78,7 @@ IPD_stats.mim <- function(strategy,
        var = var_est)
 } 
 
-#' Factory function for creating IPD_stats methods
+#' Factory function for creating calc_IPD_stats methods
 #'
 #' Creates a method for computing mean and variance statistics based on the supplied function.
 #'
@@ -87,12 +87,12 @@ IPD_stats.mim <- function(strategy,
 #' @keywords internal
 #'
 IPD_stat_factory <- function(ipd_fun) {
-
+  
   function(strategy, ipd, ald, scale,
            var_method = "sample", ...) {
     
     out <- ipd_fun(strategy, ipd, ald, ...)
-
+    
     # relative treatment effect
     hat.delta.AC <- calculate_ate(out$mean_A, out$mean_C,
                                   effect = scale)
@@ -105,7 +105,7 @@ IPD_stat_factory <- function(ipd_fun) {
     } else if (var_method == "sample") {
       var_est <- var(hat.delta.AC)
     }
-
+    
     p_est <- sapply(out, mean)
     p_var <- sapply(out, var)
     
@@ -120,38 +120,38 @@ IPD_stat_factory <- function(ipd_fun) {
   }
 }
 
-#' @rdname IPD_stats
+#' @rdname calc_IPD_stats
 #' @section Simulated treatment comparison statistics:
 #' IPD from the _AC_ trial are used to fit a regression model describing the
 #' observed outcomes \eqn{y} in terms of the relevant baseline characteristics \eqn{x} and
 #' the treatment variable \eqn{z}.
 #' @export
 #'
-IPD_stats.stc <- IPD_stat_factory(outstandR:::calc_stc)
+calc_IPD_stats.stc <- IPD_stat_factory(outstandR:::calc_stc)
 
-#' @rdname IPD_stats
+#' @rdname calc_IPD_stats
 #' @section Matching-adjusted indirect comparison statistics:
 #' Marginal _A_ vs _C_ treatment effect estimates
 #' using bootstrapping sampling.
 #' @export
 #'
-IPD_stats.maic <- IPD_stat_factory(outstandR:::calc_maic)
+calc_IPD_stats.maic <- IPD_stat_factory(outstandR:::calc_maic)
 
-#' @rdname IPD_stats
+#' @rdname calc_IPD_stats
 #' @section G-computation maximum likelihood statistics:
 #' Compute a non-parametric bootstrap with default \eqn{R=1000} resamples.
 #' @export
 #'
-IPD_stats.gcomp_ml <- IPD_stat_factory(outstandR:::calc_gcomp_ml)
+calc_IPD_stats.gcomp_ml <- IPD_stat_factory(outstandR:::calc_gcomp_ml)
 
-#' @rdname IPD_stats
+#' @rdname calc_IPD_stats
 #' @section G-computation Bayesian statistics:
 #' Using Stan, compute marginal log-odds ratio for _A_ vs _C_ for each MCMC sample
 #' by transforming from probability to linear predictor scale.
 #' @export
 #'
-IPD_stats.gcomp_stan <- IPD_stat_factory(outstandR:::calc_gcomp_stan)
+calc_IPD_stats.gcomp_stan <- IPD_stat_factory(outstandR:::calc_gcomp_stan)
 
 # #' @export
-#' IPD_stats.mim <- IPD_stat_factory(outstandR:::calc_mim)
+#' calc_IPD_stats.mim <- IPD_stat_factory(outstandR:::calc_mim)
 

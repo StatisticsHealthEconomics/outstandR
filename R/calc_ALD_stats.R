@@ -18,14 +18,16 @@
 #' @examples
 #' \dontrun{
 #' strategy <- list(family = list(family = "binomial"))  # basic version
-#' ald <- data.frame(trial = 1:5, n_B = c(10, 20, 15, 30, 25), n_C = c(12, 18, 20, 25, 22))
-#' ALD_stats(strategy, ald, treatments = list("B", "C"), scale = "log")
+#' ald <- data.frame(trial = 1:5,
+#'                   n_B = c(10, 20, 15, 30, 25),
+#'                   n_C = c(12, 18, 20, 25, 22))
+#' calc_ALD_stats(strategy, ald, treatments = list("B", "C"), scale = "log")
 #' }
 #'
-ALD_stats <- function(strategy,
-                      ald,
-                      treatments = list("B", "C"),
-                      scale) {
+calc_ALD_stats <- function(strategy,
+                           ald,
+                           treatments = list("B", "C"),
+                           scale) {
   family <- strategy$family$family
   
   ald_cc <- continuity_correction(ald, treatments)

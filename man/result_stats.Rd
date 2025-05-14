@@ -4,10 +4,10 @@
 \alias{result_stats}
 \title{Result Statistics}
 \usage{
-result_stats(AC_stats, BC_stats, CI = 0.95)
+result_stats(ipd_stats, ald_stats, CI = 0.95)
 }
 \arguments{
-\item{AC_stats, BC_stats}{}
+\item{ipd_stats, ald_stats}{}
 
 \item{CI}{Confidence interval 1-alpha}
 }

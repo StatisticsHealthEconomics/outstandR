@@ -52,12 +52,15 @@ outstandR <- function(ipd_trial, ald_trial, ref_trt = "C",
   ipd <- prep_ipd(strategy$formula, ipd_trial)
   ald <- prep_ald(strategy$formula, ald_trial, trt_var = strategy$trt_var)
 
+  ipd_trts <- get_ipd_trts(ipd, ref_trt)
+  ald_trts <- get_ald_trts(ald, ref_trt)
+  
   if (is.null(scale)) scale <- get_treatment_effect(strategy$family$link)
   
-  AC_stats <- IPD_stats(strategy, ipd = ipd, ald = ald, scale, ...) 
-  BC_stats <- ALD_stats(strategy, ald = ald, scale = scale) 
+  ipd_stats <- calc_IPD_stats(strategy, ipd = ipd, ald = ald, scale, ...) 
+  ald_stats <- calc_ALD_stats(strategy, ald = ald, treatments = ald_trts, scale = scale) 
   
-  stats <- result_stats(AC_stats, BC_stats, CI)
+  stats <- result_stats(ipd_stats, ald_stats, CI)
   
   structure(stats,
             CI = CI,

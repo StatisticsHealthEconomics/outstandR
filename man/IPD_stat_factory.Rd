@@ -2,7 +2,7 @@
 % Please edit documentation in R/IPD_stats.R
 \name{IPD_stat_factory}
 \alias{IPD_stat_factory}
-\title{Factory function for creating IPD_stats methods}
+\title{Factory function for creating calc_IPD_stats methods}
 \usage{
 IPD_stat_factory(ipd_fun)
 }

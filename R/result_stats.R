@@ -4,33 +4,33 @@
 #' Combining output from aggregate level data studies BC and 
 #' adjusted individual level data studies AC into a single object.
 #'
-#' @param AC_stats,BC_stats 
+#' @param ipd_stats,ald_stats 
 #' @param CI Confidence interval 1-alpha
 #'
 #' @returns List
 #' @keywords internal
 #'
-result_stats <- function(AC_stats,
-                         BC_stats,
+result_stats <- function(ipd_stats,
+                         ald_stats,
                          CI = 0.95) {
   upper <- 0.5 + CI/2
-  ci_range <- c(1-upper, upper)
+  ci_range <- c(1 - upper, upper)
   z_vals <- qnorm(ci_range)
   
-  AC_contrasts <- AC_stats$contrasts
-  AC_absolute <- AC_stats$absolute
+  AC_contrasts <- ipd_stats$contrasts
+  AC_absolute <- ipd_stats$absolute
   
   # contrasts
   
   contrasts <- list(
-    AB = AC_contrasts$mean - BC_stats$mean,
+    AB = AC_contrasts$mean - ald_stats$mean,
     AC = AC_contrasts$mean,
-    BC = BC_stats$mean)
+    BC = ald_stats$mean)
   
   contrast_variances <- list(
-    AB = AC_contrasts$var + BC_stats$var,
+    AB = AC_contrasts$var + ald_stats$var,
     AC = AC_contrasts$var,
-    BC = BC_stats$var)
+    BC = ald_stats$var)
   
   contrast_ci <- list(
     AB = contrasts$AB + z_vals*as.vector(sqrt(contrast_variances$AB)),
