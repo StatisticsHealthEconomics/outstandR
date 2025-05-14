@@ -4,12 +4,20 @@
 \alias{outstandR}
 \title{Calculate the difference between treatments using all evidence}
 \usage{
-outstandR(AC.IPD, BC.ALD, strategy, CI = 0.95, scale = NULL, ...)
+outstandR(
+  ipd_trial,
+  ald_trial,
+  ref_trt = "C",
+  strategy,
+  CI = 0.95,
+  scale = NULL,
+  ...
+)
 }
 \arguments{
-\item{AC.IPD}{Individual-level patient data. Suppose between studies \emph{A} and \emph{C}.}
+\item{ipd_trial}{Individual-level patient data. Suppose between studies \emph{A} and \emph{C}.}
 
-\item{BC.ALD}{Aggregate-level data. Suppose between studies \emph{B} and \emph{C}.}
+\item{ald_trial}{Aggregate-level data. Suppose between studies \emph{B} and \emph{C}.}
 
 \item{strategy}{Computation strategy function. These can be
 \code{strategy_maic()}, \code{strategy_stc()}, \code{strategy_gcomp_ml()} and  \code{strategy_gcomp_stan()}}

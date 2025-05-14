@@ -1,6 +1,6 @@
 
 #
-validate_outstandr <- function(AC.IPD, BC.ALD,
+validate_outstandr <- function(ipd_trial, ald_trial,
                                strategy,
                                CI, scale) {
   

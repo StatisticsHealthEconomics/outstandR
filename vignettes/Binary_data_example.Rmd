@@ -122,7 +122,7 @@ sdX_EM <- c(0.4, 0.4)  # standard deviation of each EM covariate
 corX <- 0.2            # covariate correlation coefficient  
 b_0 <- -0.6            # baseline intercept coefficient  ##TODO: fixed value
 
-AC.IPD <- gen_data(N, b_trt, b_X, b_EM, b_0,
+ipd_trial <- gen_data(N, b_trt, b_X, b_EM, b_0,
                    meanX_AC, sdX, 
                    meanX_EM_AC, sdX_EM, 
                    corX, allocation,
@@ -155,7 +155,7 @@ out.C <- dplyr::filter(BC.IPD, trt == 0) %>%
             y.C.sd = sd(y),
             N.C = n())
 
-BC.ALD <- cbind.data.frame(cov.X, out.C, out.B)
+ald_trial <- cbind.data.frame(cov.X, out.C, out.B)
 ```
 
 
@@ -169,13 +169,13 @@ So, the log OR for the treatment effect of interest, i.e. *AC* or *BC*, is $\bet
 
 This general format of data sets consist of the following.
 
-#### `AC.IPD`: Individual patient data
+#### `ipd_trial`: Individual patient data
 
 -   `X*`: patient measurements
 -   `trt`: treatment ID (integer)
 -   `y`: (logical) indicator of whether event was observed
 
-#### `BC.ALD`: Aggregate-level data
+#### `ald_trial`: Aggregate-level data
 
 -   `mean.X*`: mean patient measurement
 -   `sd.X*`: standard deviation of patient measurement
@@ -189,7 +189,7 @@ trial identifier *B*, *C*.
 Our data look like the following.
 
 ```{r}
-head(AC.IPD)
+head(ipd_trial)
 ```
 
 There are 4 correlated continuous covariates generated per subject,
@@ -198,7 +198,7 @@ Treatment `trt` 1 corresponds to new treatment *A*, and 0 is standard of care or
 
 
 ```{r}
-BC.ALD
+ald_trial
 ```
 
 In this case, we have 4 covariate mean and standard deviation values;
@@ -273,7 +273,7 @@ variance in the wrapper function `maic_boot_stats`.
 
 ```{r outstandR_maic}
 outstandR_maic <-
-  outstandR(AC.IPD, BC.ALD,
+  outstandR(ipd_trial, ald_trial,
             strategy = strategy_maic(formula = lin_form,
                                      family = binomial(link = "logit")))
 ```
@@ -343,7 +343,7 @@ For example, to change the scale to risk difference, we can use the following co
 
 ```{r outstandR_maic_lrr}
 outstandR_maic_lrr <-
-  outstandR(AC.IPD, BC.ALD,
+  outstandR(ipd_trial, ald_trial,
             strategy = strategy_maic(formula = lin_form,
                                      family = binomial(link = "logit")),
             scale = "log_relative_risk")
@@ -381,7 +381,7 @@ the same (uncentred) formula as before.
 
 ```{r outstandR_stc}
 outstandR_stc <-
-  outstandR(AC.IPD, BC.ALD,
+  outstandR(ipd_trial, ald_trial,
             strategy = strategy_stc(formula = lin_form,
                                     family = binomial(link = "logit")))
 outstandR_stc
@@ -391,7 +391,7 @@ Change the outcome scale
 
 ```{r outstandR_stc_lrr}
 outstandR_stc_lrr <-
-  outstandR(AC.IPD, BC.ALD,
+  outstandR(ipd_trial, ald_trial,
             strategy = strategy_stc(formula = lin_form,
                                      family = binomial(link = "logit")),
             scale = "log_relative_risk")
@@ -444,7 +444,7 @@ $$
 
 ```{r outstandR_gcomp_ml}
 outstandR_gcomp_ml <-
-  outstandR(AC.IPD, BC.ALD,
+  outstandR(ipd_trial, ald_trial,
             strategy = strategy_gcomp_ml(formula = lin_form,
                                          family = binomial(link = "logit")))
 outstandR_gcomp_ml
@@ -454,7 +454,7 @@ Change the outcome scale
 
 ```{r outstandR_gcomp_ml_lrr}
 outstandR_gcomp_ml_lrr <-
-  outstandR(AC.IPD, BC.ALD,
+  outstandR(ipd_trial, ald_trial,
             strategy = strategy_gcomp_ml(formula = lin_form,
                                          family = binomial(link = "logit")),
             scale = "log_relative_risk")
@@ -501,7 +501,7 @@ under the specific treatment.
 
 ```{r outstandR_gcomp_stan, message=FALSE, eval=FALSE}
 outstandR_gcomp_stan <-
-  outstandR(AC.IPD, BC.ALD,
+  outstandR(ipd_trial, ald_trial,
             strategy = strategy_gcomp_stan(formula = lin_form,
                                            family = binomial(link = "logit")))
 ```
@@ -509,7 +509,7 @@ outstandR_gcomp_stan <-
 ```{r outstandR_gcomp_stan_eval, echo=FALSE, message=FALSE}
 xx <- capture.output(
   outstandR_gcomp_stan <-
-    outstandR(AC.IPD, BC.ALD,
+    outstandR(ipd_trial, ald_trial,
               strategy = strategy_gcomp_stan(
                 formula = lin_form,
                 family = binomial(link = "logit"))))
@@ -523,7 +523,7 @@ As before, we can change the outcome scale.
 
 ```{r outstandR_gcomp_stan_lrr, eval=FALSE}
 outstandR_gcomp_stan_lrr <-
-  outstandR(AC.IPD, BC.ALD,
+  outstandR(ipd_trial, ald_trial,
             strategy = strategy_gcomp_stan(formula = lin_form,
                                            family = binomial(link = "logit")),
             scale = "log_relative_risk")
@@ -532,7 +532,7 @@ outstandR_gcomp_stan_lrr <-
 ```{r outstandR_gcomp_stan_lrr_eval, echo=FALSE}
 xx <- capture.output(
   outstandR_gcomp_stan_lrr <-
-    outstandR(AC.IPD, BC.ALD,
+    outstandR(ipd_trial, ald_trial,
               strategy = strategy_gcomp_stan(formula = lin_form,
                                              family = binomial(link = "logit")),
               scale = "log_relative_risk"))
@@ -552,7 +552,7 @@ $$
 
 ```{r outstandR_mim, eval=FALSE}
 outstandR_mim <-
-  outstandR(AC.IPD, BC.ALD,
+  outstandR(ipd_trial, ald_trial,
             strategy = strategy_mim(formula = lin_form,
                                     family = binomial(link = "logit")))
 outstandR_mim
@@ -561,7 +561,7 @@ outstandR_mim
 ```{r outstandR_mim_eval, echo=FALSE}
 xx <- capture.output(
   outstandR_mim <-
-    outstandR(AC.IPD, BC.ALD,
+    outstandR(ipd_trial, ald_trial,
               strategy = strategy_mim(formula = lin_form,
                                       family = binomial(link = "logit"))))
 ```
@@ -574,7 +574,7 @@ Change the outcome scale again.
 
 ```{r outstandR_mim_lrr, eval=FALSE}
 outstandR_mim_lrr <-
-  outstandR(AC.IPD, BC.ALD,
+  outstandR(ipd_trial, ald_trial,
             strategy = strategy_mim(formula = lin_form,
                                     family = binomial(link = "logit")),
             scale = "log_relative_risk")
@@ -583,7 +583,7 @@ outstandR_mim_lrr <-
 ```{r outstandR_mim_lrr_eval, echo=FALSE}
 xx <- capture.output(
   outstandR_mim_lrr <-
-    outstandR(AC.IPD, BC.ALD,
+    outstandR(ipd_trial, ald_trial,
               strategy = strategy_mim(formula = lin_form,
                                       family = binomial(link = "logit")),
               scale = "log_relative_risk"))
@@ -601,15 +601,15 @@ The true $AC$ effect on the log OR scale in the $BC$ (aggregate trial data) popu
 $\beta_{trt}^{AC} + \beta_{EM} (\bar{X}^{AC}_1 + \bar{X}_2^{AC})$. Calculated by 
 
 ```{r}
-d_AC_true <- b_trt + b_EM * (BC.ALD$mean.X1 + BC.ALD$mean.X2)
+d_AC_true <- b_trt + b_EM * (ald_trial$mean.X1 + ald_trial$mean.X2)
 ```
 
 ```{r echo=FALSE}
 # alternative calculations
 # d_AC_true <- b_trt + b_EM * (meanX_EM_BC[1] + meanX_EM_BC[2])
 # 
-# d_C_true <- b_0 + b_trt + b_EM * (BC.ALD$mean.X1 + BC.ALD$mean.X2) + b_X * (BC.ALD$mean.X3 + BC.ALD$mean.X4)
-# d_A_true <- b_0 + b_X * (BC.ALD$mean.X3 + BC.ALD$mean.X4)
+# d_C_true <- b_0 + b_trt + b_EM * (ald_trial$mean.X1 + ald_trial$mean.X2) + b_X * (ald_trial$mean.X3 + ald_trial$mean.X4)
+# d_A_true <- b_0 + b_X * (ald_trial$mean.X3 + ald_trial$mean.X4)
 # d_C_true - d_A_true
 ```
 
@@ -617,7 +617,7 @@ The naive approach is to just convert directly from one population to another, i
 
 ```{r}
 d_AC_naive <- 
-  AC.IPD |> 
+  ipd_trial |> 
   group_by(trt) |> 
   summarise(y_sum = sum(y), y_bar = mean(y), n = n()) |> 
   tidyr::pivot_wider(names_from = trt,
@@ -642,11 +642,11 @@ The naive comparison calculating $AB$ effect in the $BC$ population is
 
 ```{r}
 d_BC <-
-  with(BC.ALD, log(y.B.bar/(1-y.B.bar)) - log(y.C.bar/(1-y.C.bar)))
+  with(ald_trial, log(y.B.bar/(1-y.B.bar)) - log(y.C.bar/(1-y.C.bar)))
 
 d_AB_naive <- d_AC_naive$d_AC - d_BC
 
-var.d.BC <- with(BC.ALD, 1/y.B.sum + 1/(N.B - y.B.sum) + 1/y.C.sum + 1/(N.C - y.C.sum))
+var.d.BC <- with(ald_trial, 1/y.B.sum + 1/(N.B - y.B.sum) + 1/y.C.sum + 1/(N.C - y.C.sum))
 var.d.AB.naive <- d_AC_naive$var_AC + var.d.BC
 ```
 

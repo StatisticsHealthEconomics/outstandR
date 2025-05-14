@@ -35,6 +35,7 @@ strategy <- list(
   R = 1000,
   formula = outcome ~ treatment + age,
   family = binomial(),
+  trt_var = "treatment",
   N = 1000
 )
 ipd <- data.frame(treatment = c(0, 1), outcome = c(1, 0), age = c(30, 40))

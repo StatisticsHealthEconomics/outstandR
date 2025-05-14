@@ -71,7 +71,7 @@ sdX_EM <- c(0.4, 0.4)  # standard deviation of each EM covariate
 corX <- 0.2            # covariate correlation coefficient  
 b_0 <- -0.6            # baseline intercept coefficient  ##TODO: fixed value
 
-AC.IPD <- gen_data(N, b_trt, b_X, b_EM, b_0,
+ipd_trial <- gen_data(N, b_trt, b_X, b_EM, b_0,
                    meanX_AC, sdX, 
                    meanX_EM_AC, sdX_EM, 
                    corX, allocation,
@@ -104,18 +104,18 @@ out.C <- dplyr::filter(BC.IPD, trt == 0) %>%
             y.C.sd = sd(y),
             N.C = n())
 
-BC.ALD <- cbind.data.frame(cov.X, out.B, out.C)
+ald_trial <- cbind.data.frame(cov.X, out.B, out.C)
 ```
 
 This general format of data sets consist of the following.
 
-#### `AC.IPD`: Individual patient data
+#### `ipd_trial`: Individual patient data
 
 -   `X*`: patient measurements
 -   `trt`: treatment ID (integer)
 -   `y`: continuous outcome measure
 
-#### `BC.ALD`: Aggregate-level data
+#### `ald_trial`: Aggregate-level data
 
 -   `mean.X*`: mean patient measurement
 -   `sd.X*`: standard deviation of patient measurement
@@ -128,14 +128,14 @@ trial identifier *B*, *C*.
 Our data look like the following.
 
 ```{r}
-head(AC.IPD)
+head(ipd_trial)
 ```
 
 There are 4 correlated continuous covariates generated per subject,
 simulated from a multivariate normal distribution.
 
 ```{r}
-BC.ALD
+ald_trial
 ```
 
 In this case, we have 4 covariate mean and standard deviation values;
@@ -195,9 +195,10 @@ lin_form <- as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")
 
 ```{r outstandR_maic}
 outstandR_maic <-
-  outstandR(AC.IPD, BC.ALD,
-            strategy = strategy_maic(formula = lin_form,
-                                     family = gaussian(link = "identity")))
+  outstandR(ipd_trial, ald_trial,
+            strategy = strategy_maic(
+              formula = lin_form,
+              family = gaussian(link = "identity")))
 ```
 
 The returned object is of class `outstandR`.
@@ -240,9 +241,10 @@ the same (uncentred) formula as before.
 
 ```{r outstandR_stc}
 outstandR_stc <-
-  outstandR(AC.IPD, BC.ALD,
-            strategy = strategy_stc(formula = lin_form,
-                                    family = gaussian(link = "identity")))
+  outstandR(ipd_trial, ald_trial,
+            strategy = strategy_stc(
+              formula = lin_form,
+              family = gaussian(link = "identity")))
 outstandR_stc
 ```
 
@@ -289,7 +291,7 @@ $$
 
 ```{r outstandR_gcomp_ml}
 outstandR_gcomp_ml <-
-  outstandR(AC.IPD, BC.ALD,
+  outstandR(ipd_trial, ald_trial,
             strategy = strategy_gcomp_ml(formula = lin_form,
                                          family = gaussian(link = "identity")))
 outstandR_gcomp_ml
@@ -332,15 +334,16 @@ under the specific treatment.
 
 ```{r outstandR_gcomp_stan, eval=FALSE}
 outstandR_gcomp_stan <-
-  outstandR(AC.IPD, BC.ALD,
-            strategy = strategy_gcomp_stan(formula = lin_form,
-                                           family = gaussian(link = "identity")))
+  outstandR(ipd_trial, ald_trial,
+            strategy = strategy_gcomp_stan(
+              formula = lin_form,
+              family = gaussian(link = "identity")))
 ```
 
 ```{r outstandR_gcomp_stan_eval, echo=FALSE}
 xx <- capture.output(
   outstandR_gcomp_stan <-
-    outstandR(AC.IPD, BC.ALD,
+    outstandR(ipd_trial, ald_trial,
               strategy = strategy_gcomp_stan(
                 formula = lin_form,
                 family = gaussian(link = "identity"))))
@@ -360,15 +363,16 @@ $$
 
 ```{r outstandR_mim, eval=FALSE}
 outstandR_mim <-
-  outstandR(AC.IPD, BC.ALD,
-            strategy = strategy_mim(formula = lin_form,
-                                    family = gaussian(link = "identity")))
+  outstandR(ipd_trial, ald_trial,
+            strategy = strategy_mim(
+              formula = lin_form,
+              family = gaussian(link = "identity")))
 ```
 
 ```{r outstandR_mim_eval, echo=FALSE}
 xx <- capture.output(
   outstandR_mim <-
-    outstandR(AC.IPD, BC.ALD,
+    outstandR(ipd_trial, ald_trial,
               strategy = strategy_mim(
                 formula = lin_form,
                 family = gaussian(link = "identity"))))

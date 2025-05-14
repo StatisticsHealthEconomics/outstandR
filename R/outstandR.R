@@ -6,8 +6,8 @@
 #' Methods taken from
 #' \insertCite{RemiroAzocar2022}{outstandR}.
 #' 
-#' @param AC.IPD Individual-level patient data. Suppose between studies _A_ and _C_.
-#' @param BC.ALD Aggregate-level data. Suppose between studies _B_ and _C_. 
+#' @param ipd_trial Individual-level patient data. Suppose between studies _A_ and _C_.
+#' @param ald_trial Aggregate-level data. Suppose between studies _B_ and _C_. 
 #' @param strategy Computation strategy function. These can be
 #'    `strategy_maic()`, `strategy_stc()`, `strategy_gcomp_ml()` and  `strategy_gcomp_stan()`
 #' @param CI Confidence interval; between 0,1
@@ -44,12 +44,13 @@
 #' # Multiple imputation marginalization
 #' outstandR_gcomp_stan <- outstandR(AC_IPD, BC_ALD, strategy = strategy_mim(lin_form))
 #' 
-outstandR <- function(AC.IPD, BC.ALD, strategy, CI = 0.95, scale = NULL, ...) {
+outstandR <- function(ipd_trial, ald_trial, ref_trt = "C",
+                      strategy, CI = 0.95, scale = NULL, ...) {
   
-  validate_outstandr(AC.IPD, BC.ALD, strategy, CI, scale)
+  validate_outstandr(ipd_trial, ald_trial, strategy, CI, scale)
   
-  ipd <- prep_ipd(strategy$formula, AC.IPD)
-  ald <- prep_ald(strategy$formula, BC.ALD, trt_var = strategy$trt_var)
+  ipd <- prep_ipd(strategy$formula, ipd_trial)
+  ald <- prep_ald(strategy$formula, ald_trial, trt_var = strategy$trt_var)
 
   if (is.null(scale)) scale <- get_treatment_effect(strategy$family$link)
   

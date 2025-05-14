@@ -103,19 +103,19 @@ information to the analyst.
 ```{r load-data}
 set.seed(555)
 
-AC.IPD <- read.csv(here::here("raw-data", "AC_IPD.csv"))  # AC patient-level data
-BC.ALD <- read.csv(here::here("raw-data", "BC_ALD.csv"))  # BC aggregate-level data
+ipd_trial <- read.csv(here::here("raw-data", "AC_IPD.csv"))  # AC patient-level data
+ald_trial <- read.csv(here::here("raw-data", "BC_ALD.csv"))  # BC aggregate-level data
 ```
 
 This general format of data sets consist of the following.
 
-#### `AC.IPD`: Individual patient data
+#### `ipd_trial`: Individual patient data
 
 -   `X*`: patient measurements
 -   `trt`: treatment ID (integer)
 -   `y`: (logical) indicator of whether event was observed
 
-#### `BC.ALD`: Aggregate-level data
+#### `ald_trial`: Aggregate-level data
 
 -   `mean.X*`: mean patient measurement
 -   `sd.X*`: standard deviation of patient measurement
@@ -129,14 +129,14 @@ trial identifier *B*, *C*.
 Our data look like the following.
 
 ```{r}
-head(AC.IPD)
+head(ipd_trial)
 ```
 
 There are 4 correlated continuous covariates generated per subject,
 simulated from a multivariate normal distribution.
 
 ```{r}
-BC.ALD
+ald_trial
 ```
 
 In this case, we have 4 covariate mean and standard deviation values;
@@ -197,7 +197,7 @@ lin_form <- as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")
 ```
 
 ```{r outstandR_maic}
-outstandR_maic <- outstandR(AC.IPD, BC.ALD,
+outstandR_maic <- outstandR(ipd_trial, ald_trial,
                             strategy = strategy_maic(formula = lin_form,
                                                      family = binomial(link = "logit")))
 ```
@@ -235,7 +235,7 @@ For example, to change the scale to risk difference, we can use the following co
 
 ```{r outstandR_maic_lrr}
 outstandR_maic_lrr <-
-  outstandR(AC.IPD, BC.ALD,
+  outstandR(ipd_trial, ald_trial,
             strategy = strategy_maic(formula = lin_form,
                                      family = binomial(link = "logit")),
             scale = "log_relative_risk")
@@ -272,7 +272,7 @@ However, `outstandR()` knows how to handle this so we can simply pass
 the same (uncentred) formula as before.
 
 ```{r outstandR_stc}
-outstandR_stc <- outstandR(AC.IPD, BC.ALD,
+outstandR_stc <- outstandR(ipd_trial, ald_trial,
                            strategy = strategy_stc(formula = lin_form,
                                                    family = binomial(link = "logit")))
 outstandR_stc
@@ -282,7 +282,7 @@ Change the outcome scale
 
 ```{r outstandR_stc_lrr}
 outstandR_stc_lrr <-
-  outstandR(AC.IPD, BC.ALD,
+  outstandR(ipd_trial, ald_trial,
             strategy = strategy_stc(formula = lin_form,
                                      family = binomial(link = "logit")),
             scale = "log_relative_risk")
@@ -334,7 +334,7 @@ $$
 $$
 
 ```{r outstandR_gcomp_ml}
-outstandR_gcomp_ml <- outstandR(AC.IPD, BC.ALD,
+outstandR_gcomp_ml <- outstandR(ipd_trial, ald_trial,
                                 strategy = strategy_gcomp_ml(formula = lin_form,
                                                              family = binomial(link = "logit")))
 outstandR_gcomp_ml
@@ -344,7 +344,7 @@ Change the outcome scale
 
 ```{r outstandR_gcomp_ml_lrr}
 outstandR_gcomp_ml_lrr <-
-  outstandR(AC.IPD, BC.ALD,
+  outstandR(ipd_trial, ald_trial,
             strategy = strategy_gcomp_ml(formula = lin_form,
                                          family = binomial(link = "logit")),
             scale = "log_relative_risk")
@@ -391,7 +391,7 @@ under the specific treatment.
 
 ```{r outstandR_gcomp_stan}
 outstandR_gcomp_stan <-
-  outstandR(AC.IPD, BC.ALD,
+  outstandR(ipd_trial, ald_trial,
             strategy = strategy_gcomp_stan(formula = lin_form,
                                            family = binomial(link = "logit")))
 outstandR_gcomp_stan
@@ -401,7 +401,7 @@ Change the outcome scale
 
 ```{r outstandR_gcomp_stan_lrr}
 outstandR_gcomp_stan_lrr <-
-  outstandR(AC.IPD, BC.ALD,
+  outstandR(ipd_trial, ald_trial,
             strategy = strategy_gcomp_stan(formula = lin_form,
                                            family = binomial(link = "logit")),
             scale = "log_relative_risk")
@@ -421,7 +421,7 @@ $$
 
 ```{r outstandR_mim}
 outstandR_mim <-
-  outstandR(AC.IPD, BC.ALD,
+  outstandR(ipd_trial, ald_trial,
             strategy = strategy_mim(formula = lin_form,
                                     family = binomial(link = "logit")))
 outstandR_mim
@@ -431,7 +431,7 @@ Change the outcome scale
 
 ```{r outstandR_mim_lrr}
 outstandR_mim_lrr <-
-  outstandR(AC.IPD, BC.ALD,
+  outstandR(ipd_trial, ald_trial,
             strategy = strategy_mim(formula = lin_form,
                                     family = binomial(link = "logit")),
             scale = "log_relative_risk")

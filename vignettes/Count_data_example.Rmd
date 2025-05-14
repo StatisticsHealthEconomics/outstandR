@@ -2,10 +2,10 @@
 title: "Count data example"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Count data example}
+%\VignetteIndexEntry{Count data example}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
-editor_options: 
+  editor_options: 
   markdown: 
     wrap: 72
   chunk_output_type: console
@@ -57,11 +57,11 @@ sdX_EM <- c(0.4, 0.4)  # standard deviation of each EM covariate
 corX <- 0.2            # covariate correlation coefficient  
 b_0 <- -0.6            # baseline intercept coefficient  ##TODO: fixed value
 
-AC.IPD <- gen_data(N, b_trt, b_X, b_EM, b_0,
-                   meanX_AC, sdX, 
-                   meanX_EM_AC, sdX_EM, 
-                   corX, allocation,
-                   family = poisson(link = "log"))
+ipd_trial <- gen_data(N, b_trt, b_X, b_EM, b_0,
+                      meanX_AC, sdX, 
+                      meanX_EM_AC, sdX_EM, 
+                      corX, allocation,
+                      family = poisson(link = "log"))
 ```
 
 Similarly, for the aggregate data but with the additional summarise step.
@@ -88,7 +88,7 @@ out.B <- dplyr::filter(BC.IPD, trt == 0) %>%
             y.C.bar = mean(y),
             N.C = n())
 
-BC.ALD <- cbind.data.frame(cov.X, out.C, out.B)
+ald_trial <- cbind.data.frame(cov.X, out.C, out.B)
 
 # By definition, the true log-OR relative effect in the AC population between AC is `r b_trt`. Between BC is `r b_trt` and between AB is `r b_trt - b_trt`.
 # A naive indirect comparison, ignoring the presence of effect modifiers, would calculate the C vs B effect in the AC population as
@@ -151,9 +151,10 @@ lin_form <- as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")
 
 ```{r outstandR_maic}
 outstandR_maic <-
-  outstandR(AC.IPD, BC.ALD,
-            strategy = strategy_maic(formula = lin_form,
-                                     family = poisson(link = "log")))
+  outstandR(ipd_trial, ald_trial,
+            strategy = strategy_maic(
+              formula = lin_form,
+              family = poisson(link = "log")))
 ```
 
 The returned object is of class `outstandR`.
@@ -196,9 +197,11 @@ the same (uncentred) formula as before.
 
 ```{r outstandR_stc}
 outstandR_stc <-
-  outstandR(AC.IPD, BC.ALD,
-            strategy = strategy_stc(formula = lin_form,
-                                    family = poisson(link = "log")))
+  outstandR(ipd_trial, ald_trial,
+            strategy = strategy_stc(
+              formula = lin_form,
+              family = poisson(link = "log")))
+
 outstandR_stc
 ```
 
@@ -245,9 +248,11 @@ $$
 
 ```{r outstandR_gcomp_ml}
 outstandR_gcomp_ml <-
-  outstandR(AC.IPD, BC.ALD,
-            strategy = strategy_gcomp_ml(formula = lin_form,
-                                         family = poisson(link = "log")))
+  outstandR(ipd_trial, ald_trial,
+            strategy = strategy_gcomp_ml(
+              formula = lin_form,
+              family = poisson(link = "log")))
+
 outstandR_gcomp_ml
 ```
 
@@ -288,15 +293,16 @@ under the specific treatment.
 
 ```{r outstandR_gcomp_stan, eval=FALSE}
 outstandR_gcomp_stan <-
-  outstandR(AC.IPD, BC.ALD,
-            strategy = strategy_gcomp_stan(formula = lin_form,
-                                           family = poisson(link = "log")))
+  outstandR(ipd_trial, ald_trial,
+            strategy = strategy_gcomp_stan(
+              formula = lin_form,
+              family = poisson(link = "log")))
 ```
 
 ```{r outstandR_gcomp_stan_eval, echo=FALSE}
 xx <- capture.output(
   outstandR_gcomp_stan <-
-    outstandR(AC.IPD, BC.ALD,
+    outstandR(ipd_trial, ald_trial,
               strategy = strategy_gcomp_stan(
                 formula = lin_form,
                 family = poisson(link = "log"))))
@@ -316,9 +322,10 @@ $$
 
 ```{r outstandR_mim}
 outstandR_mim <-
-  outstandR(AC.IPD, BC.ALD,
-            strategy = strategy_mim(formula = lin_form,
-                                    family = poisson(link = "log")))
+  outstandR(ipd_trial, ald_trial,
+            strategy = strategy_mim(
+              formula = lin_form,
+              family = poisson(link = "log")))
 outstandR_mim
 ```
 
@@ -329,11 +336,11 @@ Combine all outputs for log-odds ratio table of all contrasts and methods.
 ```{r}
 knitr::kable(
   data.frame(
-  `MAIC` = unlist(outstandR_maic$contrasts$means),
-  `STC` = unlist(outstandR_stc$contrasts$means),
-  `Gcomp ML` = unlist(outstandR_gcomp_ml$contrasts$means),
-  `Gcomp Bayes` = unlist(outstandR_gcomp_stan$contrasts$means),
-  `MIM` = unlist(outstandR_mim$contrasts$means))
+    `MAIC` = unlist(outstandR_maic$contrasts$means),
+    `STC` = unlist(outstandR_stc$contrasts$means),
+    `Gcomp ML` = unlist(outstandR_gcomp_ml$contrasts$means),
+    `Gcomp Bayes` = unlist(outstandR_gcomp_stan$contrasts$means),
+    `MIM` = unlist(outstandR_mim$contrasts$means))
 ) |> 
   round(2)
 ```
