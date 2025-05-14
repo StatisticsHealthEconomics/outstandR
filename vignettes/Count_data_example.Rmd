@@ -2,7 +2,7 @@
 title: "Count data example"
 output: rmarkdown::html_vignette
 vignette: >
-%\VignetteIndexEntry{Count data example}
+  %\VignetteIndexEntry{Count data example}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
   editor_options: 

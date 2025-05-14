@@ -47,7 +47,15 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">maic.boot</span><span class="op">(</span><span class="va">ipd</span>, indices <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">ipd</span><span class="op">)</span>, <span class="va">formula</span>, <span class="va">family</span>, <span class="va">ald</span>, hat_w <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">maic.boot</span><span class="op">(</span></span>
+<span>  <span class="va">ipd</span>,</span>
+<span>  indices <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">ipd</span><span class="op">)</span>,</span>
+<span>  <span class="va">formula</span>,</span>
+<span>  <span class="va">family</span>,</span>
+<span>  <span class="va">ald</span>,</span>
+<span>  <span class="va">trt_var</span>,</span>
+<span>  hat_w <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -55,7 +63,7 @@
 
 
 <dl><dt id="arg-ipd">ipd<a class="anchor" aria-label="anchor" href="#arg-ipd"></a></dt>
-<dd><p>Individual-level data</p></dd>
+<dd><p>Individual-level patient data. Dataframe with one row per patient with outcome, treatment and covariate columns.</p></dd>
 
 
 <dt id="arg-indices">indices<a class="anchor" aria-label="anchor" href="#arg-indices"></a></dt>
@@ -64,15 +72,19 @@ which define the bootstrap sample</p></dd>
 
 
 <dt id="arg-formula">formula<a class="anchor" aria-label="anchor" href="#arg-formula"></a></dt>
-<dd><p>Linear regression formula</p></dd>
+<dd><p>Linear regression <code>formula</code> object. Prognostic factors (PF) are main effects and effect modifiers (EM) are
+interactions with the treatment variable, i.e., y ~ X1 + trt + trt:X2. For covariates as both PF and EM use <code>*</code> syntax.</p></dd>
 
 
 <dt id="arg-family">family<a class="anchor" aria-label="anchor" href="#arg-family"></a></dt>
-<dd><p>A character string specifying the family distribution (e.g., "binomial").</p></dd>
+<dd><p>A 'family' object specifying the distribution and link function (e.g., 'binomial').
+See stats::family() for more details.</p></dd>
 
 
 <dt id="arg-ald">ald<a class="anchor" aria-label="anchor" href="#arg-ald"></a></dt>
-<dd><p>Aggregate-level data</p></dd>
+<dd><p>Aggregate-level data. Single row matrix with summary statistics for each covariate and treatment outcomes.
+The format is 'mean.<em>' and 'sd.</em>' for covariates and 'y.<em>.sum', 'y.</em>.bar', 'y.*.sd' for treatments B and C.
+We assume a common distribution for each treatment arm.</p></dd>
 
 
 <dt id="arg-hat-w">hat_w<a class="anchor" aria-label="anchor" href="#arg-hat-w"></a></dt>
@@ -85,7 +97,7 @@ which define the bootstrap sample</p></dd>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="IPD_stats.html">IPD_stats.maic()</a></code></p></div>
+    <div class="dont-index"><p><code>IPD_stats.maic()</code></p></div>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

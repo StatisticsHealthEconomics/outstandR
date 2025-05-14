@@ -11,6 +11,8 @@ gcomp_ml.boot(
   formula = NULL,
   family,
   trt_var,
+  ref_trt = "C",
+  comp_trt = "A",
   rho = NA,
   N = 1000,
   ald

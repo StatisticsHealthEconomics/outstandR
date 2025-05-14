@@ -88,7 +88,7 @@ library(simcovariates)
 ### Data
 
 We consider binary outcomes using the log-odds ratio as the measure of effect.
-Foe example, the binary outcome may be response to treatment or the occurrence of an
+For example, the binary outcome may be response to treatment or the occurrence of an
 adverse event. For trials *AC* and *BC*, outcome $y_i$ for subject $i$
 is simulated from a Bernoulli distribution with probabilities of success
 generated from logistic regression.

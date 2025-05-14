@@ -4,7 +4,7 @@
 \alias{calc_mim}
 \title{Multiple imputation marginalization (MIM)}
 \usage{
-calc_mim(strategy, ipd, ald, ...)
+calc_mim(strategy, ipd, ald, ref_trt = "C", comp_trt = "A", ...)
 }
 \arguments{
 \item{strategy}{Strategy object}

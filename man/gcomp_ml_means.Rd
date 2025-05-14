@@ -4,7 +4,17 @@
 \alias{gcomp_ml_means}
 \title{G-computation Maximum Likelihood mean outcome}
 \usage{
-gcomp_ml_means(formula, family, ipd, ald, trt_var, rho = NA, N = 1000)
+gcomp_ml_means(
+  formula,
+  family,
+  ipd,
+  ald,
+  trt_var,
+  rho = NA,
+  N = 1000,
+  ref_trt = "C",
+  comp_trt = "A"
+)
 }
 \arguments{
 \item{formula}{Linear regression \code{formula} object. Prognostic factors (PF) are main effects and effect modifiers (EM) are

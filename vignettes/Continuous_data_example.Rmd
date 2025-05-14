@@ -2,7 +2,7 @@
 title: "Continuous data example"
 output: rmarkdown::html_vignette
 vignette: >
-%\VignetteIndexEntry{Continuous data example}
+  %\VignetteIndexEntry{Continuous data example}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
   editor_options: 

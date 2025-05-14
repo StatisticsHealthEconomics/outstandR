@@ -27,12 +27,13 @@ reference:
 - title: "Constituent statistics"
   desc: "Helper functions used by the main functions."
   contents:
-  - ALD_stats
-  - IPD_stats
+  - calc_ALD_stats
+  - calc_IPD_stats
   - marginal_treatment_effect
   - marginal_variance
   - calculate_trial_variance
   - calculate_ate
+  - estimate_var_sandwich
   - starts_with("calc_")
   - find_conversion_path
   # - gen_data
@@ -41,6 +42,7 @@ reference:
 - title: "Miscellaneous"
   contents:
   - print.outstandR
+  - reshape_ald_to_wide
 - title: "Data"
   contents:
   - AC_IPD

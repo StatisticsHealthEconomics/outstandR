@@ -53,6 +53,9 @@
 <span>  <span class="va">R</span>,</span>
 <span>  formula <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">family</span>,</span>
+<span>  <span class="va">trt_var</span>,</span>
+<span>  ref_trt <span class="op">=</span> <span class="st">"C"</span>,</span>
+<span>  comp_trt <span class="op">=</span> <span class="st">"A"</span>,</span>
 <span>  rho <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  N <span class="op">=</span> <span class="fl">1000</span>,</span>
 <span>  <span class="va">ald</span></span>
@@ -72,11 +75,13 @@
 
 
 <dt id="arg-formula">formula<a class="anchor" aria-label="anchor" href="#arg-formula"></a></dt>
-<dd><p>Linear regression <code>formula</code> object</p></dd>
+<dd><p>Linear regression <code>formula</code> object. Prognostic factors (PF) are main effects and effect modifiers (EM) are
+interactions with the treatment variable, i.e., y ~ X1 + trt + trt:X2. For covariates as both PF and EM use <code>*</code> syntax.</p></dd>
 
 
 <dt id="arg-family">family<a class="anchor" aria-label="anchor" href="#arg-family"></a></dt>
-<dd><p>A family object specifying the distribution and link function (e.g., "binomial").</p></dd>
+<dd><p>A 'family' object specifying the distribution and link function (e.g., 'binomial').
+See stats::family() for more details.</p></dd>
 
 
 <dt id="arg-rho">rho<a class="anchor" aria-label="anchor" href="#arg-rho"></a></dt>
