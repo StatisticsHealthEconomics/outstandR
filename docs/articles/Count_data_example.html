@@ -34,7 +34,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/Binary_data_example.html">Binary data example</a></li>
-    <li><a class="dropdown-item" href="../articles/Binary_data_Remiro-Azocar.html">Binary data example usind data from Remiro-Azocar et al. (2020)</a></li>
+    <li><a class="dropdown-item" href="../articles/Binary_data_Remiro-Azocar.html">Binary data example using data from Remiro-Azocar et al. (2020)</a></li>
     <li><a class="dropdown-item" href="../articles/comparison-with-other-packages.html">Comparison with other packages</a></li>
     <li><a class="dropdown-item" href="../articles/Continuous_data_example.html">Continuous data example</a></li>
     <li><a class="dropdown-item" href="../articles/Count_data_example.html">Count data example</a></li>
@@ -86,7 +86,8 @@
 <div class="section level3">
 <h3 id="data">Data<a class="anchor" aria-label="anchor" href="#data"></a>
 </h3>
-<p>First, use the in-built <code><a href="https://rdrr.io/pkg/simcovariates/man/gen_data.html" class="external-link">gen_data()</a></code> function.</p>
+<p>First, use the <code><a href="https://rdrr.io/pkg/simcovariates/man/gen_data.html" class="external-link">gen_data()</a></code> function available in the <a href="https://github.com/n8thangreen/simcovariates" class="external-link">simcovariates</a>
+package.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://www.stats.ox.ac.uk/pub/MASS4/" class="external-link">MASS</a></span><span class="op">)</span></span></code></pre></div>
@@ -105,11 +106,13 @@
 <span><span class="va">corX</span> <span class="op">&lt;-</span> <span class="fl">0.2</span>            <span class="co"># covariate correlation coefficient  </span></span>
 <span><span class="va">b_0</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fl">0.6</span>            <span class="co"># baseline intercept coefficient  ##TODO: fixed value</span></span>
 <span></span>
-<span><span class="va">AC.IPD</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/simcovariates/man/gen_data.html" class="external-link">gen_data</a></span><span class="op">(</span><span class="va">N</span>, <span class="va">b_trt</span>, <span class="va">b_X</span>, <span class="va">b_EM</span>, <span class="va">b_0</span>,</span>
-<span>                   <span class="va">meanX_AC</span>, <span class="va">sdX</span>, </span>
-<span>                   <span class="va">meanX_EM_AC</span>, <span class="va">sdX_EM</span>, </span>
-<span>                   <span class="va">corX</span>, <span class="va">allocation</span>,</span>
-<span>                   family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">poisson</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"log"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">ipd_trial</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/simcovariates/man/gen_data.html" class="external-link">gen_data</a></span><span class="op">(</span><span class="va">N</span>, <span class="va">b_trt</span>, <span class="va">b_X</span>, <span class="va">b_EM</span>, <span class="va">b_0</span>,</span>
+<span>                      <span class="va">meanX_AC</span>, <span class="va">sdX</span>, </span>
+<span>                      <span class="va">meanX_EM_AC</span>, <span class="va">sdX_EM</span>, </span>
+<span>                      <span class="va">corX</span>, <span class="va">allocation</span>,</span>
+<span>                      family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">poisson</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"log"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ipd_trial</span><span class="op">$</span><span class="va">trt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">ipd_trial</span><span class="op">$</span><span class="va">trt</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"C"</span>, <span class="st">"A"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Similarly, for the aggregate data but with the additional summarise
 step.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -134,7 +137,7 @@ step.</p>
 <span>            y.C.bar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>,</span>
 <span>            N.C <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">BC.ALD</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind.data.frame</a></span><span class="op">(</span><span class="va">cov.X</span>, <span class="va">out.C</span>, <span class="va">out.B</span><span class="op">)</span></span>
+<span><span class="va">ald_trial</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind.data.frame</a></span><span class="op">(</span><span class="va">cov.X</span>, <span class="va">out.C</span>, <span class="va">out.B</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># By definition, the true log-OR relative effect in the AC population between AC is `r b_trt`. Between BC is `r b_trt` and between AB is `r b_trt - b_trt`.</span></span>
 <span><span class="co"># A naive indirect comparison, ignoring the presence of effect modifiers, would calculate the C vs B effect in the AC population as</span></span>
@@ -192,9 +195,10 @@ function.</p>
 <code class="sourceCode R"><span><span class="va">lin_form</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/formula.html" class="external-link">as.formula</a></span><span class="op">(</span><span class="st">"y ~ X3 + X4 + trt*X1 + trt*X2"</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outstandR_maic</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>,</span>
-<span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_maic</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
-<span>                                     family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">poisson</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"log"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">ipd_trial</span>, <span class="va">ald_trial</span>,</span>
+<span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_maic</a></span><span class="op">(</span></span>
+<span>              formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
+<span>              family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">poisson</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"log"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>The returned object is of class <code>outstandR</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outstandR_maic</span></span></code></pre></div>
@@ -238,9 +242,11 @@ y = X_3 + X_4 + \beta_t(X_1 - \bar{X_1}) + \beta_t(X_2 - \bar{X_2})
 simply pass the same (uncentred) formula as before.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outstandR_stc</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>,</span>
-<span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_stc</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
-<span>                                    family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">poisson</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"log"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">ipd_trial</span>, <span class="va">ald_trial</span>,</span>
+<span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_stc</a></span><span class="op">(</span></span>
+<span>              formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
+<span>              family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">poisson</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"log"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">outstandR_stc</span></span></code></pre></div>
 <p>For the last two approaches, we perform G-computation firstly with a
 frequentist MLE approach and then a Bayesian approach.</p>
@@ -287,9 +293,11 @@ between the average linear predictions:</p>
 </annotation></semantics></math></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outstandR_gcomp_ml</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>,</span>
-<span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_ml</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
-<span>                                         family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">poisson</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"log"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">ipd_trial</span>, <span class="va">ald_trial</span>,</span>
+<span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_ml</a></span><span class="op">(</span></span>
+<span>              formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
+<span>              family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">poisson</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"log"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">outstandR_gcomp_ml</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -338,10 +346,12 @@ from its posterior predictive distribution under the specific
 treatment.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outstandR_gcomp_stan</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>,</span>
-<span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_stan</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
-<span>                                           family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">poisson</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"log"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">outstandR_gcomp_stan</span></span></code></pre></div>
+<span>  <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">ipd_trial</span>, <span class="va">ald_trial</span>,</span>
+<span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_stan</a></span><span class="op">(</span></span>
+<span>              formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
+<span>              family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">poisson</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"log"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">outstandR_gcomp_stan</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="multiple-imputation-marginalisation">Multiple imputation marginalisation<a class="anchor" aria-label="anchor" href="#multiple-imputation-marginalisation"></a>
@@ -350,11 +360,12 @@ treatment.</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi><mi>q</mi><mi>u</mi><mi>a</mi><mi>t</mi><mi>i</mi><mi>o</mi><mi>n</mi><mi>h</mi><mi>e</mi><mi>r</mi><mi>e</mi></mrow><annotation encoding="application/x-tex">
 equation here
 </annotation></semantics></math></p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outstandR_mim</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>,</span>
-<span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_mim</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
-<span>                                    family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">poisson</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"log"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">ipd_trial</span>, <span class="va">ald_trial</span>,</span>
+<span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_mim</a></span><span class="op">(</span></span>
+<span>              formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
+<span>              family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">poisson</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"log"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">outstandR_mim</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -362,15 +373,16 @@ equation here
 </h3>
 <p>Combine all outputs for log-odds ratio table of all contrasts and
 methods.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>  `MAIC` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_maic</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span>,</span>
-<span>  `STC` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_stc</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span>,</span>
-<span>  `Gcomp ML` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_gcomp_ml</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span>,</span>
-<span>  `Gcomp Bayes` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_gcomp_stan</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span>,</span>
-<span>  `MIM` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_mim</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span>    `MAIC` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_maic</span><span class="op">$</span><span class="va">contrasts</span><span class="op">$</span><span class="va">means</span><span class="op">)</span>,</span>
+<span>    `STC` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_stc</span><span class="op">$</span><span class="va">contrasts</span><span class="op">$</span><span class="va">means</span><span class="op">)</span>,</span>
+<span>    `Gcomp ML` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_gcomp_ml</span><span class="op">$</span><span class="va">contrasts</span><span class="op">$</span><span class="va">means</span><span class="op">)</span>,</span>
+<span>    `Gcomp Bayes` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_gcomp_stan</span><span class="op">$</span><span class="va">contrasts</span><span class="op">$</span><span class="va">means</span><span class="op">)</span>,</span>
+<span>    `MIM` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_mim</span><span class="op">$</span><span class="va">contrasts</span><span class="op">$</span><span class="va">means</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

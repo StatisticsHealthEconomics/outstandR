@@ -2,6 +2,7 @@
 title: "Comparison with other packages"
 output: rmarkdown::html_vignette
 vignette: >
+  %\VignetteIndexEntry{Comparison with other packages}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
   editor_options: 
@@ -79,7 +80,8 @@ nhefs_ipd <- nhefs_dat |>
   dplyr::rename(trt = qsmk,
                 y = wt82_71) |> 
   dplyr::mutate(sex = as.numeric(sex) - 1,
-                race = as.numeric(race) - 1)
+                race = as.numeric(race) - 1,
+                trt = factor(trt, labels = c("C", "A")))
 
 # create aggregate data
 
@@ -113,8 +115,8 @@ nhefs_strat <-
   strategy_gcomp_ml(formula = lin_form,
                     family = gaussian(link = "identity"))
 
-res <- outstandR(BC.ALD = nhefs_ald,
-                 AC.IPD = nhefs_ipd,
+res <- outstandR(ald_trial = nhefs_ald,
+                 ipd_trial = nhefs_ipd,
                  strategy = nhefs_strat,
                  scale = "log_relative_risk")
 res
@@ -123,7 +125,6 @@ res
 Alternatively, rather than dropping factors, we can create dummy variables to replace them using `maicplus::dummize_ipd()`.
 
 ```{r stdReg2-alternative2, warning=FALSE, message=FALSE}
-
 nhefs_ipd <- nhefs_dat |> 
   dplyr::select(qsmk, sex, race, age, smokeintensity, smokeyrs, wt71,
                 wt82_71, education, exercise, active) |> 
@@ -133,8 +134,9 @@ nhefs_ipd <- nhefs_dat |>
                 race = as.numeric(race) - 1) |> 
   maicplus::dummize_ipd(dummize_cols = c("education", "exercise", "active"),
                         dummize_ref_level = c("1","0","0")) |> 
-  dplyr::select(-education, -exercise, -active)  # remove originals
-
+  dplyr::select(-education, -exercise, -active) |>   # remove originals
+  dplyr::mutate(trt = factor(trt, labels = c("C", "A")))
+  
 # # replace with this?
 # model.matrix()
 
@@ -169,8 +171,8 @@ nhefs_strat <-
   strategy_gcomp_ml(formula = lin_form,
                     family = gaussian(link = "identity"))
 
-res <- outstandR(BC.ALD = nhefs_ald,
-                 AC.IPD = nhefs_ipd,
+res <- outstandR(ald_trial = nhefs_ald,
+                 ipd_trial = nhefs_ipd,
                  strategy = nhefs_strat,
                  scale = "risk_difference")
 res
@@ -264,21 +266,21 @@ adsl_colnames[adsl_colnames == "N_PR_THER_MEDIAN"] <- "N_PR_THER"
 
 lin_form <- as.formula(glue("y ~ trt * ({paste(adsl_colnames, collapse = ' + ')})"))
 
-AC.IPD <- adsl_twt |>
+ipd_trial <- adsl_twt |>
   merge(adrs_twt) |> 
   rename(trt = ARM,
          y = RESPONSE) |> 
   mutate(AGE_SQUARED = AGE^2)
 
 # sd from IPD
-agd_sd <- AC.IPD |> 
+agd_sd <- ipd_trial |> 
   summarise(across(c(AGE, AGE_SQUARED, SMOKE, ECOG0, N_PR_THER, SEX_MALE),
                    .fns = sd, .names = "sd.{.col}"))
 
 # transform names to format needed in outstandR
 # mean.* and y.*
 # note that we're nto going to use sd in matching
-BC.ALD <- agd |> 
+ald_trial <- agd |> 
   rename(mean.AGE = AGE_MEAN,
          # sd.AGE = AGE_SD,
          mean.SEX_MALE = SEX_MALE_PROP,
@@ -301,7 +303,7 @@ BC.ALD <- agd |>
     cbind(agd_sd) |> 
   relocate(N.B, y.B.sum, y.B.bar, N.C, y.C.sum, y.C.bar, .after = sd.SEX_MALE)
 
-BC.ALD
+ald_trial
 ```
 
 Now that we've prepared the input data we're ready to run the model.
@@ -309,7 +311,7 @@ Now that we've prepared the input data we're ready to run the model.
 ```{r eval=FALSE}
 ##TODO: fix bug of large value in optim()
 outstandR_maic <-
-  outstandR(AC.IPD, BC.ALD,
+  outstandR(ipd_trial, ald_trial,
             strategy = strategy_maic(formula = lin_form,
                                      family = binomial(link = "logit")))
 ```

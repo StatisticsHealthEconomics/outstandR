@@ -20,8 +20,10 @@
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/bias.mcse.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/calculate_ate.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/calculate_trial_variance.html</loc></url>
+<url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_ALD_stats.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_gcomp_ml.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_gcomp_stan.html</loc></url>
+<url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_IPD_stats.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_mim.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_stc.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/cor2cov.html</loc></url>
@@ -29,6 +31,7 @@
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/coverage.mcse.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/empse.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/empse.mcse.html</loc></url>
+<url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/estimate_var_sandwich.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/find_conversion_path.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/gcomp_ml.boot.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/gcomp_ml_log_odds_ratio.html</loc></url>
@@ -42,9 +45,16 @@
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/get_sd_names.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/get_treatment_effect.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/get_treatment_name.html</loc></url>
+<url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/guess_treatment_name.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/hat_Delta_stats.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/index.html</loc></url>
+<url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/IPD_stats.default.html</loc></url>
+<url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/IPD_stats.gcomp_ml.html</loc></url>
+<url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/IPD_stats.gcomp_stan.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/IPD_stats.html</loc></url>
+<url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/IPD_stats.maic.html</loc></url>
+<url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/IPD_stats.mim.html</loc></url>
+<url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/IPD_stats.stc.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/IPD_stat_factory.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/mae.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/maic.boot.html</loc></url>
@@ -58,8 +68,11 @@
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/mse.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/mse.mcse.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/outstandR.html</loc></url>
+<url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/print.outstandR.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/process_metrics.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/Q.html</loc></url>
+<url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/reshape_ald_to_wide.html</loc></url>
+<url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/result_stats.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/simulate_ALD_pseudo_pop.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/trial_treatment_effect.html</loc></url>

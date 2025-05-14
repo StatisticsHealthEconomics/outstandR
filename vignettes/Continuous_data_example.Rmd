@@ -396,6 +396,6 @@ knitr::kable(
     `Gcomp ML` = unlist(outstandR_gcomp_ml$contrasts$means),
     `Gcomp Bayes` = unlist(outstandR_gcomp_stan$contrasts$means),
     `MIM` = unlist(outstandR_mim$contrasts$means))
-) |> 
-  round(2)
+  |> 
+    round(2))
 ```

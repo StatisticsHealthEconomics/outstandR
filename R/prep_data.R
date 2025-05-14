@@ -75,6 +75,33 @@ reshape_ald_to_wide <- function(df) {
     bind_cols(variable_df, y_df)
 }
 
+##TODO: check this
+reshape_ald_to_long <- function(df) {
+  
+  # Separate the 'colname' into 'stat', 'variable', and 'study' columns
+  variable_cols <- df %>%
+    select(-starts_with("y")) %>%
+    pivot_longer(cols = everything(),
+                 names_to = "colname",
+                 values_to = "value") %>%
+    separate(colname, into = c("stat", "variable"), sep = "\\.") %>%
+    select(variable, stat, value) %>%
+    mutate(study = NA)  # Set study to NA for these rows
+  
+  # process the columns related to 'y' (stat, study, and variable)
+  y_cols <- df %>%
+    select(starts_with("y")) %>%
+    pivot_longer(cols = everything(),
+                 names_to = "colname",
+                 values_to = "value") %>%
+    separate(colname, into = c("variable", "study", "stat"), sep = "\\.") %>%
+    select(variable, stat, study, value) 
+  
+  bind_rows(variable_cols, y_cols) %>%
+    arrange(variable, stat, study)
+}
+
+
 # Get study comparator treatment names
 
 #

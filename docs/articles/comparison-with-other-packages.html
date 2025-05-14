@@ -34,7 +34,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/Binary_data_example.html">Binary data example</a></li>
-    <li><a class="dropdown-item" href="../articles/Binary_data_Remiro-Azocar.html">Binary data example usind data from Remiro-Azocar et al. (2020)</a></li>
+    <li><a class="dropdown-item" href="../articles/Binary_data_Remiro-Azocar.html">Binary data example using data from Remiro-Azocar et al. (2020)</a></li>
     <li><a class="dropdown-item" href="../articles/comparison-with-other-packages.html">Comparison with other packages</a></li>
     <li><a class="dropdown-item" href="../articles/Continuous_data_example.html">Continuous data example</a></li>
     <li><a class="dropdown-item" href="../articles/Count_data_example.html">Count data example</a></li>
@@ -71,24 +71,31 @@
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://StatisticsHealthEconomics.github.io/outstandR">outstandR</a></span><span class="op">)</span></span></code></pre></div>
-<p>There are already a few widely-used R packages in CRAN to perform
-model-based standardization, such as <a href="https://marginaleffects.com/" class="external-link"><code>{marginaleffects}</code></a>
-and <a href="https://sachsmc.github.io/stdReg2/" class="external-link"><code>{stdReg}/{StdReg2}</code></a>.</p>
+<p>The aim of this document is to compare the results from various other
+R packages with those produced using <a href="https://StatisticsHealthEconomics.github.io/outstandR">outstandR</a>. There are
+already a few widely-used R packages on CRAN to perform model-based
+standardization, such as <a href="https://marginaleffects.com/" class="external-link"><code>{marginaleffects}</code></a>
+and <a href="https://sachsmc.github.io/stdReg2/" class="external-link"><code>{stdReg}/{stdReg2}</code></a>.</p>
 <div class="section level2">
 <h2 id="marginaleffects">marginaleffects<a class="anchor" aria-label="anchor" href="#marginaleffects"></a>
 </h2>
+<p>The <a href="https://marginaleffects.com/" class="external-link">marginaleffects</a> package has functions to calculate
+G-computation estimates.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">##TODO: see unit tests</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://marginaleffects.com/" class="external-link">marginaleffects</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://marginaleffects.com/" class="external-link">marginaleffects</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># marginaleffects::avg_predictions()</span></span>
+<span><span class="co"># marginaleffects::avg_comparisons()</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="stdreg2">stdReg[2]<a class="anchor" aria-label="anchor" href="#stdreg2"></a>
 </h2>
-<p><code>{StdReg}</code> has been rewritten to produce
-<code>{StdReg2}</code> which has “nicer output, more available methods,
+<p>The package <code>{stdReg}</code> has been rewritten to produce
+<a href="https://sachsmc.github.io/stdReg2/" class="external-link">stdReg2</a> which has “nicer output, more available methods,
 the possibility to include new methods, and mainly to make maintenance
 and updating easier.” So, for this reason, we will use
-<code>{StdReg2}</code>.</p>
+<a href="https://sachsmc.github.io/stdReg2/" class="external-link">stdReg2</a>.</p>
 <p>We shall follow the article <a href="https://sachsmc.github.io/stdReg2/articles/overview.html" class="external-link"><em>Estimation
 of causal effects using stdReg2</em></a>. This is for continuous
 outcomes (change in weight) and includes transformed covariates. Note
@@ -188,11 +195,12 @@ run <code><a href="../reference/outstandR.html">outstandR()</a></code>.</p>
 <span></span>
 <span><span class="va">nhefs_ipd</span> <span class="op">&lt;-</span> <span class="va">nhefs_dat</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="co"># drop categorical variables</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">qsmk</span>, <span class="va">sex</span>, <span class="va">race</span>, <span class="va">age</span>, <span class="va">smokeintensity</span>, <span class="va">smokeyrs</span>, <span class="va">wt71</span>, <span class="va">wt82_71</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>trt <span class="op">=</span> <span class="va">qsmk</span>,</span>
-<span>         y <span class="op">=</span> <span class="va">wt82_71</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">sex</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span>,</span>
-<span>         race <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">race</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">qsmk</span>, <span class="va">sex</span>, <span class="va">race</span>, <span class="va">age</span>, <span class="va">smokeintensity</span>, <span class="va">smokeyrs</span>, <span class="va">wt71</span>, <span class="va">wt82_71</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>trt <span class="op">=</span> <span class="va">qsmk</span>,</span>
+<span>                y <span class="op">=</span> <span class="va">wt82_71</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">sex</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span>,</span>
+<span>                race <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">race</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span>,</span>
+<span>                trt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">trt</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"C"</span>, <span class="st">"A"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># create aggregate data</span></span>
 <span></span>
@@ -201,13 +209,15 @@ run <code><a href="../reference/outstandR.html">outstandR()</a></code>.</p>
 <span>                   <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="va">mean</span>, sd <span class="op">=</span> <span class="va">sd</span><span class="op">)</span>,</span>
 <span>                   .names <span class="op">=</span> <span class="st">"{fn}.{col}"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">nhefs.B</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">nhefs_ipd</span>, <span class="va">trt</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span><span class="va">nhefs.B</span> <span class="op">&lt;-</span> <span class="va">nhefs_ipd</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">trt</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>y.B.sum <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>,</span>
 <span>            y.B.bar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>,</span>
 <span>            y.B.sd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>,</span>
 <span>            N.B <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">nhefs.C</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">nhefs_ipd</span>, <span class="va">trt</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span><span class="va">nhefs.C</span> <span class="op">&lt;-</span> <span class="va">nhefs_ipd</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">trt</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>y.C.sum <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>,</span>
 <span>            y.C.bar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>,</span>
 <span>            y.C.sd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>,</span>
@@ -224,40 +234,51 @@ run <code><a href="../reference/outstandR.html">outstandR()</a></code>.</p>
 <span>  <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_ml</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
 <span>                    family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">gaussian</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"identity"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span>BC.ALD <span class="op">=</span> <span class="va">nhefs_ald</span>,</span>
-<span>                 AC.IPD <span class="op">=</span> <span class="va">nhefs_ipd</span>,</span>
+<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span>ald_trial <span class="op">=</span> <span class="va">nhefs_ald</span>,</span>
+<span>                 ipd_trial <span class="op">=</span> <span class="va">nhefs_ipd</span>,</span>
 <span>                 strategy <span class="op">=</span> <span class="va">nhefs_strat</span>,</span>
 <span>                 scale <span class="op">=</span> <span class="st">"log_relative_risk"</span><span class="op">)</span></span>
 <span><span class="va">res</span></span>
 <span><span class="co">#&gt; Object of class 'outstandR' </span></span>
+<span><span class="co">#&gt; Model: <span style="color: #949494;">gaussian</span> </span></span>
 <span><span class="co">#&gt; Scale: <span style="color: #949494;">log_relative_risk</span> </span></span>
 <span><span class="co">#&gt; Common treatment: <span style="color: #949494;">C</span> </span></span>
 <span><span class="co">#&gt; Individual patient data study: <span style="color: #949494;">AC</span> </span></span>
 <span><span class="co">#&gt; Aggregate level data study: <span style="color: #949494;">BC</span> </span></span>
 <span><span class="co">#&gt; Confidence interval level: <span style="color: #949494;">0.95</span> </span></span>
 <span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Contrasts:</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 5</span></span></span>
 <span><span class="co">#&gt;   Treatments Estimate Std.Error lower.0.95 upper.0.95</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AB            0.241    2.21       -<span style="color: #BB0000;">2.68</span>        3.16</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AC            1.07     0.019<span style="text-decoration: underline;">8</span>      0.790       1.34</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> BC            0.824    2.20       -<span style="color: #BB0000;">2.08</span>        3.73</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AB           <span style="color: #BB0000;">NaN</span>     <span style="color: #BB0000;">NaN</span>         <span style="color: #BB0000;">NaN</span>         <span style="color: #BB0000;">NaN</span>   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AC             1.07    0.019<span style="text-decoration: underline;">8</span>      0.790       1.34</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> BC           <span style="color: #BB0000;">NaN</span>     <span style="color: #BB0000;">NaN</span>         <span style="color: #BB0000;">NaN</span>         <span style="color: #BB0000;">NaN</span>   </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Absolute:</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 5</span></span></span>
+<span><span class="co">#&gt;   Treatments Estimate Std.Error lower.0.95 upper.0.95</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> A              5.26    0.192  <span style="color: #BB0000;">NA</span>         <span style="color: #BB0000;">NA</span>        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> C              1.82    0.039<span style="text-decoration: underline;">2</span> <span style="color: #BB0000;">NA</span>         <span style="color: #BB0000;">NA</span></span></span></code></pre></div>
 <p>Alternatively, rather than dropping factors, we can create dummy
 variables to replace them using
 <code><a href="https://hta-pharma.github.io/maicplus/main/reference/dummize_ipd.html" class="external-link">maicplus::dummize_ipd()</a></code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="va">nhefs_ipd</span> <span class="op">&lt;-</span> <span class="va">nhefs_dat</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">qsmk</span>, <span class="va">sex</span>, <span class="va">race</span>, <span class="va">age</span>, <span class="va">smokeintensity</span>, <span class="va">smokeyrs</span>, <span class="va">wt71</span>,</span>
-<span>         <span class="va">wt82_71</span>, <span class="va">education</span>, <span class="va">exercise</span>, <span class="va">active</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>trt <span class="op">=</span> <span class="va">qsmk</span>,</span>
-<span>         y <span class="op">=</span> <span class="va">wt82_71</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">sex</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span>,       <span class="co"># binary</span></span>
-<span>         race <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">race</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<code class="sourceCode R"><span><span class="va">nhefs_ipd</span> <span class="op">&lt;-</span> <span class="va">nhefs_dat</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">qsmk</span>, <span class="va">sex</span>, <span class="va">race</span>, <span class="va">age</span>, <span class="va">smokeintensity</span>, <span class="va">smokeyrs</span>, <span class="va">wt71</span>,</span>
+<span>                <span class="va">wt82_71</span>, <span class="va">education</span>, <span class="va">exercise</span>, <span class="va">active</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>trt <span class="op">=</span> <span class="va">qsmk</span>,</span>
+<span>                y <span class="op">=</span> <span class="va">wt82_71</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>sex <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">sex</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span>,       <span class="co"># binary</span></span>
+<span>                race <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">race</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu">maicplus</span><span class="fu">::</span><span class="fu"><a href="https://hta-pharma.github.io/maicplus/main/reference/dummize_ipd.html" class="external-link">dummize_ipd</a></span><span class="op">(</span>dummize_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"education"</span>, <span class="st">"exercise"</span>, <span class="st">"active"</span><span class="op">)</span>,</span>
 <span>                        dummize_ref_level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"1"</span>,<span class="st">"0"</span>,<span class="st">"0"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">education</span>, <span class="op">-</span><span class="va">exercise</span>, <span class="op">-</span><span class="va">active</span><span class="op">)</span>  <span class="co"># remove originals</span></span>
-<span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">education</span>, <span class="op">-</span><span class="va">exercise</span>, <span class="op">-</span><span class="va">active</span><span class="op">)</span> <span class="op">|&gt;</span>   <span class="co"># remove originals</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>trt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">trt</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"C"</span>, <span class="st">"A"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>  </span>
 <span><span class="co"># # replace with this?</span></span>
 <span><span class="co"># model.matrix()</span></span>
 <span></span>
@@ -292,24 +313,35 @@ variables to replace them using
 <span>  <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_ml</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
 <span>                    family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">gaussian</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"identity"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span>BC.ALD <span class="op">=</span> <span class="va">nhefs_ald</span>,</span>
-<span>                 AC.IPD <span class="op">=</span> <span class="va">nhefs_ipd</span>,</span>
+<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span>ald_trial <span class="op">=</span> <span class="va">nhefs_ald</span>,</span>
+<span>                 ipd_trial <span class="op">=</span> <span class="va">nhefs_ipd</span>,</span>
 <span>                 strategy <span class="op">=</span> <span class="va">nhefs_strat</span>,</span>
 <span>                 scale <span class="op">=</span> <span class="st">"risk_difference"</span><span class="op">)</span></span>
 <span><span class="va">res</span></span>
 <span><span class="co">#&gt; Object of class 'outstandR' </span></span>
+<span><span class="co">#&gt; Model: <span style="color: #949494;">gaussian</span> </span></span>
 <span><span class="co">#&gt; Scale: <span style="color: #949494;">risk_difference</span> </span></span>
 <span><span class="co">#&gt; Common treatment: <span style="color: #949494;">C</span> </span></span>
 <span><span class="co">#&gt; Individual patient data study: <span style="color: #949494;">AC</span> </span></span>
 <span><span class="co">#&gt; Aggregate level data study: <span style="color: #949494;">BC</span> </span></span>
 <span><span class="co">#&gt; Confidence interval level: <span style="color: #949494;">0.95</span> </span></span>
 <span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Contrasts:</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 5</span></span></span>
 <span><span class="co">#&gt;   Treatments Estimate Std.Error lower.0.95 upper.0.95</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AB             1.05     0.473     -<span style="color: #BB0000;">0.295</span>       2.40</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AC             3.59     0.235      2.64        4.54</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> BC             2.54     0.238      1.59        3.50</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> AB           <span style="color: #BB0000;">NaN</span>       <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>         <span style="color: #BB0000;">NA</span>   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> AC             3.59     0.235       2.64       4.54</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> BC           <span style="color: #BB0000;">NaN</span>       <span style="color: #BB0000;">NA</span>          <span style="color: #BB0000;">NA</span>         <span style="color: #BB0000;">NA</span>   </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Absolute:</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 5</span></span></span>
+<span><span class="co">#&gt;   Treatments Estimate Std.Error lower.0.95 upper.0.95</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> A              5.27    0.192  <span style="color: #BB0000;">NA</span>         <span style="color: #BB0000;">NA</span>        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> C              1.68    0.043<span style="text-decoration: underline;">7</span> <span style="color: #BB0000;">NA</span>         <span style="color: #BB0000;">NA</span></span></span></code></pre></div>
 <hr>
 <p>The 2024 <a href="https://www.ispor.org/heor-resources/presentations-database/presentation/euro2024-4016/141209" class="external-link">ISPOR
 poster by Hatswell</a> presents a comparison of different MAIC R
@@ -323,14 +355,15 @@ analysis at the moment.</p>
 <p>Roche developed the <code>maic</code> package which is now deprecated
 and replaced by <code>maicplus</code>. We will follow the article titled
 <a href="https://hta-pharma.github.io/maicplus/main/articles/anchored_binary.html" class="external-link">Anchored
-Binary Analysis</a> to make our comparison.</p>
+Binary Analysis</a> which is part of their package to make our
+comparison.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/hta-pharma/maicplus/" class="external-link">maicplus</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Load required data</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">centered_ipd_twt</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">adrs_twt</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"adsl_sat"</span><span class="op">)</span>  <span class="co"># Original IPD</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">adrs_twt</span><span class="op">)</span>  <span class="co"># response IPD</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">adsl_sat</span><span class="op">)</span>  <span class="co"># covariates IPD</span></span>
 <span></span>
 <span><span class="co"># Load required package</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
@@ -531,16 +564,21 @@ Binary Analysis</a> to make our comparison.</p>
 <span></span>
 <span><span class="va">lin_form</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/formula.html" class="external-link">as.formula</a></span><span class="op">(</span><span class="fu"><a href="https://glue.tidyverse.org/reference/glue.html" class="external-link">glue</a></span><span class="op">(</span><span class="st">"y ~ trt * ({paste(adsl_colnames, collapse = ' + ')})"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">AC.IPD</span> <span class="op">&lt;-</span> <span class="va">adsl_twt</span> <span class="op">|&gt;</span></span>
+<span><span class="va">ipd_trial</span> <span class="op">&lt;-</span> <span class="va">adsl_twt</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">adrs_twt</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>trt <span class="op">=</span> <span class="va">ARM</span>,</span>
 <span>         y <span class="op">=</span> <span class="va">RESPONSE</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>AGE_SQUARED <span class="op">=</span> <span class="va">AGE</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># sd from IPD</span></span>
+<span><span class="va">agd_sd</span> <span class="op">&lt;-</span> <span class="va">ipd_trial</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">across</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">AGE</span>, <span class="va">AGE_SQUARED</span>, <span class="va">SMOKE</span>, <span class="va">ECOG0</span>, <span class="va">N_PR_THER</span>, <span class="va">SEX_MALE</span><span class="op">)</span>,</span>
+<span>                   .fns <span class="op">=</span> <span class="va">sd</span>, .names <span class="op">=</span> <span class="st">"sd.{.col}"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># transform names to format needed in outstandR</span></span>
 <span><span class="co"># mean.* and y.*</span></span>
 <span><span class="co"># note that we're nto going to use sd in matching</span></span>
-<span><span class="va">BC.ALD</span> <span class="op">&lt;-</span> <span class="va">agd</span> <span class="op">|&gt;</span> </span>
+<span><span class="va">ald_trial</span> <span class="op">&lt;-</span> <span class="va">agd</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>mean.AGE <span class="op">=</span> <span class="va">AGE_MEAN</span>,</span>
 <span>         <span class="co"># sd.AGE = AGE_SD,</span></span>
 <span>         mean.SEX_MALE <span class="op">=</span> <span class="va">SEX_MALE_PROP</span>,</span>
@@ -549,7 +587,7 @@ Binary Analysis</a> to make our comparison.</p>
 <span>         mean.N_PR_THER <span class="op">=</span> <span class="va">N_PR_THER_MEDIAN</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    <span class="co"># mean.AGE_SQUARED = sd.AGE^2 + mean.AGE^2,</span></span>
-<span>    mean.AGE_SQUARED <span class="op">=</span> <span class="va">mean.AGE</span><span class="op">^</span><span class="fl">2</span>,                 <span class="co">##TODO: this is a fudge</span></span>
+<span>    <span class="co"># mean.AGE_SQUARED = mean.AGE^2,                 ##TODO: this is a fudge</span></span>
 <span>    <span class="co"># sd.SEX_MALE = sqrt(mean.SEX_MALE * (1 - mean.SEX_MALE)), </span></span>
 <span>    <span class="co"># sd.ECOG0 = sqrt(mean.ECOG0 * (1 - mean.ECOG0)), </span></span>
 <span>    <span class="co"># sd.SMOKE = sqrt(mean.SMOKE * (1 - mean.SMOKE)), </span></span>
@@ -559,19 +597,23 @@ Binary Analysis</a> to make our comparison.</p>
 <span>    y.B.bar <span class="op">=</span> <span class="va">y.B.sum</span><span class="op">/</span><span class="va">N.B</span>,</span>
 <span>    N.C <span class="op">=</span> <span class="fl">320</span>, </span>
 <span>    y.C.sum <span class="op">=</span> <span class="va">binary_agd</span><span class="op">[</span><span class="va">binary_agd</span><span class="op">$</span><span class="va">ARM</span> <span class="op">==</span> <span class="st">"C"</span> <span class="op">&amp;</span> <span class="va">binary_agd</span><span class="op">$</span><span class="va">RESPONSE</span> <span class="op">==</span> <span class="st">"YES"</span>, <span class="st">"COUNT"</span><span class="op">]</span>,</span>
-<span>    y.C.bar <span class="op">=</span> <span class="va">y.C.sum</span><span class="op">/</span><span class="va">N.C</span><span class="op">)</span></span>
+<span>    y.C.bar <span class="op">=</span> <span class="va">y.C.sum</span><span class="op">/</span><span class="va">N.C</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">agd_sd</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/relocate.html" class="external-link">relocate</a></span><span class="op">(</span><span class="va">N.B</span>, <span class="va">y.B.sum</span>, <span class="va">y.B.bar</span>, <span class="va">N.C</span>, <span class="va">y.C.sum</span>, <span class="va">y.C.bar</span>, .after <span class="op">=</span> <span class="va">sd.SEX_MALE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">BC.ALD</span></span>
-<span><span class="co">#&gt;   mean.AGE mean.SEX_MALE mean.ECOG0 mean.SMOKE mean.N_PR_THER mean.AGE_SQUARED</span></span>
-<span><span class="co">#&gt; 1       51          0.49        0.4  0.1966102              2             2601</span></span>
-<span><span class="co">#&gt;   N.B y.B.sum   y.B.bar N.C y.C.sum y.C.bar</span></span>
-<span><span class="co">#&gt; 1 480     280 0.5833333 320     120   0.375</span></span></code></pre></div>
+<span><span class="va">ald_trial</span></span>
+<span><span class="co">#&gt;   mean.AGE mean.SEX_MALE mean.ECOG0 mean.SMOKE mean.N_PR_THER   sd.AGE</span></span>
+<span><span class="co">#&gt; 1       51          0.49        0.4  0.1966102              2 9.006409</span></span>
+<span><span class="co">#&gt;   sd.AGE_SQUARED  sd.SMOKE  sd.ECOG0 sd.N_PR_THER sd.SEX_MALE N.B y.B.sum</span></span>
+<span><span class="co">#&gt; 1       1085.096 0.4667096 0.4913302     1.100505   0.4866013 480     280</span></span>
+<span><span class="co">#&gt;     y.B.bar N.C y.C.sum y.C.bar</span></span>
+<span><span class="co">#&gt; 1 0.5833333 320     120   0.375</span></span></code></pre></div>
 <p>Now that we’ve prepared the input data we’re ready to run the
 model.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">##TODO: fix bug</span></span>
+<code class="sourceCode R"><span><span class="co">##TODO: fix bug of large value in optim()</span></span>
 <span><span class="va">outstandR_maic</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>,</span>
+<span>  <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">ipd_trial</span>, <span class="va">ald_trial</span>,</span>
 <span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_maic</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
 <span>                                     family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
