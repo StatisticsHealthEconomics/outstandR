@@ -76,7 +76,8 @@ test_that("compare with stdReg2 package for continuous outcome", {
     select(qsmk, sex, age, wt82_71) |> 
     rename(trt = qsmk,
            y = wt82_71) |> 
-    mutate(sex = as.numeric(sex) - 1)
+    mutate(sex = as.numeric(sex) - 1,
+           trt = factor(trt, labels = c("C", "A")))
   
   lin_form <- as.formula(y ~ trt * (sex + age))
   
@@ -146,8 +147,9 @@ test_that("compare with stdReg2 package for binary outcome", {
   data <- data.frame(
     age = rnorm(n, mean = 50, sd = 10),
     sex = rbinom(n, 1, 0.5),
-    trt = rbinom(n, 1, 0.5)
-  )
+    trt = rbinom(n, 1, 0.5))
+  
+  data$trt <- factor(data$trt, labels = c("C", "A"))
   
   # generate a binary outcome with logit link
   logit_p <- -1 + data$trt * (0.03 * data$age + 0.2 * data$sex)
@@ -236,9 +238,10 @@ test_that("compare with marginaleffects package for binary outcome", {
   data <- data.frame(
     age = rnorm(n, mean = 50, sd = 10),
     sex = rbinom(n, 1, 0.5),
-    trt = rbinom(n, 1, 0.5)
-  )
+    trt = rbinom(n, 1, 0.5))
   
+  data$trt <- factor(data$trt, labels = c("C", "A"))
+
   # generate a binary outcome with logit link
   logit_p <- -1 + data$trt * (0.03 * data$age + 0.2 * data$sex)
   prob <- 1 / (1 + exp(-logit_p))
@@ -311,7 +314,8 @@ test_that("compare with marginaleffects package for continuous outcome", {
     select(qsmk, sex, age, wt82_71) |> 
     rename(trt = qsmk,
            y = wt82_71) |> 
-    mutate(sex = as.numeric(sex) - 1)
+    mutate(sex = as.numeric(sex) - 1,
+           trt = factor(trt, labels = c("C", "A")))
   
   lin_form <- as.formula(y ~ trt * (sex + age))
   

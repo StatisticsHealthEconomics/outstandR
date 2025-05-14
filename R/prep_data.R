@@ -76,6 +76,12 @@ reshape_ald_to_wide <- function(df) {
 }
 
 ##TODO: check this
+#' Convert from wide to long format
+#'
+#' @import tidyr
+#' @import stringr
+#' 
+#' @examples
 reshape_ald_to_long <- function(df) {
   
   # Separate the 'colname' into 'stat', 'variable', and 'study' columns

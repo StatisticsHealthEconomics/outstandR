@@ -11,9 +11,9 @@ ald <- list(
 
 strategy <- list(family = binomial(link = "logit"))
 
-## ALD_stats() ----
-test_that("ALD_stats() returns mean and variance", {
-  res <- ALD_stats(strategy, ald, scale = "log_odds")
+## calc_ALD_stats() ----
+test_that("calc_ALD_stats() returns mean and variance", {
+  res <- calc_ALD_stats(strategy, ald, scale = "log_odds")
   expect_type(res, "list")
   expect_named(res, c("mean", "var"))
   expect_type(res$mean, "double")
@@ -33,39 +33,39 @@ test_that("marginal_treatment_effect() calculates correct difference", {
   expect_type(res, "double")
 })
 
-## Edge Cases for ALD_stats() ----
-test_that("ALD_stats() handles NULL or empty ald", {
-  expect_error(ALD_stats(strategy, NULL))
-  expect_error(ALD_stats(strategy, list()))
+## Edge Cases for calc_ALD_stats() ----
+test_that("calc_ALD_stats() handles NULL or empty ald", {
+  expect_error(calc_ALD_stats(strategy, NULL))
+  expect_error(calc_ALD_stats(strategy, list()))
 })
 
-test_that("ALD_stats() handles missing treatment labels", {
+test_that("calc_ALD_stats() handles missing treatment labels", {
   ald_missing <- list(
     y.B.sum = 30,
     N.B = 100
     # C is missing
   )
-  expect_error(ALD_stats(strategy, ald_missing))
+  expect_error(calc_ALD_stats(strategy, ald_missing))
 })
 
-test_that("ALD_stats() handles incorrect data types", {
+test_that("calc_ALD_stats() handles incorrect data types", {
   ald_wrong <- list(
     y.B.sum = "thirty",
     N.B = 100,
     y.C.sum = 20,
     N.C = "one hundred"
   )
-  expect_error(ALD_stats(strategy, ald_wrong))
+  expect_error(calc_ALD_stats(strategy, ald_wrong))
 })
 
-test_that("ALD_stats() handles extreme values", {
+test_that("calc_ALD_stats() handles extreme values", {
   ald_extreme <- list(
     y.B.sum = 0,   # Zero events
     N.B = 100,
     y.C.sum = 100, # All events
     N.C = 100
   )
-  res <- ALD_stats(strategy, ald_extreme, scale = "log_odds")
+  res <- calc_ALD_stats(strategy, ald_extreme, scale = "log_odds")
   expect_type(res$mean, "double")
   expect_type(res$var, "double")
 })
@@ -81,7 +81,7 @@ test_that("marginal_variance() handles zero and full counts", {
     N.C = 100
   )
   
-  res <- ALD_stats(strategy, ald_extreme, scale = "log_odds") |> unlist()
+  res <- calc_ALD_stats(strategy, ald_extreme, scale = "log_odds") |> unlist()
   
   expect_true(all(is.finite(res)))
 })
