@@ -21,20 +21,9 @@ prep_ald <- function(form, data, trt_var = "trt") {
   term.labels <- unlist(strsplit(term.labels, ":", fixed = TRUE))
   term.labels <- setdiff(term.labels, trt_var)
   
-  mean_names <- paste0("mean.", term.labels)
-  sd_names <- paste0("sd.", term.labels)  ##TODO: for maic do we need these?
-  term_names <- c(mean_names, sd_names)
-  
-  # replace outcome variable name
-  response_var <- all.vars(form)[1]
-  response_names <- gsub(pattern = "y", replacement = response_var,
-                         x = c("y.B.sum", "y.B.bar", "y.B.sd", "N.B",
-                               "y.C.sum", "y.C.bar", "y.C.sd", "N.C")) 
-  
-  keep_names <- c(term_names, response_names)
-  data_names <- names(data)
-  
-  data[data_names %in% keep_names]
+  dplyr::filter(
+    data,
+    variable %in% c("y", term.labels))
 }
 
 #' Convert from long to wide format
@@ -109,23 +98,10 @@ reshape_ald_to_long <- function(df) {
 
 
 # Get study comparator treatment names
-
 #
-get_ald_comparator <- function(ald, ref_trt = "C") {
+get_comparator <- function(dat, ref_trt = "C", trt_var = "trt") {
   
-  pattern <- paste0("^y\\.(?!", ref_trt, ")")
-  
-  # filter for names starting with "y." but not with "y.C"
-  y_non_ref <- grep(pattern, colnames(ald),
-                    value = TRUE, perl = TRUE)
-  
-  # extract treatment of first match
-  sub("^y\\.([A-Z]).*", "\\1", y_non_ref[1])
-}
-
-#
-get_ipd_comparator <- function(ipd, ref_trt = "C", trt_var = "trt") {
-  all_trt <- levels(ipd[[trt_var]])
+  all_trt <- levels(as.factor(dat[[trt_var]]))
   all_trt[all_trt != ref_trt]
 }
 

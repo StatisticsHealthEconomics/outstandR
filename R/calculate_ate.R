@@ -248,31 +248,33 @@ continuity_correction <- function(ald,
                                   treatments = list("B", "C"),
                                   correction = 0.5) {
   # check if correction is needed in any group
-  needs_correction <- any(sapply(treatments, function(t) {
-    y <- ald[[paste0("y.", t, ".sum")]]
-    N <- ald[[paste0("N.", t)]]
-    y == 0 || y == N
-  }))
+  needs_correction <- 
+    ald |> 
+    dplyr::filter((variable == "y" & statistic == "sum") | statistic == "N") |>
+    dplyr::group_by(trt, variable) |>
+    spread(statistic, value) |>  # Spread sd and N into separate columns
+    dplyr::mutate(need_contcorr = case_when(
+      sum == 0 ~ TRUE,
+      sum == N ~ TRUE,
+      TRUE ~ FALSE
+    )) |> pull() |> any()
   
   if (!needs_correction) {
     return(ald)
   }
   
-  # apply correction to all groups
-  for (t in treatments) {
-    y_name <- paste0("y.", t, ".sum")
-    N_name <- paste0("N.", t)
-    y <- ald[[y_name]]
-    N <- ald[[N_name]]
-    
-    message(sprintf(
-      "Applying continuity correction to group %s: y = %d to %.1f, N = %d to %.1f",
-      t, y, y + correction, N, N + 2 * correction
-    ))
-    
-    ald[[y_name]] <- y + correction
-    ald[[N_name]] <- N + 2 * correction
-  }
+  message(sprintf(
+    "Applying continuity correction: %d", correction
+  ))
   
-  ald
+  ald_corrected <- ald %>%
+    dplyr::mutate(
+      value = case_when(
+        statistic == "sum" & variable == "y" ~ value + correction,
+        statistic == "N" ~ value + 2 * correction,
+        TRUE ~ value
+      )
+    )
+  
+  ald_corrected
 }

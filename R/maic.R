@@ -72,17 +72,18 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
   
   X_EM <- dat[, effect_modifier_names]
   
-  ##TODO: why is this centering used in maic.boot() and not maic()?
-  
-  # BC effect modifier means, assumed fixed
-  mean_names <- get_mean_names(ald, effect_modifier_names)
-  
   # centre AC effect modifiers on BC means
-  dat_ALD_means <- ald[rep_len(1, n_ipd), mean_names, drop = FALSE]
-  X_EM <- X_EM - dat_ALD_means
+  dat_ALD_means <- ald |> 
+    dplyr::filter(variable %in% effect_modifier_names,
+                  statistic == "mean") |> 
+    tidyr::pivot_wider(names_from = variable) |> 
+    dplyr::select(all_of(effect_modifier_names)) |> 
+    tidyr::uncount(weights = n_ipd)
+  
+  centred_EM <- X_EM - dat_ALD_means
   
   if (is.null(hat_w)) {
-    hat_w <- maic_weights(X_EM)
+    hat_w <- maic_weights(centred_EM)
   }
   
   formula_treat <- glue::glue("{formula[[2]]} ~ {trt_var}")

@@ -159,7 +159,7 @@ ipd_trial$trt <- factor(ipd_trial$trt, labels = c("C", "A"))
 ```
 
 Similarly, to obtain the aggregate data we will simulate IPD but with the additional summarise step.
-We set different mean values `meanX_BC` and `meanX_EM_BC` but otherwise use the same parameter values as for the $AC$ case.
+We set different mean values `meanX_BC` and `meanX_EM_BC` but otherwise use the same parameter values as for the $AC$ trial.
 
 ```{r generate-ald-data}
 BC.IPD <- gen_data(N, b_trt, b_X, b_EM, b_0,
@@ -168,44 +168,65 @@ BC.IPD <- gen_data(N, b_trt, b_X, b_EM, b_0,
                    corX, allocation,
                    family = binomial("logit"))
 
-cov.X <- BC.IPD %>%
-  summarise(across(starts_with("X"),
-                   list(mean = mean, sd = sd),
-                   .names = "{fn}.{col}"))
+BC.IPD$trt <- factor(BC.IPD$trt, labels = c("C", "B"))
 
-out.B <- dplyr::filter(BC.IPD, trt == 1) %>%
-  summarise(y.B.sum = sum(y),
-            y.B.bar = mean(y),
-            y.B.sd = sd(y),
-            N.B = n())
+# covariate summary statistics
+# assume same between treatments
+cov.X <- 
+  BC.IPD %>%
+  as.data.frame() |> 
+  dplyr::select(X1, X2, X3, X4, trt) %>%
+  pivot_longer(cols = starts_with("X"), names_to = "variable", values_to = "value") %>%
+  group_by(variable) %>%
+  summarise(
+    mean = mean(value),
+    sd = sd(value),
+  ) %>%
+  pivot_longer(cols = c("mean", "sd"), names_to = "statistic", values_to = "value") %>%
+  ungroup() |> 
+  mutate(trt = NA)
 
-out.C <- dplyr::filter(BC.IPD, trt == 0) %>%
-  summarise(y.C.sum = sum(y),
-            y.C.bar = mean(y),
-            y.C.sd = sd(y),
-            N.C = n())
+# outcome
+summary.y <- 
+  BC.IPD |> 
+  as.data.frame() |> 
+  dplyr::select(y, trt) %>%
+  pivot_longer(cols = "y", names_to = "variable", values_to = "value") %>%
+  group_by(variable, trt) %>%
+  summarise(
+    mean = mean(value),
+    sd = sd(value),
+    sum = sum(value),
+  ) %>%
+  pivot_longer(cols = c("mean", "sd", "sum"), names_to = "statistic", values_to = "value") %>%
+  ungroup()
 
-ald_trial <- cbind.data.frame(cov.X, out.C, out.B)
+# sample sizes
+summary.N <- 
+  BC.IPD |> 
+  group_by(trt) |> 
+  count(name = "N") |> 
+  pivot_longer(cols = "N", names_to = "statistic", values_to = "value") |> 
+  mutate(variable = NA_character_) |> 
+  dplyr::select(variable, statistic, value, trt)
+  
+ald_trial <- rbind.data.frame(cov.X, summary.y, summary.N)
 ```
 
-This general format of data sets consist of the following.
+This general format of the data sets are in a 'long' style consisting of the following.
 
 #### `ipd_trial`: Individual patient data
 
--   `X*`: patient measurements
--   `trt`: treatment ID (integer)
--   `y`: (logical) indicator of whether event was observed
+-   `X*`: Patient measurements
+-   `trt`: Treatment ID (integer)
+-   `y`: Indicator of whether event was observed (two level factor)
 
 #### `ald_trial`: Aggregate-level data
 
--   `mean.X*`: mean patient measurement
--   `sd.X*`: standard deviation of patient measurement
--   `y.*.sum`: total number of events
--   `y.*.bar`: proportion of events
--   `N.*`: total number of individuals
-
-Note that the wildcard `*` here is usually an integer from 1 or the
-trial identifier *B*, *C*.
+-   `variable`: Covariate name. In the case of treatment arm sample size this is `NA`
+-   `statistic`: Summary statistic name from mean, standard deviation or sum
+-   `value`: Numerical value of summary statistic
+-   `trt`: Treatment label. Because we assume a common covariate distribution between treatment arms this is `NA`
 
 Our data look like the following.
 
@@ -214,14 +235,13 @@ head(ipd_trial)
 ```
 
 There are 4 correlated continuous covariates generated per subject, simulated from a multivariate normal distribution.
-Treatment `trt` 1 corresponds to new treatment *A*, and 0 is standard of care or status quo *C*. The ITC is 'anchored' via *C*, the common treatment.
+Treatment `trt` takes either new treatment *A* or standard of care or status quo *C*. The ITC is 'anchored' via *C*, the common treatment.
 
 ```{r}
 ald_trial
 ```
 
-In this case, we have 4 covariate mean and standard deviation values;
-and the event total, average and sample size for each treatment *B*, and *C*.
+In this case, we have 4 covariate mean and standard deviation values; and the event total, average and sample size for each treatment *B*, and *C*.
 
 #### Regression model
 
