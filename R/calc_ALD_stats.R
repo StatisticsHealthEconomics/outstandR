@@ -18,9 +18,11 @@
 #' @examples
 #' \dontrun{
 #' strategy <- list(family = list(family = "binomial"))  # basic version
-#' ald <- data.frame(trial = 1:5,
-#'                   n_B = c(10, 20, 15, 30, 25),
-#'                   n_C = c(12, 18, 20, 25, 22))
+#' ald <- data.frame(trt = c("B","C","B","C"),
+#'                   variable = c(NA, NA, "y", "y"),
+#'                   statistic = c("N", "N", "sum", "sum"),
+#'                   value = c(100, 100, 50, 60) 
+#'
 #' calc_ALD_stats(strategy, ald, treatments = list("B", "C"), scale = "log")
 #' }
 #'
@@ -54,7 +56,10 @@ calc_ALD_stats <- function(strategy,
 #' @return The total variance of marginal treatment effects.
 #' @examples
 #' \dontrun{
-#' ald <- data.frame(trial = 1:5, n_B = c(10, 20, 15, 30, 25), n_C = c(12, 18, 20, 25, 22))
+#' ald <- data.frame(trt = c("B","C","B","C"),
+#'                   variable = c(NA, NA, "y", "y"),
+#'                   statistic = c("N", "N", "sum", "sum"),
+#'                   value = c(100, 100, 50, 60)
 #' marginal_variance(ald, treatments = list("B", "C"), scale = "log", family = "binomial")
 #' }
 #' @export
@@ -88,7 +93,10 @@ marginal_variance <- function(ald,
 #' @return The relative treatment effect.
 #' @examples
 #' \dontrun{
-#' ald <- data.frame(trial = 1:5, n_B = c(10, 20, 15, 30, 25), n_C = c(12, 18, 20, 25, 22))
+#' ald <- data.frame(trt = c("B","C","B","C"),
+#'                   variable = c(NA, NA, "y", "y"),
+#'                   statistic = c("N", "N", "sum", "sum"),
+#'                   value = c(100, 100, 50, 60)
 #' marginal_treatment_effect(ald, treatments = list("B", "C"), scale = "log", family = "binomial")
 #' }
 #' @export
