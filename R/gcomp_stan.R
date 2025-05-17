@@ -16,8 +16,8 @@
 #'
 #' @return A list of \eqn{y^*_A} and \eqn{y^*_C} posterior predictions:
 #' \describe{
-#'   \item{\code{`0`}}{Posterior means for treatment group C.}
-#'   \item{\code{`1`}}{Posterior means for treatment group A.}
+#'   \item{\code{`0`}}{Posterior means for reference treatment group "C".}
+#'   \item{\code{`1`}}{Posterior means for comparator treatment group "A".}
 #' }
 #' @importFrom copula normalCopula mvdc rMvdc
 #' @importFrom rstanarm stan_glm posterior_predict
@@ -30,7 +30,9 @@
 #'   warmup = 500,
 #'   chains = 4
 #' )
-#' ipd <- data.frame(treatment = c(0, 1), outcome = c(1, 0), age = c(30, 40))
+#' ipd <- data.frame(treatment = c(0, 1),
+#'                   outcome = c(1, 0),
+#'                   age = c(30, 40))
 #' ald <- data.frame()
 #' calc_gcomp_stan(strategy, ipd, ald)
 #' }
@@ -58,16 +60,16 @@ calc_gcomp_stan <- function(strategy,
                        ...)
   
   # counterfactual datasets
-  data.comp <- data.ref <- x_star
+  data_comp <- data_ref <- x_star
   
   # intervene on treatment while keeping set covariates fixed
-  data.comp[[trt_var]] <- comp_trt  # all receive treatment A
-  data.ref[[trt_var]] <- ref_trt    # all receive treatment C
+  data_comp[[trt_var]] <- comp_trt  # all receive comparator treatment
+  data_ref[[trt_var]] <- ref_trt    # all receive reference treatment
   
   ##TODO: is this going to work for all of the different data types?
   # draw responses from posterior predictive distribution
-  y.star.comp <- rstanarm::posterior_predict(outcome.model, newdata = data.comp)
-  y.star.ref <- rstanarm::posterior_predict(outcome.model, newdata = data.ref)
+  y.star.comp <- rstanarm::posterior_predict(outcome.model, newdata = data_comp)
+  y.star.ref <- rstanarm::posterior_predict(outcome.model, newdata = data_ref)
   
   # posterior means for each treatment group
   list(
@@ -92,8 +94,8 @@ calc_gcomp_stan <- function(strategy,
 #'
 #' @return A list containing:
 #' \describe{
-#'   \item{mean_A}{Bootstrap estimates for treatment group A.}
-#'   \item{mean_C}{Bootstrap estimates for treatment group C.}
+#'   \item{mean_A}{Bootstrap estimates for comparator treatment group "A".}
+#'   \item{mean_C}{Bootstrap estimates for reference treatment group "C".}
 #' }
 #' @importFrom boot boot
 #' @examples
@@ -105,7 +107,9 @@ calc_gcomp_stan <- function(strategy,
 #'   trt_var = "treatment",
 #'   N = 1000
 #' )
-#' ipd <- data.frame(treatment = c(0, 1), outcome = c(1, 0), age = c(30, 40))
+#' ipd <- data.frame(treatment = c(0, 1),
+#'                   outcome = c(1, 0),
+#'                   age = c(30, 40))
 #' ald <- data.frame()
 #' calc_gcomp_ml(strategy, ipd, ald)
 #' }
