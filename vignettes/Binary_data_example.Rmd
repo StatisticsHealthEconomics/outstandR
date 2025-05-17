@@ -198,7 +198,8 @@ summary.y <-
     sd = sd(value),
     sum = sum(value),
   ) %>%
-  pivot_longer(cols = c("mean", "sd", "sum"), names_to = "statistic", values_to = "value") %>%
+  pivot_longer(cols = c("mean", "sd", "sum"),
+               names_to = "statistic", values_to = "value") %>%
   ungroup()
 
 # sample sizes

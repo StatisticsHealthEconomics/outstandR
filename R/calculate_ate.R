@@ -73,8 +73,16 @@ calculate_trial_variance <- function(ald, tid, effect, family) {
 #' @export
 calculate_trial_variance_binary <- function(ald, tid, effect) {
   
-  y <- ald[[paste0("y.", tid, ".sum")]]
-  N <- ald[[paste0("N.", tid)]]
+  y <- dplyr::filter(
+    ald,
+    variable == "y",
+    trt == tid,
+    statistic == "sum")$value
+  
+  N <- dplyr::filter(
+    ald,
+    trt == tid,
+    statistic == "N")$value
   
   effect_functions <- list(
     "log_odds" = function() 1/y + 1/(N-y),
@@ -95,9 +103,22 @@ calculate_trial_variance_binary <- function(ald, tid, effect) {
 #' @export
 calculate_trial_variance_continuous <- function(ald, tid, effect) {
   
-  ybar <- ald[[paste0("y.", tid, ".bar")]]
-  ysd <- ald[[paste0("y.", tid, ".sd")]]
-  N <- ald[[paste0("N.", tid)]]
+  ybar <- dplyr::filter(
+    ald,
+    variable == "y",
+    trt == tid,
+    statistic == "mean")$value
+  
+  ysd <- dplyr::filter(
+    ald,
+    variable == "y",
+    trt == tid,
+    statistic == "sd")$value
+  
+  N <- dplyr::filter(
+    ald,
+    trt == tid,
+    statistic == "N")$value
   
   effect_functions <- list(
     "log_odds" = function() pi^2/3 * (1/N),
@@ -133,8 +154,17 @@ calculate_trial_mean <- function(ald, tid, effect, family) {
 #' @export
 calculate_trial_mean_binary <- function(ald, tid, effect) {
   
-  y <- ald[[paste0("y.", tid, ".sum")]]
-  N <- ald[[paste0("N.", tid)]]
+  y <- dplyr::filter(
+    ald,
+    variable == "y",
+    trt == tid,
+    statistic == "sum")$value
+  
+  N <- dplyr::filter(
+    ald,
+    trt == tid,
+    statistic == "N")$value
+  
   p <- y/N
   
   effect_fns <- list(
@@ -156,9 +186,22 @@ calculate_trial_mean_binary <- function(ald, tid, effect) {
 #' @export
 calculate_trial_mean_continuous <- function(ald, tid, effect) {
   
-  ybar <- ald[[paste0("y.", tid, ".bar")]]
-  ysd <- ald[[paste0("y.", tid, ".sd")]]
-  N <- ald[[paste0("N.", tid)]]
+  ybar <- dplyr::filter(
+    ald,
+    variable == "y",
+    trt == tid,
+    statistic == "mean")$value
+  
+  ysd <- dplyr::filter(
+    ald,
+    variable == "y",
+    trt == tid,
+    statistic == "sd")$value
+  
+  N <- dplyr::filter(
+    ald,
+    trt == tid,
+    statistic == "N")$value
   
   effect_fns <- list(
     log_odds = function() {

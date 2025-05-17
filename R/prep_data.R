@@ -23,7 +23,7 @@ prep_ald <- function(form, data, trt_var = "trt") {
   
   dplyr::filter(
     data,
-    variable %in% c("y", term.labels))
+    variable %in% c("y", term.labels) | statistic == "N")
 }
 
 #' Convert from long to wide format
