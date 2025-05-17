@@ -4,7 +4,7 @@
 #'
 #' Computes the average treatment effect (ATE) based on the specified effect scale.
 #'
-#' @param mean_A,mean_C Mean of the outcome for the treatment and control
+#' @param mean_comp,mean_ref Mean of the outcome for the comparator and reference / common
 #' @param effect A character string specifying the effect scale. Options are:
 #'   \describe{
 #'     \item{"log_odds"}{Log-odds difference.}
@@ -17,23 +17,23 @@
 #' @return The computed average treatment effect on the specified scale.
 #' @examples
 #' \dontrun{
-#' calculate_ate(mean_A = 0.7, mean_ref = 0.5, effect = "log_odds")
-#' calculate_ate(mean_A = 0.7, mean_ref = 0.5, effect = "risk_difference")
+#' calculate_ate(mean_comp = 0.7, mean_ref = 0.5, effect = "log_odds")
+#' calculate_ate(mean_comp = 0.7, mean_ref = 0.5, effect = "risk_difference")
 #' }
 #' @export
 #'
-calculate_ate <- function(mean_A, mean_ref, effect) {
+calculate_ate <- function(mean_comp, mean_ref, effect) {
   
   if (effect == "log_odds") {
-    ate <- qlogis(mean_A) - qlogis(mean_ref)
+    ate <- qlogis(mean_comp) - qlogis(mean_ref)
   } else if (effect == "risk_difference") {
-    ate <- mean_A - mean_ref
+    ate <- mean_comp - mean_ref
   } else if (effect == "delta_z") {
-    ate <- qnorm(mean_A) - qnorm(mean_ref)
+    ate <- qnorm(mean_comp) - qnorm(mean_ref)
   } else if (effect == "log_relative_risk_rare_events") {
-    ate <- log(-log(1 - mean_A)) - log(-log(1 - mean_ref))
+    ate <- log(-log(1 - mean_comp)) - log(-log(1 - mean_ref))
   } else if (effect == "log_relative_risk") {  # Poisson log link
-    ate <- log(mean_A) - log(mean_ref)
+    ate <- log(mean_comp) - log(mean_ref)
   } else {
     stop("Unsupported link function.")
   }
@@ -269,24 +269,24 @@ get_treatment_effect <- function(link) {
 
 # individual effects
 
-calc_log_odds_ratio <- function(mean_A, mean_ref) {
-  qlogis(mean_A) - qlogis(mean_ref)
+calc_log_odds_ratio <- function(mean_comp, mean_ref) {
+  qlogis(mean_comp) - qlogis(mean_ref)
 }
 
-calc_risk_difference <- function(mean_A, mean_ref) {
-  mean_A - mean_ref
+calc_risk_difference <- function(mean_comp, mean_ref) {
+  mean_comp - mean_ref
 }
 
-calc_delta_z <- function(mean_A, mean_ref) {
-  qnorm(mean_A) - qnorm(mean_ref)
+calc_delta_z <- function(mean_comp, mean_ref) {
+  qnorm(mean_comp) - qnorm(mean_ref)
 }
 
-calc_log_relative_risk_rare_events <- function(mean_A, mean_ref) {
-  log(-log(1 - mean_A)) - log(-log(1 - mean_ref))
+calc_log_relative_risk_rare_events <- function(mean_comp, mean_ref) {
+  log(-log(1 - mean_comp)) - log(-log(1 - mean_ref))
 }
 
-calc_log_relative_risk <- function(mean_A, mean_ref) {
-  log(mean_A) - log(mean_ref)
+calc_log_relative_risk <- function(mean_comp, mean_ref) {
+  log(mean_comp) - log(mean_ref)
 }
 
 #' @keywords internal
