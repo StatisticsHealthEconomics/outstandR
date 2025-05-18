@@ -45,8 +45,6 @@ calc_ALD_stats <- function(strategy,
 #' Marginal effect variance using the delta method
 #' 
 #' Computes the total variance of marginal treatment effects using the delta method.
-#' For binomial data, calculates:
-#' \deqn{\frac{1}{n_C} + \frac{1}{n_{\bar{C}}} + \frac{1}{n_B} + \frac{1}{n_{\bar{B}}}}.
 #'
 #' @param ald Aggregate-level data
 #' @param treatments A list of treatment labels; default _B_ vs _C_
@@ -78,12 +76,6 @@ marginal_variance <- function(ald,
 #' Marginal treatment effect from reported event counts
 #' 
 #' Computes the relative treatment effect from aggregate-level data using event counts.
-#' For binomial data, calculates:
-#' \deqn{
-#' \log\left( \frac{n_B/(N_B-n_B)}{n_C/(N_B-n_{B})} \right) = \log(n_B n_{\bar{C}}) - \log(n_C n_{\bar{B}})
-#' }
-#' where \eqn{\bar{C}} is the compliment of \eqn{C}
-#' so e.g. \eqn{n_{\bar{C}} = N_C - n_c}.
 #'
 #' @param ald Aggregate-level data
 #' @param treatments A list of treatment labels. Last variable is reference; default `B`, `C` (common; e.g. placebo)
