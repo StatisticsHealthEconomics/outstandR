@@ -4,10 +4,10 @@
 \alias{calculate_ate}
 \title{Calculate Average Treatment Effect}
 \usage{
-calculate_ate(mean_A, mean_C, effect)
+calculate_ate(mean_comp, mean_ref, effect)
 }
 \arguments{
-\item{mean_A, mean_C}{Mean of the outcome for the treatment and control}
+\item{mean_comp, mean_ref}{Mean of the outcome for the comparator and reference / common}
 
 \item{effect}{A character string specifying the effect scale. Options are:
 \describe{
@@ -26,7 +26,7 @@ Computes the average treatment effect (ATE) based on the specified effect scale.
 }
 \examples{
 \dontrun{
-calculate_ate(mean_A = 0.7, mean_C = 0.5, effect = "log_odds")
-calculate_ate(mean_A = 0.7, mean_C = 0.5, effect = "risk_difference")
+calculate_ate(mean_comp = 0.7, mean_ref = 0.5, effect = "log_odds")
+calculate_ate(mean_comp = 0.7, mean_ref = 0.5, effect = "risk_difference")
 }
 }

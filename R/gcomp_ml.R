@@ -126,21 +126,23 @@ simulate_ALD_pseudo_pop <- function(formula,
   
   # remove treatment
   covariate_names <- covariate_names[covariate_names != trt_var]
-  
-  mean_names <- get_mean_names(ald, covariate_names)
-  
-  sd_names <- get_sd_names(ald, covariate_names)
-  
   n_covariates <- length(covariate_names)
   
-  # covariate simulation for BC trial using copula package
+  ald_means <- dplyr::filter(ald, statistic == "mean", variable != "y")
+  ald_sd <- dplyr::filter(ald, statistic == "sd", variable != "y")
+  
+  # same order as covariate names
+  sd_values <- ald_sd$value[match(covariate_names, ald_sd$variable)]
+  mean_values <- ald_means$value[match(covariate_names, ald_means$variable)]
+  
+  # covariate simulation for BC ALD trial using copula package
   
   # don't require copula for single covariate
   if (length(covariate_names) <= 1) {
     x_star <- 
       rnorm(n = N,
-            mean = ald[[mean_names]],
-            sd = ald[[sd_names]]) |> 
+            mean = mean_values,
+            sd = sd_values) |> 
       matrix(ncol = 1, dimnames = list(NULL, covariate_names))
   
     return(x_star)
@@ -164,11 +166,11 @@ simulate_ALD_pseudo_pop <- function(formula,
                          dispstr = "un")
   
   # aggregate BC covariate means & standard deviations
-  mean_sd_margins <- list()
+  mean_sd_margins <- vector(mode = "list", length = n_covariates)
   
-  for (i in covariate_names) {
-    mean_sd_margins[[i]] <- list(mean = ald[[mean_names[i]]],
-                                 sd = ald[[sd_names[i]]])
+  for (i in 1:n_covariates) {
+    mean_sd_margins[[i]] <- list(mean = mean_values[i],
+                                 sd = sd_values[i])
   }
   
   # sample covariates from approximate joint distribution using copula

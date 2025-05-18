@@ -25,7 +25,10 @@ For binomial data, calculates:
 }
 \examples{
 \dontrun{
-ald <- data.frame(trial = 1:5, n_B = c(10, 20, 15, 30, 25), n_C = c(12, 18, 20, 25, 22))
+ald <- data.frame(trt = c("B","C","B","C"),
+                  variable = c(NA, NA, "y", "y"),
+                  statistic = c("N", "N", "sum", "sum"),
+                  value = c(100, 100, 50, 60)
 marginal_variance(ald, treatments = list("B", "C"), scale = "log", family = "binomial")
 }
 }

@@ -28,9 +28,11 @@ Computes the mean and variance of marginal treatment effects for aggregate-level
 \examples{
 \dontrun{
 strategy <- list(family = list(family = "binomial"))  # basic version
-ald <- data.frame(trial = 1:5,
-                  n_B = c(10, 20, 15, 30, 25),
-                  n_C = c(12, 18, 20, 25, 22))
+ald <- data.frame(trt = c("B","C","B","C"),
+                  variable = c(NA, NA, "y", "y"),
+                  statistic = c("N", "N", "sum", "sum"),
+                  value = c(100, 100, 50, 60) 
+
 calc_ALD_stats(strategy, ald, treatments = list("B", "C"), scale = "log")
 }
 

@@ -23,7 +23,10 @@ Computes the variance of treatment effects for a trial based on the specified fa
 }
 \examples{
 \dontrun{
-ald <- data.frame(y.B.sum = c(10), N.B = c(100))
+ald <- data.frame(trt = c("B","C","B","C"),
+                  variable = c(NA, NA, "y", "y"),
+                  statistic = c("N", "N", "sum", "sum"),
+                  value = c(100, 100, 50, 60)
 calculate_trial_variance(ald, tid = "B", effect = "log_odds", family = "binomial")
 }
 }

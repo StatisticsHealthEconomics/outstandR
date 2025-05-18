@@ -25,8 +25,8 @@ We assume a common distribution for each treatment arm.}
 \value{
 A list of \eqn{y^*_A} and \eqn{y^*_C} posterior predictions:
 \describe{
-\item{\code{`0`}}{Posterior means for treatment group C.}
-\item{\code{`1`}}{Posterior means for treatment group A.}
+\item{\code{`0`}}{Posterior means for reference treatment group "C".}
+\item{\code{`1`}}{Posterior means for comparator treatment group "A".}
 }
 }
 \description{
@@ -42,7 +42,9 @@ strategy <- list(
   warmup = 500,
   chains = 4
 )
-ipd <- data.frame(treatment = c(0, 1), outcome = c(1, 0), age = c(30, 40))
+ipd <- data.frame(treatment = c(0, 1),
+                  outcome = c(1, 0),
+                  age = c(30, 40))
 ald <- data.frame()
 calc_gcomp_stan(strategy, ipd, ald)
 }

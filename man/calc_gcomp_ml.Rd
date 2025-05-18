@@ -22,8 +22,8 @@ calc_gcomp_ml(strategy, ipd, ald)
 \value{
 A list containing:
 \describe{
-\item{mean_A}{Bootstrap estimates for treatment group A.}
-\item{mean_C}{Bootstrap estimates for treatment group C.}
+\item{mean_A}{Bootstrap estimates for comparator treatment group "A".}
+\item{mean_C}{Bootstrap estimates for reference treatment group "C".}
 }
 }
 \description{
@@ -38,7 +38,9 @@ strategy <- list(
   trt_var = "treatment",
   N = 1000
 )
-ipd <- data.frame(treatment = c(0, 1), outcome = c(1, 0), age = c(30, 40))
+ipd <- data.frame(treatment = c(0, 1),
+                  outcome = c(1, 0),
+                  age = c(30, 40))
 ald <- data.frame()
 calc_gcomp_ml(strategy, ipd, ald)
 }

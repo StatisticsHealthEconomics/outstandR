@@ -437,10 +437,13 @@ outstandR_stc <-
             strategy = strategy_stc(
               formula = lin_form,
               family = binomial(link = "logit")))
+```
+
+```{r}
 outstandR_stc
 ```
 
-Change the outcome scale
+Changing the outcome scale to LRR gives
 
 ```{r outstandR_stc_lrr}
 outstandR_stc_lrr <-
@@ -502,11 +505,13 @@ outstandR_gcomp_ml <-
             strategy = strategy_gcomp_ml(
               formula = lin_form,
               family = binomial(link = "logit")))
+```
 
+```{r}
 outstandR_gcomp_ml
 ```
 
-Change the outcome scale
+Once again, let us change the outcome scale to LRR
 
 ```{r outstandR_gcomp_ml_lrr}
 outstandR_gcomp_ml_lrr <-
