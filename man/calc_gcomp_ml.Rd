@@ -22,8 +22,8 @@ calc_gcomp_ml(strategy, ipd, ald)
 \value{
 A list containing:
 \describe{
-\item{mean_A}{Bootstrap estimates for treatment group A.}
-\item{mean_C}{Bootstrap estimates for treatment group C.}
+\item{mean_A}{Bootstrap estimates for comparator treatment group "A".}
+\item{mean_C}{Bootstrap estimates for reference treatment group "C".}
 }
 }
 \description{
@@ -33,12 +33,14 @@ Computes the mean difference in treatment effects using bootstrap resampling.
 \dontrun{
 strategy <- list(
   R = 1000,
-  formula = outcome ~ treatment + age,
+  formula = y ~ trt + age,
   family = binomial(),
   trt_var = "treatment",
   N = 1000
 )
-ipd <- data.frame(treatment = c(0, 1), outcome = c(1, 0), age = c(30, 40))
+ipd <- data.frame(trt = c("A", "C"),
+                  y = c(1, 0),
+                  age = c(30, 40))
 ald <- data.frame()
 calc_gcomp_ml(strategy, ipd, ald)
 }

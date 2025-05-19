@@ -7,7 +7,7 @@
 #' including Matching-Adjusted Indirect Comparison (MAIC), Simulated Treatment Comparison (STC),
 #' and G-computation via Maximum Likelihood Estimation (MLE) or Bayesian inference.
 #' 
-#' @param strategy A list corresponding to different approaches
+#' @param strategy A list corresponding to different modelling approaches
 #' @eval study_data_args(include_ipd = TRUE, include_ald = TRUE)
 #' @param scale A scaling parameter for the effect calculation.
 #' @param ... Additional arguments
@@ -20,8 +20,13 @@
 #' @examples
 #' \dontrun{
 #' strategy <- strategy_maic()
-#' ipd <- data.frame(id = 1:100, treatment = sample(c("A", "C"), 100, replace = TRUE), outcome = rnorm(100))
-#' ald <- data.frame(treatment = c("A", "C"), mean = c(0.2, 0.1), var = c(0.05, 0.03))
+#' ipd <- data.frame(trt = sample(c("A", "C"), 100, replace = TRUE),
+#'                   X1 = rnorm(100, 1, 1),
+#'                   y = rnorm(100, 10, 2))
+#' ald <- data.frame(trt = c(NA, "B", "C", "B", "C"),
+#'                   variable = c("X1", "y", "y", NA, NA),
+#'                   statistic = c("mean", "sum", "sum", "N", "N"),
+#'                   value = c(0.5, 10, 12, 20, 25))
 #' calc_IPD_stats(strategy, ipd, ald, scale = "log_odds")
 #' }
 #' @export
@@ -43,7 +48,7 @@ calc_IPD_stats.default <- function(...) {
 #' @rdname calc_IPD_stats
 #' 
 #' @section Multiple imputation marginalisation:
-#' Using Stan, compute marginal relative treatment effect for _A_ vs _C_ for each MCMC sample
+#' Using Stan, compute marginal relative treatment effect for IPD comparator "A" vs reference "C" arms for each MCMC sample
 #' by transforming from probability to linear predictor scale. Approximate by 
 #' using imputation and combining estimates using Rubin's rules, in contrast to [calc_IPD_stats.gcomp_stan()].
 #' @import stats
@@ -86,7 +91,7 @@ calc_IPD_stats.mim <- function(strategy,
 
 #' Factory function for creating calc_IPD_stats methods
 #'
-#' Creates a method for computing mean and variance statistics based on the supplied function.
+#' Creates a method for computing IPD mean and variance statistics based on the supplied function.
 #'
 #' @param ipd_fun A function that computes mean and variance statistics for individual-level patient data.
 #' @return A function that computes mean and variance statistics for a given strategy.
@@ -128,7 +133,7 @@ IPD_stat_factory <- function(ipd_fun) {
 
 #' @rdname calc_IPD_stats
 #' @section Simulated treatment comparison statistics:
-#' IPD from the _AC_ trial are used to fit a regression model describing the
+#' IPD for reference "C" and comparator "A" trial arms are used to fit a regression model describing the
 #' observed outcomes \eqn{y} in terms of the relevant baseline characteristics \eqn{x} and
 #' the treatment variable \eqn{z}.
 #' @export
@@ -137,7 +142,7 @@ calc_IPD_stats.stc <- IPD_stat_factory(outstandR:::calc_stc)
 
 #' @rdname calc_IPD_stats
 #' @section Matching-adjusted indirect comparison statistics:
-#' Marginal _A_ vs _C_ treatment effect estimates
+#' Marginal IPD comparator treatment "A" vs reference treatment "C" treatment effect estimates
 #' using bootstrapping sampling.
 #' @export
 #'
@@ -152,7 +157,7 @@ calc_IPD_stats.gcomp_ml <- IPD_stat_factory(outstandR:::calc_gcomp_ml)
 
 #' @rdname calc_IPD_stats
 #' @section G-computation Bayesian statistics:
-#' Using Stan, compute marginal log-odds ratio for _A_ vs _C_ for each MCMC sample
+#' Using Stan, compute marginal relative effects for IPD comparator "A" vs reference "C" treatment arms for each MCMC sample
 #' by transforming from probability to linear predictor scale.
 #' @export
 #'

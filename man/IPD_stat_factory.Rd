@@ -13,6 +13,6 @@ IPD_stat_factory(ipd_fun)
 A function that computes mean and variance statistics for a given strategy.
 }
 \description{
-Creates a method for computing mean and variance statistics based on the supplied function.
+Creates a method for computing IPD mean and variance statistics based on the supplied function.
 }
 \keyword{internal}

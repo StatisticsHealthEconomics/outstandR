@@ -6,6 +6,13 @@
 \usage{
 calc_stc(strategy, ipd, ...)
 }
+\value{
+A list:
+\describe{
+\item{\code{mean_A}}{Mean for comparator treatment group "A".}
+\item{\code{mean_C}}{Mean for reference treatment group "C".}
+}
+}
 \description{
 Calculate simulated treatment comparison statistics
 }

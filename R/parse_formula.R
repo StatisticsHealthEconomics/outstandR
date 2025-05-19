@@ -53,60 +53,6 @@ get_treatment_name <- function(formula, trt_var = NULL) {
   guess_treatment_name(formula)
 }
 
-#' Get mean names
-#'
-#' @eval study_data_args(include_ipd = FALSE, include_ald = TRUE)
-#' @param keep_nms Variable names character vector
-#'
-#' @return Mean names vector
-#' @keywords internal
-#'
-get_mean_names <- function(ald, keep_nms) {
-  
-  dat_names <- names(ald)
-  # is_sd_name <- grepl(pattern = "\\.mean", dat_names)
-  is_mean_name <- grepl(pattern = "mean\\.", dat_names)
-  is_var_name <- grepl(pattern = paste(keep_nms, collapse = "|"), dat_names)
-  keep_mean_nm <- is_mean_name & is_var_name
-  
-  if (all(!keep_mean_nm)) {
-    warning("No matching mean names found.")
-  }
-  
-  mean_nms <- dat_names[keep_mean_nm]
-   
-  covariate_nms <- sub(".*mean\\.", "", mean_nms)
-  
-  setNames(mean_nms, covariate_nms)
-}
-
-#' Get standard deviation names
-#'
-#' @eval study_data_args(include_ipd = FALSE, include_ald = TRUE)
-#' @param keep_nms Variable names character vector
-#'
-#' @return Standard deviation names vector
-#' @keywords internal
-#'
-get_sd_names <- function(ald, keep_nms) {
-  
-  dat_names <- names(ald)
-  # is_sd_name <- grepl(pattern = "\\.sd", dat_names)
-  is_sd_name <- grepl(pattern = "sd\\.", dat_names)
-  is_var_name <- grepl(pattern = paste(keep_nms, collapse = "|"), dat_names)
-  keep_sd_nm <- is_sd_name & is_var_name
-  
-  if (all(!keep_sd_nm)) {
-    warning("No matching sd names found.")
-  }
-  
-  sd_nms <- dat_names[keep_sd_nm]
-  
-  covariate_nms <- sub(".*sd\\.", "", sd_nms)
-  
-  setNames(sd_nms, covariate_nms)
-}
-
 #' Get covariate names
 #'
 #' @eval reg_args(include_formula = TRUE, include_family = FALSE)

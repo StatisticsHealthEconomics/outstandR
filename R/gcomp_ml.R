@@ -1,21 +1,23 @@
 
 #' G-computation maximum likelihood bootstrap
 #' 
-#' Using bootstrap resampling, calculates the log odds ratio.
+#' Using bootstrap resampling, calculates the relative treatment effect,
+#' such as log odds ratio, log relative risk or risk difference.
 #'     
-#' @param data Trial data 
-#' @param indices Indices sampled from rows of `data`
+#' @param data IPD trial data 
+#' @param indices Indices sampled from rows of `data` for bootstrapping
 #' @eval reg_args(include_formula = TRUE, include_family = TRUE)
 #' @param rho A named square matrix of covariate correlations; default NA.
 #' @param N Synthetic sample size for g-computation
 #' @param ald Aggregate-level data for covariates.
 #'
-#' @return Mean difference in expected log-odds
+#' @return Relative treatment effect
 #' @seealso [strategy_gcomp_ml()], [gcomp_ml_log_odds_ratio()]
 #' @examples
 #' \dontrun{
-#' data <- data.frame(treatment = c(0, 1), outcome = c(1, 0))
-#' gcomp_ml.boot(data, indices = 1:2, formula = outcome ~ treatment,
+#' data <- data.frame(trt = c("A", "C"),
+#'                    y = c(1, 0))
+#' gcomp_ml.boot(data, indices = 1:2, formula = y ~ trt,
 #'               R = 100, family = binomial(), N = 1000, ald = NULL)
 #' }
 #' @keywords internal
@@ -32,28 +34,24 @@ gcomp_ml.boot <- function(data, indices,
 }
 
 
-#' G-computation Maximum Likelihood mean outcome
-#' 
-#' @section Log-Odds Ratio: 
-#' Marginal _A_ vs _C_ log-odds ratio (mean difference in expected log-odds)
-#' estimated by transforming from probability to linear predictor scale.
-#'
-#' \eqn{\log(\hat{\mu}_A/(1 - \hat{\mu}_A)) - \log(\hat{\mu}_C/(1 - \hat{\mu}_C))}
+#' G-computation maximum likelihood mean outcomes by arm
 #'
 #' @eval reg_args(include_formula = TRUE, include_family = TRUE)
 #' @eval study_data_args(include_ipd = TRUE, include_ald = TRUE)
 #' @param rho A named square matrix of covariate correlations; default NA.
 #' @param N Synthetic sample size for g-computation
 #'
-#' @return A named vector containing the marginal mean probabilities under treatments A (`0`) and C (`1`).
+#' @return A named vector containing the marginal mean probabilities under
+#'   comparator "A" (`0`) and reference "C" (`1`) treatments.
 #' @seealso [strategy_gcomp_ml()], [gcomp_ml.boot()]
 #' @importFrom copula normalCopula mvdc rMvdc
 #' @importFrom stats predict glm
 #' @examples
 #' \dontrun{
-#' formula <- outcome ~ treatment
+#' formula <- y ~ trt
 #' family <- binomial()
-#' ipd <- data.frame(treatment = c(0, 1), outcome = c(1, 0))
+#' ipd <- data.frame(trt = c("A", "C"),
+#'                    y = c(1, 0))
 #' ald <- data.frame()
 #' gcomp_ml_means(formula, family, N = 1000, ipd = ipd, ald = ald)
 #' }
@@ -108,10 +106,10 @@ gcomp_ml_means <- function(formula,
 #' @importFrom copula normalCopula mvdc
 #' @examples
 #' \dontrun{
-#' formula <- outcome ~ treatment + age
-#' ipd <- data.frame(treatment = c(0, 1), outcome = c(1, 0), age = c(30, 40))
+#' formula <- y ~ trt + age
+#' ipd <- data.frame(tr = c("A", "C"), y = c(1, 0), age = c(30, 40))
 #' ald <- data.frame()
-#' simulate_ALD_pseudo_pop(formula, ipd, ald, trt_var = "treatment", N = 1000)
+#' simulate_ALD_pseudo_pop(formula, ipd, ald, trt_var = "trt", N = 1000)
 #' }
 #' @keywords internal
 #' 
@@ -126,21 +124,23 @@ simulate_ALD_pseudo_pop <- function(formula,
   
   # remove treatment
   covariate_names <- covariate_names[covariate_names != trt_var]
-  
-  mean_names <- get_mean_names(ald, covariate_names)
-  
-  sd_names <- get_sd_names(ald, covariate_names)
-  
   n_covariates <- length(covariate_names)
   
-  # covariate simulation for BC trial using copula package
+  ald_means <- dplyr::filter(ald, statistic == "mean", variable != "y")
+  ald_sd <- dplyr::filter(ald, statistic == "sd", variable != "y")
+  
+  # same order as covariate names
+  sd_values <- ald_sd$value[match(covariate_names, ald_sd$variable)]
+  mean_values <- ald_means$value[match(covariate_names, ald_means$variable)]
+  
+  # covariate simulation for BC ALD trial using copula package
   
   # don't require copula for single covariate
   if (length(covariate_names) <= 1) {
     x_star <- 
       rnorm(n = N,
-            mean = ald[[mean_names]],
-            sd = ald[[sd_names]]) |> 
+            mean = mean_values,
+            sd = sd_values) |> 
       matrix(ncol = 1, dimnames = list(NULL, covariate_names))
   
     return(x_star)
@@ -164,11 +164,11 @@ simulate_ALD_pseudo_pop <- function(formula,
                          dispstr = "un")
   
   # aggregate BC covariate means & standard deviations
-  mean_sd_margins <- list()
+  mean_sd_margins <- vector(mode = "list", length = n_covariates)
   
-  for (i in covariate_names) {
-    mean_sd_margins[[i]] <- list(mean = ald[[mean_names[i]]],
-                                 sd = ald[[sd_names[i]]])
+  for (i in 1:n_covariates) {
+    mean_sd_margins[[i]] <- list(mean = mean_values[i],
+                                 sd = sd_values[i])
   }
   
   # sample covariates from approximate joint distribution using copula
@@ -185,4 +185,3 @@ simulate_ALD_pseudo_pop <- function(formula,
   ##      what about binary? threshold?
   x_star
 }
-

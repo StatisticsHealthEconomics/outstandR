@@ -5,7 +5,7 @@
 #' adjusted individual level data studies AC into a single object.
 #'
 #' @param ipd_stats,ald_stats 
-#' @param CI Confidence interval 1-alpha
+#' @param CI Confidence interval 1-alpha; dafault 0.95
 #'
 #' @returns List
 #' @keywords internal

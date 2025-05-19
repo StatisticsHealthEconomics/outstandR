@@ -9,17 +9,17 @@
 #' @param ipd_trial Individual-level patient data. For example, suppose between studies _A_ and _C_.
 #'   In a long format and must contain a treatment column and outcome column consistent with the formula object.
 #'   The labels in the treatment are used internally so there must be a common treatment with the aggregate-level data trial.
-#' @param ald_trial Aggregate-level data. For example, suppose between studies _B_ and _C_. The column names take the form
-#'  - `mean.X*`: mean patient measurement
-#'  - `sd.X*`: standard deviation of patient measurement
-#'  - `y.*.sum`: total number of events
-#'  - `y.*.bar`: proportion of events
-#'  - `N.*`: total number of individuals
+#' @param ald_trial Aggregate-level data. For example, suppose between studies _B_ and _C_. The column names are
+#'  - `variable`: Covariate name. In the case of treatment arm sample size this is `NA`
+#'  - `statistic`: Summary statistic name from mean, standard deviation or sum
+#'  - `value`: Numerical value of summary statistic
+#'  - `trt`: Treatment label. Because we assume a common covariate distribution between treatment arms this is `NA`
 #' @param strategy Computation strategy function. These can be
 #'    `strategy_maic()`, `strategy_stc()`, `strategy_gcomp_ml()` and  `strategy_gcomp_stan()`
 #' @param ref_trt Reference / common / anchoring treatment name; default "C"
 #' @param CI Confidence interval; between 0,1
 #' @param scale Relative treatment effect scale. If `NULL`, the scale is automatically determined from the model.
+#'   Choose from "log-odds", "log_relative_risk", "risk_difference", "delta_z", "mean_difference", "rate_difference" depending on the data type.
 #' @param ... Additional arguments
 #' @return List of length 3 of statistics as a `outstandR` class object.
 #'   Containing statistics between each pair of treatments.
@@ -68,9 +68,8 @@ outstandR <- function(ipd_trial, ald_trial, strategy,
   ald <- prep_ald(strategy$formula, ald_trial, trt_var = strategy$trt_var)
 
   # treatment names for each study
-  
-  ipd_comp <- get_ipd_comparator(ipd, ref_trt, strategy$trt_var)
-  ald_comp <- get_ald_comparator(ald, ref_trt)
+  ipd_comp <- get_comparator(ipd, ref_trt, strategy$trt_var)
+  ald_comp <- get_comparator(ald, ref_trt, strategy$trt_var)
   
   ipd_trts <- list(ipd_comp, ref_trt)
   ald_trts <- list(ald_comp, ref_trt)

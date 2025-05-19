@@ -1,5 +1,6 @@
 
-#
+#' Input data validator
+#' @keyword internal
 validate_outstandr <- function(ipd_trial, ald_trial,
                                strategy,
                                CI, scale) {
@@ -8,7 +9,8 @@ validate_outstandr <- function(ipd_trial, ald_trial,
     stop("CI argument must be between 0 and 1.")
   }
   
-  if (!is.null(scale) && !any(scale %in% c("log_odds", "log_relative_risk", "risk_difference"))) {
+  if (!is.null(scale) && !any(scale %in% c("log_odds", "log_relative_risk", "risk_difference",
+                                           "mean_difference"))) {
     stop("scale not in available list.")
   }
   

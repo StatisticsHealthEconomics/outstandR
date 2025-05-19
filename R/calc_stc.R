@@ -1,5 +1,10 @@
 
 #' Calculate simulated treatment comparison statistics
+#' @return A list:
+#' \describe{
+#'   \item{`mean_A`}{Mean for comparator treatment group "A".}
+#'   \item{`mean_C`}{Mean for reference treatment group "C".}
+#' }
 #' @importFrom stats glm
 #' @export
 #' 

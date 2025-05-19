@@ -20,12 +20,13 @@ The total variance of marginal treatment effects.
 }
 \description{
 Computes the total variance of marginal treatment effects using the delta method.
-For binomial data, calculates:
-\deqn{\frac{1}{n_C} + \frac{1}{n_{\bar{C}}} + \frac{1}{n_B} + \frac{1}{n_{\bar{B}}}}.
 }
 \examples{
 \dontrun{
-ald <- data.frame(trial = 1:5, n_B = c(10, 20, 15, 30, 25), n_C = c(12, 18, 20, 25, 22))
+ald <- data.frame(trt = c("B","C","B","C"),
+                  variable = c(NA, NA, "y", "y"),
+                  statistic = c("N", "N", "sum", "sum"),
+                  value = c(100, 100, 50, 60)
 marginal_variance(ald, treatments = list("B", "C"), scale = "log", family = "binomial")
 }
 }
