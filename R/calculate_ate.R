@@ -68,6 +68,9 @@ calculate_trial_variance <- function(ald, tid, effect, family) {
   } else if (family == "gaussian") {
     return(
       calculate_trial_variance_continuous(ald, tid, effect))
+  } else if (family == "poisson") {
+    return(
+      calculate_trial_variance_count(ald, tid, effect))
   }
   
   stop("family not recognised.")
@@ -141,6 +144,49 @@ calculate_trial_variance_continuous <- function(ald, tid, effect) {
 }
 
 #' @export
+calculate_trial_variance_count <- function(ald, tid, effect) {
+  
+  ybar <- dplyr::filter(
+    ald,
+    variable == "y",
+    trt == tid,
+    statistic == "mean")$value
+  
+  ysd <- dplyr::filter(
+    ald,
+    variable == "y",
+    trt == tid,
+    statistic == "sd")$value
+  
+  N <- dplyr::filter(
+    ald,
+    trt == tid,
+    statistic == "N")$value
+  
+  effect_functions <- list(
+    
+    # Variance of log(rate) ~= 1 / (N * ybar) under Poisson assumptions
+    log_relative_risk = function() 1 / (N * ybar),
+    
+    # Variance of rate difference = variance of mean = ybar / N
+    rate_difference = function() ybar / N,
+    
+    # Signal-to-noise measure's approximate variance (can vary)
+    delta_z = function() {
+      # Var of sqrt(lambda) ≈ 1 / (4 * N * lambda) via delta method
+      1 / (4 * N * ybar)
+    }
+  )
+  
+  if (!effect %in% names(effect_functions)) {
+    stop(paste0("Unsupported effect function. Choose from ",
+                names(effect_functions)))
+  }
+  
+  effect_functions[[effect]]()
+}
+
+#' @export
 calculate_trial_mean <- function(ald, tid, effect, family) {
   
   if (family == "binomial") {
@@ -149,6 +195,9 @@ calculate_trial_mean <- function(ald, tid, effect, family) {
   } else if (family == "gaussian") {
     return(
       calculate_trial_mean_continuous(ald, tid, effect))
+  } else if (family == "poisson") {
+    return(
+      calculate_trial_mean_count(ald, tid, effect))
   }
   
   stop("family not recognised.")
@@ -211,11 +260,58 @@ calculate_trial_mean_continuous <- function(ald, tid, effect) {
       message("log mean used\n")
       log(ybar)
     },
-    risk_difference = function() ybar,
-    delta_z = function() ybar / ysd,
+    risk_difference = function() {
+      ybar
+    },
+    delta_z = function() {
+      ybar / ysd
+    },
     log_relative_risk = function() {
       message("log mean used\n")
       log(ybar)
+    }
+    # log_relative_risk_rare_events intentionally unsupported
+  )
+  
+  if (!effect %in% names(effect_fns)) {
+    stop(paste0("Unsupported link function. Choose from ",
+         names(effect_fns)))
+  }
+  
+  effect_fns[[effect]]()
+}
+
+#' @export
+calculate_trial_mean_count <- function(ald, tid, effect) {
+  
+  ybar <- dplyr::filter(
+    ald,
+    variable == "y",
+    trt == tid,
+    statistic == "mean")$value
+  
+  ysd <- dplyr::filter(
+    ald,
+    variable == "y",
+    trt == tid,
+    statistic == "sd")$value
+  
+  N <- dplyr::filter(
+    ald,
+    trt == tid,
+    statistic == "N")$value
+  
+  effect_fns <- list(
+    log_relative_risk = function() {
+      message("log rate used\n")
+      log(ybar)
+    },
+    rate_difference = function() {
+      ybar
+    },
+    delta_z = function() {
+      # signal-to-noise under Poisson
+      ybar / sqrt(ybar) 
     }
     # log_relative_risk_rare_events intentionally unsupported
   )
