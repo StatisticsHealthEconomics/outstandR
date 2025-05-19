@@ -19,13 +19,12 @@ outstandR(
 In a long format and must contain a treatment column and outcome column consistent with the formula object.
 The labels in the treatment are used internally so there must be a common treatment with the aggregate-level data trial.}
 
-\item{ald_trial}{Aggregate-level data. For example, suppose between studies \emph{B} and \emph{C}. The column names take the form
+\item{ald_trial}{Aggregate-level data. For example, suppose between studies \emph{B} and \emph{C}. The column names are
 \itemize{
-\item \verb{mean.X*}: mean patient measurement
-\item \verb{sd.X*}: standard deviation of patient measurement
-\item \code{y.*.sum}: total number of events
-\item \code{y.*.bar}: proportion of events
-\item \verb{N.*}: total number of individuals
+\item \code{variable}: Covariate name. In the case of treatment arm sample size this is \code{NA}
+\item \code{statistic}: Summary statistic name from mean, standard deviation or sum
+\item \code{value}: Numerical value of summary statistic
+\item \code{trt}: Treatment label. Because we assume a common covariate distribution between treatment arms this is \code{NA}
 }}
 
 \item{strategy}{Computation strategy function. These can be
@@ -35,7 +34,8 @@ The labels in the treatment are used internally so there must be a common treatm
 
 \item{CI}{Confidence interval; between 0,1}
 
-\item{scale}{Relative treatment effect scale. If \code{NULL}, the scale is automatically determined from the model.}
+\item{scale}{Relative treatment effect scale. If \code{NULL}, the scale is automatically determined from the model.
+Choose from "log-odds", "log_relative_risk", "risk_difference", "delta_z", "mean_difference", "rate_difference" depending on the data type.}
 
 \item{...}{Additional arguments}
 }

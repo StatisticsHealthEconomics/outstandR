@@ -9,7 +9,7 @@ result_stats(ipd_stats, ald_stats, CI = 0.95)
 \arguments{
 \item{ipd_stats, ald_stats}{}
 
-\item{CI}{Confidence interval 1-alpha}
+\item{CI}{Confidence interval 1-alpha; dafault 0.95}
 }
 \value{
 List

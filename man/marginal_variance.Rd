@@ -20,8 +20,6 @@ The total variance of marginal treatment effects.
 }
 \description{
 Computes the total variance of marginal treatment effects using the delta method.
-For binomial data, calculates:
-\deqn{\frac{1}{n_C} + \frac{1}{n_{\bar{C}}} + \frac{1}{n_B} + \frac{1}{n_{\bar{B}}}}.
 }
 \examples{
 \dontrun{

@@ -20,12 +20,6 @@ The relative treatment effect.
 }
 \description{
 Computes the relative treatment effect from aggregate-level data using event counts.
-For binomial data, calculates:
-\deqn{
-\log\left( \frac{n_B/(N_B-n_B)}{n_C/(N_B-n_{B})} \right) = \log(n_B n_{\bar{C}}) - \log(n_C n_{\bar{B}})
-}
-where \eqn{\bar{C}} is the compliment of \eqn{C}
-so e.g. \eqn{n_{\bar{C}} = N_C - n_c}.
 }
 \examples{
 \dontrun{

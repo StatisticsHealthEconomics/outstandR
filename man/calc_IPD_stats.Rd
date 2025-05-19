@@ -25,7 +25,7 @@ calc_IPD_stats(strategy, ipd, ald, scale, ...)
 \method{calc_IPD_stats}{gcomp_stan}(strategy, ipd, ald, scale, var_method = "sample", ...)
 }
 \arguments{
-\item{strategy}{A list corresponding to different approaches}
+\item{strategy}{A list corresponding to different modelling approaches}
 
 \item{ipd}{Individual-level patient data. Dataframe with one row per patient with outcome, treatment and covariate columns.}
 
@@ -51,21 +51,21 @@ and G-computation via Maximum Likelihood Estimation (MLE) or Bayesian inference.
 }
 \section{Multiple imputation marginalisation}{
 
-Using Stan, compute marginal relative treatment effect for \emph{A} vs \emph{C} for each MCMC sample
+Using Stan, compute marginal relative treatment effect for IPD comparator "A" vs reference "C" arms for each MCMC sample
 by transforming from probability to linear predictor scale. Approximate by
 using imputation and combining estimates using Rubin's rules, in contrast to \code{\link[=calc_IPD_stats.gcomp_stan]{calc_IPD_stats.gcomp_stan()}}.
 }
 
 \section{Simulated treatment comparison statistics}{
 
-IPD from the \emph{AC} trial are used to fit a regression model describing the
+IPD for reference "C" and comparator "A" trial arms are used to fit a regression model describing the
 observed outcomes \eqn{y} in terms of the relevant baseline characteristics \eqn{x} and
 the treatment variable \eqn{z}.
 }
 
 \section{Matching-adjusted indirect comparison statistics}{
 
-Marginal \emph{A} vs \emph{C} treatment effect estimates
+Marginal IPD comparator treatment "A" vs reference treatment "C" treatment effect estimates
 using bootstrapping sampling.
 }
 
@@ -76,15 +76,20 @@ Compute a non-parametric bootstrap with default \eqn{R=1000} resamples.
 
 \section{G-computation Bayesian statistics}{
 
-Using Stan, compute marginal log-odds ratio for \emph{A} vs \emph{C} for each MCMC sample
+Using Stan, compute marginal relative effects for IPD comparator "A" vs reference "C" treatment arms for each MCMC sample
 by transforming from probability to linear predictor scale.
 }
 
 \examples{
 \dontrun{
 strategy <- strategy_maic()
-ipd <- data.frame(id = 1:100, treatment = sample(c("A", "C"), 100, replace = TRUE), outcome = rnorm(100))
-ald <- data.frame(treatment = c("A", "C"), mean = c(0.2, 0.1), var = c(0.05, 0.03))
+ipd <- data.frame(trt = sample(c("A", "C"), 100, replace = TRUE),
+                  X1 = rnorm(100, 1, 1),
+                  y = rnorm(100, 10, 2))
+ald <- data.frame(trt = c(NA, "B", "C", "B", "C"),
+                  variable = c("X1", "y", "y", NA, NA),
+                  statistic = c("mean", "sum", "sum", "N", "N"),
+                  value = c(0.5, 10, 12, 20, 25))
 calc_IPD_stats(strategy, ipd, ald, scale = "log_odds")
 }
 }

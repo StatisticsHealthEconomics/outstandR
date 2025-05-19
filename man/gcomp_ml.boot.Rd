@@ -19,9 +19,9 @@ gcomp_ml.boot(
 )
 }
 \arguments{
-\item{data}{Trial data}
+\item{data}{IPD trial data}
 
-\item{indices}{Indices sampled from rows of \code{data}}
+\item{indices}{Indices sampled from rows of \code{data} for bootstrapping}
 
 \item{formula}{Linear regression \code{formula} object. Prognostic factors (PF) are main effects and effect modifiers (EM) are
 interactions with the treatment variable, i.e., y ~ X1 + trt + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
@@ -36,15 +36,17 @@ See stats::family() for more details.}
 \item{ald}{Aggregate-level data for covariates.}
 }
 \value{
-Mean difference in expected log-odds
+Relative treatment effect
 }
 \description{
-Using bootstrap resampling, calculates the log odds ratio.
+Using bootstrap resampling, calculates the relative treatment effect,
+such as log odds ratio, log relative risk or risk difference.
 }
 \examples{
 \dontrun{
-data <- data.frame(treatment = c(0, 1), outcome = c(1, 0))
-gcomp_ml.boot(data, indices = 1:2, formula = outcome ~ treatment,
+data <- data.frame(trt = c("A", "C"),
+                   y = c(1, 0))
+gcomp_ml.boot(data, indices = 1:2, formula = y ~ trt,
               R = 100, family = binomial(), N = 1000, ald = NULL)
 }
 }

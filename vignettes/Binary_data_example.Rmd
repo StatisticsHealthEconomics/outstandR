@@ -131,7 +131,7 @@ information to the analyst.
 The simulation input parameters are given below.
 
 | Parameter | Description | Value |
-|------------------|-------------------------------------|------------------|
+|------------------|------------------------------------|------------------|
 | `N` | Sample size | 200 |
 | `allocation` | Active treatment vs. placebo allocation ratio (2:1) | 2/3 |
 | `b_trt` | Conditional effect of active treatment vs. comparator (log(0.17)) | -1.77196 |
@@ -151,7 +151,8 @@ The simulation input parameters are given below.
 | `b_0` | Baseline intercept | -0.6 |
 
 We shall use the `gen_data()` function available with the
-[simcovariates](https://github.com/n8thangreen/simcovariates) package on GitHub.
+[simcovariates](https://github.com/n8thangreen/simcovariates) package on
+GitHub.
 
 ```{r, warning=FALSE, message=FALSE}
 library(dplyr)
@@ -291,19 +292,21 @@ $$
 \text{logit}(p_{t}) = \beta_0 + \beta_X (X_3 + X_4) + [\beta_{t} + \beta_{EM} (X_1 + X_2)] \; \text{I}(t \neq C)
 $$
 
-$\text{I}()$ is an indicator function taking value 1 if true and 0 otherwise.
-That is, for treatment $C$ the right hand side becomes
+$\text{I}()$ is an indicator function taking value 1 if true and 0
+otherwise. That is, for treatment $C$ the right hand side becomes
 $\beta_0 + \beta_X (X_3 + X_4)$ and for comparator treatments $A$ or $B$
 there is an additional $\beta_t + \beta_{EM} (X_1 + X_2)$ component
 consisting of the effect modifier terms and the coefficient for the
-treatment parameter, $\beta_t$ (or `b_trt` in the R code), i.e. the log odds-ratio (LOR) for the logit model.
-Finally, $p_{t}$ is the probability of experiencing the event of interest for treatment $t$.
+treatment parameter, $\beta_t$ (or `b_trt` in the R code), i.e. the log
+odds-ratio (LOR) for the logit model. Finally, $p_{t}$ is the
+probability of experiencing the event of interest for treatment $t$.
 
 ### Output statistics
 
 We will obtain the *marginal treatment effect* and *marginal variance*.
-The definition by which of these are calculated depends on the type of data and outcome
-scale. For our current example of binary data and log-odds ratio the marginal treatment effect is
+The definition by which of these are calculated depends on the type of
+data and outcome scale. For our current example of binary data and
+log-odds ratio the marginal treatment effect is
 
 $$
 \log\left( \frac{n_B/(N_B-n_B)}{n_C/(N_B-n_{B})} \right) = \log(n_B n_{\bar{C}}) - \log(n_C n_{\bar{B}})
@@ -315,16 +318,18 @@ $$
 \frac{1}{n_C} + \frac{1}{n_{\bar{C}}} + \frac{1}{n_B} + \frac{1}{n_{\bar{B}}}
 $$
 
-where $n_B, n_C$ are the number of events in each arm and $\bar{C}$
-is the compliment of $C$, so e.g. $n_{\bar{C}} = N_C - n_c$. Other outcome scales will be discussed below.
+where $n_B, n_C$ are the number of events in each arm and $\bar{C}$ is
+the compliment of $C$, so e.g. $n_{\bar{C}} = N_C - n_c$. Other outcome
+scales will be discussed below.
 
 ## Model fitting in R
 
 The `{outstandR}` package has been written to be easy to use and
-essentially consists of a single function, `outstandR()`. This can be used
-to run all of the different types of model, which when combined with their specific parameters
-we will call *strategies*. The first two arguments of `outstandR()` are the
-individual patient and aggregate-level data, respectively.
+essentially consists of a single function, `outstandR()`. This can be
+used to run all of the different types of model, which when combined
+with their specific parameters we will call *strategies*. The first two
+arguments of `outstandR()` are the individual patient and
+aggregate-level data, respectively.
 
 A `strategy` argument of `outstandR` takes functions called
 `strategy_*()`, where the wildcard `*` is replaced by the name of the
@@ -333,18 +338,17 @@ specific example is provided below.
 
 ### Model formula
 
-We will take advantage of the in-built R formula object to define the models.
-This will allow us easily pull out components of the object and consistently use it.
-Defining $X_1, X_2$ as effect modifiers, $X_3, X_4$ as prognostic
-variables and $Z$ the treatment indicator then the formula used in this
-model is
+We will take advantage of the in-built R formula object to define the
+models. This will allow us easily pull out components of the object and
+consistently use it. Defining $X_1, X_2$ as effect modifiers, $X_3, X_4$
+as prognostic variables and $Z$ the treatment indicator then the formula
+used in this model is
 
 $$
 y = X_3 + X_4 + Z + Z X_1 + Z X_2
-$$
-Notice that this does not include the link function of interest so appears as a linear regression.
-This corresponds to the following `R` `formula` object passed as an
-argument to the strategy function.
+$$ Notice that this does not include the link function of interest so
+appears as a linear regression. This corresponds to the following `R`
+`formula` object passed as an argument to the strategy function.
 
 ```{r}
 lin_form <- as.formula("y ~ X3 + X4 + trt + trt:X1 + trt:X2")
@@ -363,21 +367,24 @@ equivalent, but could be modified as follows.
 y ~ X3 + X4 + trt*(X1 + X2) - X1 - X2
 ```
 
-We note that the MAIC approach does not strictly use a regression in the same way as the other methods so should not be considered directly comparable in this sense
-but we have decided to use a consistent syntax across models using 'formula'.
-
+We note that the MAIC approach does not strictly use a regression in the
+same way as the other methods so should not be considered directly
+comparable in this sense but we have decided to use a consistent syntax
+across models using 'formula'.
 
 ### Matching-Adjusted Indirect Comparison (MAIC)
 
-A single call to `outstandR()` is sufficient to run the model. We pass to the `strategy` argument
-the `strategy_maic()` function with arguments `formula = lin_form` as defined above and `family = binomial(link = "logit")` for binary data and logistic link.
+A single call to `outstandR()` is sufficient to run the model. We pass
+to the `strategy` argument the `strategy_maic()` function with arguments
+`formula = lin_form` as defined above and
+`family = binomial(link = "logit")` for binary data and logistic link.
 
-Internally, using the individual patient level data for *AC* firstly we perform
-non-parametric bootstrap of the `maic.boot` function with `R = 1000`
-replicates. This function fits treatment coefficient for the marginal
-effect for *A* vs *C*. The returned value is an object of class `boot`
-from the `{boot}` package. We then calculate the bootstrap mean and
-variance in the wrapper function `maic_boot_stats`.
+Internally, using the individual patient level data for *AC* firstly we
+perform non-parametric bootstrap of the `maic.boot` function with
+`R = 1000` replicates. This function fits treatment coefficient for the
+marginal effect for *A* vs *C*. The returned value is an object of class
+`boot` from the `{boot}` package. We then calculate the bootstrap mean
+and variance in the wrapper function `maic_boot_stats`.
 
 ```{r outstandR_maic}
 outstandR_maic <-
@@ -397,7 +404,8 @@ We see that this is a list object with 2 parts. The first contains
 statistics between each pair of treatments. These are the mean
 contrasts, variances and confidence intervals (CI), respectively. The
 default CI is for 95% but can be altered in `outstandR` with the `CI`
-argument. The second element of the list contains the absolute effect estimates.
+argument. The second element of the list contains the absolute effect
+estimates.
 
 A `print` method is available for `outstandR` objects for more
 human-readable output
@@ -478,7 +486,8 @@ Simulated treatment comparison (STC) is the conventional outcome
 regression method. It involves fitting a regression model of outcome on
 treatment and covariates to the IPD.
 
-We can simply pass the same formula as before to the modified call with `strategy_stc()`.
+We can simply pass the same formula as before to the modified call with
+`strategy_stc()`.
 
 ```{r outstandR_stc}
 outstandR_stc <-
@@ -538,7 +547,8 @@ $$
 \hat{\mu}_0 = \int_{x^*} g^{-1} (\hat{\beta}_0 + x^* \hat{\beta}_1 ) p(x^*) \; \text{d}x^*
 $$
 
-As performed for the previous approaches, call `outstandR()` but change the strategy to `strategy_gcomp_ml()`,
+As performed for the previous approaches, call `outstandR()` but change
+the strategy to `strategy_gcomp_ml()`,
 
 ```{r outstandR_gcomp_ml}
 outstandR_gcomp_ml <-
@@ -598,7 +608,8 @@ full Bayesian estimation via Markov chain Monte Carlo (MCMC) sampling.
 The average, variance and interval estimates of the marginal treatment
 effect can be derived empirically from draws of the posterior density.
 
-The strategy function to plug-in to the `outstandR()` call for this approach is `strategy_gcomp_stan()`,
+The strategy function to plug-in to the `outstandR()` call for this
+approach is `strategy_gcomp_stan()`,
 
 ```{r outstandR_gcomp_stan, message=FALSE, eval=FALSE}
 outstandR_gcomp_stan <-
@@ -648,8 +659,9 @@ outstandR_gcomp_stan_lrr
 
 ### Multiple imputation marginalisation
 
-The final method is to obtain the marginalized treatment effect for aggregate level data study, obtained
-by integrating over the covariate distribution from the aggregate level data $BC$ study
+The final method is to obtain the marginalized treatment effect for
+aggregate level data study, obtained by integrating over the covariate
+distribution from the aggregate level data $BC$ study
 
 $$
 \Delta^{\text{marg}} = \mathbb{E}_{X \sim f_{\text{BC}}(X)} \left[ \mu_{T=1}(X) - \mu_{T=0}(X) \right]
@@ -662,7 +674,8 @@ $$
 \hat{\Delta}_{BC} \sim \mathcal{N}(\Delta^{\text{marg}}, SE^2)
 $$
 
-The multiple imputation marginalisation strategy function is `strategy_mim()`,
+The multiple imputation marginalisation strategy function is
+`strategy_mim()`,
 
 ```{r outstandR_mim, eval=FALSE}
 outstandR_mim <-
@@ -710,13 +723,14 @@ xx <- capture.output(
 outstandR_mim_lrr
 ```
 
-
 ## Model comparison
 
 #### $AC$ effect in $BC$ population
 
-The true $AC$ effect on the log OR scale in the $BC$ (aggregate trial data) population is
-$\beta_t^{AC} + \beta_{EM} (\bar{X}^{AC}_1 + \bar{X}_2^{AC})$. Calculated by
+The true $AC$ effect on the log OR scale in the $BC$ (aggregate trial
+data) population is
+$\beta_t^{AC} + \beta_{EM} (\bar{X}^{AC}_1 + \bar{X}_2^{AC})$.
+Calculated by
 
 ```{r}
 mean_X1 <- ald_trial$value[ald_trial$statistic == "mean" & ald_trial$variable == "X1"]

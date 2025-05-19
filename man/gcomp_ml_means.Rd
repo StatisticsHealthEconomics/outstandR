@@ -2,7 +2,7 @@
 % Please edit documentation in R/gcomp_ml.R
 \name{gcomp_ml_means}
 \alias{gcomp_ml_means}
-\title{G-computation Maximum Likelihood mean outcome}
+\title{G-computation maximum likelihood mean outcomes by arm}
 \usage{
 gcomp_ml_means(
   formula,
@@ -34,24 +34,18 @@ We assume a common distribution for each treatment arm.}
 \item{N}{Synthetic sample size for g-computation}
 }
 \value{
-A named vector containing the marginal mean probabilities under treatments A (\code{0}) and C (\code{1}).
+A named vector containing the marginal mean probabilities under
+comparator "A" (\code{0}) and reference "C" (\code{1}) treatments.
 }
 \description{
-G-computation Maximum Likelihood mean outcome
+G-computation maximum likelihood mean outcomes by arm
 }
-\section{Log-Odds Ratio}{
-
-Marginal \emph{A} vs \emph{C} log-odds ratio (mean difference in expected log-odds)
-estimated by transforming from probability to linear predictor scale.
-
-\eqn{\log(\hat{\mu}_A/(1 - \hat{\mu}_A)) - \log(\hat{\mu}_C/(1 - \hat{\mu}_C))}
-}
-
 \examples{
 \dontrun{
-formula <- outcome ~ treatment
+formula <- y ~ trt
 family <- binomial()
-ipd <- data.frame(treatment = c(0, 1), outcome = c(1, 0))
+ipd <- data.frame(trt = c("A", "C"),
+                   y = c(1, 0))
 ald <- data.frame()
 gcomp_ml_means(formula, family, N = 1000, ipd = ipd, ald = ald)
 }

@@ -28,6 +28,8 @@ calculate_ate <- function(mean_comp, mean_ref, effect) {
     ate <- qlogis(mean_comp) - qlogis(mean_ref)
   } else if (effect == "risk_difference") {
     ate <- mean_comp - mean_ref
+  } else if (effect == "mean_difference") {
+    ate <- mean_comp - mean_ref
   } else if (effect == "delta_z") {
     ate <- qnorm(mean_comp) - qnorm(mean_ref)
   } else if (effect == "log_relative_risk_rare_events") {
@@ -91,11 +93,21 @@ calculate_trial_variance_binary <- function(ald, tid, effect) {
     statistic == "N")$value
   
   effect_functions <- list(
-    "log_odds" = function() 1/y + 1/(N-y),
-    "log_relative_risk" = function() 1/y - 1/N,
-    "risk_difference" = function() y * (1 - y/N) / N,
-    "delta_z" = function() 1/y + 1/(N - y),
-    "log_relative_risk_rare_events" = function() 1/y - 1/N
+    "log_odds" = function() {
+      1/y + 1/(N-y)
+    },
+    "log_relative_risk" = function() {
+      1/y - 1/N
+    },
+    "risk_difference" = function() {
+      y * (1 - y/N) / N
+    },
+    "delta_z" = function() {
+      1/y + 1/(N - y)
+    },
+    "log_relative_risk_rare_events" = function() {
+      1/y - 1/N
+    }
   )
   
   if (!effect %in% names(effect_functions)) {
@@ -127,12 +139,16 @@ calculate_trial_variance_continuous <- function(ald, tid, effect) {
     statistic == "N")$value
   
   effect_functions <- list(
-    "log_odds" = function() pi^2/3 * (1/N),
+    "log_odds" = function() {
+      pi^2/3 * (1/N)
+    },
     "log_relative_risk" = function() {
       message("log mean used\n")
       log(ybar)
     },
-    "risk_difference" = function() (ysd^2)/N
+    "mean_difference" = function() {
+      (ysd^2)/N
+    }
   )
   
   if (!effect %in% names(effect_functions)) {
@@ -260,7 +276,7 @@ calculate_trial_mean_continuous <- function(ald, tid, effect) {
       message("log mean used\n")
       log(ybar)
     },
-    risk_difference = function() {
+    mean_difference = function() {
       ybar
     },
     delta_z = function() {
@@ -349,7 +365,7 @@ get_treatment_effect <- function(link) {
   
   link_map <- list(
     logit = "log_odds",
-    identity = "risk_difference",
+    identity = "mean_difference",
     probit = "delta_z",
     cloglog = "log_relative_risk_rare_events",
     log = "log_relative_risk"
@@ -389,6 +405,13 @@ calc_log_relative_risk <- function(mean_comp, mean_ref) {
 continuity_correction <- function(ald,
                                   treatments = list("B", "C"),
                                   correction = 0.5) {
+  # missing value
+  needs_correction <- any(ald$variable == "y" & ald$statistic == "sum") 
+  
+  if (!needs_correction) {
+    return(ald)
+  }
+  
   # check if correction is needed in any group
   needs_correction <- 
     ald |> 
