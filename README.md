@@ -6,6 +6,7 @@
 [![R-CMD-check](https://github.com/StatisticsHealthEconomics/outstandR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/StatisticsHealthEconomics/outstandR/actions/workflows/R-CMD-check.yaml)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![outstandR status badge](https://statisticshealtheconomics.r-universe.dev/outstandR/badges/version)](https://statisticshealtheconomics.r-universe.dev/outstandR)
 <!-- badges: end -->
 
 > Model-based Standardisation with G-computation
@@ -38,11 +39,13 @@ and
 > Remiro-Azócar, A., Heath, A., & Baio, G. (2023) _Model-based standardization using multiple imputation. BMC Medical Research Methodology_, 1–15. https://doi.org/10.1186/s12874-024-02157-x
 
 ## Installation
-Install the [development version from GitHub](https://github.com/StatisticsHealthEconomics/) using `remotes`:
+Install the [development version from GitHub](https://github.com/StatisticsHealthEconomics/) using R-universe:
 
 ```r
-remotes::install_github("StatisticsHealthEconomics/outstandR")
+install.packages("outstandR", repos = c("https://statisticshealtheconomics.r-universe.dev", "https://cloud.r-project.org"))
 ```
+
+Alternatively, you may wish to download directly from the repo with `remotes::install_github("StatisticsHealthEconomics/outstandR")`.
 
 ## License
 This package is licensed under the GPLv3. For more information, see [LICENSE](https://www.gnu.org/licenses/gpl-3.0).
