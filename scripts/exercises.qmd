@@ -62,7 +62,8 @@ The `outstandR` package will also need to be installed.
 # install.packages(c("dplyr", "tidyr", "boot", "copula", "rstanarm", "remotes"))
 #
 # remotes::install_github("n8thangreen/simcovariates") # For gen_data
-# remotes::install_github("StatisticsHealthEconomics/outstandR")
+#
+# install.packages("outstandR", repos = c("https://statisticshealtheconomics.r-universe.dev", "https://cloud.r-project.org"))
 
 library(outstandR)
 library(simcovariates) # For gen_data
