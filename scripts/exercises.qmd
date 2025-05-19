@@ -63,7 +63,8 @@ The `outstandR` package will also need to be installed.
 #
 # remotes::install_github("n8thangreen/simcovariates") # For gen_data
 #
-# install.packages("outstandR", repos = c("https://statisticshealtheconomics.r-universe.dev", "https://cloud.r-project.org"))
+# install.packages("outstandR",
+#  repos = c("https://statisticshealtheconomics.r-universe.dev", "https://cloud.r-project.org"))
 
 library(outstandR)
 library(simcovariates) # For gen_data
@@ -131,7 +132,7 @@ ipd_trial_bin <- gen_data(N,
                           b_trt, 
                           b_X, 
                           b_EM, 
-                          b_0 = b_0,
+                          b_0,
                           meanX_AC, 
                           sdX, 
                           meanX_EM_AC, 
