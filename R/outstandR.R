@@ -11,7 +11,7 @@
 #'   The labels in the treatment are used internally so there must be a common treatment with the aggregate-level data trial.
 #' @param ald_trial Aggregate-level data. For example, suppose between studies _B_ and _C_. The column names are
 #'  - `variable`: Covariate name. In the case of treatment arm sample size this is `NA`
-#'  - `statistic`: Summary statistic name from mean, standard deviation or sum
+#'  - `statistic`: Summary statistic name from "mean", standard deviation "sd" or "sum"
 #'  - `value`: Numerical value of summary statistic
 #'  - `trt`: Treatment label. Because we assume a common covariate distribution between treatment arms this is `NA`
 #' @param strategy Computation strategy function. These can be
