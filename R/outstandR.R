@@ -63,13 +63,15 @@ outstandR <- function(ipd_trial, ald_trial, strategy,
                       CI = 0.95, scale = NULL, ...) {
   
   validate_outstandr(ipd_trial, ald_trial, strategy, CI, scale)
+
+  trt_var <- strategy$trt_var
   
   ipd <- prep_ipd(strategy$formula, ipd_trial)
-  ald <- prep_ald(strategy$formula, ald_trial, trt_var = strategy$trt_var)
+  ald <- prep_ald(strategy$formula, ald_trial, trt_var = trt_var)
 
   # treatment names for each study
-  ipd_comp <- get_comparator(ipd, ref_trt, strategy$trt_var)
-  ald_comp <- get_comparator(ald, ref_trt, strategy$trt_var)
+  ipd_comp <- get_comparator(ipd, ref_trt, trt_var)
+  ald_comp <- get_comparator(ald, ref_trt, trt_var)
   
   ipd_trts <- list(ipd_comp, ref_trt)
   ald_trts <- list(ald_comp, ref_trt)
