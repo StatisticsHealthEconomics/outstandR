@@ -30,7 +30,11 @@ The document structure follow the binary data example vignette which should be r
 First, let us load necessary packages.
 
 ```{r setup, warning=FALSE, message=FALSE}
-# install.packages("outstandR", repos = c("https://statisticshealtheconomics.r-universe.dev", "https://cloud.r-project.org"))
+# install.packages("outstandR",
+#  repos = c("https://statisticshealtheconomics.r-universe.dev", "https://cloud.r-project.org"))
+#
+# install.packages("simcovariates",
+#  repos = c("https://n8thangreen.r-universe.dev", "https://cloud.r-project.org"))
 
 library(boot)      # non-parametric bootstrap in MAIC and ML G-computation
 library(copula)    # simulating BC covariates from Gaussian copula
