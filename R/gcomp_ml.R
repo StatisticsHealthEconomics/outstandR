@@ -101,6 +101,9 @@ gcomp_ml_means <- function(formula,
 #' @eval study_data_args(include_ipd = TRUE, include_ald = TRUE)
 #' @param rho A named square matrix of covariate correlations; default NA.
 #' @param N Sample size for the synthetic cohort. Default is 1000.
+#' @param marginal_distns Marginal distributions names; vector default NA.
+#'    Available distributions are given in stats::Distributions. See [copula::Mvdc()] for details
+#' @param marginal_params Marginal distributions parameters; list of lists, default NA. See [copula::Mvdc()] for details
 #' 
 #' @return A data frame representing the synthetic pseudo-population.
 #' @importFrom copula normalCopula mvdc
@@ -117,7 +120,9 @@ simulate_ALD_pseudo_pop <- function(formula,
                                     ipd, ald,
                                     trt_var,
                                     rho = NA,
-                                    N = 1000) {
+                                    N = 1000,
+                                    marginal_distns = NA,
+                                    marginal_params = NA) {
   set.seed(1234)
   
   covariate_names <- get_covariate_names(formula)
@@ -171,11 +176,23 @@ simulate_ALD_pseudo_pop <- function(formula,
                                  sd = sd_values[i])
   }
   
+  ##TODO: move this out of this function
+  # check if custom marginal distributions provided
+  if (is.na(marginal_distns) || is.na(marginal_params)) {
+    margins_arg <- rep("norm", n_covariates)
+    paramMargins_arg <- mean_sd_margins
+  } else {
+    # use user-provided
+    margins_arg <- marginal_distns
+    paramMargins_arg <- marginal_params
+  }
+  
   # sample covariates from approximate joint distribution using copula
   mvd <- copula::mvdc(
     copula = cop,
-    margins = rep("norm", n_covariates),  # Gaussian marginals
-    paramMargins = mean_sd_margins)
+    margins = marginal_args,
+    paramMargins = paramMargins_arg,
+    check = TRUE)
 
   # simulated BC pseudo-population
   x_star <- as.data.frame(copula::rMvdc(n = N, mvd))
