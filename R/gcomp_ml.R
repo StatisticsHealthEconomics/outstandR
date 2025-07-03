@@ -162,6 +162,7 @@ simulate_ALD_pseudo_pop <- function(formula,
                     ncol = n_covariates,
                     dimnames = list(covariate_names,
                                     covariate_names))
+      diag(rho) <- rep(1, n_covariates)
     }
   } else {
     # ensure in correct order
