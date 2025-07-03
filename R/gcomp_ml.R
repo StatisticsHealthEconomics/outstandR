@@ -99,7 +99,7 @@ gcomp_ml_means <- function(formula,
 #'
 #' @eval reg_args(include_formula = TRUE, include_family = FALSE)
 #' @eval study_data_args(include_ipd = TRUE, include_ald = TRUE)
-#' @param rho A named square matrix of covariate correlations; default NA.
+#' @param rho A named square matrix of covariate correlations or single value; default NA takes from IPD.
 #' @param N Sample size for the synthetic cohort. Default is 1000.
 #' @param marginal_distns Marginal distributions names; vector default NA.
 #'    Available distributions are given in stats::Distributions. See [copula::Mvdc()] for details
@@ -134,6 +134,7 @@ simulate_ALD_pseudo_pop <- function(formula,
   ald_means <- dplyr::filter(ald, statistic == "mean", variable != "y")
   ald_sd <- dplyr::filter(ald, statistic == "sd", variable != "y")
   
+  # from ALD
   # same order as covariate names
   sd_values <- ald_sd$value[match(covariate_names, ald_sd$variable)]
   mean_values <- ald_means$value[match(covariate_names, ald_means$variable)]
@@ -147,13 +148,21 @@ simulate_ALD_pseudo_pop <- function(formula,
             mean = mean_values,
             sd = sd_values) |> 
       matrix(ncol = 1, dimnames = list(NULL, covariate_names))
-  
+    
     return(x_star)
   }
   
-  if (is.na(rho)) {
-    # AC IPD pairwise correlations
-    rho <- cor(ipd[, covariate_names])
+  if (!is.matrix(rho)) {
+    if (is.na(rho)) {
+      # AC IPD pairwise correlations
+      rho <- cor(ipd[, covariate_names])
+    } else {
+      rho <- matrix(data = rho,
+                    nrow = n_covariates,
+                    ncol = n_covariates,
+                    dimnames = list(covariate_names,
+                                    covariate_names))
+    }
   } else {
     # ensure in correct order
     rho <- rho[covariate_names, covariate_names]
@@ -178,27 +187,21 @@ simulate_ALD_pseudo_pop <- function(formula,
   
   ##TODO: move this out of this function
   # check if custom marginal distributions provided
-  if (is.na(marginal_distns) || is.na(marginal_params)) {
-    margins_arg <- rep("norm", n_covariates)
-    paramMargins_arg <- mean_sd_margins
-  } else {
-    # use user-provided
-    margins_arg <- marginal_distns
-    paramMargins_arg <- marginal_params
+  if (!is.list(marginal_params) || any(is.na(marginal_distns))) {
+    marginal_distns <- rep("norm", n_covariates)
+    marginal_params <- mean_sd_margins
   }
   
   # sample covariates from approximate joint distribution using copula
   mvd <- copula::mvdc(
     copula = cop,
-    margins = marginal_args,
-    paramMargins = paramMargins_arg,
+    margins = marginal_distns,
+    paramMargins = marginal_params,
     check = TRUE)
-
+  
   # simulated BC pseudo-population
   x_star <- as.data.frame(copula::rMvdc(n = N, mvd))
   colnames(x_star) <- covariate_names
   
-  ##TODO: this assume all covariate continuous
-  ##      what about binary? threshold?
   x_star
 }
