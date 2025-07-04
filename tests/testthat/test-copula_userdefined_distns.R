@@ -3,7 +3,8 @@
 
 form <- y ~ X3 + X4 + trt:X1 + trt:X2
 
-# generate data
+###########################
+# generate continuous data
 
 N <- 200
 allocation <- 2 / 3      # active treatment vs. placebo allocation ratio (2:1)
@@ -20,32 +21,32 @@ corX <- 0.2            # covariate correlation coefficient
 b_0 <- -0.6            # baseline intercept coefficient; fixed value
 
 ipd_trial <- simcovariates::gen_data(
-  N,
-  b_trt,
-  b_X,
-  b_EM,
-  b_0,
-  meanX_AC,
-  sdX,
-  meanX_EM_AC,
-  sdX_EM,
-  corX,
-  allocation,
+  N = N,
+  b_trt = b_trt,
+  b_X = b_X,
+  b_EM = b_EM,
+  b_0 = b_0,
+  meanX = meanX_AC,
+  sdX = sdX,
+  meanX_EM = meanX_EM_AC,
+  sdX_EM = sdX_EM,
+  corX = corX,
+  allocation = allocation,
   family = binomial("logit")
 )
 
 BC.IPD <- simcovariates::gen_data(
-  N,
-  b_trt,
-  b_X,
-  b_EM,
-  b_0,
-  meanX_BC,
-  sdX,
-  meanX_EM_BC,
-  sdX_EM,
-  corX,
-  allocation,
+  N = N,
+  b_trt = b_trt,
+  b_X = b_X,
+  b_EM = b_EM,
+  b_0 = b_0,
+  meanX = meanX_BC,
+  sdX = sdX,
+  meanX_EM = meanX_EM_BC,
+  sdX_EM = sdX_EM,
+  corX = corX,
+  allocation = allocation,
   family = binomial("logit")
 )
 
@@ -54,19 +55,20 @@ BC.IPD$trt <- factor(BC.IPD$trt, labels = c("C", "B"))
 # covariate summary statistics
 # assume same between treatments
 cov.X <-
-  BC.IPD %>%
+  BC.IPD |>
   as.data.frame() |>
-  dplyr::select(X1, X2, X3, X4, trt) %>%
-  pivot_longer(cols = starts_with("X"),
-               names_to = "variable",
-               values_to = "value") %>%
-  dplyr::group_by(variable) %>%
-  dplyr::summarise(mean = mean(value), sd = sd(value)) %>%
-  pivot_longer(
+  dplyr::select(matches("^(PF|EM)"), trt) |> 
+  tidyr::pivot_longer(
+    cols = starts_with("PF") | starts_with("EM"),
+    names_to = "variable",
+    values_to = "value") |>
+  dplyr::group_by(variable) |>
+  dplyr::summarise(mean = mean(value), sd = sd(value)) |>
+  tidyr::pivot_longer(
     cols = c("mean", "sd"),
     names_to = "statistic",
     values_to = "value"
-  ) %>%
+  ) |>
   dplyr::ungroup() |>
   dplyr::mutate(trt = NA)
 
@@ -74,19 +76,19 @@ cov.X <-
 summary.y <-
   BC.IPD |>
   as.data.frame() |>
-  dplyr::select(y, trt) %>%
-  pivot_longer(cols = "y",
+  dplyr::select(y, trt) |>
+  tidyr::pivot_longer(cols = "y",
                names_to = "variable",
-               values_to = "value") %>%
-  dplyr::group_by(variable, trt) %>%
+               values_to = "value") |>
+  dplyr::group_by(variable, trt) |>
   dplyr::summarise(mean = mean(value),
                    sd = sd(value),
-                   sum = sum(value)) %>%
-  pivot_longer(
+                   sum = sum(value)) |>
+  tidyr::pivot_longer(
     cols = c("mean", "sd", "sum"),
     names_to = "statistic",
     values_to = "value"
-  ) %>%
+  ) |>
   dplyr::ungroup()
 
 # sample sizes
@@ -94,7 +96,7 @@ summary.N <-
   BC.IPD |>
   dplyr::group_by(trt) |>
   dplyr::count(name = "N") |>
-  pivot_longer(cols = "N",
+  tidyr::pivot_longer(cols = "N",
                names_to = "statistic",
                values_to = "value") |>
   dplyr::mutate(variable = NA_character_) |>
@@ -115,7 +117,7 @@ test_that("simulate_ALD_pseudo_pop directly", {
     ipd = ipd_trial,
     ald = ald_trial,
     trt_var = "trt",
-    N = 10000
+    N = 100000
   )
   
   X1_mean <- ald_trial |> dplyr::filter(variable == "X1", statistic == "mean") |>
@@ -172,7 +174,7 @@ test_that("simulate_ALD_pseudo_pop directly", {
     ald = ald_trial,
     rho = corX,
     trt_var = "trt",
-    N = 10000
+    N = 100000
   )
   
   X1_mean <- ald_trial |> dplyr::filter(variable == "X1", statistic == "mean") |>
@@ -233,7 +235,7 @@ test_that("simulate_ALD_pseudo_pop directly", {
     ald = ald_trial,
     rho = rho_new,
     trt_var = "trt",
-    N = 10000
+    N = 100000
   )
   
   X1_mean <- ald_trial |> dplyr::filter(variable == "X1", statistic == "mean") |>
@@ -290,7 +292,7 @@ test_that("simulate_ALD_pseudo_pop directly", {
     ald = ald_trial,
     rho = rho_new,
     trt_var = "trt",
-    N = 10000
+    N = 100000
   )
   
   X1_mean <- ald_trial |> dplyr::filter(variable == "X1", statistic == "mean") |>
@@ -345,22 +347,22 @@ test_that("simulate_ALD_pseudo_pop directly", {
   # with marginals
   
   marginals_orig <- list(
-    marginal_dists = c("norm", "norm", "norm", "norm"),
+    marginal_dists = c(X1 = "norm", X2 = "norm", X3 = "norm", X4 = "norm"),
     marginal_params = list(
-      list(mean = meanX_EM_BC[1], sd = sdX_EM[1]),
-      list(mean = meanX_EM_BC[2], sd = sdX_EM[2]),
-      list(mean = meanX_BC[1], sd = sdX[1]),
-      list(mean = meanX_BC[2], sd = sdX[2])
+      X1 = list(mean = meanX_EM_BC[1], sd = sdX_EM[1]),
+      X2 = list(mean = meanX_EM_BC[2], sd = sdX_EM[2]),
+      X3 = list(mean = meanX_BC[1], sd = sdX[1]),
+      X4 = list(mean = meanX_BC[2], sd = sdX[2])
     )
   )
   
   marginals_new <- list(
-    marginal_dists = c("norm", "norm", "norm", "norm"),
+    marginal_dists = c(X1 = "norm", X2 = "norm", X3 = "norm", X4 = "norm"),
     marginal_params = list(
-      list(mean = 0, sd = 1),
-      list(mean = 0, sd = 1),
-      list(mean = 0, sd = 1),
-      list(mean = 0, sd = 1)
+      X1 = list(mean = 0, sd = 1),
+      X2 = list(mean = 0, sd = 1),
+      X3 = list(mean = 0, sd = 1),
+      X4 = list(mean = 0, sd = 1)
     )
   )
   
@@ -505,6 +507,117 @@ test_that("simulate_ALD_pseudo_pop directly", {
     tolerance = 0.1
   )
 })
+
+#######################
+# generate binary data
+
+N <- 200
+allocation <- 2 / 3      # active treatment vs. placebo allocation ratio (2:1)
+b_trt <- log(0.17)     # conditional effect of active treatment vs. common comparator
+b_X <- -log(0.5)       # conditional effect of each prognostic variable
+b_EM <- -log(0.67)     # conditional interaction effect of each effect modifier
+propX_AC <- c(0.45, 0.45)
+propX_BC <- c(0.6, 0.6)  
+propX_EM_AC <- c(0.45, 0.45)
+propX_EM_BC <- c(0.6, 0.6)  
+corX <- 0.2            # covariate correlation coefficient
+b_0 <- -0.6            # baseline intercept coefficient; fixed value
+
+ipd_trial <- simcovariates::gen_data(
+  N = N,
+  b_trt = b_trt,
+  b_X_bin = b_X,
+  b_EM_bin = b_EM,
+  prop_X_bin = propX_AC,
+  prop_EM_bin = propX_EM_AC,
+  b_0 = b_0,
+  corX = corX,
+  allocation = allocation,
+  family = binomial("logit")
+)
+
+BC.IPD <- simcovariates::gen_data(
+  N = N,
+  b_trt = b_trt,
+  b_X_bin = b_X,
+  b_EM_bin = b_EM,
+  prop_X_bin = propX_BC,
+  prop_EM_bin = propX_EM_BC,
+  b_0 = b_0,
+  corX = corX,
+  allocation = allocation,
+  family = binomial("logit")
+)
+
+BC.IPD$trt <- factor(BC.IPD$trt, labels = c("C", "B"))
+
+# covariate summary statistics
+# assume same between treatments
+cov.X <-
+  BC.IPD |>
+  as.data.frame() |>
+  dplyr::select(matches("^(PF|EM)"), trt) |> 
+  tidyr::pivot_longer(
+    cols = starts_with("PF") | starts_with("EM"),
+    names_to = "variable",
+    values_to = "value") |>
+  dplyr::group_by(variable) |>
+  dplyr::summarise(mean = mean(value), sd = sd(value)) |>
+  tidyr::pivot_longer(
+    cols = c("mean", "sd"),
+    names_to = "statistic",
+    values_to = "value"
+  ) |>
+  dplyr::ungroup() |>
+  dplyr::mutate(trt = NA)
+
+# outcome
+summary.y <-
+  BC.IPD |>
+  as.data.frame() |>
+  dplyr::select(y, trt) |>
+  tidyr::pivot_longer(cols = "y",
+               names_to = "variable",
+               values_to = "value") |>
+  dplyr::group_by(variable, trt) |>
+  dplyr::summarise(mean = mean(value),
+                   sd = sd(value),
+                   sum = sum(value)) |>
+  tidyr::pivot_longer(
+    cols = c("mean", "sd", "sum"),
+    names_to = "statistic",
+    values_to = "value"
+  ) |>
+  dplyr::ungroup()
+
+# sample sizes
+summary.N <-
+  BC.IPD |>
+  dplyr::group_by(trt) |>
+  dplyr::count(name = "N") |>
+  tidyr::pivot_longer(cols = "N",
+               names_to = "statistic",
+               values_to = "value") |>
+  dplyr::mutate(variable = NA_character_) |>
+  dplyr::select(variable, statistic, value, trt)
+
+ald_trial <- rbind.data.frame(cov.X, summary.y, summary.N)
+
+
+test_that("simulate_ALD_pseudo_pop directly with binary data", {
+  ##TODO:
+})
+
+
+
+
+
+
+
+
+
+
+
 
 
 

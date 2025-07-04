@@ -178,11 +178,19 @@ sdX_EM <- c(0.4, 0.4)  # standard deviation of each EM covariate
 corX <- 0.2            # covariate correlation coefficient  
 b_0 <- -0.6            # baseline intercept coefficient  ##TODO: fixed value
 
-ipd_trial <- gen_data(N, b_trt, b_X, b_EM, b_0,
-                      meanX_AC, sdX, 
-                      meanX_EM_AC, sdX_EM, 
-                      corX, allocation,
-                      family = binomial("logit"))
+ipd_trial <- gen_data(
+  N = N,
+  b_trt = b_trt,
+  b_X = b_X,
+  b_EM = b_EM,
+  b_0 = b_0,
+  meanX = meanX_AC,
+  sdX = sdX,
+  meanX_EM = meanX_EM_AC,
+  sdX_EM = sdX_EM,
+  corX = corX,
+  allocation = allocation,
+  family = binomial("logit"))
 ```
 
 The treatment column in the return data is binary and takes values 0
@@ -200,11 +208,19 @@ and `meanX_EM_BC` but otherwise use the same parameter values as for the
 $AC$ trial.
 
 ```{r generate-ald-data}
-BC.IPD <- gen_data(N, b_trt, b_X, b_EM, b_0,
-                   meanX_BC, sdX, 
-                   meanX_EM_BC, sdX_EM, 
-                   corX, allocation,
-                   family = binomial("logit"))
+BC.IPD <- gen_data(
+  N = N,
+  b_trt = b_trt,
+  b_X = b_X,
+  b_EM = b_EM,
+  b_0 = b_0,
+  meanX = meanX_BC,
+  sdX = sdX,
+  meanX_EM = meanX_EM_BC,
+  sdX_EM = sdX_EM,
+  corX = corX,
+  allocation = allocation,
+  family = binomial("logit"))
 
 BC.IPD$trt <- factor(BC.IPD$trt, labels = c("C", "B"))
 
@@ -213,14 +229,20 @@ BC.IPD$trt <- factor(BC.IPD$trt, labels = c("C", "B"))
 cov.X <- 
   BC.IPD %>%
   as.data.frame() |> 
-  dplyr::select(X1, X2, X3, X4, trt) %>%
-  pivot_longer(cols = starts_with("X"), names_to = "variable", values_to = "value") %>%
+  dplyr::select(matches("^(PF|EM)"), trt) |> 
+  tidyr::pivot_longer(
+    cols = starts_with("PF") | starts_with("EM"),
+    names_to = "variable",
+    values_to = "value") |>
   group_by(variable) %>%
   summarise(
     mean = mean(value),
     sd = sd(value)
   ) %>%
-  pivot_longer(cols = c("mean", "sd"), names_to = "statistic", values_to = "value") %>%
+  tidyr::pivot_longer(
+    cols = c("mean", "sd"),
+    names_to = "statistic",
+    values_to = "value") %>%
   ungroup() |> 
   mutate(trt = NA)
 
@@ -229,15 +251,19 @@ summary.y <-
   BC.IPD |> 
   as.data.frame() |> 
   dplyr::select(y, trt) %>%
-  pivot_longer(cols = "y", names_to = "variable", values_to = "value") %>%
+  tidyr::pivot_longer(cols = "y",
+               names_to = "variable",
+               values_to = "value") %>%
   group_by(variable, trt) %>%
   summarise(
     mean = mean(value),
     sd = sd(value),
     sum = sum(value)
   ) %>%
-  pivot_longer(cols = c("mean", "sd", "sum"),
-               names_to = "statistic", values_to = "value") %>%
+  tidyr::pivot_longer(
+    cols = c("mean", "sd", "sum"),
+    names_to = "statistic",
+    values_to = "value") %>%
   ungroup()
 
 # sample sizes
@@ -245,7 +271,10 @@ summary.N <-
   BC.IPD |> 
   group_by(trt) |> 
   count(name = "N") |> 
-  pivot_longer(cols = "N", names_to = "statistic", values_to = "value") |> 
+  tidyr::pivot_longer(
+    cols = "N",
+    names_to = "statistic",
+    values_to = "value") |> 
   mutate(variable = NA_character_) |> 
   dplyr::select(variable, statistic, value, trt)
   
@@ -257,7 +286,8 @@ the following.
 
 #### `ipd_trial`: Individual patient data
 
--   `X*`: Patient measurements
+-   `PF_*`: Patient measurements prognostic factors
+-   `EM_*`: Patient measurements effect modifiers
 -   `trt`: Treatment label (factor)
 -   `y`: Indicator of whether event was observed (two level factor)
 

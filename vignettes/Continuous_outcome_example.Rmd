@@ -1,8 +1,8 @@
 ---
-title: "Count data example"
+title: "Continuous data example"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Count data example}
+  %\VignetteIndexEntry{Continuous data example}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
   editor_options: 
@@ -14,14 +14,13 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  eval = TRUE,
   comment = "#>"
 )
 ```
 
 ## Introduction
 
-This is the vignette for performing population adjustment methods with count data, in order to compare marginal
+This is the vignette for performing population adjustment methods with continuous data, in order to compare marginal
 treatment effects when there are cross-trial differences in effect modifiers and limited patient-level data.
 We will demonstrate how to apply MAIC, STC, G-computation with ML, G-computation with Bayesian inference and multiple imputation marginalisation.
 The document structure follow the binary data example vignette which should be referred to for more details.
@@ -47,8 +46,8 @@ library(simcovariates)
 
 ### Data
 
-We first simulate both the IPD and ALD count data. See the binary data example vignette for more details on how this is implemented.
-The difference with that example is that we change the `family` argument in `gen_data()` to `poisson(link = "log")`, corresponding to the count data case.
+We first simulate both the IPD and ALD data. See the binary data example vignette for more details on how this is implemented.
+The difference with that example is that we change the `family` argument in `gen_data()` to `gaussian(link = "identity")`, corresponding to the continuous data case.
 The `gen_data()` function is available in the [simcovariates](https://github.com/n8thangreen/simcovariates) package on GitHub.
 
 ```{r, warning=FALSE, message=FALSE}
@@ -69,11 +68,19 @@ sdX_EM <- c(0.4, 0.4)  # standard deviation of each EM covariate
 corX <- 0.2            # covariate correlation coefficient  
 b_0 <- -0.6            # baseline intercept coefficient  ##TODO: fixed value
 
-ipd_trial <- gen_data(N, b_trt, b_X, b_EM, b_0,
-                      meanX_AC, sdX, 
-                      meanX_EM_AC, sdX_EM, 
-                      corX, allocation,
-                      family = poisson(link = "log"))
+ipd_trial <- gen_data(
+  N = N,
+  b_trt = b_trt,
+  b_X = b_X,
+  b_EM = b_EM,
+  b_0 = b_0,
+  meanX = meanX_AC,
+  sdX = sdX,
+  meanX_EM = meanX_EM_AC,
+  sdX_EM = sdX_EM,
+  corX = corX,
+  allocation = allocation,
+  family = gaussian(link = "identity"))
 
 ipd_trial$trt <- factor(ipd_trial$trt, labels = c("C", "A"))
 ```
@@ -81,11 +88,19 @@ ipd_trial$trt <- factor(ipd_trial$trt, labels = c("C", "A"))
 Similarly, for the aggregate data but with the additional summarise step (see binary data example vignette for code).
 
 ```{r generate-ald-data, echo=FALSE, warning=FALSE, message=FALSE}
-BC.IPD <- gen_data(N, b_trt, b_X, b_EM, b_0,
-                   meanX_BC, sdX, 
-                   meanX_EM_BC, sdX_EM, 
-                   corX, allocation,
-                   family = poisson(link = "log"))
+BC.IPD <- gen_data(
+  N = N,
+  b_trt = b_trt,
+  b_X = b_X,
+  b_EM = b_EM,
+  b_0 = b_0,
+  meanX = meanX_BC,
+  sdX = sdX,
+  meanX_EM = meanX_EM_BC,
+  sdX_EM = sdX_EM,
+  corX = corX,
+  allocation = allocation,
+  family = gaussian(link = "identity"))
 
 BC.IPD$trt <- factor(BC.IPD$trt, labels = c("C", "B"))
 
@@ -94,14 +109,20 @@ BC.IPD$trt <- factor(BC.IPD$trt, labels = c("C", "B"))
 cov.X <- 
   BC.IPD %>%
   as.data.frame() |> 
-  dplyr::select(X1, X2, X3, X4, trt) %>%
-  pivot_longer(cols = starts_with("X"), names_to = "variable", values_to = "value") %>%
+  dplyr::select(matches("^(PF|EM)"), trt) |> 
+  tidyr::pivot_longer(
+    cols = starts_with("PF") | starts_with("EM"),
+    names_to = "variable",
+    values_to = "value") |>
   group_by(variable) %>%
   summarise(
     mean = mean(value),
     sd = sd(value)
   ) %>%
-  pivot_longer(cols = c("mean", "sd"), names_to = "statistic", values_to = "value") %>%
+  tidyr::pivot_longer(
+    cols = c("mean", "sd"),
+    names_to = "statistic",
+    values_to = "value") %>%
   ungroup() |> 
   mutate(trt = NA)
 
@@ -110,15 +131,19 @@ summary.y <-
   BC.IPD |> 
   as.data.frame() |> 
   dplyr::select(y, trt) %>%
-  pivot_longer(cols = "y", names_to = "variable", values_to = "value") %>%
+  tidyr::pivot_longer(cols = "y",
+               names_to = "variable",
+               values_to = "value") %>%
   group_by(variable, trt) %>%
   summarise(
     mean = mean(value),
     sd = sd(value),
-    sum = sum(value),
+    sum = sum(value)
   ) %>%
-  pivot_longer(cols = c("mean", "sd", "sum"),
-               names_to = "statistic", values_to = "value") %>%
+  tidyr::pivot_longer(
+    cols = c("mean", "sd", "sum"),
+    names_to = "statistic",
+    values_to = "value") %>%
   ungroup()
 
 # sample sizes
@@ -126,9 +151,13 @@ summary.N <-
   BC.IPD |> 
   group_by(trt) |> 
   count(name = "N") |> 
-  pivot_longer(cols = "N", names_to = "statistic", values_to = "value") |> 
+  tidyr::pivot_longer(
+    cols = "N",
+    names_to = "statistic",
+    values_to = "value") |> 
   mutate(variable = NA_character_) |> 
   dplyr::select(variable, statistic, value, trt)
+
   
 ald_trial <- rbind.data.frame(cov.X, summary.y, summary.N)
 ```
@@ -137,9 +166,10 @@ This general format of the data sets are in a 'long' style consisting of the fol
 
 #### `ipd_trial`: Individual patient data
 
--   `X*`: Patient measurements
+-   `PF_*`: Patient measurements prognostic factors
+-   `EM_*`: Patient measurements effect modifiers
 -   `trt`: Treatment label (factor)
--   `y`: Counts
+-   `y`: Continuous numeric
 
 #### `ald_trial`: Aggregate-level data
 
@@ -202,7 +232,7 @@ outstandR_maic <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_maic(
               formula = lin_form,
-              family = poisson(link = "log")))
+              family = gaussian(link = "identity")))
 ```
 
 The returned object is of class `outstandR`.
@@ -223,7 +253,7 @@ outstandR_stc <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_stc(
               formula = lin_form,
-              family = poisson(link = "log")))
+              family = gaussian(link = "identity")))
 outstandR_stc
 ```
 
@@ -236,12 +266,13 @@ effect for *A* versus *C*.
 Pass the `strategy_gcomp_ml()` strategy function.
 
 
-```{r outstandR_gcomp_ml, message=FALSE, warning=FALSE}
+```{r outstandR_gcomp_ml}
 outstandR_gcomp_ml <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_gcomp_ml(
               formula = lin_form,
-              family = poisson(link = "log")))
+              family = gaussian(link = "identity")))
+
 outstandR_gcomp_ml
 ```
 
@@ -255,21 +286,21 @@ of the outcome regression, as well as the joint covariate distribution.
 
 Pass the `strategy_gcomp_stan()` strategy function.
 
-```{r outstandR_gcomp_stan, eval=FALSE, message=FALSE, warning=FALSE}
+```{r outstandR_gcomp_stan, eval=FALSE}
 outstandR_gcomp_stan <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_gcomp_stan(
               formula = lin_form,
-              family = poisson(link = "log")))
+              family = gaussian(link = "identity")))
 ```
 
-```{r outstandR_gcomp_stan_eval, echo=FALSE, message=FALSE, warning=FALSE}
+```{r outstandR_gcomp_stan_eval, echo=FALSE}
 xx <- capture.output(
   outstandR_gcomp_stan <-
     outstandR(ipd_trial, ald_trial,
               strategy = strategy_gcomp_stan(
                 formula = lin_form,
-                family = poisson(link = "log"))))
+                family = gaussian(link = "identity"))))
 ```
 
 ```{r}
@@ -285,7 +316,7 @@ outstandR_mim <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_mim(
               formula = lin_form,
-              family = poisson(link = "log")))
+              family = gaussian(link = "identity")))
 ```
 
 ```{r outstandR_mim_eval, echo=FALSE}
@@ -294,7 +325,7 @@ xx <- capture.output(
     outstandR(ipd_trial, ald_trial,
               strategy = strategy_mim(
                 formula = lin_form,
-                family = poisson(link = "log"))))
+                family = gaussian(link = "identity"))))
 ```
 
 ```{r}
