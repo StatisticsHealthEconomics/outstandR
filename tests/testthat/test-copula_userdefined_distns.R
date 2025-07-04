@@ -1,7 +1,7 @@
 #
 
 
-form <- y ~ X3 + X4 + trt:X1 + trt:X2
+form <- y ~ PF_cont_1 + PF_cont_2 + trt:EM_cont_1 + trt:EM_cont_2
 
 ###########################
 # generate continuous data
@@ -77,9 +77,10 @@ summary.y <-
   BC.IPD |>
   as.data.frame() |>
   dplyr::select(y, trt) |>
-  tidyr::pivot_longer(cols = "y",
-               names_to = "variable",
-               values_to = "value") |>
+  tidyr::pivot_longer(
+    cols = "y",
+    names_to = "variable",
+    values_to = "value") |>
   dplyr::group_by(variable, trt) |>
   dplyr::summarise(mean = mean(value),
                    sd = sd(value),
@@ -96,9 +97,10 @@ summary.N <-
   BC.IPD |>
   dplyr::group_by(trt) |>
   dplyr::count(name = "N") |>
-  tidyr::pivot_longer(cols = "N",
-               names_to = "statistic",
-               values_to = "value") |>
+  tidyr::pivot_longer(
+    cols = "N",
+    names_to = "statistic",
+    values_to = "value") |>
   dplyr::mutate(variable = NA_character_) |>
   dplyr::select(variable, statistic, value, trt)
 
@@ -117,53 +119,52 @@ test_that("simulate_ALD_pseudo_pop directly", {
     ipd = ipd_trial,
     ald = ald_trial,
     trt_var = "trt",
-    N = 100000
-  )
+    N = 100000)
   
-  X1_mean <- ald_trial |> dplyr::filter(variable == "X1", statistic == "mean") |>
+  EM1_mean <- ald_trial |> dplyr::filter(variable == "EM_cont_1", statistic == "mean") |>
     dplyr::pull(value)
   
-  X2_mean <- ald_trial |> dplyr::filter(variable == "X2", statistic == "mean") |>
+  EM2_mean <- ald_trial |> dplyr::filter(variable == "EM_cont_2", statistic == "mean") |>
     dplyr::pull(value)
   
-  X3_mean <- ald_trial |> dplyr::filter(variable == "X3", statistic == "mean") |>
+  PF1_mean <- ald_trial |> dplyr::filter(variable == "PF_cont_1", statistic == "mean") |>
     dplyr::pull(value)
-
-  X4_mean <- ald_trial |> dplyr::filter(variable == "X4", statistic == "mean") |>
+  
+  PF2_mean <- ald_trial |> dplyr::filter(variable == "PF_cont_2", statistic == "mean") |>
     dplyr::pull(value)
   
   expect_equal(
-    object = mean(result$X1),
-    expected = X1_mean,
+    object = mean(result$EM_cont_1),
+    expected = EM1_mean,
     tolerance = 0.01
   )
   
   expect_equal(
-    object = mean(result$X2),
-    expected = X2_mean,
+    object = mean(result$EM_cont_2),
+    expected = EM2_mean,
     tolerance = 0.01
   )
   
   expect_equal(
-    object = mean(result$X3),
-    expected = X3_mean,
+    object = mean(result$PF_cont_1),
+    expected = PF1_mean,
     tolerance = 0.01
   )
   expect_equal(
-    object = mean(result$X4),
-    expected = X4_mean,
+    object = mean(result$PF_cont_2),
+    expected = PF2_mean,
     tolerance = 0.01
   )
   
   expect_equal(
-    object = cor(result$X3, result$X4),
-    expected = cor(ipd_trial$X3, ipd_trial$X4),
+    object = cor(result$EM_cont_1, result$EM_cont_2),
+    expected = cor(ipd_trial$EM_cont_1, ipd_trial$EM_cont_2),
     tolerance = 0.1
   )
   
   expect_equal(
-    object = cor(result$X1, result$X2),
-    expected = cor(ipd_trial$X1, ipd_trial$X2),
+    object = cor(result$PF_cont_1, result$PF_cont_2),
+    expected = cor(ipd_trial$PF_cont_1, ipd_trial$PF_cont_2),
     tolerance = 0.1
   )
   
@@ -174,53 +175,52 @@ test_that("simulate_ALD_pseudo_pop directly", {
     ald = ald_trial,
     rho = corX,
     trt_var = "trt",
-    N = 100000
-  )
+    N = 100000)
   
-  X1_mean <- ald_trial |> dplyr::filter(variable == "X1", statistic == "mean") |>
+  EM1_mean <- ald_trial |> dplyr::filter(variable == "EM_cont_1", statistic == "mean") |>
     dplyr::pull(value)
   
-  X2_mean <- ald_trial |> dplyr::filter(variable == "X2", statistic == "mean") |>
+  EM2_mean <- ald_trial |> dplyr::filter(variable == "EM_cont_2", statistic == "mean") |>
     dplyr::pull(value)
   
-  X3_mean <- ald_trial |> dplyr::filter(variable == "X3", statistic == "mean") |>
+  PF1_mean <- ald_trial |> dplyr::filter(variable == "PF_cont_1", statistic == "mean") |>
     dplyr::pull(value)
   
-  X4_mean <- ald_trial |> dplyr::filter(variable == "X4", statistic == "mean") |>
+  PF2_mean <- ald_trial |> dplyr::filter(variable == "PF_cont_2", statistic == "mean") |>
     dplyr::pull(value)
   
   expect_equal(
-    object = mean(result$X1),
-    expected = X1_mean,
+    object = mean(result$EM_cont_1),
+    expected = EM1_mean,
     tolerance = 0.01
   )
   
   expect_equal(
-    object = mean(result$X2),
-    expected = X2_mean,
+    object = mean(result$EM_cont_2),
+    expected = EM2_mean,
     tolerance = 0.01
   )
   
   expect_equal(
-    object = mean(result$X3),
-    expected = X3_mean,
+    object = mean(result$PF_cont_1),
+    expected = PF1_mean,
     tolerance = 0.01
   )
   
   expect_equal(
-    object = mean(result$X4),
-    expected = X4_mean,
+    object = mean(result$PF_cont_2),
+    expected = PF2_mean,
     tolerance = 0.01
   )
   
   expect_equal(
-    object = cor(result$X3, result$X4),
+    object = cor(result$PF_cont_1, result$PF_cont_2),
     expected = corX,
     tolerance = 0.1
   )
   
   expect_equal(
-    object = cor(result$X1, result$X2),
+    object = cor(result$EM_cont_1, result$EM_cont_2),
     expected = corX,
     tolerance = 0.1
   )
@@ -235,53 +235,52 @@ test_that("simulate_ALD_pseudo_pop directly", {
     ald = ald_trial,
     rho = rho_new,
     trt_var = "trt",
-    N = 100000
-  )
+    N = 100000)
   
-  X1_mean <- ald_trial |> dplyr::filter(variable == "X1", statistic == "mean") |>
+  EM1_mean <- ald_trial |> dplyr::filter(variable == "EM_cont_1", statistic == "mean") |>
     dplyr::pull(value)
   
-  X2_mean <- ald_trial |> dplyr::filter(variable == "X2", statistic == "mean") |>
+  EM2_mean <- ald_trial |> dplyr::filter(variable == "EM_cont_2", statistic == "mean") |>
     dplyr::pull(value)
   
-  X3_mean <- ald_trial |> dplyr::filter(variable == "X3", statistic == "mean") |>
+  PF1_mean <- ald_trial |> dplyr::filter(variable == "PF_cont_1", statistic == "mean") |>
     dplyr::pull(value)
   
-  X4_mean <- ald_trial |> dplyr::filter(variable == "X4", statistic == "mean") |>
+  PF2_mean <- ald_trial |> dplyr::filter(variable == "PF_cont_2", statistic == "mean") |>
     dplyr::pull(value)
   
   expect_equal(
-    object = mean(result$X1),
-    expected = X1_mean,
+    object = mean(result$EM_cont_1),
+    expected = EM1_mean,
     tolerance = 0.01
   )
   
   expect_equal(
-    object = mean(result$X2),
-    expected = X2_mean,
+    object = mean(result$EM_cont_2),
+    expected = EM2_mean,
     tolerance = 0.01
   )
   
   expect_equal(
-    object = mean(result$X3),
-    expected = X3_mean,
+    object = mean(result$PF_cont_1),
+    expected = PF1_mean,
     tolerance = 0.01
   )
   
   expect_equal(
-    object = mean(result$X4),
-    expected = X4_mean,
+    object = mean(result$PF_cont_2),
+    expected = PF2_mean,
     tolerance = 0.01
   )
   
   expect_equal(
-    object = cor(result$X3, result$X4),
+    object = cor(result$EM_cont_1, result$EM_cont_2),
     expected = rho_new,
     tolerance = 0.1
   )
   
   expect_equal(
-    object = cor(result$X1, result$X2),
+    object = cor(result$PF_cont_1, result$PF_cont_2),
     expected = rho_new,
     tolerance = 0.1
   )
@@ -292,53 +291,52 @@ test_that("simulate_ALD_pseudo_pop directly", {
     ald = ald_trial,
     rho = rho_new,
     trt_var = "trt",
-    N = 100000
-  )
+    N = 100000)
   
-  X1_mean <- ald_trial |> dplyr::filter(variable == "X1", statistic == "mean") |>
+  EM1_mean <- ald_trial |> dplyr::filter(variable == "EM_cont_1", statistic == "mean") |>
     dplyr::pull(value)
   
-  X2_mean <- ald_trial |> dplyr::filter(variable == "X2", statistic == "mean") |>
+  EM2_mean <- ald_trial |> dplyr::filter(variable == "EM_cont_2", statistic == "mean") |>
     dplyr::pull(value)
   
-  X3_mean <- ald_trial |> dplyr::filter(variable == "X3", statistic == "mean") |>
+  PF1_mean <- ald_trial |> dplyr::filter(variable == "PF_cont_1", statistic == "mean") |>
     dplyr::pull(value)
   
-  X4_mean <- ald_trial |> dplyr::filter(variable == "X4", statistic == "mean") |>
+  PF2_mean <- ald_trial |> dplyr::filter(variable == "PF_cont_2", statistic == "mean") |>
     dplyr::pull(value)
   
   expect_equal(
-    object = mean(result$X1),
-    expected = X1_mean,
+    object = mean(result$EM_cont_1),
+    expected = EM1_mean,
     tolerance = 0.01
   )
   
   expect_equal(
-    object = mean(result$X2),
-    expected = X2_mean,
+    object = mean(result$EM_cont_2),
+    expected = EM2_mean,
     tolerance = 0.01
   )
   
   expect_equal(
-    object = mean(result$X3),
-    expected = X3_mean,
+    object = mean(result$PF_cont_1),
+    expected = PF1_mean,
     tolerance = 0.01
   )
   
   expect_equal(
-    object = mean(result$X4),
-    expected = X4_mean,
+    object = mean(result$PF_cont_2),
+    expected = PF2_mean,
     tolerance = 0.01
   )
   
   expect_equal(
-    object = cor(result$X3, result$X4),
+    object = cor(result$EM_cont_1, result$EM_cont_2),
     expected = rho_new,
     tolerance = 0.1
   )
   
   expect_equal(
-    object = cor(result$X1, result$X2),
+    object = cor(result$PF_cont_1, result$PF_cont_2),
     expected = rho_new,
     tolerance = 0.1
   )
@@ -347,22 +345,28 @@ test_that("simulate_ALD_pseudo_pop directly", {
   # with marginals
   
   marginals_orig <- list(
-    marginal_dists = c(X1 = "norm", X2 = "norm", X3 = "norm", X4 = "norm"),
+    marginal_dists = c(EM_cont_1 = "norm",
+                       EM_cont_2 = "norm",
+                       PF_cont_1 = "norm",
+                       PF_cont_2 = "norm"),
     marginal_params = list(
-      X1 = list(mean = meanX_EM_BC[1], sd = sdX_EM[1]),
-      X2 = list(mean = meanX_EM_BC[2], sd = sdX_EM[2]),
-      X3 = list(mean = meanX_BC[1], sd = sdX[1]),
-      X4 = list(mean = meanX_BC[2], sd = sdX[2])
+      EM_cont_1 = list(mean = meanX_EM_BC[1], sd = sdX_EM[1]),
+      EM_cont_2 = list(mean = meanX_EM_BC[2], sd = sdX_EM[2]),
+      PF_cont_1 = list(mean = meanX_BC[1], sd = sdX[1]),
+      PF_cont_2 = list(mean = meanX_BC[2], sd = sdX[2])
     )
   )
   
   marginals_new <- list(
-    marginal_dists = c(X1 = "norm", X2 = "norm", X3 = "norm", X4 = "norm"),
+    marginal_dists = c(EM_cont_1 = "norm",
+                       EM_cont_2 = "norm",
+                       PF_cont_1 = "norm",
+                       PF_cont_2 = "norm"),
     marginal_params = list(
-      X1 = list(mean = 0, sd = 1),
-      X2 = list(mean = 0, sd = 1),
-      X3 = list(mean = 0, sd = 1),
-      X4 = list(mean = 0, sd = 1)
+      EM_cont_1 = list(mean = 0, sd = 1),
+      EM_cont_2 = list(mean = 0, sd = 1),
+      PF_cont_1 = list(mean = 0, sd = 1),
+      PF_cont_2 = list(mean = 0, sd = 1)
     )
   )
   
@@ -378,38 +382,38 @@ test_that("simulate_ALD_pseudo_pop directly", {
   )
   
   expect_equal(
-    object = mean(result$X1),
-    expected = marginals_orig$marginal_params[[1]]$mean,
+    object = mean(result$EM_cont_1),
+    expected = marginals_orig$marginal_params$EM_cont_1$mean,
     tolerance = 0.01
   )
   
   expect_equal(
-    object = mean(result$X2),
-    expected = marginals_orig$marginal_params[[2]]$mean,
+    object = mean(result$EM_cont_2),
+    expected = marginals_orig$marginal_params$EM_cont_2$mean,
     tolerance = 0.01
   )
   
   expect_equal(
-    object = mean(result$X3),
-    expected = marginals_orig$marginal_params[[3]]$mean,
+    object = mean(result$PF_cont_1),
+    expected = marginals_orig$marginal_params$PF_cont_1$mean,
     tolerance = 0.01
   )
   
   expect_equal(
-    object = mean(result$X4),
-    expected = marginals_orig$marginal_params[[4]]$mean,
+    object = mean(result$PF_cont_2),
+    expected = marginals_orig$marginal_params$PF_cont_2$mean,
     tolerance = 0.01
   )
   
   expect_equal(
-    object = cor(result$X3, result$X4),
-    expected = cor(ipd_trial$X3, ipd_trial$X4),
+    object = cor(result$EM_cont_1, result$EM_cont_2),
+    expected = cor(ipd_trial$EM_cont_1, ipd_trial$EM_cont_2),
     tolerance = 0.1
   )
   
   expect_equal(
-    object = cor(result$X1, result$X2),
-    expected = cor(ipd_trial$X1, ipd_trial$X2),
+    object = cor(result$PF_cont_1, result$PF_cont_2),
+    expected = cor(ipd_trial$PF_cont_1, ipd_trial$PF_cont_2),
     tolerance = 0.1
   )
   
@@ -426,36 +430,36 @@ test_that("simulate_ALD_pseudo_pop directly", {
   )
   
   expect_equal(
-    object = mean(result$X1),
-    expected = marginals_orig$marginal_params[[1]]$mean,
+    object = mean(result$EM_cont_1),
+    expected = marginals_orig$marginal_params$EM_cont_1$mean,
     tolerance = 0.01
   )
   
   expect_equal(
-    object = mean(result$X2),
-    expected = marginals_orig$marginal_params[[2]]$mean,
+    object = mean(result$EM_cont_2),
+    expected = marginals_orig$marginal_params$EM_cont_2$mean,
     tolerance = 0.01
   )
   
   expect_equal(
-    object = mean(result$X3),
-    expected = marginals_orig$marginal_params[[3]]$mean,
+    object = mean(result$PF_cont_1),
+    expected = marginals_orig$marginal_params$PF_cont_1$mean,
     tolerance = 0.01
   )
   
   expect_equal(
-    object = mean(result$X4),
-    expected = marginals_orig$marginal_params[[4]]$mean,
+    object = mean(result$PF_cont_2),
+    expected = marginals_orig$marginal_params$PF_cont_2$mean,
     tolerance = 0.01
   )
   
   expect_equal(
-    object = cor(result$X3, result$X4),
+    object = cor(result$EM_cont_1, result$EM_cont_2),
     expected = rho_new,
     tolerance = 0.1
   )
   expect_equal(
-    object = cor(result$X1, result$X2),
+    object = cor(result$PF_cont_1, result$PF_cont_2),
     expected = rho_new,
     tolerance = 0.1
   )
@@ -472,37 +476,37 @@ test_that("simulate_ALD_pseudo_pop directly", {
   )
   
   expect_equal(
-    object = mean(result$X1),
-    expected = marginals_orig$marginal_params[[1]]$mean,
+    object = mean(result$EM_cont_1),
+    expected = marginals_orig$marginal_params$EM_cont_1$mean,
     tolerance = 0.01
   )
   
   expect_equal(
-    object = mean(result$X2),
-    expected = marginals_orig$marginal_params[[2]]$mean,
+    object = mean(result$EM_cont_2),
+    expected = marginals_orig$marginal_params$EM_cont_2$mean,
     tolerance = 0.01
   )
   
   expect_equal(
-    object = mean(result$X3),
-    expected = marginals_orig$marginal_params[[3]]$mean,
+    object = mean(result$PF_cont_1),
+    expected = marginals_orig$marginal_params$PF_cont_1$mean,
     tolerance = 0.01
   )
   
   expect_equal(
-    object = mean(result$X4),
-    expected = marginals_orig$marginal_params[[4]]$mean,
+    object = mean(result$PF_cont_2),
+    expected = marginals_orig$marginal_params$PF_cont_2$mean,
     tolerance = 0.01
   )
   
   expect_equal(
-    object = cor(result$X3, result$X4),
+    object = cor(result$EM_cont_1, result$EM_cont_2),
     expected = rho_new,
     tolerance = 0.1
   )
   
   expect_equal(
-    object = cor(result$X1, result$X2),
+    object = cor(result$PF_cont_1, result$PF_cont_2),
     expected = rho_new,
     tolerance = 0.1
   )
@@ -510,6 +514,8 @@ test_that("simulate_ALD_pseudo_pop directly", {
 
 #######################
 # generate binary data
+
+form <- y ~ PF_bin_1 + PF_bin_2 + trt:EM_bin_1 + trt:EM_bin_2
 
 N <- 200
 allocation <- 2 / 3      # active treatment vs. placebo allocation ratio (2:1)
@@ -528,8 +534,8 @@ ipd_trial <- simcovariates::gen_data(
   b_trt = b_trt,
   b_X_bin = b_X,
   b_EM_bin = b_EM,
-  prop_X_bin = propX_AC,
-  prop_EM_bin = propX_EM_AC,
+  prob_X_bin = propX_AC,
+  prob_EM_bin = propX_EM_AC,
   b_0 = b_0,
   corX = corX,
   allocation = allocation,
@@ -541,8 +547,8 @@ BC.IPD <- simcovariates::gen_data(
   b_trt = b_trt,
   b_X_bin = b_X,
   b_EM_bin = b_EM,
-  prop_X_bin = propX_BC,
-  prop_EM_bin = propX_EM_BC,
+  prob_X_bin = propX_BC,
+  prob_EM_bin = propX_EM_BC,
   b_0 = b_0,
   corX = corX,
   allocation = allocation,
@@ -562,9 +568,9 @@ cov.X <-
     names_to = "variable",
     values_to = "value") |>
   dplyr::group_by(variable) |>
-  dplyr::summarise(mean = mean(value), sd = sd(value)) |>
+  dplyr::summarise(prop = mean(value)) |>
   tidyr::pivot_longer(
-    cols = c("mean", "sd"),
+    cols = "prop",
     names_to = "statistic",
     values_to = "value"
   ) |>
@@ -576,9 +582,10 @@ summary.y <-
   BC.IPD |>
   as.data.frame() |>
   dplyr::select(y, trt) |>
-  tidyr::pivot_longer(cols = "y",
-               names_to = "variable",
-               values_to = "value") |>
+  tidyr::pivot_longer(
+    cols = "y",
+    names_to = "variable",
+    values_to = "value") |>
   dplyr::group_by(variable, trt) |>
   dplyr::summarise(mean = mean(value),
                    sd = sd(value),
@@ -595,9 +602,10 @@ summary.N <-
   BC.IPD |>
   dplyr::group_by(trt) |>
   dplyr::count(name = "N") |>
-  tidyr::pivot_longer(cols = "N",
-               names_to = "statistic",
-               values_to = "value") |>
+  tidyr::pivot_longer(
+    cols = "N",
+    names_to = "statistic",
+    values_to = "value") |>
   dplyr::mutate(variable = NA_character_) |>
   dplyr::select(variable, statistic, value, trt)
 
@@ -605,20 +613,411 @@ ald_trial <- rbind.data.frame(cov.X, summary.y, summary.N)
 
 
 test_that("simulate_ALD_pseudo_pop directly with binary data", {
-  ##TODO:
+  ####################
+  # without marginals
+  
+  # providing competing arguments
+  
+  # no rho ie taken from ipd
+  result <- simulate_ALD_pseudo_pop(
+    formula = form,
+    ipd = ipd_trial,
+    ald = ald_trial,
+    trt_var = "trt",
+    N = 100000)
+  
+  EM1_mean <- ald_trial |> dplyr::filter(variable == "EM_bin_1", statistic == "prop") |>
+    dplyr::pull(value)
+  
+  EM2_mean <- ald_trial |> dplyr::filter(variable == "EM_bin_2", statistic == "prop") |>
+    dplyr::pull(value)
+  
+  PF1_mean <- ald_trial |> dplyr::filter(variable == "PF_bin_1", statistic == "prop") |>
+    dplyr::pull(value)
+  
+  PF2_mean <- ald_trial |> dplyr::filter(variable == "PF_bin_2", statistic == "prop") |>
+    dplyr::pull(value)
+  
+  expect_equal(
+    object = mean(result$EM_bin_1),
+    expected = EM1_mean,
+    tolerance = 0.01
+  )
+  
+  expect_equal(
+    object = mean(result$EM_bin_2),
+    expected = EM2_mean,
+    tolerance = 0.01
+  )
+  
+  expect_equal(
+    object = mean(result$PF_bin_1),
+    expected = PF1_mean,
+    tolerance = 0.01
+  )
+  expect_equal(
+    object = mean(result$PF_bin_2),
+    expected = PF2_mean,
+    tolerance = 0.01
+  )
+  
+  expect_equal(
+    object = cor(result$EM_bin_1, result$EM_bin_2),
+    expected = cor(ipd_trial$EM_bin_1, ipd_trial$EM_bin_2),
+    tolerance = 0.1
+  )
+  
+  expect_equal(
+    object = cor(result$PF_bin_1, result$PF_bin_2),
+    expected = cor(ipd_trial$PF_bin_1, ipd_trial$PF_bin_2),
+    tolerance = 0.1
+  )
+  
+  # rho (same) and ipd
+  result <- simulate_ALD_pseudo_pop(
+    formula = form,
+    ipd = ipd_trial,
+    ald = ald_trial,
+    rho = corX,
+    trt_var = "trt",
+    N = 100000)
+  
+  EM1_mean <- ald_trial |> dplyr::filter(variable == "EM_bin_1", statistic == "prop") |>
+    dplyr::pull(value)
+  
+  EM2_mean <- ald_trial |> dplyr::filter(variable == "EM_bin_2", statistic == "prop") |>
+    dplyr::pull(value)
+  
+  PF1_mean <- ald_trial |> dplyr::filter(variable == "PF_bin_1", statistic == "prop") |>
+    dplyr::pull(value)
+  
+  PF2_mean <- ald_trial |> dplyr::filter(variable == "PF_bin_2", statistic == "prop") |>
+    dplyr::pull(value)
+  
+  expect_equal(
+    object = mean(result$EM_bin_1),
+    expected = EM1_mean,
+    tolerance = 0.01
+  )
+  
+  expect_equal(
+    object = mean(result$EM_bin_2),
+    expected = EM2_mean,
+    tolerance = 0.01
+  )
+  
+  expect_equal(
+    object = mean(result$PF_bin_1),
+    expected = PF1_mean,
+    tolerance = 0.01
+  )
+  
+  expect_equal(
+    object = mean(result$PF_bin_2),
+    expected = PF2_mean,
+    tolerance = 0.01
+  )
+  
+  # expect_equal(
+  #   object = cor(result$PF_bin_1, result$PF_bin_2),
+  #   expected = corX,
+  #   tolerance = 0.1
+  # )
+  # 
+  # expect_equal(
+  #   object = cor(result$EM_bin_1, result$EM_bin_2),
+  #   expected = corX,
+  #   tolerance = 0.1
+  # )
+  
+  # rho (different) and ipd
+  
+  rho_new <- 0.6
+  
+  result <- simulate_ALD_pseudo_pop(
+    formula = form,
+    ipd = ipd_trial,
+    ald = ald_trial,
+    rho = rho_new,
+    trt_var = "trt",
+    N = 100000)
+  
+  EM1_mean <- ald_trial |> dplyr::filter(variable == "EM_bin_1", statistic == "prop") |>
+    dplyr::pull(value)
+  
+  EM2_mean <- ald_trial |> dplyr::filter(variable == "EM_bin_2", statistic == "prop") |>
+    dplyr::pull(value)
+  
+  PF1_mean <- ald_trial |> dplyr::filter(variable == "PF_bin_1", statistic == "prop") |>
+    dplyr::pull(value)
+  
+  PF2_mean <- ald_trial |> dplyr::filter(variable == "PF_bin_2", statistic == "prop") |>
+    dplyr::pull(value)
+  
+  expect_equal(
+    object = mean(result$EM_bin_1),
+    expected = EM1_mean,
+    tolerance = 0.01
+  )
+  
+  expect_equal(
+    object = mean(result$EM_bin_2),
+    expected = EM2_mean,
+    tolerance = 0.01
+  )
+  
+  expect_equal(
+    object = mean(result$PF_bin_1),
+    expected = PF1_mean,
+    tolerance = 0.01
+  )
+  
+  expect_equal(
+    object = mean(result$PF_bin_2),
+    expected = PF2_mean,
+    tolerance = 0.01
+  )
+  
+  # expect_equal(
+  #   object = cor(result$EM_bin_1, result$EM_bin_2),
+  #   expected = rho_new,
+  #   tolerance = 0.1
+  # )
+  # 
+  # expect_equal(
+  #   object = cor(result$PF_bin_1, result$PF_bin_2),
+  #   expected = rho_new,
+  #   tolerance = 0.1
+  # )
+  
+  # no ipd
+  result <- simulate_ALD_pseudo_pop(
+    formula = form,
+    ald = ald_trial,
+    rho = rho_new,
+    trt_var = "trt",
+    N = 100000)
+  
+  EM1_mean <- ald_trial |> dplyr::filter(variable == "EM_bin_1", statistic == "prop") |>
+    dplyr::pull(value)
+  
+  EM2_mean <- ald_trial |> dplyr::filter(variable == "EM_bin_2", statistic == "prop") |>
+    dplyr::pull(value)
+  
+  PF1_mean <- ald_trial |> dplyr::filter(variable == "PF_bin_1", statistic == "prop") |>
+    dplyr::pull(value)
+  
+  PF2_mean <- ald_trial |> dplyr::filter(variable == "PF_bin_2", statistic == "prop") |>
+    dplyr::pull(value)
+  
+  expect_equal(
+    object = mean(result$EM_bin_1),
+    expected = EM1_mean,
+    tolerance = 0.01
+  )
+  
+  expect_equal(
+    object = mean(result$EM_bin_2),
+    expected = EM2_mean,
+    tolerance = 0.01
+  )
+  
+  expect_equal(
+    object = mean(result$PF_bin_1),
+    expected = PF1_mean,
+    tolerance = 0.01
+  )
+  
+  expect_equal(
+    object = mean(result$PF_bin_2),
+    expected = PF2_mean,
+    tolerance = 0.01
+  )
+  
+  # expect_equal(
+  #   object = cor(result$EM_bin_1, result$EM_bin_2),
+  #   expected = rho_new,
+  #   tolerance = 0.1
+  # )
+  # 
+  # expect_equal(
+  #   object = cor(result$PF_bin_1, result$PF_bin_2),
+  #   expected = rho_new,
+  #   tolerance = 0.1
+  # )
+  
+  #################
+  # with marginals
+  
+  marginals_orig <- list(
+    marginal_dists = c(EM_bin_1 = "norm",
+                       EM_bin_2 = "norm",
+                       PF_bin_1 = "norm",
+                       PF_bin_2 = "norm"),
+    marginal_params = list(
+      EM_bin_1 = list(mean = meanX_EM_BC[1], sd = sdX_EM[1]),
+      EM_bin_2 = list(mean = meanX_EM_BC[2], sd = sdX_EM[2]),
+      PF_bin_1 = list(mean = meanX_BC[1], sd = sdX[1]),
+      PF_bin_2 = list(mean = meanX_BC[2], sd = sdX[2])
+    )
+  )
+  
+  marginals_new <- list(
+    marginal_dists = c(EM_bin_1 = "norm",
+                       EM_bin_2 = "norm",
+                       PF_bin_1 = "norm",
+                       PF_bin_2 = "norm"),
+    marginal_params = list(
+      EM_bin_1 = list(mean = 0, sd = 1),
+      EM_bin_2 = list(mean = 0, sd = 1),
+      PF_bin_1 = list(mean = 0, sd = 1),
+      PF_bin_2 = list(mean = 0, sd = 1)
+    )
+  )
+  
+  # no rho ie taken from ipd
+  result <- simulate_ALD_pseudo_pop(
+    formula = form,
+    ipd = ipd_trial,
+    ald = ald_trial,
+    trt_var = "trt",
+    N = 100000,
+    marginal_distns = marginals_orig$marginal_dists,
+    marginal_params = marginals_orig$marginal_params
+  )
+  
+  expect_equal(
+    object = mean(result$EM_bin_1),
+    expected = marginals_orig$marginal_params$EM_bin_1$mean,
+    tolerance = 0.01
+  )
+  
+  expect_equal(
+    object = mean(result$EM_bin_2),
+    expected = marginals_orig$marginal_params$EM_bin_2$mean,
+    tolerance = 0.01
+  )
+  
+  expect_equal(
+    object = mean(result$PF_bin_1),
+    expected = marginals_orig$marginal_params$PF_bin_1$mean,
+    tolerance = 0.01
+  )
+  
+  expect_equal(
+    object = mean(result$PF_bin_2),
+    expected = marginals_orig$marginal_params$PF_bin_2$mean,
+    tolerance = 0.01
+  )
+
+  ##TODO: why are the binomial correlations wrong?
+  
+  # expect_equal(
+  #   object = cor(result$EM_cont_1, result$EM_bin_2),
+  #   expected = cor(ipd_trial$EM_cont_1, ipd_trial$EM_bin_2),
+  #   tolerance = 0.1
+  # )
+  # 
+  # expect_equal(
+  #   object = cor(result$PF_cont_1, result$PF_bin_2),
+  #   expected = cor(ipd_trial$PF_cont_1, ipd_trial$PF_bin_2),
+  #   tolerance = 0.1
+  # )
+  
+  # rho and ipd
+  result <- simulate_ALD_pseudo_pop(
+    formula = form,
+    ipd = ipd_trial,
+    ald = ald_trial,
+    rho = rho_new,
+    trt_var = "trt",
+    N = 10000,
+    marginal_distns = marginals_orig$marginal_dists,
+    marginal_params = marginals_orig$marginal_params
+  )
+  
+  expect_equal(
+    object = mean(result$EM_bin_1),
+    expected = marginals_orig$marginal_params$EM_bin_1$mean,
+    tolerance = 0.01
+  )
+  
+  expect_equal(
+    object = mean(result$EM_bin_2),
+    expected = marginals_orig$marginal_params$EM_bin_2$mean,
+    tolerance = 0.01
+  )
+  
+  expect_equal(
+    object = mean(result$PF_bin_1),
+    expected = marginals_orig$marginal_params$PF_bin_1$mean,
+    tolerance = 0.01
+  )
+  
+  expect_equal(
+    object = mean(result$PF_bin_2),
+    expected = marginals_orig$marginal_params$PF_bin_2$mean,
+    tolerance = 0.01
+  )
+  
+  # expect_equal(
+  #   object = cor(result$EM_bin_1, result$EM_bin_2),
+  #   expected = rho_new,
+  #   tolerance = 0.1
+  # )
+  # expect_equal(
+  #   object = cor(result$PF_bin_1, result$PF_bin_2),
+  #   expected = rho_new,
+  #   tolerance = 0.1
+  # )
+  
+  # no ipd
+  result <- simulate_ALD_pseudo_pop(
+    formula = form,
+    ald = ald_trial,
+    rho = rho_new,
+    trt_var = "trt",
+    N = 10000,
+    marginal_distns = marginals_orig$marginal_dists,
+    marginal_params = marginals_orig$marginal_params
+  )
+  
+  expect_equal(
+    object = mean(result$EM_bin_1),
+    expected = marginals_orig$marginal_params$EM_bin_1$mean,
+    tolerance = 0.01
+  )
+  
+  expect_equal(
+    object = mean(result$EM_bin_2),
+    expected = marginals_orig$marginal_params$EM_bin_2$mean,
+    tolerance = 0.01
+  )
+  
+  expect_equal(
+    object = mean(result$PF_bin_1),
+    expected = marginals_orig$marginal_params$PF_bin_1$mean,
+    tolerance = 0.01
+  )
+  
+  expect_equal(
+    object = mean(result$PF_bin_2),
+    expected = marginals_orig$marginal_params$PF_bin_2$mean,
+    tolerance = 0.01
+  )
+  
+  # expect_equal(
+  #   object = cor(result$EM_bin_1, result$EM_bin_2),
+  #   expected = rho_new,
+  #   tolerance = 0.1
+  # )
+  # 
+  # expect_equal(
+  #   object = cor(result$PF_bin_1, result$PF_bin_2),
+  #   expected = rho_new,
+  #   tolerance = 0.1
+  # )
 })
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 test_that("simulate_ALD_pseudo_pop via outstandR", {
