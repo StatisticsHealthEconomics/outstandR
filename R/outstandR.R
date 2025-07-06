@@ -59,7 +59,7 @@
 #'                            strategy = strategy_mim(lin_form))
 #' 
 outstandR <- function(ipd_trial, ald_trial, strategy,
-                      ref_trt = "C",
+                      ref_trt = NA,
                       CI = 0.95, scale = NULL, ...) {
   
   validate_outstandr(ipd_trial, ald_trial, strategy, CI, scale)
@@ -69,6 +69,8 @@ outstandR <- function(ipd_trial, ald_trial, strategy,
   ipd <- prep_ipd(strategy$formula, ipd_trial)
   ald <- prep_ald(strategy$formula, ald_trial, trt_var = trt_var)
 
+  ref_trt <- get_ref_trt(ref_trt)
+  
   # treatment names for each study
   ipd_comp <- get_comparator(ipd, ref_trt, trt_var)
   ald_comp <- get_comparator(ald, ref_trt, trt_var)
@@ -80,7 +82,7 @@ outstandR <- function(ipd_trial, ald_trial, strategy,
   
   ipd_stats <- calc_IPD_stats(strategy, 
                               ipd = ipd, ald = ald,
-                              scale, ...) 
+                              scale, ref_trt, ...) 
   
   ald_stats <- calc_ALD_stats(strategy, ald = ald,
                               treatments = ald_trts,

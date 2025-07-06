@@ -10,8 +10,8 @@
 #' 
 calc_mim <- function(strategy,
                      ipd, ald, 
-                     ref_trt = "C",
-                     comp_trt = "A", ...) {
+                     ref_trt = NA,
+                     comp_trt = NA, ...) {
   
   formula <- strategy$formula
   family <- strategy$family

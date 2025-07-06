@@ -25,7 +25,8 @@
 gcomp_ml.boot <- function(data, indices,
                           R, formula = NULL,
                           family, trt_var,
-                          ref_trt = "C", comp_trt = "A",
+                          ref_trt = NA,
+                          comp_trt = NA,
                           rho = NA,
                           N = 1000, ald) {
   dat <- data[indices, ]
@@ -63,8 +64,8 @@ gcomp_ml_means <- function(formula,
                            trt_var,
                            rho = NA,
                            N = 1000,
-                           ref_trt = "C",
-                           comp_trt = "A") {
+                           ref_trt = NA,
+                           comp_trt = NA) {
   
   x_star <- simulate_ALD_pseudo_pop(formula = formula,
                                     ipd = ipd, ald = ald,

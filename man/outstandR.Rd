@@ -8,7 +8,7 @@ outstandR(
   ipd_trial,
   ald_trial,
   strategy,
-  ref_trt = "C",
+  ref_trt = NA,
   CI = 0.95,
   scale = NULL,
   ...
@@ -22,7 +22,7 @@ The labels in the treatment are used internally so there must be a common treatm
 \item{ald_trial}{Aggregate-level data. For example, suppose between studies \emph{B} and \emph{C}. The column names are
 \itemize{
 \item \code{variable}: Covariate name. In the case of treatment arm sample size this is \code{NA}
-\item \code{statistic}: Summary statistic name from mean, standard deviation or sum
+\item \code{statistic}: Summary statistic name from "mean", standard deviation "sd" or "sum"
 \item \code{value}: Numerical value of summary statistic
 \item \code{trt}: Treatment label. Because we assume a common covariate distribution between treatment arms this is \code{NA}
 }}

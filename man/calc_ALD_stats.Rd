@@ -4,14 +4,16 @@
 \alias{calc_ALD_stats}
 \title{Aggregate-level data mean and variance statistics}
 \usage{
-calc_ALD_stats(strategy, ald, treatments = list("B", "C"), scale)
+calc_ALD_stats(strategy, ald, ref_trt = NA, comp_trt = NA, scale)
 }
 \arguments{
 \item{strategy}{A list containing the strategy details, including the family distribution.}
 
 \item{ald}{Aggregate-level trial data}
 
-\item{treatments}{Treatment labels list; default \code{B}, \code{C} (common; e.g. placebo)}
+\item{ref_trt}{Treatment labels reference (common; e.g. placebo)}
+
+\item{comp_trt}{Treatment labels comparator}
 
 \item{scale}{A scaling parameter for the calculation.}
 }

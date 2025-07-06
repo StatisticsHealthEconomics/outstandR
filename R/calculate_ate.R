@@ -401,9 +401,10 @@ calc_log_relative_risk <- function(mean_comp, mean_ref) {
   log(mean_comp) - log(mean_ref)
 }
 
+#' @importFrom dplyr filter group_by mutate pull case_when
+#' @importFrom tidyr spread
 #' @keywords internal
 continuity_correction <- function(ald,
-                                  treatments = list("B", "C"),
                                   correction = 0.5) {
   # missing value
   needs_correction <- any(ald$variable == "y" & ald$statistic == "sum") 
@@ -417,24 +418,24 @@ continuity_correction <- function(ald,
     ald |> 
     dplyr::filter((variable == "y" & statistic == "sum") | statistic == "N") |>
     dplyr::group_by(trt, variable) |>
-    spread(statistic, value) |>  # Spread sd and N into separate columns
+    tidyr::spread(statistic, value) |>  # Spread sd and N into separate columns
     dplyr::mutate(need_contcorr = case_when(
       sum == 0 ~ TRUE,
       sum == N ~ TRUE,
-      TRUE ~ FALSE
-    )) |> pull() |> any()
+      TRUE ~ FALSE)
+    ) |> dplyr::pull() |> any()
   
   if (!needs_correction) {
     return(ald)
   }
   
   message(sprintf(
-    "Applying continuity correction: %d", correction
-  ))
+    "Applying continuity correction: %d", correction)
+  )
   
-  ald_corrected <- ald %>%
+  ald_corrected <- ald |> 
     dplyr::mutate(
-      value = case_when(
+      value = dplyr::case_when(
         statistic == "sum" & variable == "y" ~ value + correction,
         statistic == "N" ~ value + 2 * correction,
         TRUE ~ value

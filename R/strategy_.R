@@ -287,21 +287,23 @@ check_distns <- function(formula,
                          marginal_distns,
                          marginal_params) {
   
-  if (!is.na(marginal_distns) || !is.na(marginal_params)) {
-    
-    covariate_names <- get_covariate_names(formula)
-    n_covariates <- length(covariate_names) - 1  # remove treatment
-    
-    if (length(marginal_distns) != n_covariates) {
-      stop("Number of marginal distributions must match
+  if (length(marginal_distns) == 1 && is.na(marginal_distns) &&
+      length(marginal_params) == 1 && is.na(marginal_params)) {
+    return()
+  }
+  
+  covariate_names <- get_covariate_names(formula)
+  n_covariates <- length(covariate_names) - 1  # remove treatment
+  
+  if (length(marginal_distns) != n_covariates) {
+    stop("Number of marginal distributions must match
            the number of covariates in the formula.")
-    }
-    
-    if (length(marginal_params) != n_covariates) {
-      stop("Number of marginal parameter lists must match
+  }
+  
+  if (length(marginal_params) != n_covariates) {
+    stop("Number of marginal parameter lists must match
            the number of covariates in the formula.")
-    }
-  }  
+  }
 }
 
 

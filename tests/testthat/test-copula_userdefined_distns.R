@@ -1,7 +1,7 @@
 #
 
 
-form <- y ~ PF_cont_1 + PF_cont_2 + trt:EM_cont_1 + trt:EM_cont_2
+form <- y ~ PF_cont_1 + PF_cont_2 + trt*EM_cont_1 + trt*EM_cont_2
 
 ###########################
 # generate continuous data
@@ -34,6 +34,8 @@ ipd_trial <- simcovariates::gen_data(
   allocation = allocation,
   family = binomial("logit")
 )
+
+ipd_trial$trt <- factor(ipd_trial$trt, labels = c("C", "A"))
 
 BC.IPD <- simcovariates::gen_data(
   N = N,
@@ -121,16 +123,20 @@ test_that("simulate_ALD_pseudo_pop directly", {
     trt_var = "trt",
     N = 100000)
   
-  EM1_mean <- ald_trial |> dplyr::filter(variable == "EM_cont_1", statistic == "mean") |>
+  EM1_mean <- ald_trial |> 
+    dplyr::filter(variable == "EM_cont_1", statistic == "mean") |>
     dplyr::pull(value)
   
-  EM2_mean <- ald_trial |> dplyr::filter(variable == "EM_cont_2", statistic == "mean") |>
+  EM2_mean <- ald_trial |> 
+    dplyr::filter(variable == "EM_cont_2", statistic == "mean") |>
     dplyr::pull(value)
   
-  PF1_mean <- ald_trial |> dplyr::filter(variable == "PF_cont_1", statistic == "mean") |>
+  PF1_mean <- ald_trial |> 
+    dplyr::filter(variable == "PF_cont_1", statistic == "mean") |>
     dplyr::pull(value)
   
-  PF2_mean <- ald_trial |> dplyr::filter(variable == "PF_cont_2", statistic == "mean") |>
+  PF2_mean <- ald_trial |> 
+    dplyr::filter(variable == "PF_cont_2", statistic == "mean") |>
     dplyr::pull(value)
   
   expect_equal(
@@ -177,16 +183,20 @@ test_that("simulate_ALD_pseudo_pop directly", {
     trt_var = "trt",
     N = 100000)
   
-  EM1_mean <- ald_trial |> dplyr::filter(variable == "EM_cont_1", statistic == "mean") |>
+  EM1_mean <- ald_trial |>
+    dplyr::filter(variable == "EM_cont_1", statistic == "mean") |>
     dplyr::pull(value)
   
-  EM2_mean <- ald_trial |> dplyr::filter(variable == "EM_cont_2", statistic == "mean") |>
+  EM2_mean <- ald_trial |> 
+    dplyr::filter(variable == "EM_cont_2", statistic == "mean") |>
     dplyr::pull(value)
   
-  PF1_mean <- ald_trial |> dplyr::filter(variable == "PF_cont_1", statistic == "mean") |>
+  PF1_mean <- ald_trial |> 
+    dplyr::filter(variable == "PF_cont_1", statistic == "mean") |>
     dplyr::pull(value)
   
-  PF2_mean <- ald_trial |> dplyr::filter(variable == "PF_cont_2", statistic == "mean") |>
+  PF2_mean <- ald_trial |> 
+    dplyr::filter(variable == "PF_cont_2", statistic == "mean") |>
     dplyr::pull(value)
   
   expect_equal(
@@ -293,16 +303,20 @@ test_that("simulate_ALD_pseudo_pop directly", {
     trt_var = "trt",
     N = 100000)
   
-  EM1_mean <- ald_trial |> dplyr::filter(variable == "EM_cont_1", statistic == "mean") |>
+  EM1_mean <- ald_trial |> 
+    dplyr::filter(variable == "EM_cont_1", statistic == "mean") |>
     dplyr::pull(value)
   
-  EM2_mean <- ald_trial |> dplyr::filter(variable == "EM_cont_2", statistic == "mean") |>
+  EM2_mean <- ald_trial |>
+    dplyr::filter(variable == "EM_cont_2", statistic == "mean") |>
     dplyr::pull(value)
   
-  PF1_mean <- ald_trial |> dplyr::filter(variable == "PF_cont_1", statistic == "mean") |>
+  PF1_mean <- ald_trial |> 
+    dplyr::filter(variable == "PF_cont_1", statistic == "mean") |>
     dplyr::pull(value)
   
-  PF2_mean <- ald_trial |> dplyr::filter(variable == "PF_cont_2", statistic == "mean") |>
+  PF2_mean <- ald_trial |> 
+    dplyr::filter(variable == "PF_cont_2", statistic == "mean") |>
     dplyr::pull(value)
   
   expect_equal(
@@ -512,13 +526,32 @@ test_that("simulate_ALD_pseudo_pop directly", {
   )
 })
 
+test_that("simulate_ALD_pseudo_pop continuous via outstandR", {
+  ##TODO:
+    # rho = rho_new,
+    # trt_var = "trt",
+    # N = 10000,
+  
+  res <- outstandR(
+    ipd_trial = ipd_trial,
+    ald_trial = ald_trial,
+    strategy = strategy_gcomp_ml(
+      formula = form,
+      marginal_distns = marginals_orig$marginal_dists,
+      marginal_params = marginals_orig$marginal_params))
+  
+  # expect_equivalent(res)
+})
+
+
+
 #######################
 # generate binary data
 
 form <- y ~ PF_bin_1 + PF_bin_2 + trt:EM_bin_1 + trt:EM_bin_2
 
 N <- 200
-allocation <- 2 / 3      # active treatment vs. placebo allocation ratio (2:1)
+allocation <- 2 / 3    # active treatment vs. placebo allocation ratio (2:1)
 b_trt <- log(0.17)     # conditional effect of active treatment vs. common comparator
 b_X <- -log(0.5)       # conditional effect of each prognostic variable
 b_EM <- -log(0.67)     # conditional interaction effect of each effect modifier
@@ -626,16 +659,20 @@ test_that("simulate_ALD_pseudo_pop directly with binary data", {
     trt_var = "trt",
     N = 100000)
   
-  EM1_mean <- ald_trial |> dplyr::filter(variable == "EM_bin_1", statistic == "prop") |>
+  EM1_mean <- ald_trial |>
+    dplyr::filter(variable == "EM_bin_1", statistic == "prop") |>
     dplyr::pull(value)
   
-  EM2_mean <- ald_trial |> dplyr::filter(variable == "EM_bin_2", statistic == "prop") |>
+  EM2_mean <- ald_trial |>
+    dplyr::filter(variable == "EM_bin_2", statistic == "prop") |>
     dplyr::pull(value)
   
-  PF1_mean <- ald_trial |> dplyr::filter(variable == "PF_bin_1", statistic == "prop") |>
+  PF1_mean <- ald_trial |>
+    dplyr::filter(variable == "PF_bin_1", statistic == "prop") |>
     dplyr::pull(value)
   
-  PF2_mean <- ald_trial |> dplyr::filter(variable == "PF_bin_2", statistic == "prop") |>
+  PF2_mean <- ald_trial |>
+    dplyr::filter(variable == "PF_bin_2", statistic == "prop") |>
     dplyr::pull(value)
   
   expect_equal(
@@ -682,16 +719,20 @@ test_that("simulate_ALD_pseudo_pop directly with binary data", {
     trt_var = "trt",
     N = 100000)
   
-  EM1_mean <- ald_trial |> dplyr::filter(variable == "EM_bin_1", statistic == "prop") |>
+  EM1_mean <- ald_trial |> 
+    dplyr::filter(variable == "EM_bin_1", statistic == "prop") |>
     dplyr::pull(value)
   
-  EM2_mean <- ald_trial |> dplyr::filter(variable == "EM_bin_2", statistic == "prop") |>
+  EM2_mean <- ald_trial |> 
+    dplyr::filter(variable == "EM_bin_2", statistic == "prop") |>
     dplyr::pull(value)
   
-  PF1_mean <- ald_trial |> dplyr::filter(variable == "PF_bin_1", statistic == "prop") |>
+  PF1_mean <- ald_trial |> 
+    dplyr::filter(variable == "PF_bin_1", statistic == "prop") |>
     dplyr::pull(value)
   
-  PF2_mean <- ald_trial |> dplyr::filter(variable == "PF_bin_2", statistic == "prop") |>
+  PF2_mean <- ald_trial |> 
+    dplyr::filter(variable == "PF_bin_2", statistic == "prop") |>
     dplyr::pull(value)
   
   expect_equal(
@@ -742,16 +783,20 @@ test_that("simulate_ALD_pseudo_pop directly with binary data", {
     trt_var = "trt",
     N = 100000)
   
-  EM1_mean <- ald_trial |> dplyr::filter(variable == "EM_bin_1", statistic == "prop") |>
+  EM1_mean <- ald_trial |> 
+    dplyr::filter(variable == "EM_bin_1", statistic == "prop") |>
     dplyr::pull(value)
   
-  EM2_mean <- ald_trial |> dplyr::filter(variable == "EM_bin_2", statistic == "prop") |>
+  EM2_mean <- ald_trial |> 
+    dplyr::filter(variable == "EM_bin_2", statistic == "prop") |>
     dplyr::pull(value)
   
-  PF1_mean <- ald_trial |> dplyr::filter(variable == "PF_bin_1", statistic == "prop") |>
+  PF1_mean <- ald_trial |> 
+    dplyr::filter(variable == "PF_bin_1", statistic == "prop") |>
     dplyr::pull(value)
   
-  PF2_mean <- ald_trial |> dplyr::filter(variable == "PF_bin_2", statistic == "prop") |>
+  PF2_mean <- ald_trial |> 
+    dplyr::filter(variable == "PF_bin_2", statistic == "prop") |>
     dplyr::pull(value)
   
   expect_equal(
@@ -798,16 +843,20 @@ test_that("simulate_ALD_pseudo_pop directly with binary data", {
     trt_var = "trt",
     N = 100000)
   
-  EM1_mean <- ald_trial |> dplyr::filter(variable == "EM_bin_1", statistic == "prop") |>
+  EM1_mean <- ald_trial |> 
+    dplyr::filter(variable == "EM_bin_1", statistic == "prop") |>
     dplyr::pull(value)
   
-  EM2_mean <- ald_trial |> dplyr::filter(variable == "EM_bin_2", statistic == "prop") |>
+  EM2_mean <- ald_trial |> 
+    dplyr::filter(variable == "EM_bin_2", statistic == "prop") |>
     dplyr::pull(value)
   
-  PF1_mean <- ald_trial |> dplyr::filter(variable == "PF_bin_1", statistic == "prop") |>
+  PF1_mean <- ald_trial |> 
+    dplyr::filter(variable == "PF_bin_1", statistic == "prop") |>
     dplyr::pull(value)
   
-  PF2_mean <- ald_trial |> dplyr::filter(variable == "PF_bin_2", statistic == "prop") |>
+  PF2_mean <- ald_trial |> 
+    dplyr::filter(variable == "PF_bin_2", statistic == "prop") |>
     dplyr::pull(value)
   
   expect_equal(
@@ -1019,14 +1068,18 @@ test_that("simulate_ALD_pseudo_pop directly with binary data", {
   # )
 })
 
-
-test_that("simulate_ALD_pseudo_pop via outstandR", {
+test_that("simulate_ALD_pseudo_pop binomial via outstandR", {
   ##TODO:
-  # outstandR(marginal_distns =  c("norm", "exp"),
-  #           marginal_params = list(
-  #     list(mean = 55, sd = 8),
-  #     list(rate = 0.04)
-  #   )
+  # rho = rho_new,
+  # trt_var = "trt",
+  # N = 10000,
   
-  # expect_
+  res <- outstandR(
+    ipd_trial = ipd_trial,
+    ald_trial = ald_trial,
+    strategy = strategy_maic(formula = form),
+    marginal_distns = marginals_orig$marginal_dists,
+    marginal_params = marginals_orig$marginal_params)
+  
+  # expect_equivalent(res)
 })

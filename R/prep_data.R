@@ -99,9 +99,27 @@ reshape_ald_to_long <- function(df) {
 
 # Get study comparator treatment names
 #
-get_comparator <- function(dat, ref_trt = "C", trt_var = "trt") {
+get_comparator <- function(dat, ref_trt, trt_var = "trt") {
   
   all_trt <- levels(as.factor(dat[[trt_var]]))
   all_trt[all_trt != ref_trt]
 }
 
+#' Get reference treatment
+#'
+get_ref_trt <- function(ref_trt, trt, ipd_trial, ald_trial) {
+  
+  if (!is.na(ref_trt)) {
+    return()
+  }
+  
+  ref_trt <- intersect(
+    unique(ipd_trial[[trt]]),
+    unique(ald_trial[[trt]]))
+  
+  if (length(ref_trt) != 1) {
+    stop("More than one common treatment in aggregate and individual level data.", call. = FALSE)
+  }  
+  
+  ref_trt
+}

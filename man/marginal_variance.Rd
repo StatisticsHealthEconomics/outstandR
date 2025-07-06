@@ -4,12 +4,14 @@
 \alias{marginal_variance}
 \title{Marginal effect variance using the delta method}
 \usage{
-marginal_variance(ald, treatments = list("B", "C"), scale, family)
+marginal_variance(ald, ref_trt = NA, comp_trt = NA, scale, family)
 }
 \arguments{
 \item{ald}{Aggregate-level data}
 
-\item{treatments}{A list of treatment labels; default \emph{B} vs \emph{C}}
+\item{ref_trt}{Treatment labels reference (common; e.g. placebo)}
+
+\item{comp_trt}{Treatment labels comparator}
 
 \item{scale}{A scaling parameter for the calculation.}
 
