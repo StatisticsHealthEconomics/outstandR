@@ -73,15 +73,15 @@ reshape_ald_to_wide <- function(df) {
 #' @examples
 reshape_ald_to_long <- function(df) {
   
-  # Separate the 'colname' into 'stat', 'variable', and 'study' columns
+  # Separate the 'colname' into 'statistic', 'variable', and 'treatment' columns
   variable_cols <- df %>%
     select(-starts_with("y")) %>%
     pivot_longer(cols = everything(),
                  names_to = "colname",
                  values_to = "value") %>%
-    separate(colname, into = c("stat", "variable"), sep = "\\.") %>%
-    select(variable, stat, value) %>%
-    mutate(study = NA)  # Set study to NA for these rows
+    separate(colname, into = c("statistic", "variable"), sep = "\\.") %>%
+    select(variable, statistic, value) %>%
+    mutate(treatment = NA)  # Set study to NA for these rows
   
   # process the columns related to 'y' (stat, study, and variable)
   y_cols <- df %>%
@@ -89,11 +89,11 @@ reshape_ald_to_long <- function(df) {
     pivot_longer(cols = everything(),
                  names_to = "colname",
                  values_to = "value") %>%
-    separate(colname, into = c("variable", "study", "stat"), sep = "\\.") %>%
-    select(variable, stat, study, value) 
+    separate(colname, into = c("variable", "treatment", "statistic"), sep = "\\.") %>%
+    select(variable, statistic, treatment, value) 
   
   bind_rows(variable_cols, y_cols) %>%
-    arrange(variable, stat, study)
+    arrange(variable, statistic, treatment)
 }
 
 

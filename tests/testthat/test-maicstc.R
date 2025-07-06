@@ -10,10 +10,13 @@ test_that("different combinations of covariates in formula", {
   load(test_path("testdata/BC_ALD.RData"))
   load(test_path("testdata/AC_IPD.RData"))
   
+  BC_ALD <- reshape_ald_to_long(BC_ALD)
+  
   # maic
   expect_error(strategy_maic(formula = as.formula("y ~ 1")),
                regexp = "Treatment term 'trt' is missing in the formula")
 
+  ##TODO:
   expect_error(strategy_maic(formula = as.formula("y ~ X3 + X4")),
                regexp = "Treatment term 'trt' is missing in the formula")
   
