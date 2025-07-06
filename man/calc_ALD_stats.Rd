@@ -4,18 +4,18 @@
 \alias{calc_ALD_stats}
 \title{Aggregate-level data mean and variance statistics}
 \usage{
-calc_ALD_stats(strategy, ald, ref_trt = NA, comp_trt = NA, scale)
+calc_ALD_stats(strategy, analysis_params)
 }
 \arguments{
 \item{strategy}{A list containing the strategy details, including the family distribution.}
 
-\item{ald}{Aggregate-level trial data}
-
-\item{ref_trt}{Treatment labels reference (common; e.g. placebo)}
-
-\item{comp_trt}{Treatment labels comparator}
-
-\item{scale}{A scaling parameter for the calculation.}
+\item{analysis_params}{A list containing:
+\itemize{
+\item \code{ald} Aggregate-level trial data
+\item \code{ref_trt} Treatment labels reference (common; e.g. placebo)
+\item \code{comp_trt} Treatment labels comparator
+\item \code{param} scale A scaling parameter for the calculation.
+}}
 }
 \value{
 A list containing:
@@ -35,7 +35,11 @@ ald <- data.frame(trt = c("B","C","B","C"),
                   statistic = c("N", "N", "sum", "sum"),
                   value = c(100, 100, 50, 60) 
 
-calc_ALD_stats(strategy, ald, treatments = list("B", "C"), scale = "log")
+calc_ALD_stats(strategy = strategy,
+               list(ald = ald,
+                    ref_trt = "C",
+                    comp_trt = "B",
+                    scale = "log"))
 }
 
 }

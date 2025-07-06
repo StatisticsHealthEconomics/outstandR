@@ -31,7 +31,7 @@
 #' }
 #' @export
 #' 
-calc_IPD_stats <- function(strategy, ipd, ald, scale, ...)
+calc_IPD_stats <- function(strategy, analysis_params, ...)
   UseMethod("calc_IPD_stats", strategy)
 
 
@@ -55,8 +55,12 @@ calc_IPD_stats.default <- function(...) {
 #' @export
 #'
 calc_IPD_stats.mim <- function(strategy,
-                               ipd, ald,
-                               scale, ...) {
+                               analysis_params, ...) {
+  
+  ipd <- analysis_params$ipd
+  ald <- analysis_params$ald
+  scale <- analysis_params$scale
+  
   mis_res <-
     calc_mim(strategy,
              ipd, ald, ...)
@@ -99,8 +103,12 @@ calc_IPD_stats.mim <- function(strategy,
 #'
 IPD_stat_factory <- function(ipd_fun) {
   
-  function(strategy, ipd, ald, scale,
+  function(strategy, analysis_params,
            var_method = "sample", ...) {
+    
+    ipd <- analysis_params$ipd
+    ald <- analysis_params$ald
+    scale <- analysis_params$scale
     
     out <- ipd_fun(strategy, ipd, ald, ...)
     

@@ -29,6 +29,8 @@ ald <- data.frame(trt = c("B","C","B","C"),
                   variable = c(NA, NA, "y", "y"),
                   statistic = c("N", "N", "sum", "sum"),
                   value = c(100, 100, 50, 60)
-marginal_treatment_effect(ald, treatments = list("B", "C"), scale = "log", family = "binomial")
+                  
+marginal_treatment_effect(ald, ref_trt = "C", comp_trt = "B",
+                          scale = "log", family = "binomial")
 }
 }

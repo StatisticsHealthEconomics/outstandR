@@ -10,22 +10,24 @@
 \alias{calc_IPD_stats.gcomp_stan}
 \title{Calculate individual-level patient data statistics}
 \usage{
-calc_IPD_stats(strategy, ipd, ald, scale, ...)
+calc_IPD_stats(strategy, analysis_params, ...)
 
 \method{calc_IPD_stats}{default}(...)
 
-\method{calc_IPD_stats}{mim}(strategy, ipd, ald, scale, ...)
+\method{calc_IPD_stats}{mim}(strategy, analysis_params, ...)
 
-\method{calc_IPD_stats}{stc}(strategy, ipd, ald, scale, var_method = "sample", ...)
+\method{calc_IPD_stats}{stc}(strategy, analysis_params, var_method = "sample", ...)
 
-\method{calc_IPD_stats}{maic}(strategy, ipd, ald, scale, var_method = "sample", ...)
+\method{calc_IPD_stats}{maic}(strategy, analysis_params, var_method = "sample", ...)
 
-\method{calc_IPD_stats}{gcomp_ml}(strategy, ipd, ald, scale, var_method = "sample", ...)
+\method{calc_IPD_stats}{gcomp_ml}(strategy, analysis_params, var_method = "sample", ...)
 
-\method{calc_IPD_stats}{gcomp_stan}(strategy, ipd, ald, scale, var_method = "sample", ...)
+\method{calc_IPD_stats}{gcomp_stan}(strategy, analysis_params, var_method = "sample", ...)
 }
 \arguments{
 \item{strategy}{A list corresponding to different modelling approaches}
+
+\item{...}{Additional arguments}
 
 \item{ipd}{Individual-level patient data. Dataframe with one row per patient with outcome, treatment and covariate columns.}
 
@@ -34,8 +36,6 @@ The format is 'mean.\emph{' and 'sd.}' for covariates and 'y.\emph{.sum', 'y.}.b
 We assume a common distribution for each treatment arm.}
 
 \item{scale}{A scaling parameter for the effect calculation.}
-
-\item{...}{Additional arguments}
 }
 \value{
 A list containing:

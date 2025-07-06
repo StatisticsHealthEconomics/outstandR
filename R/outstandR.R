@@ -75,18 +75,20 @@ outstandR <- function(ipd_trial, ald_trial, strategy,
   ipd_comp <- get_comparator(ipd, ref_trt, trt_var)
   ald_comp <- get_comparator(ald, ref_trt, trt_var)
   
-  ipd_trts <- list(ipd_comp, ref_trt)
-  ald_trts <- list(ald_comp, ref_trt)
-  
   if (is.null(scale)) scale <- get_treatment_effect(strategy$family$link)
   
-  ipd_stats <- calc_IPD_stats(strategy, 
-                              ipd = ipd, ald = ald,
-                              scale, ref_trt, ...) 
+  analysis_params <- list(
+    ipd = ipd, 
+    ald = ald,
+    scale = scale,
+    trt_var,
+    ref_trt,
+    ipd_comp,
+    ald_comp
+  )
   
-  ald_stats <- calc_ALD_stats(strategy, ald = ald,
-                              treatments = ald_trts,
-                              scale = scale) 
+  ipd_stats <- calc_IPD_stats(strategy, analysis_params, ...) 
+  ald_stats <- calc_ALD_stats(strategy, analysis_params) 
   
   stats <- result_stats(ipd_stats, ald_stats, CI)
   
