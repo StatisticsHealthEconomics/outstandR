@@ -9,6 +9,8 @@ test_that("different combinations of covariates in formula", {
   load(test_path("testdata/BC_ALD.RData"))
   load(test_path("testdata/AC_IPD.RData"))
   
+  BC_ALD <- reshape_ald_to_long(BC_ALD)
+  
   # gcomp_ml
   
   expect_error(strategy_gcomp_ml(formula = as.formula("y ~ 1")),
