@@ -14,14 +14,14 @@ calc_ALD_stats(strategy, analysis_params)
 \item \code{ald} Aggregate-level trial data
 \item \code{ref_trt} Treatment labels reference (common; e.g. placebo)
 \item \code{comp_trt} Treatment labels comparator
-\item \code{param} scale A scaling parameter for the calculation.
+\item \code{scale} A scaling parameter for the calculation.
 }}
 }
 \value{
 A list containing:
 \describe{
-\item{mean}{The marginal treatment effect mean.}
-\item{var}{The marginal treatment effect variance.}
+\item{\code{mean}}{The marginal treatment effect mean.}
+\item{\code{var}}{The marginal treatment effect variance.}
 }
 }
 \description{

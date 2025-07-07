@@ -13,8 +13,8 @@ Convert from long to wide format
 df <- 
   data.frame(
     variable = c("age", "age", "y", "y", "y", "y", "y", "y", "y", "y"),
-    stat = c("mean", "sd", "sum", "bar", "sd", "N", "sum", "bar", "sd", "N"),
-    study = c(NA, NA, "B", "B", "B", "B", "C", "C", "C", "C"),
+    statistic = c("mean", "sd", "sum", "bar", "sd", "N", "sum", "bar", "sd", "N"),
+    treatment = c(NA, NA, "B", "B", "B", "B", "C", "C", "C", "C"),
     value = c(1,1,1,1,1,1,1,1,1,1))
 
 }

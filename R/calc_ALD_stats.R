@@ -8,12 +8,12 @@
 #'   - `ald` Aggregate-level trial data
 #'   - `ref_trt` Treatment labels reference (common; e.g. placebo)
 #'   - `comp_trt` Treatment labels comparator
-#'   - `param` scale A scaling parameter for the calculation.
+#'   - `scale` A scaling parameter for the calculation.
 #'
 #' @return A list containing:
 #' \describe{
-#'   \item{mean}{The marginal treatment effect mean.}
-#'   \item{var}{The marginal treatment effect variance.}
+#'   \item{`mean`}{The marginal treatment effect mean.}
+#'   \item{`var`}{The marginal treatment effect variance.}
 #' }
 #' @seealso [marginal_treatment_effect()], [marginal_variance()]
 #' @export

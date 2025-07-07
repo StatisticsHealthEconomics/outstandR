@@ -82,7 +82,7 @@ ipd_trial <- read.csv(here::here("raw-data", "AC_IPD.csv"))  # AC patient-level 
 ald_trial <- read.csv(here::here("raw-data", "BC_ALD.csv"))  # BC aggregate-level data
 ```
 
-This general format of data sets consist of the following.
+This general format of these data sets from the original analysis consist of the following.
 
 #### `ipd_trial`: Individual patient data
 
@@ -122,6 +122,14 @@ ald_trial
 In this case, we have 4 covariate mean and standard deviation values;
 and the event total, average and sample size for each treatment *B*, and
 *C*.
+
+#### Rearranging the orginal aggregate data
+
+The `{outstandR}` package take a slightly different data format for the aggregate data. A _long_ format is needs which is more generalisable, flexible and appropriate for handling programmatically. Having variable names as columns (in a _wide_) format makes manipulation and retrieval more cumbersome and common packages such as `dplyr` and other `tidyverse` packages are designed for long data frames. To transform from one format to another, we have created a helper function.
+
+```{r}
+BC_ALD <- reshape_ald_to_long(BC_ALD)
+```
 
 ## Model fitting in R
 

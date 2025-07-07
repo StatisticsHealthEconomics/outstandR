@@ -36,8 +36,8 @@ prep_ald <- function(form, data, trt_var = "trt") {
 #' df <- 
 #'   data.frame(
 #'     variable = c("age", "age", "y", "y", "y", "y", "y", "y", "y", "y"),
-#'     stat = c("mean", "sd", "sum", "bar", "sd", "N", "sum", "bar", "sd", "N"),
-#'     study = c(NA, NA, "B", "B", "B", "B", "C", "C", "C", "C"),
+#'     statistic = c("mean", "sd", "sum", "bar", "sd", "N", "sum", "bar", "sd", "N"),
+#'     trt = c(NA, NA, "B", "B", "B", "B", "C", "C", "C", "C"),
 #'     value = c(1,1,1,1,1,1,1,1,1,1))
 #' 
 reshape_ald_to_wide <- function(df) {
@@ -52,7 +52,7 @@ reshape_ald_to_wide <- function(df) {
   
   y_df <- df |> 
     dplyr::filter(variable == "y") |> 
-    tidyr::unite("colname", variable, study, stat, sep = ".") |> 
+    tidyr::unite("colname", variable, trt, stat, sep = ".") |> 
     dplyr::select(colname, value) |> 
     tidyr::pivot_wider(names_from = colname,
                        values_from = value)
@@ -65,24 +65,34 @@ reshape_ald_to_wide <- function(df) {
   dplyr::bind_cols(variable_df, y_df)
 }
 
-##TODO: check this
 #' Convert from wide to long format
 #'
 #' @importFrom tidyr pivot_longer separate
 #' @importFrom dplyr select mutate bind_rows arrange
 #' 
 #' @examples
+#' ##TODO
+#' 
 reshape_ald_to_long <- function(df) {
   
   # Separate the 'colname' into 'statistic', 'variable', and 'treatment' columns
   variable_cols <- df |> 
-    dplyr::select(-starts_with("y")) |> 
+    dplyr::select(-starts_with("y"), -starts_with("N")) |> 
     tidyr::pivot_longer(cols = everything(),
                         names_to = "colname",
                         values_to = "value") |> 
     tidyr::separate(colname, into = c("statistic", "variable"), sep = "\\.") |> 
     dplyr::select(variable, statistic, value) |> 
-    dplyr::mutate(treatment = NA)  # Set study to NA for these rows
+    dplyr::mutate(trt = NA)  # Set study to NA for these rows
+  
+  N_cols <- df |> 
+    dplyr::select(starts_with("N")) |> 
+    tidyr::pivot_longer(cols = everything(),
+                        names_to = "colname",
+                        values_to = "value") |> 
+    tidyr::separate(colname, into = c("statistic", "trt"), sep = "\\.") |> 
+    dplyr::select(statistic, trt, value) |> 
+    dplyr::mutate(variable = NA)
   
   # process the columns related to 'y' (stat, study, and variable)
   y_cols <- df |> 
@@ -91,12 +101,12 @@ reshape_ald_to_long <- function(df) {
                         names_to = "colname",
                         values_to = "value") |> 
     tidyr::separate(colname,
-                    into = c("variable", "treatment", "statistic"),
+                    into = c("variable", "trt", "statistic"),
                     sep = "\\.") |> 
-    dplyr::select(variable, statistic, treatment, value) 
+    dplyr::select(variable, statistic, trt, value) 
   
-  dplyr::bind_rows(variable_cols, y_cols) |> 
-    dplyr::arrange(variable, statistic, treatment)
+  dplyr::bind_rows(variable_cols, y_cols, N_cols) |> 
+    dplyr::arrange(variable, statistic, trt)
 }
 
 
