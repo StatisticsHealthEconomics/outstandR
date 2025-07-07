@@ -28,8 +28,9 @@ prep_ald <- function(form, data, trt_var = "trt") {
 
 #' Convert from long to wide format
 #'
-#' @import tidyr
-#' @import stringr
+#' @importFrom tidyr unite pivot_wider
+#' @importFrom stringr str_replace
+#' @importFrom dplyr filter arrange select bind_cols
 #' 
 #' @examples
 #' df <- 
@@ -40,60 +41,62 @@ prep_ald <- function(form, data, trt_var = "trt") {
 #'     value = c(1,1,1,1,1,1,1,1,1,1))
 #' 
 reshape_ald_to_wide <- function(df) {
-    
-    variable_df <- df %>%
-      filter(variable != "y") %>%
-      arrange(variable) |> 
-      select(-study) |> 
-      unite("colname", stat, variable, sep = ".") %>%
-      pivot_wider(names_from = colname,
-                  values_from = value)
-    
-    y_df <- df %>%
-      filter(variable == "y") %>%
-      unite("colname", variable, study, stat, sep = ".") %>%
-      select(colname, value) %>%
-      pivot_wider(names_from = colname,
-                  values_from = value)
-    
-    # Rename columns: y.X.N to N.X
-    # i.e. swap study and stat, removes 'y.'
-    colnames(y_df) <- colnames(y_df) %>%
-      str_replace("^y\\.(.*?)\\.(.*?)$", "\\2.\\1")
-    
-    bind_cols(variable_df, y_df)
+  
+  variable_df <- df |> 
+    dplyr::filter(variable != "y") |> 
+    dplyr::arrange(variable) |> 
+    dplyr::select(-study) |> 
+    tidyr::unite("colname", stat, variable, sep = ".") |> 
+    tidyr::pivot_wider(names_from = colname,
+                       values_from = value)
+  
+  y_df <- df |> 
+    dplyr::filter(variable == "y") |> 
+    tidyr::unite("colname", variable, study, stat, sep = ".") |> 
+    dplyr::select(colname, value) |> 
+    tidyr::pivot_wider(names_from = colname,
+                       values_from = value)
+  
+  # Rename columns: y.X.N to N.X
+  # i.e. swap study and stat, removes 'y.'
+  colnames(y_df) <- colnames(y_df) |> 
+    stringr::str_replace("^y\\.(.*?)\\.(.*?)$", "\\2.\\1")
+  
+  dplyr::bind_cols(variable_df, y_df)
 }
 
 ##TODO: check this
 #' Convert from wide to long format
 #'
-#' @import tidyr
-#' @import stringr
+#' @importFrom tidyr pivot_longer separate
+#' @importFrom dplyr select mutate bind_rows arrange
 #' 
 #' @examples
 reshape_ald_to_long <- function(df) {
   
   # Separate the 'colname' into 'statistic', 'variable', and 'treatment' columns
-  variable_cols <- df %>%
-    select(-starts_with("y")) %>%
-    pivot_longer(cols = everything(),
-                 names_to = "colname",
-                 values_to = "value") %>%
-    separate(colname, into = c("statistic", "variable"), sep = "\\.") %>%
-    select(variable, statistic, value) %>%
-    mutate(treatment = NA)  # Set study to NA for these rows
+  variable_cols <- df |> 
+    dplyr::select(-starts_with("y")) |> 
+    tidyr::pivot_longer(cols = everything(),
+                        names_to = "colname",
+                        values_to = "value") |> 
+    tidyr::separate(colname, into = c("statistic", "variable"), sep = "\\.") |> 
+    dplyr::select(variable, statistic, value) |> 
+    dplyr::mutate(treatment = NA)  # Set study to NA for these rows
   
   # process the columns related to 'y' (stat, study, and variable)
-  y_cols <- df %>%
-    select(starts_with("y")) %>%
-    pivot_longer(cols = everything(),
-                 names_to = "colname",
-                 values_to = "value") %>%
-    separate(colname, into = c("variable", "treatment", "statistic"), sep = "\\.") %>%
-    select(variable, statistic, treatment, value) 
+  y_cols <- df |> 
+    dplyr::select(starts_with("y")) |> 
+    tidyr::pivot_longer(cols = everything(),
+                        names_to = "colname",
+                        values_to = "value") |> 
+    tidyr::separate(colname,
+                    into = c("variable", "treatment", "statistic"),
+                    sep = "\\.") |> 
+    dplyr::select(variable, statistic, treatment, value) 
   
-  bind_rows(variable_cols, y_cols) %>%
-    arrange(variable, statistic, treatment)
+  dplyr::bind_rows(variable_cols, y_cols) |> 
+    dplyr::arrange(variable, statistic, treatment)
 }
 
 

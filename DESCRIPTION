@@ -13,7 +13,7 @@ Description:
     Model-based standardisation with several different computation approaches.
     See Remiro‐Azócar A, Heath A, Baio G (2022. Parametric G‐computation for compatible
     indirect treatment comparisons with limited individual patient data, 
-    Res. Synth. Methods, 1–31. ISSN 1759-2879, <doi:10.1002/jrsm.1565, 2108.12208>.
+    Res. Synth. Methods, 1–31. ISSN 1759-2879, <doi:10.1002/jrsm.1565, 2108.12208>.)
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -34,7 +34,9 @@ Suggests:
     parallel,
     purrr,
     rmarkdown,
-    testthat (>= 3.0.0)
+    stringr,
+    testthat (>= 3.0.0),
+    tidyr
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 RdMacros: Rdpack
