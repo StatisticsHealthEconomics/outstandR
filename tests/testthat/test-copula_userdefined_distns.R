@@ -532,6 +532,19 @@ test_that("simulate_ALD_pseudo_pop continuous via outstandR", {
     # trt_var = "trt",
     # N = 10000,
   
+  marginals_orig <- list(
+    marginal_dists = c(EM_cont_1 = "norm",
+                       EM_cont_2 = "norm",
+                       PF_cont_1 = "norm",
+                       PF_cont_2 = "norm"),
+    marginal_params = list(
+      EM_cont_1 = list(mean = meanX_EM_BC[1], sd = sdX_EM[1]),
+      EM_cont_2 = list(mean = meanX_EM_BC[2], sd = sdX_EM[2]),
+      PF_cont_1 = list(mean = meanX_BC[1], sd = sdX[1]),
+      PF_cont_2 = list(mean = meanX_BC[2], sd = sdX[2])
+    )
+  )
+  
   res <- outstandR(
     ipd_trial = ipd_trial,
     ald_trial = ald_trial,

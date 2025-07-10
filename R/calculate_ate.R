@@ -111,8 +111,9 @@ calculate_trial_variance_binary <- function(ald, tid, effect) {
   )
   
   if (!effect %in% names(effect_functions)) {
-    stop(paste0("Unsupported effect function. Choose from ",
-                names(effect_functions)))
+    stop(
+      paste0("Unsupported effect function. Choose from ", 
+             paste(names(effect_functions), collapse = ", ")))
   }
   
   effect_functions[[effect]]()
@@ -152,10 +153,11 @@ calculate_trial_variance_continuous <- function(ald, tid, effect) {
   )
   
   if (!effect %in% names(effect_functions)) {
-    stop(paste0("Unsupported effect function. Choose from ",
-                names(effect_functions)))
+    stop(
+      paste0("Unsupported effect function. Choose from ", 
+             paste(names(effect_functions), collapse = ", ")))
   }
-  
+
   effect_functions[[effect]]()
 }
 
@@ -195,8 +197,9 @@ calculate_trial_variance_count <- function(ald, tid, effect) {
   )
   
   if (!effect %in% names(effect_functions)) {
-    stop(paste0("Unsupported effect function. Choose from ",
-                names(effect_functions)))
+    stop(
+      paste0("Unsupported effect function. Choose from ", 
+             paste(names(effect_functions), collapse = ", ")))
   }
   
   effect_functions[[effect]]()

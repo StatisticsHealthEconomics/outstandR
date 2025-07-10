@@ -130,9 +130,13 @@ get_ref_trt <- function(ref_trt, trt, ipd_trial, ald_trial) {
     unique(ipd_trial[[trt]]),
     unique(ald_trial[[trt]]))
   
-  if (length(ref_trt) != 1) {
+  if (length(ref_trt) == 0) {
+    stop("No common treatment in aggregate and individual level data.", call. = FALSE)
+  }
+  
+  if (length(ref_trt) > 1) {
     stop("More than one common treatment in aggregate and individual level data.", call. = FALSE)
-  }  
+  }
   
   ref_trt
 }

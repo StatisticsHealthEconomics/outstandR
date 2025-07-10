@@ -110,7 +110,7 @@ IPD_stat_factory <- function(ipd_fun) {
     ald <- analysis_params$ald
     scale <- analysis_params$scale
     
-    out <- ipd_fun(strategy, ipd, ald, ...)
+    out <- ipd_fun(strategy, analysis_params, ...)
     
     # relative treatment effect
     hat.delta.AC <- calculate_ate(out$mean_A, out$mean_C,
@@ -120,7 +120,7 @@ IPD_stat_factory <- function(ipd_fun) {
     
     if (var_method == "sandwich") {
       ##TODO:
-      var_est <- estimate_var_sandwich(strategy, ipd_data, ...)
+      var_est <- estimate_var_sandwich(strategy, ipd, ...)
     } else if (var_method == "sample") {
       var_est <- var(hat.delta.AC)
     }

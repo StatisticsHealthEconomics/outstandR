@@ -1,13 +1,16 @@
 # test-calculate_trial_stats
 
+library(tibble)
+
 # variances
 
 test_that("calculate_trial_variance_binary works correctly", {
-  ald <- list(
-    "y.B.sum" = 30,
-    "N.B" = 100,
-    "y.C.sum" = 40,
-    "N.C" = 120
+  ## mock data
+  ald <- data.frame(
+    variable = c("y", NA, "y", NA),
+    trt = c("B", "B", "C", "C"),
+    statistic = c("sum", "N", "sum", "N"),
+    value = c(30, 100, 20, 100)
   )
   
   # log_odds
@@ -39,9 +42,14 @@ test_that("calculate_trial_variance_binary works correctly", {
 })
 
 test_that("calculate_trial_variance_continuous works correctly", {
-  ald <- list("y.B.bar" = 2.5,
-              "y.B.sd" = 1.2,
-              "N.B" = 50)
+  
+  ald <- tribble(
+    ~variable, ~trt, ~statistic, ~value,
+    "y",       "B",  "mean",     2.5,
+    "y",       "B",  "sd",       1.2,
+    NA,        "B",  "N",        50
+  )
+  
   # log_odds
   expected <- pi^2 / 3 * (1 / 50)
   expect_equal(calculate_trial_variance_continuous(ald, "B", "log_odds"),
@@ -54,15 +62,20 @@ test_that("calculate_trial_variance_continuous works correctly", {
   
   # risk_difference
   expected <- (1.2^2) / 50
-  expect_equal(calculate_trial_variance_continuous(ald, "B", "risk_difference"),
+  expect_equal(calculate_trial_variance_continuous(ald, "B", "mean_difference"),
                expected)
 })
 
 # means
 
 test_that("calculate_trial_mean_binary works correctly", {
-  ald <- list("y.B.sum" = 30,
-              "N.B" = 100)
+
+  ald <- tribble(
+    ~variable, ~trt, ~statistic, ~value,
+    "y",       "B",  "sum",     30,
+    NA,        "B",  "N",       100
+  )
+  
   p <- 30 / 100
   
   # log_odds
@@ -94,10 +107,14 @@ test_that("calculate_trial_mean_binary works correctly", {
 
 
 test_that("calculate_trial_mean_continuous works correctly", {
-  ald <- list("y.B.bar" = 2.5,
-              "y.B.sd" = 1.2,
-              "N.B" = 50)
   
+  ald <- tribble(
+    ~variable, ~trt, ~statistic, ~value,
+    "y",       "B",  "mean",     2.5,
+    "y",       "B",  "sd",       1.2,
+    NA,        "B",  "N",        50
+  )
+
   # log_odds
   expected <- log(2.5)
   expect_equal(calculate_trial_mean_continuous(ald, "B", "log_odds"),
@@ -105,7 +122,7 @@ test_that("calculate_trial_mean_continuous works correctly", {
   
   # risk_difference
   expected <- 2.5
-  expect_equal(calculate_trial_mean_continuous(ald, "B", "risk_difference"),
+  expect_equal(calculate_trial_mean_continuous(ald, "B", "mean_difference"),
                expected)
   
   # delta_z
@@ -117,37 +134,45 @@ test_that("calculate_trial_mean_continuous works correctly", {
 
 
 test_that("marginal_variance works correctly", {
-  ald <- list(
-    "y.B.sum" = 30,
-    "N.B" = 100,
-    "y.C.sum" = 40,
-    "N.C" = 120
+
+  ald <- tribble(
+    ~variable, ~trt, ~statistic, ~value,
+    "y",       "B",  "sum",     30,
+    "y",       "C",  "sum",     40,
+    NA,        "B",  "N",       100,
+    NA,        "C",  "N",       120
   )
-  treatments <- list("B", "C")
-  
+
   expected <- sum(
     calculate_trial_variance_binary(ald, "B", "log_odds"),
     calculate_trial_variance_binary(ald, "C", "log_odds")
   )
   
-  expect_equal(marginal_variance(ald, treatments, "log_odds", "binomial"),
-               expected)
+  expect_equal(
+    marginal_variance(ald, 
+                      ref_trt = "C", comp_trt = "B", 
+                      scale = "log_odds", family = "binomial"),
+    expected)
 })
 
 
 test_that("marginal_treatment_effect works correctly", {
-  ald <- list(
-    "y.B.sum" = 30,
-    "N.B" = 100,
-    "y.C.sum" = 40,
-    "N.C" = 120
+  
+  ald <- tribble(
+    ~variable, ~trt, ~statistic, ~value,
+    "y",       "B",  "sum",     30,
+    "y",       "C",  "sum",     40,
+    NA,        "B",  "N",       100,
+    NA,        "C",  "N",       120
   )
-  treatments <- list("B", "C")
   
   meanB <- calculate_trial_mean_binary(ald, "B", "log_odds")
   meanC <- calculate_trial_mean_binary(ald, "C", "log_odds")
   
   expected <- meanB - meanC 
-  expect_equal(marginal_treatment_effect(ald, treatments, "log_odds", "binomial"),
-               expected)
+  
+  expect_equal(
+    marginal_treatment_effect(ald, ref_trt = "C", comp_trt = "B", 
+                              scale = "log_odds", family = "binomial"),
+    expected)
 })

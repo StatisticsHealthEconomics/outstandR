@@ -1,4 +1,4 @@
-#
+# G-computation
 
 library(dplyr)
 library(stdReg2)
@@ -10,8 +10,9 @@ test_that("different combinations of covariates in formula", {
   load(test_path("testdata/AC_IPD.RData"))
   
   BC_ALD <- reshape_ald_to_long(BC_ALD)
+  AC_IPD$trt <- factor(AC_IPD$trt, labels = c("C", "A"))  # from 0, 1
   
-  # gcomp_ml
+  ### gcomp_ml
   
   expect_error(strategy_gcomp_ml(formula = as.formula("y ~ 1")),
                regexp = "Treatment term 'trt' is missing in the formula")
@@ -24,13 +25,14 @@ test_that("different combinations of covariates in formula", {
   strat_13 <- strategy_gcomp_ml(formula = as.formula("y ~ trt*X1 + X3"))
   strat_1 <- strategy_gcomp_ml(formula = as.formula("y ~ trt*X1"))
   
-  res <- outstandR(AC_IPD, BC_ALD, strategy = strat_1234)
+  res <- outstandR(ipd_trial = AC_IPD, ald_trial = BC_ALD, strategy = strat_1234)
+  
   expect_length(res, 2)
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_31))
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_13))
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_1))
   
-  # gcomp_stan
+  ### gcomp_stan
   
   expect_error(strategy_gcomp_stan(formula = as.formula("y ~ 1")),
                regexp = "Treatment term 'trt' is missing in the formula")
@@ -43,7 +45,8 @@ test_that("different combinations of covariates in formula", {
   strat_13 <- strategy_gcomp_stan(formula = as.formula("y ~ trt*X1 + X3"))
   strat_1 <- strategy_gcomp_stan(formula = as.formula("y ~ trt*X1"))
   
-  res <- outstandR(AC_IPD, BC_ALD, strategy = strat_1234)
+  res <- outstandR(ipd_trial = AC_IPD, ald_trial = BC_ALD, strategy = strat_1234)
+  
   expect_length(res, 2)
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_31))
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_13))

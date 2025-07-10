@@ -39,15 +39,17 @@
 #' @export
 #'
 calc_gcomp_stan <- function(strategy,
-                            ipd, ald, 
-                            ref_trt = NA,
-                            comp_trt = NA, ...) {
+                            analysis_params, ...) {
   
   formula <- strategy$formula
   family <- strategy$family
   rho <- strategy$rho
   N <- strategy$N
   trt_var <- strategy$trt_var
+  ipd <- analysis_params$ipd 
+  ald <- analysis_params$ald 
+  ref_trt <- analysis_params$ref_trt
+  comp_trt <- analysis_params$ipd_comp
   
   x_star <- simulate_ALD_pseudo_pop(formula, ipd, ald, trt_var, rho, N)
   
@@ -116,18 +118,19 @@ calc_gcomp_stan <- function(strategy,
 #' @export
 #'
 calc_gcomp_ml <- function(strategy,
-                          ipd, ald) {
+                          analysis_params) {
+  
   args_list <- 
     list(R = strategy$R,
          formula = strategy$formula,
          family = strategy$family,
          trt_var = strategy$trt_var,
-         ref_trt = ref_trt,
-         comp_trt = NA,
+         ref_trt = analysis_params$ref_trt,
+         comp_trt = analysis_params$ipd_comp,
          rho = strategy$rho,
          N = strategy$N,
-         data = ipd,
-         ald = ald)
+         data = analysis_params$ipd,
+         ald = analysis_params$ald)
   
   gcomp_boot <- do.call(boot::boot, c(statistic = gcomp_ml.boot, args_list))
   
