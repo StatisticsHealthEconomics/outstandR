@@ -4,7 +4,7 @@
 \alias{calc_gcomp_stan}
 \title{G-computation using Stan}
 \usage{
-calc_gcomp_stan(strategy, ipd, ald, ref_trt = NA, comp_trt = NA, ...)
+calc_gcomp_stan(strategy, analysis_params, ...)
 }
 \arguments{
 \item{strategy}{A list specifying the model strategy, including:

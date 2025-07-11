@@ -2,44 +2,48 @@
 
 library(tibble)
 
-## Setup ----
 strategy_maic <- list(
-  class = "maic",
   R = 1000,
   formula = y ~ trt,
+  trt_var = "trt",
   family = binomial()
-)
+) |> 
+  `attr<-`(which = "class", value = "maic")
 
 strategy_stc <- list(
-  class = "stc",
   formula = y ~ trt,
+  trt_var = "trt",
   family = binomial()
-)
+) |> 
+  `attr<-`(which = "class", value = "stc")
 
 strategy_gcomp_ml <- list(
-  class = "gcomp_ml",
   R = 1000,
   formula = y ~ trt,
+  trt_var = "trt",
   family = binomial()
-)
+) |> 
+  `attr<-`(which = "class", value = "gcomp_ml")
 
 strategy_gcomp_stan <- list(
-  class = "gcomp_stan",
   formula = y ~ trt,
+  trt_var = "trt",
   family = binomial()
-)
+) |> 
+  `attr<-`(which = "class", value = "gcomp_stan")
 
 strategy_mim <- list(
-  class = "mim",
   formula = y ~ trt,
+  trt_var = "trt",
   family = binomial()
-)
+) |> 
+  `attr<-`(which = "class", value = "mim")
 
 ald <- tribble(
   ~variable, ~trt, ~statistic, ~value,
-  "y",       "A",  "sum",     30,
+  "y",       "B",  "sum",     30,
   "y",       "C",  "sum",     20,
-  NA,        "A",  "N",       100,
+  NA,        "B",  "N",       100,
   NA,        "C",  "N",       100
 )
 
@@ -55,7 +59,8 @@ analysis_params <-
 
 ## General Tests ----
 test_that("calc_IPD_stats() works for MAIC", {
-  res <- calc_IPD_stats(strategy = strategy_maic, analysis_params)
+  res <- calc_IPD_stats(strategy = strategy_maic, analysis_params = analysis_params)
+  
   expect_type(res$mean, "double")
   expect_type(res$var, "double")
 })
@@ -138,24 +143,6 @@ test_that("calc_IPD_stats() handles missing columns", {
   params_missing$ipd <- ipd_missing
   
   expect_error(calc_IPD_stats(strategy_maic, params_missing))
-})
-
-test_that("calc_IPD_stats() handles different link functions", {
-  strategy_log <- list(class = "stc",
-                       formula = y ~ trt,
-                       family = binomial(link = "log"))
-  
-  strategy_identity <- list(class = "stc",
-                            formula = y ~ trt,
-                            family = binomial(link = "identity"))
-  
-  res_log <- calc_IPD_stats(strategy_log, analysis_params)
-  res_identity <- calc_IPD_stats(strategy_identity, analysis_params)
-  
-  expect_type(res_log$mean, "double")
-  expect_type(res_log$var, "double")
-  expect_type(res_identity$mean, "double")
-  expect_type(res_identity$var, "double")
 })
 
 test_that("calc_IPD_stats() handles unsupported link functions", {

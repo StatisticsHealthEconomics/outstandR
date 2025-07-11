@@ -68,22 +68,33 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
   dat <- ipd[indices, ]  # bootstrap sample
   n_ipd <- length(indices)
   
+  # ensure bootstrap sample contains more than one treatment level
+  if (length(unique(dat[[trt_var]])) < 2) {
+    return(c(pC = NA, pA = NA))
+  }
+  
   effect_modifier_names <- get_eff_mod_names(formula)
   
-  X_EM <- dat[, effect_modifier_names]
-  
-  # centre AC effect modifiers on BC means
-  dat_ALD_means <- ald |> 
-    dplyr::filter(variable %in% effect_modifier_names,
-                  statistic == "mean") |> 
-    tidyr::pivot_wider(names_from = variable) |> 
-    dplyr::select(all_of(effect_modifier_names)) |> 
-    tidyr::uncount(weights = n_ipd)
-  
-  centred_EM <- X_EM - dat_ALD_means
-  
-  if (is.null(hat_w)) {
-    hat_w <- maic_weights(centred_EM)
+  if (length(effect_modifier_names) > 0) {
+    X_EM <- dat[, effect_modifier_names]
+    
+    # centre AC effect modifiers on BC means
+    dat_ALD_means <- ald |> 
+      dplyr::filter(variable %in% effect_modifier_names,
+                    statistic == "mean") |> 
+      tidyr::pivot_wider(names_from = variable) |> 
+      dplyr::select(all_of(effect_modifier_names)) |> 
+      tidyr::uncount(weights = n_ipd)
+    
+    centred_EM <- X_EM - dat_ALD_means
+    
+    if (is.null(hat_w)) {
+      hat_w <- maic_weights(centred_EM)
+    }
+  } else {
+    # if there are no covariates, all weights are 1
+    # i.e. unadjusted comparison
+    hat_w <- rep(1, n_ipd)
   }
   
   formula_treat <- glue::glue("{formula[[2]]} ~ {trt_var}")
@@ -116,17 +127,17 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
 #' @importFrom boot boot
 #' 
 calc_maic <- function(strategy,
-                      ipd, ald) {
+                      analysis_params) {
   args_list <- 
     list(R = strategy$R,
          formula = strategy$formula,
          family = strategy$family,
          trt_var = strategy$trt_var,
-         data = ipd,
-         ald = ald)
+         data = analysis_params$ipd,
+         ald = analysis_params$ald)
   
   maic_boot <- do.call(boot::boot, c(statistic = maic.boot, args_list))
-  
+
   list(mean_A = maic_boot$t[, 2],
        mean_C = maic_boot$t[, 1])  
 }

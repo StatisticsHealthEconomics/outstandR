@@ -4,7 +4,7 @@
 \alias{calc_gcomp_ml}
 \title{G-computation Maximum Likelihood Bootstrap}
 \usage{
-calc_gcomp_ml(strategy, ipd, ald)
+calc_gcomp_ml(strategy, analysis_params)
 }
 \arguments{
 \item{strategy}{A list specifying the model strategy, including:
