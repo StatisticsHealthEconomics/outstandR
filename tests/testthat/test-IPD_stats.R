@@ -112,9 +112,9 @@ test_that("calc_IPD_stats() handles extreme values", {
   
   ald_extreme <- tribble(
     ~variable, ~trt, ~statistic, ~value,
-    "y",       "A",  "sum",     0,     # zero events
+    "y",       "B",  "sum",     0,     # zero events
     "y",       "C",  "sum",     100,   # all events
-    NA,        "A",  "N",       100,
+    NA,        "B",  "N",       100,
     NA,        "C",  "N",       100
   )
   
@@ -161,9 +161,9 @@ test_that("calc_IPD_stats() handles negative or NA values", {
   
   ald_na <- tribble(
     ~variable, ~trt, ~statistic, ~value,
-    "y",       "A",  "sum",     NA,
+    "y",       "B",  "sum",     NA,
     "y",       "C",  "sum",     20,
-    NA,        "A",  "N",       100,
+    NA,        "B",  "N",       100,
     NA,        "C",  "N",       100
   )
   
