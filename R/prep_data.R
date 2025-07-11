@@ -123,7 +123,12 @@ get_comparator <- function(dat, ref_trt, trt_var = "trt") {
 get_ref_trt <- function(ref_trt, trt, ipd_trial, ald_trial) {
   
   if (!is.na(ref_trt)) {
-    return()
+    # check exists
+    if (!ref_trt %in% names(ipd_trial) || !ref_trt %in% names(ald_trial)) {
+      stop("Reference treatment not in IPD and ALD.", call. = FALSE)
+    }
+    
+    return(ref_trt)
   }
   
   ref_trt <- intersect(

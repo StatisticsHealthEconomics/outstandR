@@ -8,8 +8,9 @@
 #' @importFrom stats glm
 #' @export
 #' 
-calc_stc <- function(strategy, ipd, ...) {
+calc_stc <- function(strategy, analysis_params, ...) {
   
+  ipd <- analysis_params$ipd
   trt_var <- strategy$trt_var
   
   # centre covariates
@@ -25,7 +26,9 @@ calc_stc <- function(strategy, ipd, ...) {
   coef_fit <- coef(fit)
   
   # safer than trt_var in case of factor level append
-  treat_coef_name <- grep(paste0("^", trt_var, "[^:]*$"), names(coef_fit), value = TRUE)
+  treat_coef_name <-
+    grep(pattern = paste0("^", trt_var, "[^:]*$"),
+         names(coef_fit), value = TRUE)
   
   # probability for control and treatment group
   # estimating treatment effect at means because of centring

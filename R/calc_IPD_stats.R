@@ -116,17 +116,17 @@ IPD_stat_factory <- function(ipd_fun) {
     hat.delta.AC <- calculate_ate(out$mean_A, out$mean_C,
                                   effect = scale)
     
-    coef_est <- mean(hat.delta.AC)
+    coef_est <- mean(hat.delta.AC, na.rm = TRUE)
     
     if (var_method == "sandwich") {
       ##TODO:
       var_est <- estimate_var_sandwich(strategy, ipd, ...)
     } else if (var_method == "sample") {
-      var_est <- var(hat.delta.AC)
+      var_est <- var(hat.delta.AC, na.rm = TRUE)
     }
     
-    p_est <- sapply(out, mean)
-    p_var <- sapply(out, var)
+    p_est <- sapply(out, mean, na.rm = TRUE)
+    p_var <- sapply(out, var, na.rm = TRUE)
     
     list(
       contrasts = list(
