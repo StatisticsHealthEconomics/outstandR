@@ -48,10 +48,13 @@ calc_IPD_stats.default <- function(...) {
 #' @rdname calc_IPD_stats
 #' 
 #' @section Multiple imputation marginalisation:
-#' Using Stan, compute marginal relative treatment effect for IPD comparator "A" vs reference "C" arms for each MCMC sample
+#' Using Stan, compute marginal relative treatment effect for IPD
+#' comparator "A" vs reference "C" arms for each MCMC sample
 #' by transforming from probability to linear predictor scale. Approximate by 
-#' using imputation and combining estimates using Rubin's rules, in contrast to [calc_IPD_stats.gcomp_stan()].
-#' @import stats
+#' using imputation and combining estimates using Rubin's rules,
+#' in contrast to [calc_IPD_stats.gcomp_stan()].
+#' 
+#' @importFrom stats qt var
 #' @export
 #'
 calc_IPD_stats.mim <- function(strategy,

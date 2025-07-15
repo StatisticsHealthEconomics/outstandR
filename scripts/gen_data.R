@@ -67,12 +67,12 @@ ALD.BC <- lapply(1:n_sim, function(j) {
       sd.X3 = sd(X3),
       sd.X4 = sd(X4)),
     # summarize outcomes for the BC trial (treatment B)
-    filter(IPD.BC[[j]], trt == 1) %>%
+    dplyr::filter(IPD.BC[[j]], trt == 1) %>%
       summarise(y.B.sum = sum(y),
                 y.B.bar = mean(y),
                 N.B = n()),
     # summarize outcomes for the BC trial (treatment C)
-    filter(IPD.BC[[j]], trt == 0) %>%
+    dplyr::filter(IPD.BC[[j]], trt == 0) %>%
       summarise(y.C.sum = sum(y),
                 y.C.bar = mean(y),
                 N.C = n())))   

@@ -51,9 +51,11 @@ and G-computation via Maximum Likelihood Estimation (MLE) or Bayesian inference.
 }
 \section{Multiple imputation marginalisation}{
 
-Using Stan, compute marginal relative treatment effect for IPD comparator "A" vs reference "C" arms for each MCMC sample
+Using Stan, compute marginal relative treatment effect for IPD
+comparator "A" vs reference "C" arms for each MCMC sample
 by transforming from probability to linear predictor scale. Approximate by
-using imputation and combining estimates using Rubin's rules, in contrast to \code{\link[=calc_IPD_stats.gcomp_stan]{calc_IPD_stats.gcomp_stan()}}.
+using imputation and combining estimates using Rubin's rules,
+in contrast to \code{\link[=calc_IPD_stats.gcomp_stan]{calc_IPD_stats.gcomp_stan()}}.
 }
 
 \section{Simulated treatment comparison statistics}{

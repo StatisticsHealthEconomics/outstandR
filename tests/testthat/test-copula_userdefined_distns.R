@@ -588,6 +588,8 @@ ipd_trial <- simcovariates::gen_data(
   family = binomial("logit")
 )
 
+ipd_trial$trt <- factor(ipd_trial$trt, labels = c("C", "A"))
+
 BC.IPD <- simcovariates::gen_data(
   N = N,
   b_trt = b_trt,
@@ -658,9 +660,7 @@ summary.N <-
 ald_trial <- rbind.data.frame(cov.X, summary.y, summary.N)
 
 
-test_that("simulate_ALD_pseudo_pop directly with binary data", {
-  ####################
-  # without marginals
+test_that("simulate directly with binary data without marginals", {
   
   # providing competing arguments
   
@@ -907,36 +907,26 @@ test_that("simulate_ALD_pseudo_pop directly with binary data", {
   #   expected = rho_new,
   #   tolerance = 0.1
   # )
-  
-  #################
-  # with marginals
+
+})
+
+test_that("simulate directly with binary data with marginals", {
   
   marginals_orig <- list(
-    marginal_dists = c(EM_bin_1 = "norm",
-                       EM_bin_2 = "norm",
-                       PF_bin_1 = "norm",
-                       PF_bin_2 = "norm"),
+    marginal_dists = c(EM_bin_1 = "binom",
+                       EM_bin_2 = "binom",
+                       PF_bin_1 = "binom",
+                       PF_bin_2 = "binom"),
     marginal_params = list(
-      EM_bin_1 = list(mean = meanX_EM_BC[1], sd = sdX_EM[1]),
-      EM_bin_2 = list(mean = meanX_EM_BC[2], sd = sdX_EM[2]),
-      PF_bin_1 = list(mean = meanX_BC[1], sd = sdX[1]),
-      PF_bin_2 = list(mean = meanX_BC[2], sd = sdX[2])
+      EM_bin_1 = list(prob = propX_EM_BC[1]),
+      EM_bin_2 = list(prob = propX_EM_BC[2]),
+      PF_bin_1 = list(prob = propX_BC[1]),
+      PF_bin_2 = list(prob = propX_BC[2])
     )
   )
   
-  marginals_new <- list(
-    marginal_dists = c(EM_bin_1 = "norm",
-                       EM_bin_2 = "norm",
-                       PF_bin_1 = "norm",
-                       PF_bin_2 = "norm"),
-    marginal_params = list(
-      EM_bin_1 = list(mean = 0, sd = 1),
-      EM_bin_2 = list(mean = 0, sd = 1),
-      PF_bin_1 = list(mean = 0, sd = 1),
-      PF_bin_2 = list(mean = 0, sd = 1)
-    )
-  )
-  
+  rho_new <- 0.6
+
   # no rho ie taken from ipd
   result <- simulate_ALD_pseudo_pop(
     formula = form,
@@ -1079,13 +1069,8 @@ test_that("simulate_ALD_pseudo_pop directly with binary data", {
   #   expected = rho_new,
   #   tolerance = 0.1
   # )
-})
 
-test_that("simulate_ALD_pseudo_pop binomial via outstandR", {
-  ##TODO:
-  # rho = rho_new,
-  # trt_var = "trt",
-  # N = 10000,
+  # via outstandR()
   
   res <- outstandR(
     ipd_trial = ipd_trial,

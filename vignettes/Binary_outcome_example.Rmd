@@ -817,7 +817,7 @@ The naive comparison calculating $AB$ effect in the $BC$ population is
 ```{r}
 # reshape to make extraction easier
 ald_out <- ald_trial %>%
-  filter(variable == "y" | is.na(variable)) %>%
+  dplyr::filter(variable == "y" | is.na(variable)) %>%
   mutate(stat_trt = paste0(statistic, "_", trt)) %>%
   dplyr::select(stat_trt, value) %>%
   pivot_wider(names_from = stat_trt, values_from = value)

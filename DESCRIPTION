@@ -21,12 +21,13 @@ RoxygenNote: 7.3.2.9000
 Imports:
     boot,
     copula,
+    dplyr,
     MASS,
     rstanarm,
+    stats,
     Rdpack (>= 0.7)
 Suggests:
     doSNOW,
-    dplyr,
     ggplot2,
     gridExtra,
     here,

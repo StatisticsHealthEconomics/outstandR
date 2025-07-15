@@ -203,6 +203,14 @@ simulate_ALD_pseudo_pop <- function(formula,
                               dim = n_covariates,
                               dispstr = "un")
   
+  # marginal_params add size = 1 if 'binom' and size is missing
+  for (i in seq_along(marginal_distns)) {
+    if (marginal_distns[i] == "binom" &&
+        is.null(marginal_params[[i]]$size)) {
+      marginal_params[[i]]$size <- 1
+    }
+  }
+  
   mvd <- copula::mvdc(copula = cop,
                       margins = marginal_distns,
                       paramMargins = marginal_params)

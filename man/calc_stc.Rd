@@ -4,7 +4,7 @@
 \alias{calc_stc}
 \title{Calculate simulated treatment comparison statistics}
 \usage{
-calc_stc(strategy, ipd, ...)
+calc_stc(strategy, analysis_params, ...)
 }
 \value{
 A list:
