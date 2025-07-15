@@ -1,10 +1,9 @@
-# maic, stc
+# test strategies maic, stc
 
 library(dplyr)
 library(glue)
 
 
-#
 test_that("different combinations of covariates in formula", {
   
   load(test_path("testdata/BC_ALD.RData"))
@@ -18,8 +17,8 @@ test_that("different combinations of covariates in formula", {
                regexp = "Treatment term 'trt' is missing in the formula")
 
   ##TODO:
-  expect_error(strategy_maic(formula = as.formula("y ~ X3 + X4")),
-               regexp = "Treatment term 'trt' is missing in the formula")
+  expect_message(strategy_maic(formula = as.formula("y ~ X3 + X4")),
+                 regexp = "Treatment is guessed as:")
   
   strat_1234 <- strategy_maic(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"))
   strat_123 <- strategy_maic(formula = as.formula("y ~ X1 + X2 + trt + trt:X2 + trt:X3"))

@@ -73,7 +73,7 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
     return(c(pC = NA, pA = NA))
   }
   
-  effect_modifier_names <- get_eff_mod_names(formula)
+  effect_modifier_names <- get_eff_mod_names(formula, trt_var)
   
   if (length(effect_modifier_names) > 0) {
     X_EM <- dat[, effect_modifier_names]

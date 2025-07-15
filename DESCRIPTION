@@ -27,6 +27,7 @@ Imports:
     stats,
     Rdpack (>= 0.7)
 Suggests:
+    crayon,
     doSNOW,
     ggplot2,
     gridExtra,
