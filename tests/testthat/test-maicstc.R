@@ -16,7 +16,6 @@ test_that("different combinations of covariates in formula", {
   expect_error(strategy_maic(formula = as.formula("y ~ 1")),
                regexp = "Treatment term 'trt' is missing in the formula")
 
-  ##TODO:
   expect_message(strategy_maic(formula = as.formula("y ~ X3 + X4")),
                  regexp = "Treatment is guessed as:")
   
@@ -37,20 +36,27 @@ test_that("different combinations of covariates in formula", {
 
   # stc
   expect_error(strategy_stc(formula = as.formula("y ~ 1")),
-               regexp = "Treatment term, trt, is missing in the formula")
+               regexp = "Treatment term 'trt' is missing in the formula")
   
-  expect_error(strategy_stc(formula = as.formula("y ~ X3 + X4")),
-               regexp = "Treatment term, trt, is missing in the formula")
+  expect_message(strategy_stc(formula = as.formula("y ~ X3 + X4")),
+                 regexp = "Treatment is guessed as:")
   
   strat_1234 <- strategy_stc(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"))
   strat_31 <- strategy_stc(formula = as.formula("y ~ X3 + trt*X1"))
   strat_13 <- strategy_stc(formula = as.formula("y ~ trt*X1 + X3"))
   strat_1 <- strategy_stc(formula = as.formula("y ~ trt*X1"))
 
-  # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_1234))
-  # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_31))
-  # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_13))
-  # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_1))
+  expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_1234)$contrasts$means$AC,
+               expected = -0.27, tolerance = 0.1)
+  
+  expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_31)$contrasts$means$AC,
+               expected = -0.27, tolerance = 0.1)
+  
+  expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_13)$contrasts$means$AC,
+               expected = -0.27, tolerance = 0.1)
+  
+  expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_1)$contrasts$means$AC,
+               expected = -0.30, tolerance = 0.1)
 })
 
 test_that("compare with maicplus package with binary outcome", {
@@ -109,31 +115,31 @@ test_that("compare with maicplus package with binary outcome", {
     rename(trt = ARM,
            y = RESPONSE)
   
-  BC.ALD <- agd |> 
-    rename(mean.AGE = AGE_MEAN,
-           mean.SEX_MALE = SEX_MALE_PROP) |> 
-    mutate(
-      # outcomes
-      N.B = 480, 
-      y.B.sum = binary_agd[
-        binary_agd$ARM == "B" & binary_agd$RESPONSE == "YES", "COUNT"],
-      y.B.bar = y.B.sum/N.B,
-      N.C = 320, 
-      y.C.sum = binary_agd[
-        binary_agd$ARM == "C" & binary_agd$RESPONSE == "YES", "COUNT"],
-      y.C.bar = y.C.sum/N.C)
+  BC.ALD <- tribble(
+    ~variable, ~trt, ~statistic, ~value,
+    "AGE",      NA,   "mean",     agd$AGE_MEAN,
+    "SEX_MALE", NA,   "prop",     agd$SEX_MALE_PROP,
+    "y",        "B",  "sum",      binary_agd[binary_agd$ARM == "B" &
+                                             binary_agd$RESPONSE == "YES", "COUNT"],
+    "y",        "C",  "sum",      binary_agd[binary_agd$ARM == "C" &
+                                             binary_agd$RESPONSE == "YES", "COUNT"],
+    NA,         "B",  "N",        480,
+    NA,         "C",  "N",        320
+  )
   
   res_outstandr <- 
     maic.boot(ipd = AC.IPD,
               formula = lin_form,
               family = binomial("logit"),
-              ald = BC.ALD)
+              ald = BC.ALD,
+              trt_var = "trt")
 
   res_outstandr_unadjusted <- 
     maic.boot(ipd = AC.IPD,
               formula = lin_form,
               family = binomial("logit"),
               ald = BC.ALD,
+              trt_var = "trt",
               hat_w = rep(1, nrow(AC.IPD)))
   
   maicplus_AC <-
@@ -161,6 +167,7 @@ test_that("compare with maicplus package with continuous outcome", {
 
   # Step 1: Create fake IPD
   n_ipd <- 100
+  
   ipd <- data.frame(
     age = rnorm(n_ipd, mean = 55, sd = 10),
     sex = rbinom(n_ipd, 1, 0.5),  # 1 = male
