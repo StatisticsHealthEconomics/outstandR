@@ -940,25 +940,25 @@ test_that("simulate directly with binary data with marginals", {
   
   expect_equal(
     object = mean(result$EM_bin_1),
-    expected = marginals_orig$marginal_params$EM_bin_1$mean,
+    expected = marginals_orig$marginal_params$EM_bin_1$prob,
     tolerance = 0.01
   )
   
   expect_equal(
     object = mean(result$EM_bin_2),
-    expected = marginals_orig$marginal_params$EM_bin_2$mean,
+    expected = marginals_orig$marginal_params$EM_bin_2$prob,
     tolerance = 0.01
   )
   
   expect_equal(
     object = mean(result$PF_bin_1),
-    expected = marginals_orig$marginal_params$PF_bin_1$mean,
+    expected = marginals_orig$marginal_params$PF_bin_1$prob,
     tolerance = 0.01
   )
   
   expect_equal(
     object = mean(result$PF_bin_2),
-    expected = marginals_orig$marginal_params$PF_bin_2$mean,
+    expected = marginals_orig$marginal_params$PF_bin_2$prob,
     tolerance = 0.01
   )
 
@@ -990,25 +990,25 @@ test_that("simulate directly with binary data with marginals", {
   
   expect_equal(
     object = mean(result$EM_bin_1),
-    expected = marginals_orig$marginal_params$EM_bin_1$mean,
+    expected = marginals_orig$marginal_params$EM_bin_1$prob,
     tolerance = 0.01
   )
   
   expect_equal(
     object = mean(result$EM_bin_2),
-    expected = marginals_orig$marginal_params$EM_bin_2$mean,
+    expected = marginals_orig$marginal_params$EM_bin_2$prob,
     tolerance = 0.01
   )
   
   expect_equal(
     object = mean(result$PF_bin_1),
-    expected = marginals_orig$marginal_params$PF_bin_1$mean,
+    expected = marginals_orig$marginal_params$PF_bin_1$prob,
     tolerance = 0.01
   )
   
   expect_equal(
     object = mean(result$PF_bin_2),
-    expected = marginals_orig$marginal_params$PF_bin_2$mean,
+    expected = marginals_orig$marginal_params$PF_bin_2$prob,
     tolerance = 0.01
   )
   
@@ -1036,25 +1036,25 @@ test_that("simulate directly with binary data with marginals", {
   
   expect_equal(
     object = mean(result$EM_bin_1),
-    expected = marginals_orig$marginal_params$EM_bin_1$mean,
+    expected = marginals_orig$marginal_params$EM_bin_1$prob,
     tolerance = 0.01
   )
   
   expect_equal(
     object = mean(result$EM_bin_2),
-    expected = marginals_orig$marginal_params$EM_bin_2$mean,
+    expected = marginals_orig$marginal_params$EM_bin_2$prob,
     tolerance = 0.01
   )
   
   expect_equal(
     object = mean(result$PF_bin_1),
-    expected = marginals_orig$marginal_params$PF_bin_1$mean,
+    expected = marginals_orig$marginal_params$PF_bin_1$prob,
     tolerance = 0.01
   )
   
   expect_equal(
     object = mean(result$PF_bin_2),
-    expected = marginals_orig$marginal_params$PF_bin_2$mean,
+    expected = marginals_orig$marginal_params$PF_bin_2$prob,
     tolerance = 0.01
   )
   
