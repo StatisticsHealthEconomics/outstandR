@@ -1072,12 +1072,14 @@ test_that("simulate directly with binary data with marginals", {
 
   # via outstandR()
   
-  res <- outstandR(
-    ipd_trial = ipd_trial,
-    ald_trial = ald_trial,
-    strategy = strategy_maic(formula = form),
-    marginal_distns = marginals_orig$marginal_dists,
-    marginal_params = marginals_orig$marginal_params)
+  expect_error(
+    outstandR(
+      ipd_trial = ipd_trial,
+      ald_trial = ald_trial,
+      strategy = strategy_maic(formula = form),  # doesnt use pseudo data
+      marginal_distns = marginals_orig$marginal_dists,
+      marginal_params = marginals_orig$marginal_params),
+    regexp = "unused arguments")
   
   # expect_equivalent(res)
 })
