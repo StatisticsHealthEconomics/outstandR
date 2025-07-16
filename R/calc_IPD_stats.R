@@ -63,13 +63,17 @@ calc_IPD_stats.mim <- function(strategy,
   ipd <- analysis_params$ipd
   ald <- analysis_params$ald
   scale <- analysis_params$scale
+  ref_trt <- analysis_params$ref_trt
+  comp_trt <- analysis_params$ipd_comp
   
   mis_res <-
     calc_mim(strategy,
-             ipd, ald, ...)
+             ipd, ald, 
+             ref_trt, comp_trt, 
+             ...)
   
   hat.delta.AC <-
-    calculate_ate(mis_res$mean_A, mis_res$mean_C,
+    calculate_ate(mis_res$mean_comp, mis_res$mean_ref,
                   effect = scale)
   
   M <- mis_res$M

@@ -165,58 +165,24 @@ test_that("compare with maicplus package with binary outcome", {
 
 test_that("compare with maicplus package with continuous outcome", {
 
-  # Step 1: Create fake IPD
   n_ipd <- 100
   
   ipd <- data.frame(
     age = rnorm(n_ipd, mean = 55, sd = 10),
     sex = rbinom(n_ipd, 1, 0.5),  # 1 = male
-    QoL_score = rnorm(n_ipd, mean = 60, sd = 8)
+    y = rnorm(n_ipd, mean = 60, sd = 8)
   )
   
-  # Step 2: Define AgD comparator baseline covariates (mean age and % male)
-  agd_covariates <- c(age = 60, sex = 0.6)
+  agd_covariates <- list(age = 60, sex = 0.6)
   
-  # Step 3: Calculate weights using MAIC
-  weights <- maic_weighting(
-    ipd_covariates = ipd[, c("age", "sex")],
-    comparator_aggregates = agd_covariates
-  )
+  EM_mat <- select(ipd, - y)
+  EM_mat$age <- EM_mat$age - agd_covariates$age
+  EM_mat$sex <- EM_mat$sex - agd_covariates$sex
   
-  # Step 4: Compute weighted mean outcome in IPD
+  weights <- maic_weights(X_EM = EM_mat)
+  
   ipd$weight <- weights
-  weighted_mean_ipd <- weighted.mean(ipd$QoL_score, ipd$weight)
-  
-  # Assume AgD reports a mean QoL score of 55
-  agd_qol_mean <- 55
-  
-  # Step 5: Estimate treatment effect (mean difference)
-  treatment_effect <- weighted_mean_ipd - agd_qol_mean
-  cat("Treatment effect (mean difference):", treatment_effect, "\n")
-  
-  # Step 6: Bootstrap 95% CI for treatment effect
-  n_boot <- 1000
-  boot_effects <- numeric(n_boot)
-  
-  for (i in 1:n_boot) {
-    boot_idx <- sample(1:n_ipd, replace = TRUE)
-    boot_ipd <- ipd[boot_idx, ]
-    boot_weights <- maic_weighting(
-      ipd_covariates = boot_ipd[, c("age", "sex")],
-      comparator_aggregates = agd_covariates
-    )
-    boot_ipd$weight <- boot_weights
-    boot_mean <- weighted.mean(boot_ipd$QoL_score, boot_ipd$weight)
-    boot_effects[i] <- boot_mean - agd_qol_mean
-  }
-  
-  ci_lower <- quantile(boot_effects, 0.025)
-  ci_upper <- quantile(boot_effects, 0.975)
-  
-  # different output scales
-  ##TODO:
-  # calculate_ate()
-  
+  weighted_mean_ipd <- weighted.mean(ipd$y, ipd$weight)
 })
 
 

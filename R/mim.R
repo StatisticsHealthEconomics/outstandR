@@ -3,6 +3,7 @@
 #' 
 #' @param strategy Strategy object
 #' @eval study_data_args(include_ipd = TRUE, include_ald = TRUE)
+#' @param ref_trt,comp_trt Reference and comparison treatment names
 #' @param ... Argument to pass to Stan model
 #' 
 #' @importFrom rstanarm posterior_predict stan_glm
@@ -10,8 +11,8 @@
 #' 
 calc_mim <- function(strategy,
                      ipd, ald, 
-                     ref_trt = NA,
-                     comp_trt = NA, ...) {
+                     ref_trt,
+                     comp_trt, ...) {
   
   formula <- strategy$formula
   family <- strategy$family
@@ -71,16 +72,16 @@ calc_mim <- function(strategy,
                           function(fit)
                             vcov(fit)[treat_coef_name, treat_coef_name]))
   
-  mean_C <- family$linkinv(coef_fit[, 1])                  # probability for reference
-  mean_A <- family$linkinv(coef_fit[, 1] + coef_fit[, treat_coef_name])  # probability for comparator
+  mean_ref <- family$linkinv(coef_fit[, 1])                  # probability for reference
+  mean_comp <- family$linkinv(coef_fit[, 1] + coef_fit[, treat_coef_name])  # probability for comparator
   
-  tibble::lst(mean_A, mean_C,
+  tibble::lst(mean_comp, mean_ref,
               hats.v, M)
 }
 
 #' Wald-type interval estimates
 #' 
-#' Constructed using t-distribution with nu degrees of freedom
+#' Constructed using t-distribution with nu degrees of freedom.
 #'
 #' @param M Number of syntheses used in analysis stage (high for low Monte Carlo error)
 #' @param bar.v "within" variance (average of variance point estimates)
@@ -94,8 +95,7 @@ wald_type_interval <- function(M, bar.v, b) {
 
 #' Variance estimate by pooling
 #' 
-#' Use combining rules to estimate
-#' 2003
+#' Use combining rules to estimate.
 #' 
 #' @param M Number of syntheses used in analysis stage (high for low Monte Carlo error)
 #' @param bar.v "within" variance (average of variance point estimates)

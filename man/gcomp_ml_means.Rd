@@ -12,8 +12,8 @@ gcomp_ml_means(
   trt_var,
   rho = NA,
   N = 1000,
-  ref_trt = NA,
-  comp_trt = NA
+  ref_trt,
+  comp_trt
 )
 }
 \arguments{
