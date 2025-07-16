@@ -74,9 +74,10 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
   
   dat <- ipd[indices, ]  # bootstrap sample
   n_ipd <- length(indices)
+  n_trts <- length(unique(dat[[trt_var]]))
   
   # ensure bootstrap sample contains more than one treatment level
-  if (length(unique(dat[[trt_var]])) < 2) {
+  if (n_trts < 2) {
     warning("Bootstrap sample contains less than two treatment levels. Returning NA.")
     return(c(pC = NA, pA = NA))
   }

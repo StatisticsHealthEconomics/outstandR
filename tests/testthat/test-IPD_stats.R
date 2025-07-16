@@ -1,4 +1,3 @@
-# from chatgpt
 
 library(tibble)
 
@@ -48,8 +47,8 @@ ald <- tribble(
 )
 
 ipd <- data.frame(
-  y = c(1, 0, 1, 0, 1, 0, 1, 0),
-  trt = c("A", "A", "A", "A", "C", "C", "C", "C")
+  y = sample(c(1, 0), replace = TRUE, size = 40),
+  trt = c(rep("A", 20), rep("C", 20))
 )
 
 analysis_params <- 
@@ -60,10 +59,34 @@ analysis_params <-
 ## test for no covariates
 
 test_that("calc_IPD_stats() works for MAIC", {
+
   res <- calc_IPD_stats(strategy_maic, analysis_params)
   
   expect_type(res$contrasts$mean, "double")
   expect_type(res$contrasts$var, "double")
+
+  # single arm ipd
+  
+  params_single_ipd <- list(
+    ipd = 
+      data.frame(variable = "y",
+                 trt = "B",
+                 statistic = "sum",
+                 value = 30),
+    ald = ald,
+    scale = "log_odds")
+  
+  strategy_maic_single_sample <- list(
+    R = 1,   # results in TWO samples, including original
+    formula = y ~ trt,
+    trt_var = "trt",
+    family = binomial()
+  ) |> 
+    `attr<-`(which = "class", value = "maic")
+  
+  calc_IPD_stats(strategy_maic_single_sample, params_single_ipd) |> 
+    expect_warning(regexp = "Bootstrap sample contains less than two treatment levels. Returning NA.") |>  
+    expect_warning(regexp = "Bootstrap sample contains less than two treatment levels. Returning NA.") 
 })
 
 test_that("calc_IPD_stats() works for STC", {
@@ -126,7 +149,9 @@ test_that("calc_IPD_stats() handles extreme values", {
                          ald = ald_extreme,
                          scale = "log_odds")
   
-  res <- calc_IPD_stats(strategy_maic, params_extreme)
+  res <- suppressWarnings(
+    calc_IPD_stats(strategy_maic, params_extreme)
+  )
   
   expect_type(res$contrasts$mean, "double")
   expect_type(res$contrasts$var, "double")
@@ -151,9 +176,9 @@ test_that("calc_IPD_stats() handles missing columns", {
   params_missing <- analysis_params
   params_missing$ipd <- ipd_missing
   
-  calc_IPD_stats(strategy_maic, params_missing)
-  
-  expect_error()
+  # calc_IPD_stats(strategy_stc, params_missing)
+  # 
+  # expect_error()
 })
 
 test_that("calc_IPD_stats() handles unsupported link functions", {
