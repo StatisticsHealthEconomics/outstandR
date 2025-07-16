@@ -64,8 +64,8 @@ gcomp_ml_means <- function(formula,
                            trt_var,
                            rho = NA,
                            N = 1000,
-                           ref_trt = NA,
-                           comp_trt = NA) {
+                           ref_trt,
+                           comp_trt) {
   
   x_star <- simulate_ALD_pseudo_pop(formula = formula,
                                     ipd = ipd, ald = ald,
@@ -85,8 +85,8 @@ gcomp_ml_means <- function(formula,
   data.ref[[trt_var]] <- ref_trt    # all receive C
   
   # predict counterfactual event probs, conditional on treatment/covariates
-  hat.mu.comp <- predict(fit, type="response", newdata=data.comp)
-  hat.mu.ref <- predict(fit, type="response", newdata=data.ref)
+  hat.mu.comp <- predict(fit, type = "response", newdata = data.comp)
+  hat.mu.ref <- predict(fit, type = "response", newdata = data.ref)
   
   # (marginal) mean probability prediction under A and C
   c(`0` = mean(hat.mu.ref),

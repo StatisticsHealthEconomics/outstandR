@@ -711,6 +711,7 @@ test_that("simulate directly with binary data without marginals", {
     tolerance = 0.01
   )
   
+  ##TODO:
   expect_equal(
     object = cor(result$EM_bin_1, result$EM_bin_2),
     expected = cor(ipd_trial$EM_bin_1, ipd_trial$EM_bin_2),
