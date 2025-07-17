@@ -18,7 +18,7 @@ badge](https://statisticshealtheconomics.r-universe.dev/outstandR/badges/version
 
 ## Overview
 
-`outstandR` is an R package designed to facilitate **outcome regression
+`{outstandR}` is an R package designed to facilitate **outcome regression
 standardisation** using model-based approaches, particularly focusing on
 G-estimation. The package provides tools to apply standardisation
 techniques for indirect treatment comparisons, especially in scenarios
@@ -26,7 +26,7 @@ with limited individual patient data.
 
 ## Who is this package for?
 
-The target audience of `outstandR` is those who want to perform
+The target audience of `{outstandR}` is those who want to perform
 model-based standardization in the specific context of two-study
 indirect treatment comparisons with limited subject-level data. This is
 model-based standardization with two additional steps:
