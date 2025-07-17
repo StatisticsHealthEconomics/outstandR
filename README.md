@@ -98,7 +98,7 @@ specific population. Within the *BC* population there are parameters
 $\mu_{B(BC)}$ and $\mu_{C(BC)}$ representing the expected outcome on
 each treatment (including parameters for treatments not studied in the
 *BC* trial, e.g. treatment *A*). The *BC* trial provides estimators
-$\bar{Y}_{B(BC)}$ and $\bar{Y}_{C(BC)}$ of $\mu_{B(BC)}$, $\mu_{C(BC)}$,
+$\bar{Y}\_{B(BC)}$ and $\bar{Y}\_{C(BC)}$ of $\mu_{B(BC)}$, $\mu_{C(BC)}$,
 respectively, which are the summary outcomes. It is the same situation
 for the *AC* trial.
 
@@ -109,7 +109,7 @@ this is always represented as a difference so, for example, for the risk
 ratio this is on the log scale.
 
 $$
-\Delta_{AB(BC)} = g(\bar{Y}_{B{(BC)}}) - g(\bar{Y}_{A{(BC)}})
+\Delta_{AB(BC)} = g(\bar{Y}\_{B{(BC)}}) - g(\bar{Y}_{A{(BC)}})
 $$
 
 This R package contains code originally written for the papers:
