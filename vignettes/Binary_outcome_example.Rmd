@@ -20,86 +20,10 @@ knitr::opts_chunk$set(
 
 ## Introduction
 
-Population adjustment methods are increasingly used to compare marginal
-treatment effects when there are cross-trial differences in effect
-modifiers and limited patient-level data.
+This vignette will demonstrate the use of the `{outstandR}` package to fit the range of types of models to simulated binary data.
+Related vignettes will provide equivalent analyses for continuous and count data.
 
-The `{outstandR}` package allows the implementation of a range of
-methods for this situation including the following:
-
--   *Matching-Adjusted Indirect Comparison (MAIC)* is based on
-    propensity score weighting, which is sensitive to poor covariate
-    overlap and cannot extrapolate beyond the observed covariate space.
-    It reweights the individual patient-level data (IPD) to match the
-    aggregate characteristics of the comparator trial, thereby aligning
-    the populations.
-
--   *Simulated Treatment Comparison (STC)* relies on outcome regression
-    models fitted to IPD, conditioning on covariates to estimate the
-    effect of treatment. These estimates are then applied to the
-    aggregate-level comparator population. Like MAIC, STC is limited by
-    its conditional nature and can produce biased marginal estimates if
-    not properly marginalized.
-
--   *Parametric G-computation with maximum likelihood*: This method fits
-    an outcome model to the IPD using maximum likelihood estimation,
-    then uses that model to predict outcomes in the comparator
-    population. It allows extrapolation beyond the observed covariate
-    space but requires correct specification of the outcome model to
-    avoid bias.
-
--   *Parametric G-computation with Bayesian inference*: Similar to the
-    maximum likelihood version, this approach fits an outcome model but
-    within a Bayesian framework. It allows coherent propagation of
-    uncertainty through prior distributions and posterior inference,
-    enabling probabilistic sensitivity analysis and full uncertainty
-    quantification.
-
--   *Marginalization method based on parametric G-computation*: Current
-    outcome regression-based alternatives can extrapolate but target a
-    conditional treatment effect that is incompatible in the indirect
-    comparison. When adjusting for covariates, one must integrate or
-    average the conditional estimate over the relevant population to
-    recover a compatible marginal treatment effect. This can be easily
-    applied where the outcome regression is a generalized linear model
-    or a Cox model. The approach views the covariate adjustment
-    regression as a nuisance model and separates its estimation from the
-    evaluation of the marginal treatment effect of interest. The method
-    can accommodate a Bayesian statistical framework, which naturally
-    integrates the analysis into a probabilistic framework.
-
-We will now demonstrate the use of the `{outstandR}` package to fit all
-of these types of models to simulated binary data. Other vignettes will
-provide equivalent analyses for continuous and count data.
-
-## General problem
-
-Consider one trial, for which the company has IPD, comparing treatments
-*A* and *C*, from herein call the *AC* trial. Also, consider a second
-trial comparing treatments *B* and *C*, similarly called the *BC* trial.
-For this trial only published aggregate data are available. We wish to
-estimate a comparison of the effects of treatments *A* and *B* on an
-appropriate scale in some target population *P*, denoted by the
-parameter $d_{AB(P)}$. We make use of bracketed subscripts to denote a
-specific population. Within the *BC* population there are parameters
-$\mu_{B(BC)}$ and $\mu_{C(BC)}$ representing the expected outcome on
-each treatment (including parameters for treatments not studied in the
-*BC* trial, e.g. treatment *A*). The *BC* trial provides estimators
-$\bar{Y}_{B(BC)}$ and $\bar{Y}_{C(BC)}$ of $\mu_{B(BC)}$, $\mu_{C(BC)}$,
-respectively, which are the summary outcomes. It is the same situation
-for the *AC* trial.
-
-For a suitable scale, for example a log-odds ratio, or risk difference,
-we form estimators $\Delta_{BC(BC)}$ and $\Delta_{AC(AC)}$ of the trial
-level (or marginal) relative treatment effects. We shall assume that
-this is always represented as a difference so, for example, for the risk
-ratio this is on the log scale.
-
-$$
-\Delta_{AB(BC)} = g(\bar{Y}_{B{(BC)}}) - g(\bar{Y}_{A{(BC)}})
-$$
-
-## Example analysis
+## Analysis
 
 First, let us load necessary packages.
 
