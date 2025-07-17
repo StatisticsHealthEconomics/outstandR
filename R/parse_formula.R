@@ -6,8 +6,9 @@
 #' Finally, if there are no interactions then pick last main effect term.
 #' 
 #' @eval reg_args(include_formula = TRUE, include_family = FALSE)
-#'
 #' @return Treatment name
+#' 
+#' @importFrom crayon yellow
 #' @keywords internal
 #'
 guess_treatment_name <- function(formula) {
@@ -38,6 +39,8 @@ guess_treatment_name <- function(formula) {
       if (length(treat_nm) == 0) {
         stop("Treatment term 'trt' is missing in the formula")
       }
+      
+      message("Treatment is guessed as: ", crayon::yellow(treat_nm))
     }
   }
   
@@ -81,10 +84,22 @@ get_eff_mod_names <- function(formula, trt_var = "trt") {
   
   formula <- as.formula(formula)
   
-  term.labels <- attr(terms(formula), "term.labels")
+  all_terms <- attr(terms(formula), "term.labels")
   
-  # effect modifier terms only
-  eff_mod_terms <- term.labels[grepl(":", term.labels)]
+  effect_modifiers <- character()
   
-  gsub(paste0("^", trt_var, ":"), "", eff_mod_terms)
+  for (term in all_terms) {
+    is_interaction <- grepl(":", term)
+    
+    if (is_interaction) {
+      components <- strsplit(term, ":")[[1]]
+      
+      if (trt_var %in% components) {
+        other_components <- components[components != trt_var]
+        effect_modifiers <- c(effect_modifiers, other_components)
+      }
+    }
+  }
+  
+  unique(effect_modifiers)
 }

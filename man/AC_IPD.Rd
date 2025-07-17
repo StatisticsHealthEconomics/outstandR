@@ -5,15 +5,18 @@
 \alias{AC_IPD}
 \title{Data set for individual level patient data}
 \format{
-A data list including the variables needed for the outstandR basic example. The variables are as follows:
+A data list including the variables needed for a outstandR basic example. The variables are as follows:
 \describe{
-\item{list("X1")}{Numeric covariate}
-\item{list("X2")}{Numeric covariate}
-\item{list("X3")}{Numeric covariate}
-\item{list("X4")}{Numeric covariate}
-\item{list("trt")}{Integer treatment identifier}
-\item{list("y")}{Integer binary outcome}
+\item{X1}{Numeric covariate}
+\item{X2}{Numeric covariate}
+\item{X3}{Numeric covariate}
+\item{X4}{Numeric covariate}
+\item{trt}{Integer treatment identifier}
+\item{y}{Integer binary outcome}
 }
+}
+\source{
+Simulated data
 }
 \description{
 This data set contains simulated patient covariate and outcome values.

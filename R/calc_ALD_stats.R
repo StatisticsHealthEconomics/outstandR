@@ -4,14 +4,16 @@
 #' Computes the mean and variance of marginal treatment effects for aggregate-level trial data.
 #'
 #' @param strategy A list containing the strategy details, including the family distribution.
-#' @param ald Aggregate-level trial data
-#' @param treatments Treatment labels list; default `B`, `C` (common; e.g. placebo)
-#' @param scale A scaling parameter for the calculation.
+#' @param analysis_params A list containing: 
+#'   - `ald` Aggregate-level trial data
+#'   - `ref_trt` Treatment labels reference (common; e.g. placebo)
+#'   - `comp_trt` Treatment labels comparator
+#'   - `scale` A scaling parameter for the calculation.
 #'
 #' @return A list containing:
 #' \describe{
-#'   \item{mean}{The marginal treatment effect mean.}
-#'   \item{var}{The marginal treatment effect variance.}
+#'   \item{`mean`}{The marginal treatment effect mean.}
+#'   \item{`var`}{The marginal treatment effect variance.}
 #' }
 #' @seealso [marginal_treatment_effect()], [marginal_variance()]
 #' @export
@@ -23,19 +25,26 @@
 #'                   statistic = c("N", "N", "sum", "sum"),
 #'                   value = c(100, 100, 50, 60) 
 #'
-#' calc_ALD_stats(strategy, ald, treatments = list("B", "C"), scale = "log")
+#' calc_ALD_stats(strategy = strategy,
+#'                list(ald = ald,
+#'                     ref_trt = "C",
+#'                     comp_trt = "B",
+#'                     scale = "log"))
 #' }
 #'
-calc_ALD_stats <- function(strategy,
-                           ald,
-                           treatments = list("B", "C"),
-                           scale) {
+calc_ALD_stats <- function(strategy, analysis_params) {
+  
+  ald <- analysis_params$ald
+  ref_trt <- analysis_params$ref_trt
+  comp_trt <- analysis_params$ald_comp
+  scale <- analysis_params$scale
+  
   family <- strategy$family$family
   
-  ald_cc <- continuity_correction(ald, treatments)
+  ald_cc <- continuity_correction(ald)
   
-  mean_eff <- marginal_treatment_effect(ald_cc, treatments, scale, family)
-  var_eff <- marginal_variance(ald_cc, treatments, scale, family)
+  mean_eff <- marginal_treatment_effect(ald_cc, ref_trt, comp_trt, scale, family)
+  var_eff <- marginal_variance(ald_cc, ref_trt, comp_trt, scale, family)
   
   list(mean = mean_eff,
        var = var_eff)
@@ -47,7 +56,8 @@ calc_ALD_stats <- function(strategy,
 #' Computes the total variance of marginal treatment effects using the delta method.
 #'
 #' @param ald Aggregate-level data
-#' @param treatments A list of treatment labels; default _B_ vs _C_
+#' @param ref_trt Treatment labels reference (common; e.g. placebo)
+#' @param comp_trt Treatment labels comparator
 #' @param scale A scaling parameter for the calculation.
 #' @param family A character string specifying the family distribution (e.g., "binomial").
 #' 
@@ -58,18 +68,22 @@ calc_ALD_stats <- function(strategy,
 #'                   variable = c(NA, NA, "y", "y"),
 #'                   statistic = c("N", "N", "sum", "sum"),
 #'                   value = c(100, 100, 50, 60)
-#' marginal_variance(ald, treatments = list("B", "C"), scale = "log", family = "binomial")
+#'                   
+#' marginal_variance(ald, ref_trt = "C", comp_trt = "B",
+#'                   scale = "log", family = "binomial")
 #' }
 #' @export
 #' 
 marginal_variance <- function(ald,
-                              treatments = list("B", "C"),
+                              ref_trt = NA,
+                              comp_trt = NA,
                               scale,
                               family) {
-  v1 <- calculate_trial_variance(ald, treatments[[1]], scale, family)
-  v2 <- calculate_trial_variance(ald, treatments[[2]], scale, family)
   
-  v1 + v2
+  v_ref <- calculate_trial_variance(ald, ref_trt, scale, family)
+  v_comp <- calculate_trial_variance(ald, comp_trt, scale, family)
+  
+  v_comp + v_ref
 }
 
 
@@ -78,7 +92,8 @@ marginal_variance <- function(ald,
 #' Computes the relative treatment effect from aggregate-level data using event counts.
 #'
 #' @param ald Aggregate-level data
-#' @param treatments A list of treatment labels. Last variable is reference; default `B`, `C` (common; e.g. placebo)
+#' @param ref_trt Treatment labels reference (common; e.g. placebo)
+#' @param comp_trt Treatment labels comparator
 #' @param scale A scaling parameter for the calculation.
 #' @param family A character string specifying the family distribution (e.g., "binomial").
 #' 
@@ -89,17 +104,21 @@ marginal_variance <- function(ald,
 #'                   variable = c(NA, NA, "y", "y"),
 #'                   statistic = c("N", "N", "sum", "sum"),
 #'                   value = c(100, 100, 50, 60)
-#' marginal_treatment_effect(ald, treatments = list("B", "C"), scale = "log", family = "binomial")
+#'                   
+#' marginal_treatment_effect(ald, ref_trt = "C", comp_trt = "B",
+#'                           scale = "log", family = "binomial")
 #' }
 #' @export
 #' 
 marginal_treatment_effect <- function(ald,
-                                      treatments = list("B", "C"),
+                                      ref_trt = NA,
+                                      comp_trt = NA,
                                       scale,
                                       family) {
-  m1 <- calculate_trial_mean(ald, treatments[[1]], scale, family)
-  m2 <- calculate_trial_mean(ald, treatments[[2]], scale, family)
   
-  m1 - m2
+  m_ref <- calculate_trial_mean(ald, ref_trt, scale, family)
+  m_comp <- calculate_trial_mean(ald, comp_trt, scale, family)
+  
+  m_comp - m_ref
 }
 

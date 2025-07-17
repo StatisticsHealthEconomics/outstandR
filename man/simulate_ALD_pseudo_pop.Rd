@@ -4,7 +4,16 @@
 \alias{simulate_ALD_pseudo_pop}
 \title{Simulate Aggregate-Level Data Pseudo-Population}
 \usage{
-simulate_ALD_pseudo_pop(formula, ipd, ald, trt_var, rho = NA, N = 1000)
+simulate_ALD_pseudo_pop(
+  formula,
+  ipd = NULL,
+  ald = NULL,
+  trt_var,
+  rho = NA,
+  N = 1000,
+  marginal_distns = NA,
+  marginal_params = NA
+)
 }
 \arguments{
 \item{formula}{Linear regression \code{formula} object. Prognostic factors (PF) are main effects and effect modifiers (EM) are
@@ -16,9 +25,15 @@ interactions with the treatment variable, i.e., y ~ X1 + trt + trt:X2. For covar
 The format is 'mean.\emph{' and 'sd.}' for covariates and 'y.\emph{.sum', 'y.}.bar', 'y.*.sd' for treatments B and C.
 We assume a common distribution for each treatment arm.}
 
-\item{rho}{A named square matrix of covariate correlations; default NA.}
+\item{rho}{A named square matrix of covariate correlations or single value; default NA takes from IPD.}
 
 \item{N}{Sample size for the synthetic cohort. Default is 1000.}
+
+\item{marginal_distns}{Marginal distributions names; vector default NA.
+Available distributions are given in stats::Distributions. See \code{\link[copula:Mvdc]{copula::Mvdc()}} for details}
+
+\item{marginal_params}{Marginal distributions parameters;
+named list of lists, default NA. See \code{\link[copula:Mvdc]{copula::Mvdc()}} for details}
 }
 \value{
 A data frame representing the synthetic pseudo-population.

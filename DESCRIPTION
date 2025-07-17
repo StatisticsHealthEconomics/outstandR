@@ -2,32 +2,33 @@ Package: outstandR
 Title: Model-based Standardisation
 Version: 0.0.0.9000
 Authors@R: c(
-    person("Nathan", "Green",
-            email = "n.green@ucl.ac.uk",
-            role = c("aut", "cre"),
-            comment = c(ORCID = "0000-0003-2745-1736")),
-    person("Antonio", "Remiro-Azocar",
-            email = "antonio.remiro-azocar@bayer.com",
-            role = c("aut"),
-            comment = c(ORCID = "0000-0002-7263-4251")))
+    person("Nathan", "Green", , "n.green@ucl.ac.uk", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-2745-1736", ROR = "02jx3x895")),
+    person("Chengyang", "Gao", , "chengyang.gao.15@ucl.ac.uk", role = "aut",
+           comment = c(ORCID = "0000-0003-2745-1736")),
+    person("Antonio", "Remiro-Azocar", , "antonio.remiro-azocar@bayer.com", role = "aut",
+           comment = c(ORCID = "0000-0002-7263-4251"))
+  )
 Description:
     Model-based standardisation with several different computation approaches.
     See Remiro‐Azócar A, Heath A, Baio G (2022. Parametric G‐computation for compatible
     indirect treatment comparisons with limited individual patient data, 
-    Res. Synth. Methods, 1–31. ISSN 1759-2879, <doi:10.1002/jrsm.1565, 2108.12208>.
+    Res. Synth. Methods, 1–31. ISSN 1759-2879, <doi:10.1002/jrsm.1565, 2108.12208>.)
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.2.9000
 Imports:
     boot,
     copula,
+    dplyr,
     MASS,
     rstanarm,
+    stats,
     Rdpack (>= 0.7)
 Suggests:
+    crayon,
     doSNOW,
-    dplyr,
     ggplot2,
     gridExtra,
     here,
@@ -35,7 +36,9 @@ Suggests:
     parallel,
     purrr,
     rmarkdown,
-    testthat (>= 3.0.0)
+    stringr,
+    testthat (>= 3.0.0),
+    tidyr
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 RdMacros: Rdpack

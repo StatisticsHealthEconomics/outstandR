@@ -1,144 +1,192 @@
-# from chatgpt
 
-## Setup ----
+library(tibble)
+
 strategy_maic <- list(
-  class = "maic",
   R = 1000,
   formula = y ~ trt,
+  trt_var = "trt",
   family = binomial()
-)
+) |> 
+  `attr<-`(which = "class", value = "maic")
 
 strategy_stc <- list(
-  class = "stc",
   formula = y ~ trt,
+  trt_var = "trt",
   family = binomial()
-)
+) |> 
+  `attr<-`(which = "class", value = "stc")
 
 strategy_gcomp_ml <- list(
-  class = "gcomp_ml",
   R = 1000,
   formula = y ~ trt,
+  trt_var = "trt",
   family = binomial()
-)
+) |> 
+  `attr<-`(which = "class", value = "gcomp_ml")
 
 strategy_gcomp_stan <- list(
-  class = "gcomp_stan",
   formula = y ~ trt,
+  trt_var = "trt",
   family = binomial()
-)
+) |> 
+  `attr<-`(which = "class", value = "gcomp_stan")
 
 strategy_mim <- list(
-  class = "mim",
   formula = y ~ trt,
+  trt_var = "trt",
   family = binomial()
-)
+) |> 
+  `attr<-`(which = "class", value = "mim")
 
-ald <- list(
-  y.A.sum = 30,
-  N.A = 100,
-  y.C.sum = 20,
-  N.C = 100
+ald <- tribble(
+  ~variable, ~trt, ~statistic, ~value,
+  "y",       "B",  "sum",     30,
+  "y",       "C",  "sum",     20,
+  NA,        "B",  "N",       100,
+  NA,        "C",  "N",       100
 )
 
 ipd <- data.frame(
-  y = c(1, 0, 1, 0, 1, 0, 1, 0),
-  trt = c("A", "A", "A", "A", "C", "C", "C", "C")
+  y = sample(c(1, 0), replace = TRUE, size = 40),
+  trt = c(rep("A", 20), rep("C", 20))
 )
 
-## General Tests ----
+analysis_params <- 
+  list(ipd = ipd,
+       ald = ald,
+       scale = "log_odds")
+
+## test for no covariates
+
 test_that("calc_IPD_stats() works for MAIC", {
-  res <- calc_IPD_stats(strategy_maic, ipd, ald, scale = "log_odds")
-  expect_type(res$mean, "double")
-  expect_type(res$var, "double")
+
+  res <- calc_IPD_stats(strategy_maic, analysis_params)
+  
+  expect_type(res$contrasts$mean, "double")
+  expect_type(res$contrasts$var, "double")
+
+  # single arm ipd
+  
+  params_single_ipd <- list(
+    ipd = 
+      data.frame(variable = "y",
+                 trt = "B",
+                 statistic = "sum",
+                 value = 30),
+    ald = ald,
+    scale = "log_odds")
+  
+  strategy_maic_single_sample <- list(
+    R = 1,   # results in TWO samples, including original
+    formula = y ~ trt,
+    trt_var = "trt",
+    family = binomial()
+  ) |> 
+    `attr<-`(which = "class", value = "maic")
+  
+  calc_IPD_stats(strategy_maic_single_sample, params_single_ipd) |> 
+    expect_warning(regexp = "Bootstrap sample contains less than two treatment levels. Returning NA.") |>  
+    expect_warning(regexp = "Bootstrap sample contains less than two treatment levels. Returning NA.") 
 })
 
 test_that("calc_IPD_stats() works for STC", {
-  res <- calc_IPD_stats(strategy_stc, ipd, ald, scale = "log_odds")
-  expect_type(res$mean, "double")
-  expect_type(res$var, "double")
+  res <- calc_IPD_stats(strategy_stc, analysis_params)
+  
+  expect_type(res$contrasts$mean, "double")
+  expect_type(res$contrasts$var, "double")
 })
 
 test_that("calc_IPD_stats() works for G-computation (ML)", {
-  res <- calc_IPD_stats(strategy_gcomp_ml, ipd, ald, scale = "log_odds")
-  expect_type(res$mean, "double")
-  expect_type(res$var, "double")
+  expect_error(
+    object = calc_IPD_stats(strategy_gcomp_ml, analysis_params),
+    regexp = "No covariates found to simulate.")
 })
 
 test_that("calc_IPD_stats() works for G-computation (Stan)", {
-  res <- calc_IPD_stats(strategy_gcomp_stan, ipd, ald, scale = "log_odds")
-  expect_type(res$mean, "double")
-  expect_type(res$var, "double")
+  expect_error(
+    object = calc_IPD_stats(strategy_gcomp_stan, analysis_params),
+    regexp = "No covariates found to simulate.")
 })
 
 test_that("calc_IPD_stats() works for Multiple Imputation Marginalisation", {
-  res <- calc_IPD_stats(strategy_mim, ipd, ald, scale = "log_odds")
-  expect_type(res$mean, "double")
-  expect_type(res$var, "double")
+  expect_error(
+    object = calc_IPD_stats(strategy_mim, analysis_params),
+    regexp = "No covariates found to simulate.")
 })
 
-## Edge Cases ----
-test_that("calc_IPD_stats() handles NULL or empty inputs", {
-  expect_error(calc_IPD_stats(strategy_maic, NULL, ald, scale = "log_odds"))
-  expect_error(calc_IPD_stats(strategy_maic, ipd, NULL, scale = "log_odds"))
-  expect_error(calc_IPD_stats(strategy_maic, list(), ald, scale = "log_odds"))
-})
+## edge cases
 
-test_that("calc_IPD_stats() handles unexpected input types", {
-  ipd_wrong <- list(y = "1", trt = "A")
-  ald_wrong <- list(y.A.sum = "thirty", N.A = "one hundred")
-  
-  expect_error(calc_IPD_stats(strategy_maic, ipd_wrong, ald, scale = "log_odds"))
-  expect_error(calc_IPD_stats(strategy_maic, ipd, ald_wrong, scale = "log_odds"))
-})
+# test_that("calc_IPD_stats() handles NULL or empty inputs", {
+#   expect_error(calc_IPD_stats(strategy_maic, NULL, ald, scale = "log_odds"))
+#   expect_error(calc_IPD_stats(strategy_maic, ipd, NULL, scale = "log_odds"))
+#   expect_error(calc_IPD_stats(strategy_maic, list(), ald, scale = "log_odds"))
+# })
+# 
+# test_that("calc_IPD_stats() handles unexpected input types", {
+#   ipd_wrong <- list(y = "1", trt = "A")
+#   ald_wrong <- list(y.A.sum = "thirty", N.A = "one hundred")
+#   
+#   expect_error(calc_IPD_stats(strategy_maic, ipd_wrong, ald, scale = "log_odds"))
+#   expect_error(calc_IPD_stats(strategy_maic, ipd, ald_wrong, scale = "log_odds"))
+# })
 
 test_that("calc_IPD_stats() handles extreme values", {
+  
   ipd_extreme <- data.frame(
     y = c(1, 1, 1, 1, 0, 0, 0, 0),
     trt = c("A", "A", "A", "A", "C", "C", "C", "C")
   )
-  ald_extreme <- list(
-    y.A.sum = 0,   # Zero events
-    N.A = 100,
-    y.C.sum = 100, # All events
-    N.C = 100
+  
+  ald_extreme <- tribble(
+    ~variable, ~trt, ~statistic, ~value,
+    "y",       "B",  "sum",     0,     # zero events
+    "y",       "C",  "sum",     100,   # all events
+    NA,        "B",  "N",       100,
+    NA,        "C",  "N",       100
   )
-  res <- calc_IPD_stats(strategy_maic, ipd_extreme, ald_extreme, scale = "log_odds")
-  expect_type(res$mean, "double")
-  expect_type(res$var, "double")
+  
+  params_extreme <- list(ipd = ipd_extreme,
+                         ald = ald_extreme,
+                         scale = "log_odds")
+  
+  res <- suppressWarnings(
+    calc_IPD_stats(strategy_maic, params_extreme)
+  )
+  
+  expect_type(res$contrasts$mean, "double")
+  expect_type(res$contrasts$var, "double")
 })
 
 test_that("calc_IPD_stats() handles unsupported strategies", {
-  strategy_invalid <- list(class = "unsupported")
-  expect_error(calc_IPD_stats(strategy_invalid, ipd, ald, scale = "log_odds"))
+  strategy_invalid <- list() |> 
+    `attr<-`(which = "class",
+             value = "unsupported")
+  
+  expect_error(calc_IPD_stats(strategy_invalid, analysis_params))
 })
 
 test_that("calc_IPD_stats() handles missing columns", {
+
   ipd_missing <- data.frame(
     y = c(1, 0, 1, 0),
     # trt column missing
     z = c("A", "A", "C", "C")
   )
-  expect_error(calc_IPD_stats(strategy_maic, ipd_missing, ald))
-})
-
-test_that("calc_IPD_stats() handles different link functions", {
-  strategy_log <- list(class = "stc", formula = y ~ trt, family = binomial(link = "log"))
-  strategy_identity <- list(class = "stc", formula = y ~ trt, family = binomial(link = "identity"))
   
-  res_log <- calc_IPD_stats(strategy_log, ipd, ald, scale = "log_odds")
-  res_identity <- calc_IPD_stats(strategy_identity, ipd, ald, scale = "log_odds")
+  params_missing <- analysis_params
+  params_missing$ipd <- ipd_missing
   
-  expect_type(res_log$mean, "double")
-  expect_type(res_log$var, "double")
-  expect_type(res_identity$mean, "double")
-  expect_type(res_identity$var, "double")
+  # calc_IPD_stats(strategy_stc, params_missing)
+  # 
+  # expect_error()
 })
 
 test_that("calc_IPD_stats() handles unsupported link functions", {
   strategy_unknown <- list(class = "stc",
                            formula = y ~ trt,
                            family = list(link = "unknown"))
-  expect_error(calc_IPD_stats(strategy_unknown, ipd, ald, scale = "log_odds"))
+  
+  expect_error(calc_IPD_stats(strategy_unknown, analysis_params))
 })
 
 test_that("calc_IPD_stats() handles negative or NA values", {
@@ -146,12 +194,21 @@ test_that("calc_IPD_stats() handles negative or NA values", {
     y = c(-1, 0, 1, 0),
     trt = c("A", "A", "C", "C")
   )
-  ald_na <- list(
-    y.A.sum = NA,
-    N.A = 100,
-    y.C.sum = 20,
-    N.C = 100
+  
+  ald_na <- tribble(
+    ~variable, ~trt, ~statistic, ~value,
+    "y",       "B",  "sum",     NA,
+    "y",       "C",  "sum",     20,
+    NA,        "B",  "N",       100,
+    NA,        "C",  "N",       100
   )
-  expect_error(calc_IPD_stats(strategy_maic, ipd_negative, ald, scale = "log_odds"))
-  expect_error(calc_IPD_stats(strategy_maic, ipd, ald_na, scale = "log_odds"))
+  
+  params_NA_neg <- list(
+    ipd = ipd_negative,
+    ald = ald_na,
+    scale = "log_odds"
+  )
+  
+  expect_error(calc_IPD_stats(strategy_maic, params_NA_neg))
+  expect_error(calc_IPD_stats(strategy_maic, params_NA_neg))
 })

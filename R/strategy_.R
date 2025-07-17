@@ -117,7 +117,9 @@ strategy_stc <- function(formula = NULL,
 #' }
 #'
 #' @param trt_var Treatment variable name
-#' @param rho A named square matrix of covariate correlations; default NA.
+#' @param rho A named square matrix of covariate correlations; default NA
+#' @param marginal_distns Marginal distributions names; vector default NA
+#' @param marginal_params Marginal distributions parameters; list of lists, default NA
 #' @param R The number of resamples used for the non-parametric bootstrap
 #' @param N Synthetic sample size for g-computation
 #' 
@@ -130,10 +132,13 @@ strategy_gcomp_ml <- function(formula = NULL,
                               family = gaussian(link = "identity"),
                               trt_var = NULL,
                               rho = NA,
+                              marginal_distns = NA,
+                              marginal_params = NA,
                               R = 1000L,
                               N = 1000L) {
   check_formula(formula, trt_var)
   check_family(family)
+  check_distns(formula, marginal_distns, marginal_params)
   
   if (R <= 0 || R %% 1 != 0) {
     stop("R not positive whole number.")
@@ -146,6 +151,8 @@ strategy_gcomp_ml <- function(formula = NULL,
                family = family,
                rho = rho,
                trt_var = get_treatment_name(formula, trt_var),
+               marginal_distns = marginal_distns,
+               marginal_params = marginal_params,
                R = R,
                N = N)
   
@@ -182,21 +189,27 @@ strategy_gcomp_ml <- function(formula = NULL,
 #' estimation via Markov chain Monte Carlo (MCMC) sampling.
 #' 
 #' @param trt_var Treatment variable name
-#' @param rho A named square matrix of covariate correlations; default NA.
+#' @param rho A named square matrix of covariate correlations; default NA
+#' @param marginal_distns Marginal distributions names; vector default NA.
+#'    Available distributions are given in stats::Distributions. See [copula::Mvdc()] for details
+#' @param marginal_params Marginal distributions parameters; list of lists, default NA. See [copula::Mvdc()] for details
 #' @param N Synthetic sample size for g-computation
 #' 
 #' @return `gcomp_stan` class object
 #' @importFrom utils modifyList
-#' @seealso [strategy_gcomp_ml()]
+#' @seealso [strategy_gcomp_ml()],[copula::Mvdc()]
 #' @export
 #'
 strategy_gcomp_stan <- function(formula = NULL,
                                 family = gaussian(link = "identity"),
                                 trt_var = NULL,
                                 rho = NA,
+                                marginal_distns = NA,
+                                marginal_params = NA,
                                 N = 1000L) {
   check_formula(formula, trt_var)
   check_family(family)
+  check_distns(formula, marginal_distns, marginal_params)
   
   if (N <= 0 || N %% 1 != 0) {
     stop("N not positive whole number.")
@@ -206,6 +219,8 @@ strategy_gcomp_stan <- function(formula = NULL,
                family = family,
                trt_var = get_treatment_name(formula, trt_var),
                rho = rho,
+               marginal_distns = marginal_distns,
+               marginal_params = marginal_params,
                N = N)
   
   do.call(new_strategy, c(strategy = "gcomp_stan", args))
@@ -264,6 +279,30 @@ is_family <- function(obj) inherits(obj, "family")
 check_family <- function(obj) {
   if (!is_family(obj)) {
     stop("family must be a family object")
+  }
+}
+
+#
+check_distns <- function(formula,
+                         marginal_distns,
+                         marginal_params) {
+  
+  if (length(marginal_distns) == 1 && is.na(marginal_distns) &&
+      length(marginal_params) == 1 && is.na(marginal_params)) {
+    return()
+  }
+  
+  covariate_names <- get_covariate_names(formula)
+  n_covariates <- length(covariate_names) - 1  # remove treatment
+  
+  if (length(marginal_distns) != n_covariates) {
+    stop("Number of marginal distributions must match
+           the number of covariates in the formula.")
+  }
+  
+  if (length(marginal_params) != n_covariates) {
+    stop("Number of marginal parameter lists must match
+           the number of covariates in the formula.")
   }
 }
 

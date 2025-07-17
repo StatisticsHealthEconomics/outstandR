@@ -8,7 +8,7 @@ outstandR(
   ipd_trial,
   ald_trial,
   strategy,
-  ref_trt = "C",
+  ref_trt = NA,
   CI = 0.95,
   scale = NULL,
   ...
@@ -22,13 +22,13 @@ The labels in the treatment are used internally so there must be a common treatm
 \item{ald_trial}{Aggregate-level data. For example, suppose between studies \emph{B} and \emph{C}. The column names are
 \itemize{
 \item \code{variable}: Covariate name. In the case of treatment arm sample size this is \code{NA}
-\item \code{statistic}: Summary statistic name from mean, standard deviation or sum
+\item \code{statistic}: Summary statistic name from "mean", standard deviation "sd" or "sum"
 \item \code{value}: Numerical value of summary statistic
 \item \code{trt}: Treatment label. Because we assume a common covariate distribution between treatment arms this is \code{NA}
 }}
 
 \item{strategy}{Computation strategy function. These can be
-\code{strategy_maic()}, \code{strategy_stc()}, \code{strategy_gcomp_ml()} and  \code{strategy_gcomp_stan()}}
+\code{strategy_maic()}, \code{strategy_stc()}, \code{strategy_gcomp_ml()} and \code{strategy_gcomp_stan()}.}
 
 \item{ref_trt}{Reference / common / anchoring treatment name; default "C"}
 
@@ -37,7 +37,7 @@ The labels in the treatment are used internally so there must be a common treatm
 \item{scale}{Relative treatment effect scale. If \code{NULL}, the scale is automatically determined from the model.
 Choose from "log-odds", "log_relative_risk", "risk_difference", "delta_z", "mean_difference", "rate_difference" depending on the data type.}
 
-\item{...}{Additional arguments}
+\item{...}{Additional arguments. Currently, can pass named arguments to \code{rstanarm::stan_glm()} via \code{strategy_gcomp_stan()}.}
 }
 \value{
 List of length 3 of statistics as a \code{outstandR} class object.
@@ -80,4 +80,7 @@ outstandR_mim <- outstandR(AC_IPD, BC_ALD,
 }
 \references{
 \insertRef{RemiroAzocar2022}{outstandR}
+}
+\seealso{
+\code{\link[=strategy_maic]{strategy_maic()}} \code{\link[=strategy_stc]{strategy_stc()}} \code{\link[=strategy_gcomp_ml]{strategy_gcomp_ml()}} \code{\link[=strategy_gcomp_stan]{strategy_gcomp_stan()}}
 }

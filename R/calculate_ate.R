@@ -111,8 +111,9 @@ calculate_trial_variance_binary <- function(ald, tid, effect) {
   )
   
   if (!effect %in% names(effect_functions)) {
-    stop(paste0("Unsupported effect function. Choose from ",
-                names(effect_functions)))
+    stop(
+      paste0("Unsupported effect function. Choose from ", 
+             paste(names(effect_functions), collapse = ", ")))
   }
   
   effect_functions[[effect]]()
@@ -152,10 +153,11 @@ calculate_trial_variance_continuous <- function(ald, tid, effect) {
   )
   
   if (!effect %in% names(effect_functions)) {
-    stop(paste0("Unsupported effect function. Choose from ",
-                names(effect_functions)))
+    stop(
+      paste0("Unsupported effect function. Choose from ", 
+             paste(names(effect_functions), collapse = ", ")))
   }
-  
+
   effect_functions[[effect]]()
 }
 
@@ -195,8 +197,9 @@ calculate_trial_variance_count <- function(ald, tid, effect) {
   )
   
   if (!effect %in% names(effect_functions)) {
-    stop(paste0("Unsupported effect function. Choose from ",
-                names(effect_functions)))
+    stop(
+      paste0("Unsupported effect function. Choose from ", 
+             paste(names(effect_functions), collapse = ", ")))
   }
   
   effect_functions[[effect]]()
@@ -401,9 +404,12 @@ calc_log_relative_risk <- function(mean_comp, mean_ref) {
   log(mean_comp) - log(mean_ref)
 }
 
+#' Continuity Correction
+#' 
+#' @importFrom dplyr filter group_by mutate pull case_when
+#' @importFrom tidyr spread
 #' @keywords internal
 continuity_correction <- function(ald,
-                                  treatments = list("B", "C"),
                                   correction = 0.5) {
   # missing value
   needs_correction <- any(ald$variable == "y" & ald$statistic == "sum") 
@@ -414,27 +420,27 @@ continuity_correction <- function(ald,
   
   # check if correction is needed in any group
   needs_correction <- 
-    ald |> 
+    ald |>
     dplyr::filter((variable == "y" & statistic == "sum") | statistic == "N") |>
-    dplyr::group_by(trt, variable) |>
-    spread(statistic, value) |>  # Spread sd and N into separate columns
-    dplyr::mutate(need_contcorr = case_when(
-      sum == 0 ~ TRUE,
-      sum == N ~ TRUE,
-      TRUE ~ FALSE
-    )) |> pull() |> any()
-  
+    dplyr::select(-variable) |>
+    pivot_wider(
+      names_from = statistic,
+      values_from = value) |>
+    mutate(
+      need_contcorr = (sum == 0 | sum == N)
+    ) |> dplyr::pull() |> any()
+
   if (!needs_correction) {
     return(ald)
   }
   
   message(sprintf(
-    "Applying continuity correction: %d", correction
-  ))
+    "Applying continuity correction: %.2f", correction)
+  )
   
-  ald_corrected <- ald %>%
+  ald_corrected <- ald |> 
     dplyr::mutate(
-      value = case_when(
+      value = dplyr::case_when(
         statistic == "sum" & variable == "y" ~ value + correction,
         statistic == "N" ~ value + 2 * correction,
         TRUE ~ value

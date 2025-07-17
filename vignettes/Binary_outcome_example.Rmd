@@ -20,86 +20,10 @@ knitr::opts_chunk$set(
 
 ## Introduction
 
-Population adjustment methods are increasingly used to compare marginal
-treatment effects when there are cross-trial differences in effect
-modifiers and limited patient-level data.
+This vignette will demonstrate the use of the `{outstandR}` package to fit the range of types of models to simulated binary data.
+Related vignettes will provide equivalent analyses for continuous and count data.
 
-The `{outstandR}` package allows the implementation of a range of
-methods for this situation including the following:
-
--   *Matching-Adjusted Indirect Comparison (MAIC)* is based on
-    propensity score weighting, which is sensitive to poor covariate
-    overlap and cannot extrapolate beyond the observed covariate space.
-    It reweights the individual patient-level data (IPD) to match the
-    aggregate characteristics of the comparator trial, thereby aligning
-    the populations.
-
--   *Simulated Treatment Comparison (STC)* relies on outcome regression
-    models fitted to IPD, conditioning on covariates to estimate the
-    effect of treatment. These estimates are then applied to the
-    aggregate-level comparator population. Like MAIC, STC is limited by
-    its conditional nature and can produce biased marginal estimates if
-    not properly marginalized.
-
--   *Parametric G-computation with maximum likelihood*: This method fits
-    an outcome model to the IPD using maximum likelihood estimation,
-    then uses that model to predict outcomes in the comparator
-    population. It allows extrapolation beyond the observed covariate
-    space but requires correct specification of the outcome model to
-    avoid bias.
-
--   *Parametric G-computation with Bayesian inference*: Similar to the
-    maximum likelihood version, this approach fits an outcome model but
-    within a Bayesian framework. It allows coherent propagation of
-    uncertainty through prior distributions and posterior inference,
-    enabling probabilistic sensitivity analysis and full uncertainty
-    quantification.
-
--   *Marginalization method based on parametric G-computation*: Current
-    outcome regression-based alternatives can extrapolate but target a
-    conditional treatment effect that is incompatible in the indirect
-    comparison. When adjusting for covariates, one must integrate or
-    average the conditional estimate over the relevant population to
-    recover a compatible marginal treatment effect. This can be easily
-    applied where the outcome regression is a generalized linear model
-    or a Cox model. The approach views the covariate adjustment
-    regression as a nuisance model and separates its estimation from the
-    evaluation of the marginal treatment effect of interest. The method
-    can accommodate a Bayesian statistical framework, which naturally
-    integrates the analysis into a probabilistic framework.
-
-We will now demonstrate the use of the `{outstandR}` package to fit all
-of these types of models to simulated binary data. Other vignettes will
-provide equivalent analyses for continuous and count data.
-
-## General problem
-
-Consider one trial, for which the company has IPD, comparing treatments
-*A* and *C*, from herein call the *AC* trial. Also, consider a second
-trial comparing treatments *B* and *C*, similarly called the *BC* trial.
-For this trial only published aggregate data are available. We wish to
-estimate a comparison of the effects of treatments *A* and *B* on an
-appropriate scale in some target population *P*, denoted by the
-parameter $d_{AB(P)}$. We make use of bracketed subscripts to denote a
-specific population. Within the *BC* population there are parameters
-$\mu_{B(BC)}$ and $\mu_{C(BC)}$ representing the expected outcome on
-each treatment (including parameters for treatments not studied in the
-*BC* trial, e.g. treatment *A*). The *BC* trial provides estimators
-$\bar{Y}_{B(BC)}$ and $\bar{Y}_{C(BC)}$ of $\mu_{B(BC)}$, $\mu_{C(BC)}$,
-respectively, which are the summary outcomes. It is the same situation
-for the *AC* trial.
-
-For a suitable scale, for example a log-odds ratio, or risk difference,
-we form estimators $\Delta_{BC(BC)}$ and $\Delta_{AC(AC)}$ of the trial
-level (or marginal) relative treatment effects. We shall assume that
-this is always represented as a difference so, for example, for the risk
-ratio this is on the log scale.
-
-$$
-\Delta_{AB(BC)} = g(\bar{Y}_{B{(BC)}}) - g(\bar{Y}_{A{(BC)}})
-$$
-
-## Example analysis
+## Analysis
 
 First, let us load necessary packages.
 
@@ -114,6 +38,7 @@ library(boot)      # non-parametric bootstrap in MAIC and ML G-computation
 library(copula)    # simulating BC covariates from Gaussian copula
 library(rstanarm)  # fit outcome regression, draw outcomes in Bayesian G-computation
 library(tidyr)
+library(dplyr)
 library(outstandR)
 library(simcovariates)
 ```
@@ -137,7 +62,7 @@ information to the analyst.
 The simulation input parameters are given below.
 
 | Parameter | Description | Value |
-|------------------|------------------------------------|------------------|
+|-------------------|----------------------------------|-------------------|
 | `N` | Sample size | 200 |
 | `allocation` | Active treatment vs. placebo allocation ratio (2:1) | 2/3 |
 | `b_trt` | Conditional effect of active treatment vs. comparator (log(0.17)) | -1.77196 |
@@ -178,11 +103,19 @@ sdX_EM <- c(0.4, 0.4)  # standard deviation of each EM covariate
 corX <- 0.2            # covariate correlation coefficient  
 b_0 <- -0.6            # baseline intercept coefficient  ##TODO: fixed value
 
-ipd_trial <- gen_data(N, b_trt, b_X, b_EM, b_0,
-                      meanX_AC, sdX, 
-                      meanX_EM_AC, sdX_EM, 
-                      corX, allocation,
-                      family = binomial("logit"))
+ipd_trial <- simcovariates::gen_data(
+  N = N,
+  b_trt = b_trt,
+  b_X = b_X,
+  b_EM = b_EM,
+  b_0 = b_0,
+  meanX = meanX_AC,
+  sdX = sdX,
+  meanX_EM = meanX_EM_AC,
+  sdX_EM = sdX_EM,
+  corX = corX,
+  allocation = allocation,
+  family = binomial("logit"))
 ```
 
 The treatment column in the return data is binary and takes values 0
@@ -200,11 +133,19 @@ and `meanX_EM_BC` but otherwise use the same parameter values as for the
 $AC$ trial.
 
 ```{r generate-ald-data}
-BC.IPD <- gen_data(N, b_trt, b_X, b_EM, b_0,
-                   meanX_BC, sdX, 
-                   meanX_EM_BC, sdX_EM, 
-                   corX, allocation,
-                   family = binomial("logit"))
+BC.IPD <- simcovariates::gen_data(
+  N = N,
+  b_trt = b_trt,
+  b_X = b_X,
+  b_EM = b_EM,
+  b_0 = b_0,
+  meanX = meanX_BC,
+  sdX = sdX,
+  meanX_EM = meanX_EM_BC,
+  sdX_EM = sdX_EM,
+  corX = corX,
+  allocation = allocation,
+  family = binomial("logit"))
 
 BC.IPD$trt <- factor(BC.IPD$trt, labels = c("C", "B"))
 
@@ -213,14 +154,20 @@ BC.IPD$trt <- factor(BC.IPD$trt, labels = c("C", "B"))
 cov.X <- 
   BC.IPD %>%
   as.data.frame() |> 
-  dplyr::select(X1, X2, X3, X4, trt) %>%
-  pivot_longer(cols = starts_with("X"), names_to = "variable", values_to = "value") %>%
+  dplyr::select(matches("^(PF|EM)"), trt) |> 
+  tidyr::pivot_longer(
+    cols = starts_with("PF") | starts_with("EM"),
+    names_to = "variable",
+    values_to = "value") |>
   group_by(variable) %>%
   summarise(
     mean = mean(value),
     sd = sd(value)
   ) %>%
-  pivot_longer(cols = c("mean", "sd"), names_to = "statistic", values_to = "value") %>%
+  tidyr::pivot_longer(
+    cols = c("mean", "sd"),
+    names_to = "statistic",
+    values_to = "value") %>%
   ungroup() |> 
   mutate(trt = NA)
 
@@ -229,15 +176,19 @@ summary.y <-
   BC.IPD |> 
   as.data.frame() |> 
   dplyr::select(y, trt) %>%
-  pivot_longer(cols = "y", names_to = "variable", values_to = "value") %>%
+  tidyr::pivot_longer(cols = "y",
+               names_to = "variable",
+               values_to = "value") %>%
   group_by(variable, trt) %>%
   summarise(
     mean = mean(value),
     sd = sd(value),
     sum = sum(value)
   ) %>%
-  pivot_longer(cols = c("mean", "sd", "sum"),
-               names_to = "statistic", values_to = "value") %>%
+  tidyr::pivot_longer(
+    cols = c("mean", "sd", "sum"),
+    names_to = "statistic",
+    values_to = "value") %>%
   ungroup()
 
 # sample sizes
@@ -245,7 +196,10 @@ summary.N <-
   BC.IPD |> 
   group_by(trt) |> 
   count(name = "N") |> 
-  pivot_longer(cols = "N", names_to = "statistic", values_to = "value") |> 
+  tidyr::pivot_longer(
+    cols = "N",
+    names_to = "statistic",
+    values_to = "value") |> 
   mutate(variable = NA_character_) |> 
   dplyr::select(variable, statistic, value, trt)
   
@@ -257,7 +211,8 @@ the following.
 
 #### `ipd_trial`: Individual patient data
 
--   `X*`: Patient measurements
+-   `PF_*`: Patient measurements prognostic factors
+-   `EM_*`: Patient measurements effect modifiers
 -   `trt`: Treatment label (factor)
 -   `y`: Indicator of whether event was observed (two level factor)
 
@@ -345,32 +300,35 @@ specific example is provided below.
 ### Model formula
 
 We will take advantage of the in-built R formula object to define the
-models. This will allow us easily pull out components of the object and
-consistently use it. Defining $X_1, X_2$ as effect modifiers, $X_3, X_4$
-as prognostic variables and $Z$ the treatment indicator then the formula
-used in this model is
+models. This will allow us to easily pull out components of the object and
+consistently use it. Defining $EM\_cont\_1, EM\_cont\_2$ as effect
+modifiers, $PF\_cont\_1, PF\_cont\_2$ as prognostic variables and $Z$
+the treatment indicator then the formula used in this model is
 
 $$
-y = X_3 + X_4 + Z + Z X_1 + Z X_2
-$$ Notice that this does not include the link function of interest so
+y = PF\_cont\_1 + PF\_cont\_2 + Z + Z \times EM\_cont\_1 + Z \times EM\_cont\_2
+$$
+
+Notice that this does not include the link function of interest so
 appears as a linear regression. This corresponds to the following `R`
-`formula` object passed as an argument to the strategy function.
+`formula` object we will pass as an argument to the strategy function.
 
 ```{r}
-lin_form <- as.formula("y ~ X3 + X4 + trt + trt:X1 + trt:X2")
+lin_form <- as.formula("y ~ PF_cont_1 + PF_cont_2 + trt + trt:EM_cont_1 + trt:EM_cont_2")
 ```
 
 Note that the more succinct formula
 
 ```{r, eval=FALSE}
-y ~ X3 + X4 + trt*(X1 + X2)
+y ~ PF_cont_1 + PF_cont_2 + trt*(EM_cont_1 + EM_cont_2)
 ```
 
-Would additionally include $X_1, X_2$ as prognostic factors so in not
-equivalent, but could be modified as follows.
+would additionally include $X_1, X_2$ as prognostic factors so is not
+equivalent (but this may be what you actually want).
+To recover the original formula it can be modified as follows.
 
 ```{r, eval=FALSE}
-y ~ X3 + X4 + trt*(X1 + X2) - X1 - X2
+y ~ PF_cont_1 + PF_cont_2 + trt*(EM_cont_1 + EM_cont_2) - EM_cont_1 - EM_cont_2
 ```
 
 We note that the MAIC approach does not strictly use a regression in the
@@ -486,11 +444,11 @@ outstandR_maic_lrr <-
 outstandR_maic_lrr
 ```
 
-### Simulated treatment comparison
+### Simulated treatment comparison (STC)
 
 Simulated treatment comparison (STC) is the conventional outcome
 regression method. It involves fitting a regression model of outcome on
-treatment and covariates to the IPD.
+treatment and covariates to the IPD anad then 'plugging-in' mean covariate values from the aggregate data study.
 
 We can simply pass the same formula as before to the modified call with
 `strategy_stc()`.
@@ -522,7 +480,8 @@ outstandR_stc_lrr <-
 outstandR_stc_lrr
 ```
 
-For the last two approaches, we perform G-computation firstly with a
+The following approaches follow naturally from the simple 'plug-in' version of STC.
+We will perform G-computation firstly with a
 frequentist MLE and then a Bayesian approach.
 
 ### Parametric G-computation with maximum-likelihood estimation
@@ -739,8 +698,8 @@ $\beta_t^{AC} + \beta_{EM} (\bar{X}^{AC}_1 + \bar{X}_2^{AC})$.
 Calculated by
 
 ```{r}
-mean_X1 <- ald_trial$value[ald_trial$statistic == "mean" & ald_trial$variable == "X1"]
-mean_X2 <- ald_trial$value[ald_trial$statistic == "mean" & ald_trial$variable == "X2"]
+mean_X1 <- ald_trial$value[ald_trial$statistic == "mean" & ald_trial$variable == "EM_cont_1"]
+mean_X2 <- ald_trial$value[ald_trial$statistic == "mean" & ald_trial$variable == "EM_cont_1"]
 
 d_AC_true <- b_trt + b_EM * (mean_X1 + mean_X2)
 ```
@@ -760,14 +719,14 @@ another, ignoring the imbalance in effect modifiers.
 ```{r}
 d_AC_naive <- 
   ipd_trial |> 
-  group_by(trt) |> 
-  summarise(y_sum = sum(y), y_bar = mean(y), n = n()) |> 
+  dplyr::group_by(trt) |> 
+  dplyr::summarise(y_sum = sum(y), y_bar = mean(y), n = n()) |> 
   tidyr::pivot_wider(names_from = trt,
                      values_from = c(y_sum, y_bar, n)) |> 
-  mutate(d_AC =
-           log(y_bar_A/(1-y_bar_A)) - log(y_bar_C/(1-y_bar_C)),
-         var_AC =
-           1/(n_A-y_sum_A) + 1/y_sum_A + 1/(n_C-y_sum_C) + 1/y_sum_C)
+  dplyr::mutate(d_AC =
+                  log(y_bar_A/(1-y_bar_A)) - log(y_bar_C/(1-y_bar_C)),
+                var_AC =
+                  1/(n_A-y_sum_A) + 1/y_sum_A + 1/(n_C-y_sum_C) + 1/y_sum_C)
 ```
 
 #### $AB$ effect in $BC$ population
@@ -786,10 +745,10 @@ The naive comparison calculating $AB$ effect in the $BC$ population is
 
 ```{r}
 # reshape to make extraction easier
-ald_out <- ald_trial %>%
-  filter(variable == "y" | is.na(variable)) %>%
-  mutate(stat_trt = paste0(statistic, "_", trt)) %>%
-  dplyr::select(stat_trt, value) %>%
+ald_out <- ald_trial |> 
+  dplyr::filter(variable == "y" | is.na(variable)) |> 
+  mutate(stat_trt = paste0(statistic, "_", trt)) |> 
+  dplyr::select(stat_trt, value) |> 
   pivot_wider(names_from = stat_trt, values_from = value)
 
 d_BC <-

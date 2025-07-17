@@ -28,6 +28,8 @@ strategy_gcomp_ml(
   family = gaussian(link = "identity"),
   trt_var = NULL,
   rho = NA,
+  marginal_distns = NA,
+  marginal_params = NA,
   R = 1000L,
   N = 1000L
 )
@@ -37,6 +39,8 @@ strategy_gcomp_stan(
   family = gaussian(link = "identity"),
   trt_var = NULL,
   rho = NA,
+  marginal_distns = NA,
+  marginal_params = NA,
   N = 1000L
 )
 
@@ -61,7 +65,12 @@ See stats::family() for more details.}
 
 \item{R}{The number of resamples used for the non-parametric bootstrap}
 
-\item{rho}{A named square matrix of covariate correlations; default NA.}
+\item{rho}{A named square matrix of covariate correlations; default NA}
+
+\item{marginal_distns}{Marginal distributions names; vector default NA.
+Available distributions are given in stats::Distributions. See \code{\link[copula:Mvdc]{copula::Mvdc()}} for details}
+
+\item{marginal_params}{Marginal distributions parameters; list of lists, default NA. See \code{\link[copula:Mvdc]{copula::Mvdc()}} for details}
 
 \item{N}{Synthetic sample size for g-computation}
 
@@ -189,5 +198,5 @@ estimation via Markov chain Monte Carlo (MCMC) sampling.
 \seealso{
 \code{\link[=strategy_gcomp_stan]{strategy_gcomp_stan()}}
 
-\code{\link[=strategy_gcomp_ml]{strategy_gcomp_ml()}}
+\code{\link[=strategy_gcomp_ml]{strategy_gcomp_ml()}},\code{\link[copula:Mvdc]{copula::Mvdc()}}
 }

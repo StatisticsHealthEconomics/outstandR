@@ -31,7 +31,7 @@
 #' }
 #' @export
 #' 
-calc_IPD_stats <- function(strategy, ipd, ald, scale, ...)
+calc_IPD_stats <- function(strategy, analysis_params, ...)
   UseMethod("calc_IPD_stats", strategy)
 
 
@@ -48,21 +48,32 @@ calc_IPD_stats.default <- function(...) {
 #' @rdname calc_IPD_stats
 #' 
 #' @section Multiple imputation marginalisation:
-#' Using Stan, compute marginal relative treatment effect for IPD comparator "A" vs reference "C" arms for each MCMC sample
+#' Using Stan, compute marginal relative treatment effect for IPD
+#' comparator "A" vs reference "C" arms for each MCMC sample
 #' by transforming from probability to linear predictor scale. Approximate by 
-#' using imputation and combining estimates using Rubin's rules, in contrast to [calc_IPD_stats.gcomp_stan()].
-#' @import stats
+#' using imputation and combining estimates using Rubin's rules,
+#' in contrast to [calc_IPD_stats.gcomp_stan()].
+#' 
+#' @importFrom stats qt var
 #' @export
 #'
 calc_IPD_stats.mim <- function(strategy,
-                               ipd, ald,
-                               scale, ...) {
+                               analysis_params, ...) {
+  
+  ipd <- analysis_params$ipd
+  ald <- analysis_params$ald
+  scale <- analysis_params$scale
+  ref_trt <- analysis_params$ref_trt
+  comp_trt <- analysis_params$ipd_comp
+  
   mis_res <-
     calc_mim(strategy,
-             ipd, ald, ...)
+             ipd, ald, 
+             ref_trt, comp_trt, 
+             ...)
   
   hat.delta.AC <-
-    calculate_ate(mis_res$mean_A, mis_res$mean_C,
+    calculate_ate(mis_res$mean_comp, mis_res$mean_ref,
                   effect = scale)
   
   M <- mis_res$M
@@ -99,26 +110,30 @@ calc_IPD_stats.mim <- function(strategy,
 #'
 IPD_stat_factory <- function(ipd_fun) {
   
-  function(strategy, ipd, ald, scale,
+  function(strategy, analysis_params,
            var_method = "sample", ...) {
     
-    out <- ipd_fun(strategy, ipd, ald, ...)
+    ipd <- analysis_params$ipd
+    ald <- analysis_params$ald
+    scale <- analysis_params$scale
+    
+    out <- ipd_fun(strategy, analysis_params, ...)
     
     # relative treatment effect
     hat.delta.AC <- calculate_ate(out$mean_A, out$mean_C,
                                   effect = scale)
     
-    coef_est <- mean(hat.delta.AC)
+    coef_est <- mean(hat.delta.AC, na.rm = TRUE)
     
     if (var_method == "sandwich") {
       ##TODO:
-      var_est <- estimate_var_sandwich(strategy, ipd_data, ...)
+      var_est <- estimate_var_sandwich(strategy, ipd, ...)
     } else if (var_method == "sample") {
-      var_est <- var(hat.delta.AC)
+      var_est <- var(hat.delta.AC, na.rm = TRUE)
     }
     
-    p_est <- sapply(out, mean)
-    p_var <- sapply(out, var)
+    p_est <- sapply(out, mean, na.rm = TRUE)
+    p_var <- sapply(out, var, na.rm = TRUE)
     
     list(
       contrasts = list(
