@@ -1,9 +1,3 @@
----
-editor_options: 
-  markdown: 
-    wrap: 72
----
-
 # outstandR: *Out*come regression *stand*ardisation
 
 <!-- <img align="right" src="mime.png" width="100"> -->
@@ -142,7 +136,8 @@ install.packages("outstandR", repos = c("https://statisticshealtheconomics.r-uni
 Alternatively, you may wish to download directly from the repo with
 `remotes::install_github("StatisticsHealthEconomics/outstandR")`.
 
-> [!NOTE] License This package is licensed under the GPLv3. For more
+> [!NOTE]
+> This package is licensed under the GPLv3. For more
 > information, see [LICENSE](https://www.gnu.org/licenses/gpl-3.0).
 
 ## Contributing
