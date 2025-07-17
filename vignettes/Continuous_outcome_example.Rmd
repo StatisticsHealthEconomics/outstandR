@@ -40,6 +40,8 @@ library(boot)      # non-parametric bootstrap in MAIC and ML G-computation
 library(copula)    # simulating BC covariates from Gaussian copula
 library(rstanarm)  # fit outcome regression, draw outcomes in Bayesian G-computation
 library(tidyr)
+library(dplyr)
+library(MASS)
 library(outstandR)
 library(simcovariates)
 ```
@@ -50,10 +52,7 @@ We first simulate both the IPD and ALD data. See the binary data example vignett
 The difference with that example is that we change the `family` argument in `gen_data()` to `gaussian(link = "identity")`, corresponding to the continuous data case.
 The `gen_data()` function is available in the [simcovariates](https://github.com/n8thangreen/simcovariates) package on GitHub.
 
-```{r, warning=FALSE, message=FALSE}
-library(dplyr)
-library(MASS)
-
+```{r generate-ipd-data, warning=FALSE, message=FALSE}
 N <- 200
 allocation <- 2/3      # active treatment vs. placebo allocation ratio (2:1)
 b_trt <- log(0.17)     # conditional effect of active treatment vs. common comparator
@@ -219,8 +218,8 @@ specific example is provided below.
 The formula used in this model, passed as an
 argument to the strategy function is
 
-```{r}
-lin_form <- as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")
+```{r lin_form}
+lin_form <- as.formula("y ~ PF_cont_1 + PF_cont_2 + trt:EM_cont_1 + trt:EM_cont_2")
 ```
 
 ### MAIC
