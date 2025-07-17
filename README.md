@@ -112,6 +112,8 @@ $$
 \Delta_{AB(BC)} = g(\bar{Y}\_{B{(BC)}}) - g(\bar{Y}_{A{(BC)}})
 $$
 
+## References
+
 This R package contains code originally written for the papers:
 
 > Remiro-Azócar, A., Heath, A. & Baio, G. (2022) *Parametric
