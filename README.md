@@ -138,10 +138,6 @@ install.packages("outstandR", repos = c("https://statisticshealtheconomics.r-uni
 Alternatively, you may wish to download directly from the repo with
 `remotes::install_github("StatisticsHealthEconomics/outstandR")`.
 
-> [!NOTE]
-> This package is licensed under the GPLv3. For more
-> information, see [LICENSE](https://www.gnu.org/licenses/gpl-3.0).
-
 ## Contributing
 
 We welcome contributions! Please submit contributions through
@@ -154,3 +150,7 @@ tracker.
 Please note that this project is released with a [Contributor Code of
 Conduct](https://github.com/n8thangreen/BCEA/blob/dev/CONDUCT.md). By
 participating in this project you agree to abide by its terms.
+
+> [!NOTE]
+> This package is licensed under the GPLv3. For more
+> information, see [LICENSE](https://www.gnu.org/licenses/gpl-3.0).
