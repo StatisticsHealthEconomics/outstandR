@@ -35,6 +35,18 @@ model-based standardization with two additional steps:
     of the studies)
 2.  Indirect comparison across studies
 
+## Installation
+
+Install the [development version from
+GitHub](https://github.com/StatisticsHealthEconomics/) using R-universe:
+
+``` r
+install.packages("outstandR", repos = c("https://statisticshealtheconomics.r-universe.dev", "https://cloud.r-project.org"))
+```
+
+Alternatively, you may wish to download directly from the repo with
+`remotes::install_github("StatisticsHealthEconomics/outstandR")`.
+
 ## Background
 
 Population adjustment methods are increasingly used to compare marginal
@@ -125,18 +137,6 @@ and
 > Remiro-Azócar, A., Heath, A., & Baio, G. (2023) *Model-based
 > standardization using multiple imputation. BMC Medical Research
 > Methodology*, 1–15. <https://doi.org/10.1186/s12874-024-02157-x>
-
-## Installation
-
-Install the [development version from
-GitHub](https://github.com/StatisticsHealthEconomics/) using R-universe:
-
-``` r
-install.packages("outstandR", repos = c("https://statisticshealtheconomics.r-universe.dev", "https://cloud.r-project.org"))
-```
-
-Alternatively, you may wish to download directly from the repo with
-`remotes::install_github("StatisticsHealthEconomics/outstandR")`.
 
 ## Contributing
 
