@@ -20,14 +20,7 @@ and G-computation via Maximum Likelihood Estimation (MLE) or Bayesian inference.
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/Binary_data_example.html">Binary data example</a></li>
-    <li><a class="dropdown-item" href="../articles/Binary_data_Remiro-Azocar.html">Binary data example using data from Remiro-Azocar et al. (2020)</a></li>
-    <li><a class="dropdown-item" href="../articles/comparison-with-other-packages.html">Comparison with other packages</a></li>
-    <li><a class="dropdown-item" href="../articles/Continuous_data_example.html">Continuous data example</a></li>
-    <li><a class="dropdown-item" href="../articles/Count_data_example.html">Count data example</a></li>
-  </ul></li>
+<li class="nav-item"><a class="nav-link" href="../articles/index.html">Articles</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -53,25 +46,25 @@ and G-computation via Maximum Likelihood Estimation (MLE) or Bayesian inference.
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calc_IPD_stats</span><span class="op">(</span><span class="va">strategy</span>, <span class="va">ipd</span>, <span class="va">ald</span>, <span class="va">scale</span>, <span class="va">...</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calc_IPD_stats</span><span class="op">(</span><span class="va">strategy</span>, <span class="va">analysis_params</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Default S3 method</span></span>
 <span><span class="fu">calc_IPD_stats</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'mim'</span></span>
-<span><span class="fu">calc_IPD_stats</span><span class="op">(</span><span class="va">strategy</span>, <span class="va">ipd</span>, <span class="va">ald</span>, <span class="va">scale</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">calc_IPD_stats</span><span class="op">(</span><span class="va">strategy</span>, <span class="va">analysis_params</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'stc'</span></span>
-<span><span class="fu">calc_IPD_stats</span><span class="op">(</span><span class="va">strategy</span>, <span class="va">ipd</span>, <span class="va">ald</span>, <span class="va">scale</span>, var_method <span class="op">=</span> <span class="st">"sample"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">calc_IPD_stats</span><span class="op">(</span><span class="va">strategy</span>, <span class="va">analysis_params</span>, var_method <span class="op">=</span> <span class="st">"sample"</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'maic'</span></span>
-<span><span class="fu">calc_IPD_stats</span><span class="op">(</span><span class="va">strategy</span>, <span class="va">ipd</span>, <span class="va">ald</span>, <span class="va">scale</span>, var_method <span class="op">=</span> <span class="st">"sample"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">calc_IPD_stats</span><span class="op">(</span><span class="va">strategy</span>, <span class="va">analysis_params</span>, var_method <span class="op">=</span> <span class="st">"sample"</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'gcomp_ml'</span></span>
-<span><span class="fu">calc_IPD_stats</span><span class="op">(</span><span class="va">strategy</span>, <span class="va">ipd</span>, <span class="va">ald</span>, <span class="va">scale</span>, var_method <span class="op">=</span> <span class="st">"sample"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">calc_IPD_stats</span><span class="op">(</span><span class="va">strategy</span>, <span class="va">analysis_params</span>, var_method <span class="op">=</span> <span class="st">"sample"</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'gcomp_stan'</span></span>
-<span><span class="fu">calc_IPD_stats</span><span class="op">(</span><span class="va">strategy</span>, <span class="va">ipd</span>, <span class="va">ald</span>, <span class="va">scale</span>, var_method <span class="op">=</span> <span class="st">"sample"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">calc_IPD_stats</span><span class="op">(</span><span class="va">strategy</span>, <span class="va">analysis_params</span>, var_method <span class="op">=</span> <span class="st">"sample"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -79,7 +72,11 @@ and G-computation via Maximum Likelihood Estimation (MLE) or Bayesian inference.
 
 
 <dl><dt id="arg-strategy">strategy<a class="anchor" aria-label="anchor" href="#arg-strategy"></a></dt>
-<dd><p>A list corresponding to different approaches</p></dd>
+<dd><p>A list corresponding to different modelling approaches</p></dd>
+
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>Additional arguments</p></dd>
 
 
 <dt id="arg-ipd">ipd<a class="anchor" aria-label="anchor" href="#arg-ipd"></a></dt>
@@ -94,10 +91,6 @@ We assume a common distribution for each treatment arm.</p></dd>
 
 <dt id="arg-scale">scale<a class="anchor" aria-label="anchor" href="#arg-scale"></a></dt>
 <dd><p>A scaling parameter for the effect calculation.</p></dd>
-
-
-<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional arguments</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -114,15 +107,17 @@ We assume a common distribution for each treatment arm.</p></dd>
     <h2 id="multiple-imputation-marginalisation">Multiple imputation marginalisation<a class="anchor" aria-label="anchor" href="#multiple-imputation-marginalisation"></a></h2>
 
 
-<p>Using Stan, compute marginal relative treatment effect for <em>A</em> vs <em>C</em> for each MCMC sample
+<p>Using Stan, compute marginal relative treatment effect for IPD
+comparator "A" vs reference "C" arms for each MCMC sample
 by transforming from probability to linear predictor scale. Approximate by
-using imputation and combining estimates using Rubin's rules, in contrast to <code>calc_IPD_stats.gcomp_stan()</code>.</p>
+using imputation and combining estimates using Rubin's rules,
+in contrast to <code>calc_IPD_stats.gcomp_stan()</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="simulated-treatment-comparison-statistics">Simulated treatment comparison statistics<a class="anchor" aria-label="anchor" href="#simulated-treatment-comparison-statistics"></a></h2>
 
 
-<p>IPD from the <em>AC</em> trial are used to fit a regression model describing the
+<p>IPD for reference "C" and comparator "A" trial arms are used to fit a regression model describing the
 observed outcomes \(y\) in terms of the relevant baseline characteristics \(x\) and
 the treatment variable \(z\).</p>
     </div>
@@ -130,7 +125,7 @@ the treatment variable \(z\).</p>
     <h2 id="matching-adjusted-indirect-comparison-statistics">Matching-adjusted indirect comparison statistics<a class="anchor" aria-label="anchor" href="#matching-adjusted-indirect-comparison-statistics"></a></h2>
 
 
-<p>Marginal <em>A</em> vs <em>C</em> treatment effect estimates
+<p>Marginal IPD comparator treatment "A" vs reference treatment "C" treatment effect estimates
 using bootstrapping sampling.</p>
     </div>
     <div class="section level2">
@@ -143,7 +138,7 @@ using bootstrapping sampling.</p>
     <h2 id="g-computation-bayesian-statistics">G-computation Bayesian statistics<a class="anchor" aria-label="anchor" href="#g-computation-bayesian-statistics"></a></h2>
 
 
-<p>Using Stan, compute marginal log-odds ratio for <em>A</em> vs <em>C</em> for each MCMC sample
+<p>Using Stan, compute marginal relative effects for IPD comparator "A" vs reference "C" treatment arms for each MCMC sample
 by transforming from probability to linear predictor scale.</p>
     </div>
 
@@ -151,8 +146,13 @@ by transforming from probability to linear predictor scale.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="va">strategy</span> <span class="op">&lt;-</span> <span class="fu"><a href="strategy.html">strategy_maic</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">ipd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>id <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span>, treatment <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"C"</span><span class="op">)</span>, <span class="fl">100</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, outcome <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">ald</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>treatment <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"C"</span><span class="op">)</span>, mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">0.1</span><span class="op">)</span>, var <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.03</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ipd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>trt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"C"</span><span class="op">)</span>, <span class="fl">100</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                  X1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                  y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">10</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ald</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>trt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="st">"B"</span>, <span class="st">"C"</span>, <span class="st">"B"</span>, <span class="st">"C"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                  variable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"X1"</span>, <span class="st">"y"</span>, <span class="st">"y"</span>, <span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                  statistic <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"sum"</span>, <span class="st">"sum"</span>, <span class="st">"N"</span>, <span class="st">"N"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                  value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">10</span>, <span class="fl">12</span>, <span class="fl">20</span>, <span class="fl">25</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">calc_IPD_stats</span><span class="op">(</span><span class="va">strategy</span>, <span class="va">ipd</span>, <span class="va">ald</span>, scale <span class="op">=</span> <span class="st">"log_odds"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
@@ -162,11 +162,11 @@ by transforming from probability to linear predictor scale.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Nathan Green, Antonio Remiro-Azocar.</p>
+  <p>Developed by Nathan Green, Chengyang Gao, Antonio Remiro-Azocar.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer></div>

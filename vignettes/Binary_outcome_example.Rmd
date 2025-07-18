@@ -275,12 +275,12 @@ and the event total, average and sample size for each treatment *B* and
 The true logistic outcome model which we use to simulate the data is
 
 $$
-\text{logit}(p_{t}) = \beta_0 + \beta_X (X_3 + X_4) + [\beta_{t} + \beta_{EM} (X_1 + X_2)] \; \text{I}(t \neq C)
+\text{logit}(p_{t}) = \beta_0 + \beta_{PF} (X_3 + X_4) + [\beta_{t} + \beta_{EM} (X_1 + X_2)] \; \text{I}(t \neq C)
 $$
 
 $\text{I}()$ is an indicator function taking value 1 if true and 0
 otherwise. That is, for treatment $C$ the right hand side becomes
-$\beta_0 + \beta_X (X_3 + X_4)$ and for comparator treatments $A$ or $B$
+$\beta_0 + \beta_{PF} (X_3 + X_4)$ and for comparator treatments $A$ or $B$
 there is an additional $\beta_t + \beta_{EM} (X_1 + X_2)$ component
 consisting of the effect modifier terms and the coefficient for the
 treatment parameter, $\beta_t$ (or `b_trt` in the R code), i.e. the log
@@ -518,7 +518,7 @@ outcome $y$ on the covariates $x$ and treatment $z$ is fitted to the
 *AC* IPD:
 
 $$
-g(\mu_n) = \beta_0 + \boldsymbol{x}_n \boldsymbol{\beta_X} + (\beta_z + \boldsymbol{x_n^{EM}} \boldsymbol{\beta_{EM}}) \; \mbox{I}(t \neq C)
+g(\mu_n) = \beta_0 + \boldsymbol{x}_n \boldsymbol{\beta_{PF}} + (\beta_z + \boldsymbol{x_n^{EM}} \boldsymbol{\beta_{EM}}) \; \mbox{I}(t \neq C)
 $$
 
 In the context of G-computation, this regression model is often called

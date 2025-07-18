@@ -1,13 +1,11 @@
 pandoc: '3.4'
-pkgdown: 2.1.1
+pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
-  Binary_data_example: Binary_data_example.html
-  Binary_data_Remiro-Azocar: Binary_data_Remiro-Azocar.html
-  comparison-with-other-packages: comparison-with-other-packages.html
-  Continuous_data_example: Continuous_data_example.html
-  Count_data_example: Count_data_example.html
-last_built: 2025-05-14T15:59Z
+  Binary_outcome_example: Binary_outcome_example.html
+  Continuous_outcome_example: Continuous_outcome_example.html
+  Count_outcome_example: Count_outcome_example.html
+last_built: 2025-07-18T12:03Z
 urls:
   reference: https://StatisticsHealthEconomics.github.io/outstandR/reference
   article: https://StatisticsHealthEconomics.github.io/outstandR/articles

@@ -203,7 +203,8 @@ the following.
 
 #### `ipd_trial`: Individual patient data
 
--   `X*`: Patient measurements
+-   `PF_*`: Patient measurements prognostic factors
+-   `EM_*`: Patient measurements effect modifiers
 -   `trt`: Treatment label (factor)
 -   `y`: Counts
 

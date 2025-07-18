@@ -11,8 +11,8 @@
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Model-based Standardisation">
-<meta name="description" content="Model-based standardisation with several different computation approaches. See Remiro‐Azócar A, Heath A, Baio G (2022. Parametric G‐computation for compatible indirect treatment comparisons with limited individual patient data, Res. Synth. Methods, 1–31. ISSN 1759-2879, &lt;doi:10.1002/jrsm.1565, 2108.12208&gt;.">
-<meta property="og:description" content="Model-based standardisation with several different computation approaches. See Remiro‐Azócar A, Heath A, Baio G (2022. Parametric G‐computation for compatible indirect treatment comparisons with limited individual patient data, Res. Synth. Methods, 1–31. ISSN 1759-2879, &lt;doi:10.1002/jrsm.1565, 2108.12208&gt;.">
+<meta name="description" content="Model-based standardisation with several different computation approaches. See Remiro‐Azócar A, Heath A, Baio G (2022. Parametric G‐computation for compatible indirect treatment comparisons with limited individual patient data, Res. Synth. Methods, 1–31. ISSN 1759-2879, &lt;doi:10.1002/jrsm.1565, 2108.12208&gt;.)">
+<meta property="og:description" content="Model-based standardisation with several different computation approaches. See Remiro‐Azócar A, Heath A, Baio G (2022. Parametric G‐computation for compatible indirect treatment comparisons with limited individual patient data, Res. Synth. Methods, 1–31. ISSN 1759-2879, &lt;doi:10.1002/jrsm.1565, 2108.12208&gt;.)">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -32,16 +32,7 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
-<li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="articles/Binary_data_example.html">Binary data example</a></li>
-    <li><a class="dropdown-item" href="articles/Binary_data_Remiro-Azocar.html">Binary data example using data from Remiro-Azocar et al. (2020)</a></li>
-    <li><a class="dropdown-item" href="articles/comparison-with-other-packages.html">Comparison with other packages</a></li>
-    <li><a class="dropdown-item" href="articles/Continuous_data_example.html">Continuous data example</a></li>
-    <li><a class="dropdown-item" href="articles/Count_data_example.html">Count data example</a></li>
-  </ul>
-</li>
+<li class="nav-item"><a class="nav-link" href="articles/index.html">Articles</a></li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -62,26 +53,56 @@
 <!-- <img align="right" src="mime.png" width="100"> -->
 <!-- badges: start -->
 
+<!-- badges: end -->
 <blockquote>
 <p>Model-based Standardisation with G-computation</p>
 </blockquote>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p><code>outstandR</code> is an R package designed to facilitate <strong>outcome regression standardisation</strong> using model-based approaches, particularly focusing on G-estimation. The package provides tools to apply standardisation techniques for indirect treatment comparisons, especially in scenarios with limited individual patient data.</p>
-<p>Key features include: - <strong>G-computation methods</strong> - <strong>Multiple imputation marginalisation</strong> - <strong>MAIC, STC</strong> for comparison</p>
+<p><a href="https://StatisticsHealthEconomics.github.io/outstandR">outstandR</a> is an R package designed to facilitate <strong>outcome regression standardisation</strong> using model-based approaches, particularly focusing on G-estimation. The package provides tools to apply standardisation techniques for indirect treatment comparisons, especially in scenarios with limited individual patient data.</p>
 </div>
 <div class="section level2">
 <h2 id="who-is-this-package-for">Who is this package for?<a class="anchor" aria-label="anchor" href="#who-is-this-package-for"></a>
 </h2>
-<p>The target audience of <code>outstandR</code> is those who want to perform model-based standardization in the specific context of two-study indirect treatment comparisons with limited subject-level data. This is model-based standardization with two additional steps:</p>
+<p>The target audience of <a href="https://StatisticsHealthEconomics.github.io/outstandR">outstandR</a> is those who want to perform model-based standardization in the specific context of two-study indirect treatment comparisons with limited subject-level data. This is model-based standardization with two additional steps:</p>
 <ol style="list-style-type: decimal">
 <li>Covariate simulation (to overcome limited subject-level data for one of the studies)</li>
 <li>Indirect comparison across studies</li>
 </ol>
 </div>
 <div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<p>Install the <a href="https://github.com/StatisticsHealthEconomics/" class="external-link">development version from GitHub</a> using R-universe:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"outstandR"</span>, repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"https://statisticshealtheconomics.r-universe.dev"</span>, <span class="st">"https://cloud.r-project.org"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>Alternatively, you may wish to download directly from the repo with <code>remotes::install_github("StatisticsHealthEconomics/outstandR")</code>.</p>
+</div>
+<div class="section level2">
 <h2 id="background">Background<a class="anchor" aria-label="anchor" href="#background"></a>
+</h2>
+<p>Population adjustment methods are increasingly used to compare marginal treatment effects when there are cross-trial differences in effect modifiers and limited patient-level data.</p>
+<p>The <a href="https://StatisticsHealthEconomics.github.io/outstandR">outstandR</a> package allows the implementation of a range of methods for this situation including the following:</p>
+<ul>
+<li><p><em>Matching-Adjusted Indirect Comparison (MAIC)</em> is based on propensity score weighting, which is sensitive to poor covariate overlap and cannot extrapolate beyond the observed covariate space. It reweights the individual patient-level data (IPD) to match the aggregate characteristics of the comparator trial, thereby aligning the populations.</p></li>
+<li><p><em>Simulated Treatment Comparison (STC)</em> relies on outcome regression models fitted to IPD, conditioning on covariates to estimate the effect of treatment. These estimates are then applied to the aggregate-level comparator population. Like MAIC, STC is limited by its conditional nature and can produce biased marginal estimates if not properly marginalized.</p></li>
+<li><p><em>Parametric G-computation with maximum likelihood</em>: This method fits an outcome model to the IPD using maximum likelihood estimation, then uses that model to predict outcomes in the comparator population. It allows extrapolation beyond the observed covariate space but requires correct specification of the outcome model to avoid bias.</p></li>
+<li><p><em>Parametric G-computation with Bayesian inference</em>: Similar to the maximum likelihood version, this approach fits an outcome model but within a Bayesian framework. It allows coherent propagation of uncertainty through prior distributions and posterior inference, enabling probabilistic sensitivity analysis and full uncertainty quantification.</p></li>
+<li><p><em>Marginalization method based on parametric G-computation</em>: Current outcome regression-based alternatives can extrapolate but target a conditional treatment effect that is incompatible in the indirect comparison. When adjusting for covariates, one must integrate or average the conditional estimate over the relevant population to recover a compatible marginal treatment effect. This can be easily applied where the outcome regression is a generalized linear model or a Cox model. The approach views the covariate adjustment regression as a nuisance model and separates its estimation from the evaluation of the marginal treatment effect of interest. The method can accommodate a Bayesian statistical framework, which naturally integrates the analysis into a probabilistic framework.</p></li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="general-problem">General problem<a class="anchor" aria-label="anchor" href="#general-problem"></a>
+</h2>
+<p>Consider one trial, for which the company has IPD, comparing treatments <em>A</em> and <em>C</em>, from herein call the <em>AC</em> trial. Also, consider a second trial comparing treatments <em>B</em> and <em>C</em>, similarly called the <em>BC</em> trial. For this trial only published aggregate data are available. We wish to estimate a comparison of the effects of treatments <em>A</em> and <em>B</em> on an appropriate scale in some target population <em>P</em>, denoted by the parameter <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>d</mi><mrow><mi>A</mi><mi>B</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>P</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><annotation encoding="application/x-tex">d_{AB(P)}</annotation></semantics></math>. We make use of bracketed subscripts to denote a specific population. Within the <em>BC</em> population there are parameters <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>μ</mi><mrow><mi>B</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>B</mi><mi>C</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><annotation encoding="application/x-tex">\mu_{B(BC)}</annotation></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>μ</mi><mrow><mi>C</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>B</mi><mi>C</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><annotation encoding="application/x-tex">\mu_{C(BC)}</annotation></semantics></math> representing the expected outcome on each treatment (including parameters for treatments not studied in the <em>BC</em> trial, e.g. treatment <em>A</em>). The <em>BC</em> trial provides estimators <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>Y</mi><mo accent="true">‾</mo></mover><mi>_</mi><mrow><mi>B</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>B</mi><mi>C</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mrow><annotation encoding="application/x-tex">\bar{Y}\_{B(BC)}</annotation></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>Y</mi><mo accent="true">‾</mo></mover><mi>_</mi><mrow><mi>C</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>B</mi><mi>C</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mrow><annotation encoding="application/x-tex">\bar{Y}\_{C(BC)}</annotation></semantics></math> of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>μ</mi><mrow><mi>B</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>B</mi><mi>C</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><annotation encoding="application/x-tex">\mu_{B(BC)}</annotation></semantics></math>, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>μ</mi><mrow><mi>C</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>B</mi><mi>C</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><annotation encoding="application/x-tex">\mu_{C(BC)}</annotation></semantics></math>, respectively, which are the summary outcomes. It is the same situation for the <em>AC</em> trial.</p>
+<p>For a suitable scale, for example a log-odds ratio, or risk difference, we form estimators <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Δ</mi><mrow><mi>B</mi><mi>C</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>B</mi><mi>C</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><annotation encoding="application/x-tex">\Delta_{BC(BC)}</annotation></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Δ</mi><mrow><mi>A</mi><mi>C</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>A</mi><mi>C</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><annotation encoding="application/x-tex">\Delta_{AC(AC)}</annotation></semantics></math> of the trial level (or marginal) relative treatment effects. We shall assume that this is always represented as a difference so, for example, for the risk ratio this is on the log scale.</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Δ</mi><mrow><mi>A</mi><mi>B</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>B</mi><mi>C</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><mo>=</mo><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><mover><mi>Y</mi><mo accent="true">‾</mo></mover><mi>_</mi><mrow><mi>B</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>B</mi><mi>C</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>g</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mover><mi>Y</mi><mo accent="true">‾</mo></mover><mrow><mi>A</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>B</mi><mi>C</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+\Delta_{AB(BC)} = g(\bar{Y}\_{B{(BC)}}) - g(\bar{Y}_{A{(BC)}})
+</annotation></semantics></math></p>
+</div>
+<div class="section level2">
+<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <p>This R package contains code originally written for the papers:</p>
 <blockquote>
@@ -93,22 +114,13 @@
 </blockquote>
 </div>
 <div class="section level2">
-<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
-</h2>
-<p>Install the <a href="https://github.com/StatisticsHealthEconomics/" class="external-link">development version from GitHub</a> using <code>remotes</code>:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"StatisticsHealthEconomics/outstandR"</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
-</h2>
-<p>This package is licensed under the GPLv3. For more information, see <a href="https://www.gnu.org/licenses/gpl-3.0" class="external-link">LICENSE</a>.</p>
-</div>
-<div class="section level2">
 <h2 id="contributing">Contributing<a class="anchor" aria-label="anchor" href="#contributing"></a>
 </h2>
 <p>We welcome contributions! Please submit contributions through <code>Pull Requests</code>, following the <a href="https://github.com/n8thangreen/BCEA/blob/dev/CONTRIBUTING.md" class="external-link">contributing guidelines</a>. To report issues and/or seek support, please file a new ticket in the <a href="https://github.com/StatisticsHealthEconomics/outstandR/issues" class="external-link">issue</a> tracker.</p>
 <p>Please note that this project is released with a <a href="https://github.com/n8thangreen/BCEA/blob/dev/CONDUCT.md" class="external-link">Contributor Code of Conduct</a>. By participating in this project you agree to abide by its terms.</p>
+<blockquote>
+<p>[!NOTE] This package is licensed under the GPLv3. For more information, see <a href="https://www.gnu.org/licenses/gpl-3.0" class="external-link">LICENSE</a>.</p>
+</blockquote>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
@@ -138,8 +150,9 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Nathan Green <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-2745-1736" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Antonio Remiro-Azocar <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-7263-4251" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Nathan Green <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-2745-1736" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> <a href="https://ror.org/02jx3x895" class="external-link"><img src="https://raw.githubusercontent.com/ror-community/ror-logos/main/ror-icon-rgb.svg" class="ror" alt="ROR"></a> </li>
+<li>Chengyang Gao <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-2745-1736" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
+<li>Antonio Remiro-Azocar <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-7263-4251" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 </ul>
 </div>
 
@@ -149,6 +162,7 @@
 <li><a href="https://github.com/StatisticsHealthEconomics/outstandR/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/StatisticsHealthEconomics/outstandR/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
 <li><a href="https://www.gnu.org/licenses/gpl-3.0" class="external-link"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License: GPL v3"></a></li>
+<li><a href="https://statisticshealtheconomics.r-universe.dev/outstandR" class="external-link"><img src="https://statisticshealtheconomics.r-universe.dev/outstandR/badges/version" alt="outstandR status badge"></a></li>
 </ul>
 </div>
 
@@ -157,11 +171,11 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Nathan Green, Antonio Remiro-Azocar.</p>
+  <p>Developed by Nathan Green, Chengyang Gao, Antonio Remiro-Azocar.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>

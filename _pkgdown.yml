@@ -36,15 +36,29 @@ reference:
   - estimate_var_sandwich
   - starts_with("calc_")
   - find_conversion_path
-  # - gen_data
   - get_treatment_effect
   - IPD_stat_factory
+  - BC_ALD_long
+  - get_ref_trt
+  - validate_outstandr
 - title: "Miscellaneous"
   contents:
   - print.outstandR
+  - reshape_ald_to_long
   - reshape_ald_to_wide
 - title: "Data"
   contents:
   - AC_IPD
   - BC_ALD
-  
+
+articles:
+- title: "Binary outcome example"
+  contents:
+    - "Binary_outcome_example"
+- title: "Continuous outcome example"
+  contents:
+    - "Continuous_outcome_example"
+- title: "Count outcome example"
+  contents:
+    - "Count_outcome_example"
+    
