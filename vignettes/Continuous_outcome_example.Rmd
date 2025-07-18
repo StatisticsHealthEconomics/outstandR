@@ -6,6 +6,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
   editor_options: 
+    markdown: 
   markdown: 
     wrap: 72
   chunk_output_type: console
@@ -20,10 +21,7 @@ knitr::opts_chunk$set(
 
 ## Introduction
 
-This is the vignette for performing population adjustment methods with continuous data, in order to compare marginal
-treatment effects when there are cross-trial differences in effect modifiers and limited patient-level data.
-We will demonstrate how to apply MAIC, STC, G-computation with ML, G-computation with Bayesian inference and multiple imputation marginalisation.
-The document structure follow the binary data example vignette which should be referred to for more details.
+This is the vignette for performing population adjustment methods with continuous data, in order to compare marginal treatment effects when there are cross-trial differences in effect modifiers and limited patient-level data. We will demonstrate how to apply MAIC, STC, G-computation with ML, G-computation with Bayesian inference and multiple imputation marginalisation. The document structure follow the binary data example vignette which should be referred to for more details.
 
 ## Example analysis
 
@@ -48,9 +46,7 @@ library(simcovariates)
 
 ### Data
 
-We first simulate both the IPD and ALD data. See the binary data example vignette for more details on how this is implemented.
-The difference with that example is that we change the `family` argument in `gen_data()` to `gaussian(link = "identity")`, corresponding to the continuous data case.
-The `gen_data()` function is available in the [simcovariates](https://github.com/n8thangreen/simcovariates) package on GitHub.
+We first simulate both the IPD and ALD data. See the binary data example vignette for more details on how this is implemented. The difference with that example is that we change the `family` argument in `gen_data()` to `gaussian(link = "identity")`, corresponding to the continuous data case. The `gen_data()` function is available in the [simcovariates](https://github.com/n8thangreen/simcovariates) package on GitHub.
 
 ```{r generate-ipd-data, warning=FALSE, message=FALSE}
 N <- 200
@@ -67,19 +63,38 @@ sdX_EM <- c(0.4, 0.4)  # standard deviation of each EM covariate
 corX <- 0.2            # covariate correlation coefficient  
 b_0 <- -0.6            # baseline intercept coefficient  ##TODO: fixed value
 
-ipd_trial <- gen_data(
+covariate_defns_ipd <- list(
+  PF_cont_1 = list(type = continuous(mean = meanX_AC[1], sd = sdX[1]),
+                    role = "prognostic"),
+  PF_cont_2 = list(type = continuous(mean = meanX_AC[2], sd = sdX[2]),
+                    role = "prognostic"),
+  EM_cont_1 = list(type = continuous(mean = meanX_EM_AC[1], sd = sdX_EM[1]),
+                    role = "effect_modifier"),
+  EM_cont_2 = list(type = continuous(mean = meanX_EM_AC[2], sd = sdX_EM[2]),
+                    role = "effect_modifier")
+)
+
+b_prognostic <- c(PF_cont_1 = b_X, PF_cont_2 = b_X)
+
+b_effect_modifier <- c(EM_cont_1 = b_EM, EM_cont_2 = b_EM)
+
+num_normal_covs <- length(covariate_defns_ipd)
+cor_matrix <- matrix(corX, num_normal_covs, num_normal_covs)
+diag(cor_matrix) <- 1
+
+rownames(cor_matrix) <- c("PF_cont_1", "PF_cont_2", "EM_cont_1", "EM_cont_2")
+colnames(cor_matrix) <- c("PF_cont_1", "PF_cont_2", "EM_cont_1", "EM_cont_2")
+
+ipd_trial <- simcovariates::gen_data(
   N = N,
-  b_trt = b_trt,
-  b_X = b_X,
-  b_EM = b_EM,
   b_0 = b_0,
-  meanX = meanX_AC,
-  sdX = sdX,
-  meanX_EM = meanX_EM_AC,
-  sdX_EM = sdX_EM,
-  corX = corX,
-  allocation = allocation,
-  family = gaussian(link = "identity"))
+  b_trt = b_trt,
+  covariate_defns = covariate_defns_ipd,
+  b_prognostic = b_prognostic,
+  b_effect_modifier = b_effect_modifier,
+  cor_matrix = cor_matrix,
+  trt_assignment = list(prob_trt1 = allocation),
+  family = gaussian("identity"))
 
 ipd_trial$trt <- factor(ipd_trial$trt, labels = c("C", "A"))
 ```
@@ -87,19 +102,27 @@ ipd_trial$trt <- factor(ipd_trial$trt, labels = c("C", "A"))
 Similarly, for the aggregate data but with the additional summarise step (see binary data example vignette for code).
 
 ```{r generate-ald-data, echo=FALSE, warning=FALSE, message=FALSE}
-BC.IPD <- gen_data(
+covariate_defns_ald <- list(
+  PF_cont_1 = list(type = continuous(mean = meanX_BC[1], sd = sdX[1]),
+                    role = "prognostic"),
+  PF_cont_2 = list(type = continuous(mean = meanX_BC[2], sd = sdX[2]),
+                    role = "prognostic"),
+  EM_cont_1 = list(type = continuous(mean = meanX_EM_BC[1], sd = sdX_EM[1]),
+                    role = "effect_modifier"),
+  EM_cont_2 = list(type = continuous(mean = meanX_EM_BC[2], sd = sdX_EM[2]),
+                    role = "effect_modifier")
+)
+
+BC.IPD <- simcovariates::gen_data(
   N = N,
-  b_trt = b_trt,
-  b_X = b_X,
-  b_EM = b_EM,
   b_0 = b_0,
-  meanX = meanX_BC,
-  sdX = sdX,
-  meanX_EM = meanX_EM_BC,
-  sdX_EM = sdX_EM,
-  corX = corX,
-  allocation = allocation,
-  family = gaussian(link = "identity"))
+  b_trt = b_trt,
+  covariate_defns = covariate_defns_ald,
+  b_prognostic = b_prognostic,
+  b_effect_modifier = b_effect_modifier,
+  cor_matrix = cor_matrix,
+  trt_assignment = list(prob_trt1 = allocation),
+  family = gaussian("identity"))
 
 BC.IPD$trt <- factor(BC.IPD$trt, labels = c("C", "B"))
 
@@ -172,13 +195,10 @@ This general format of the data sets are in a 'long' style consisting of the fol
 
 #### `ald_trial`: Aggregate-level data
 
--   `variable`: Covariate name. In the case of treatment arm sample size
-    this is `NA`
--   `statistic`: Summary statistic name from mean, standard deviation or
-    sum
+-   `variable`: Covariate name. In the case of treatment arm sample size this is `NA`
+-   `statistic`: Summary statistic name from mean, standard deviation or sum
 -   `value`: Numerical value of summary statistic
--   `trt`: Treatment label. Because we assume a common covariate
-    distribution between treatment arms this is `NA`
+-   `trt`: Treatment label. Because we assume a common covariate distribution between treatment arms this is `NA`
 
 Our data look like the following.
 
@@ -186,37 +206,23 @@ Our data look like the following.
 head(ipd_trial)
 ```
 
-There are 4 correlated continuous covariates generated per subject,
-simulated from a multivariate normal distribution. Treatment `trt` takes
-either new treatment *A* or standard of care / status quo *C*. The ITC
-is 'anchored' via *C*, the common treatment.
+There are 4 correlated continuous covariates generated per subject, simulated from a multivariate normal distribution. Treatment `trt` takes either new treatment *A* or standard of care / status quo *C*. The ITC is 'anchored' via *C*, the common treatment.
 
 ```{r}
 ald_trial
 ```
 
-In this case, we have 4 covariate mean and standard deviation values;
-and the total, average and sample size for each treatment *B* and
-*C*.
+In this case, we have 4 covariate mean and standard deviation values; and the total, average and sample size for each treatment *B* and *C*.
 
-In the following we will implement for MAIC, STC, and G-computation methods to obtain the
-*marginal variance* and the *marginal treatment effect*.
+In the following we will implement for MAIC, STC, and G-computation methods to obtain the *marginal variance* and the *marginal treatment effect*.
 
 ## Model fitting in R
 
-The `{outstandR}` package has been written to be easy to use and
-essential consists of a single function, `outstandR()`. This can be used
-to run all of the different types of model, which we will call
-*strategies*. The first two arguments of `outstandR()` are the
-individual and aggregate-level data, respectively.
+The `{outstandR}` package has been written to be easy to use and essential consists of a single function, `outstandR()`. This can be used to run all of the different types of model, which we will call *strategies*. The first two arguments of `outstandR()` are the individual and aggregate-level data, respectively.
 
-A `strategy` argument of `outstandR` takes functions called
-`strategy_*()`, where the wildcard `*` is replaced by the name of the
-particular method required, e.g. `strategy_maic()` for MAIC. Each
-specific example is provided below.
+A `strategy` argument of `outstandR` takes functions called `strategy_*()`, where the wildcard `*` is replaced by the name of the particular method required, e.g. `strategy_maic()` for MAIC. Each specific example is provided below.
 
-The formula used in this model, passed as an
-argument to the strategy function is
+The formula used in this model, passed as an argument to the strategy function is
 
 ```{r lin_form}
 lin_form <- as.formula("y ~ PF_cont_1 + PF_cont_2 + trt:EM_cont_1 + trt:EM_cont_2")
@@ -240,12 +246,9 @@ The returned object is of class `outstandR`.
 outstandR_maic
 ```
 
-
 ### Simulated Treatment Comparison (STC)
 
-STC is the conventional outcome regression method. It involves fitting a
-regression model of outcome on treatment and covariates to the IPD. Simply pass
-the same as formula as before with the `strategy_stc()` strategy function.
+STC is the conventional outcome regression method. It involves fitting a regression model of outcome on treatment and covariates to the IPD. Simply pass the same as formula as before with the `strategy_stc()` strategy function.
 
 ```{r outstandR_stc}
 outstandR_stc <-
@@ -256,14 +259,9 @@ outstandR_stc <-
 outstandR_stc
 ```
 
-
 ### Parametric G-computation with maximum-likelihood estimation
 
-G-computation marginalizes the conditional estimates by separating the
-regression modelling from the estimation of the marginal treatment
-effect for *A* versus *C*.
-Pass the `strategy_gcomp_ml()` strategy function.
-
+G-computation marginalizes the conditional estimates by separating the regression modelling from the estimation of the marginal treatment effect for *A* versus *C*. Pass the `strategy_gcomp_ml()` strategy function.
 
 ```{r outstandR_gcomp_ml}
 outstandR_gcomp_ml <-
@@ -277,11 +275,7 @@ outstandR_gcomp_ml
 
 ### Bayesian G-computation with MCMC
 
-The difference between Bayesian G-computation and its maximum-likelihood
-counterpart is in the estimated distribution of the predicted outcomes.
-The Bayesian approach also marginalizes, integrates or standardizes over
-the joint posterior distribution of the conditional nuisance parameters
-of the outcome regression, as well as the joint covariate distribution.
+The difference between Bayesian G-computation and its maximum-likelihood counterpart is in the estimated distribution of the predicted outcomes. The Bayesian approach also marginalizes, integrates or standardizes over the joint posterior distribution of the conditional nuisance parameters of the outcome regression, as well as the joint covariate distribution.
 
 Pass the `strategy_gcomp_stan()` strategy function.
 
