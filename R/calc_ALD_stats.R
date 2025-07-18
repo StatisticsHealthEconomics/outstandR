@@ -8,7 +8,7 @@
 #'   - `ald` Aggregate-level trial data
 #'   - `ref_trt` Treatment labels reference (common; e.g. placebo)
 #'   - `comp_trt` Treatment labels comparator
-#'   - `scale` A scaling parameter for the calculation.
+#'   - `scale` A scaling parameter for the calculation. From "log_odds", "risk_difference", "log_relative_risk".
 #'
 #' @return A list containing:
 #' \describe{

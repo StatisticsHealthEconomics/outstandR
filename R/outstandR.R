@@ -11,12 +11,12 @@
 #'   The labels in the treatment are used internally so there must be a common treatment with the aggregate-level data trial.
 #' @param ald_trial Aggregate-level data. For example, suppose between studies _B_ and _C_. The column names are
 #'  - `variable`: Covariate name. In the case of treatment arm sample size this is `NA`
-#'  - `statistic`: Summary statistic name from "mean", standard deviation "sd" or "sum"
+#'  - `statistic`: Summary statistic name from "mean", standard deviation "sd", probability "prop", or "sum"
 #'  - `value`: Numerical value of summary statistic
 #'  - `trt`: Treatment label. Because we assume a common covariate distribution between treatment arms this is `NA`
 #' @param strategy Computation strategy function. These can be
 #'    `strategy_maic()`, `strategy_stc()`, `strategy_gcomp_ml()` and `strategy_gcomp_stan()`.
-#' @param ref_trt Reference / common / anchoring treatment name; default "C"
+#' @param ref_trt Reference / common / anchoring treatment name.
 #' @param CI Confidence interval; between 0,1
 #' @param scale Relative treatment effect scale. If `NULL`, the scale is automatically determined from the model.
 #'   Choose from "log-odds", "log_relative_risk", "risk_difference", "delta_z", "mean_difference", "rate_difference" depending on the data type.

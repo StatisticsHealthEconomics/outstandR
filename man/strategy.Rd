@@ -56,14 +56,14 @@ new_strategy(strategy, ...)
 }
 \arguments{
 \item{formula}{Linear regression \code{formula} object. Prognostic factors (PF) are main effects and effect modifiers (EM) are
-interactions with the treatment variable, i.e., y ~ X1 + trt + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
+interactions with the treatment variable, e.g., y ~ X1 + trt + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
 
 \item{family}{A 'family' object specifying the distribution and link function (e.g., 'binomial').
 See stats::family() for more details.}
 
-\item{trt_var}{Treatment variable name}
+\item{trt_var}{Treatment variable name; string}
 
-\item{R}{The number of resamples used for the non-parametric bootstrap}
+\item{R}{The number of resamples used for the non-parametric bootstrap; integer}
 
 \item{rho}{A named square matrix of covariate correlations; default NA}
 

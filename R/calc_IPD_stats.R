@@ -8,8 +8,11 @@
 #' and G-computation via Maximum Likelihood Estimation (MLE) or Bayesian inference.
 #' 
 #' @param strategy A list corresponding to different modelling approaches
-#' @eval study_data_args(include_ipd = TRUE, include_ald = TRUE)
-#' @param scale A scaling parameter for the effect calculation.
+#' @param analysis_params A list containing: 
+#'   - `ald` Aggregate-level trial data
+#'   - `ref_trt` Treatment labels reference (common; e.g. placebo)
+#'   - `comp_trt` Treatment labels comparator
+#'   - `scale` A scaling parameter for the calculation. From "log_odds", "risk_difference", "log_relative_risk".
 #' @param ... Additional arguments
 #' 
 #' @return A list containing:

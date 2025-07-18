@@ -116,12 +116,12 @@ strategy_stc <- function(formula = NULL,
 #' \hat{\Delta}^{(2)}_{10} = g(\hat{\mu}_1) - g(\hat{\mu}_0)
 #' }
 #'
-#' @param trt_var Treatment variable name
+#' @param trt_var Treatment variable name; string
 #' @param rho A named square matrix of covariate correlations; default NA
 #' @param marginal_distns Marginal distributions names; vector default NA
 #' @param marginal_params Marginal distributions parameters; list of lists, default NA
-#' @param R The number of resamples used for the non-parametric bootstrap
-#' @param N Synthetic sample size for g-computation
+#' @param R The number of resamples used for the non-parametric bootstrap; integer
+#' @param N Synthetic sample size for g-computation; integer; integer
 #' 
 #' @return `gcomp_ml` class object
 #' @importFrom utils modifyList
@@ -228,7 +228,7 @@ strategy_gcomp_stan <- function(formula = NULL,
 
 #' @rdname strategy
 #'
-#' @param trt_var Treatment variable name
+#' @param trt_var Treatment variable name; string
 #' 
 #' @section Multiple imputation marginalization (MIM):
 #' @return `mim` class object

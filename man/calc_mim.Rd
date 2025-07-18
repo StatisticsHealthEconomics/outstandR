@@ -4,15 +4,14 @@
 \alias{calc_mim}
 \title{Multiple imputation marginalization (MIM)}
 \usage{
-calc_mim(strategy, ipd, ald, ref_trt = NA, comp_trt = NA, ...)
+calc_mim(strategy, ipd, ald, ref_trt, comp_trt, ...)
 }
 \arguments{
 \item{strategy}{Strategy object}
 
 \item{ipd}{Individual-level patient data. Dataframe with one row per patient with outcome, treatment and covariate columns.}
 
-\item{ald}{Aggregate-level data. Single row matrix with summary statistics for each covariate and treatment outcomes.
-The format is 'mean.\emph{' and 'sd.}' for covariates and 'y.\emph{.sum', 'y.}.bar', 'y.*.sd' for treatments B and C.
+\item{ald}{Aggregate-level data. Long format summary statistics for each covariate and treatment outcomes.
 We assume a common distribution for each treatment arm.}
 
 \item{ref_trt, comp_trt}{Reference and comparison treatment names}

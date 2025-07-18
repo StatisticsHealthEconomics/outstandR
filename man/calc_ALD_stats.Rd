@@ -14,7 +14,7 @@ calc_ALD_stats(strategy, analysis_params)
 \item \code{ald} Aggregate-level trial data
 \item \code{ref_trt} Treatment labels reference (common; e.g. placebo)
 \item \code{comp_trt} Treatment labels comparator
-\item \code{scale} A scaling parameter for the calculation.
+\item \code{scale} A scaling parameter for the calculation. From "log_odds", "risk_difference", "log_relative_risk".
 }}
 }
 \value{

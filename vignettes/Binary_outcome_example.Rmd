@@ -67,7 +67,7 @@ The simulation input parameters are given below.
 | `N` | Sample size | 200 |
 | `allocation` | Active treatment vs. placebo allocation ratio (2:1) | 2/3 |
 | `b_trt` | Conditional effect of active treatment vs. comparator (log(0.17)) | -1.77196 |
-| `b_X` | Conditional effect of each prognostic variable (-log(0.5)) | 0.69315 |
+| `b_PF` | Conditional effect of each prognostic variable (-log(0.5)) | 0.69315 |
 | `b_EM` | Conditional interaction effect of each effect modifier (-log(0.67)) | 0.40048 |
 | `meanX_AC[1]` | Mean of prognostic factor in AC trial | 0.45 |
 | `meanX_AC[2]` | Mean of prognostic factor in AC trial | 0.45 |
@@ -82,15 +82,13 @@ The simulation input parameters are given below.
 | `corX` | Covariate correlation coefficient | 0.2 |
 | `b_0` | Baseline intercept | -0.6 |
 
-We shall use the `gen_data()` function available with the
-[simcovariates](https://github.com/n8thangreen/simcovariates) package on
-GitHub.
+Translating to R code.
 
 ```{r, warning=FALSE, message=FALSE}
 N <- 200
 allocation <- 2/3      # active treatment vs. placebo allocation ratio (2:1)
 b_trt <- log(0.17)     # conditional effect of active treatment vs. common comparator
-b_X <- -log(0.5)       # conditional effect of each prognostic variable
+b_PF <- -log(0.5)       # conditional effect of each prognostic variable
 b_EM <- -log(0.67)     # conditional interaction effect of each effect modifier
 meanX_AC <- c(0.45, 0.45)       # mean of normally-distributed covariate in AC trial
 meanX_BC <- c(0.6, 0.6)         # mean of each normally-distributed covariate in BC
@@ -100,7 +98,13 @@ sdX <- c(0.4, 0.4)     # standard deviation of each covariate (same for AC and B
 sdX_EM <- c(0.4, 0.4)  # standard deviation of each EM covariate
 corX <- 0.2            # covariate correlation coefficient  
 b_0 <- -0.6            # baseline intercept coefficient  ##TODO: fixed value
+```
 
+We shall use the `gen_data()` function available with the
+[simcovariates](https://github.com/n8thangreen/simcovariates) package on
+GitHub. For this, we need to define a list of covariates with distribution `type` and relationship to the outcome `role` as either `prognostic`, `effect_modifier` or both.
+
+```{r}
 covariate_defns_ipd <- list(
   PF_cont_1 = list(type = continuous(mean = meanX_AC[1], sd = sdX[1]),
                     role = "prognostic"),
@@ -112,7 +116,7 @@ covariate_defns_ipd <- list(
                     role = "effect_modifier")
 )
 
-b_prognostic <- c(PF_cont_1 = b_X, PF_cont_2 = b_X)
+b_prognostic <- c(PF_cont_1 = b_PF, PF_cont_2 = b_PF)
 
 b_effect_modifier <- c(EM_cont_1 = b_EM, EM_cont_2 = b_EM)
 
@@ -149,6 +153,8 @@ the additional summarise step. We set different mean values `meanX_BC`
 and `meanX_EM_BC` but otherwise use the same parameter values as for the
 $AC$ trial.
 
+First, simulate the underlying IPD similarly for the AC trial.
+
 ```{r generate-ald-data}
 covariate_defns_ald <- list(
   PF_cont_1 = list(type = continuous(mean = meanX_BC[1], sd = sdX[1]),
@@ -173,7 +179,11 @@ BC.IPD <- simcovariates::gen_data(
   family = binomial("logit"))
 
 BC.IPD$trt <- factor(BC.IPD$trt, labels = c("C", "B"))
+```
 
+Next, we aggregate these data. We `summarise()` the covariates, sample sizes and outcomes separately and then bind the results together.
+
+```{r}
 # covariate summary statistics
 # assume same between treatments
 cov.X <- 
@@ -251,7 +261,7 @@ the following.
 -   `trt`: Treatment label. Because we assume a common covariate
     distribution between treatment arms this is `NA`
 
-Our data look like the following.
+Our final data look like the following.
 
 ```{r}
 head(ipd_trial)
@@ -733,8 +743,8 @@ d_AC_true <- b_trt + b_EM * (mean_X1 + mean_X2)
 # alternative calculations
 # d_AC_true <- b_trt + b_EM * (meanX_EM_BC[1] + meanX_EM_BC[2])
 # 
-# d_C_true <- b_0 + b_trt + b_EM * (ald_trial$mean.X1 + ald_trial$mean.X2) + b_X * (ald_trial$mean.X3 + ald_trial$mean.X4)
-# d_A_true <- b_0 + b_X * (ald_trial$mean.X3 + ald_trial$mean.X4)
+# d_C_true <- b_0 + b_trt + b_EM * (ald_trial$mean.X1 + ald_trial$mean.X2) + b_PF * (ald_trial$mean.X3 + ald_trial$mean.X4)
+# d_A_true <- b_0 + b_PF * (ald_trial$mean.X3 + ald_trial$mean.X4)
 # d_C_true - d_A_true
 ```
 

@@ -17,12 +17,11 @@ simulate_ALD_pseudo_pop(
 }
 \arguments{
 \item{formula}{Linear regression \code{formula} object. Prognostic factors (PF) are main effects and effect modifiers (EM) are
-interactions with the treatment variable, i.e., y ~ X1 + trt + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
+interactions with the treatment variable, e.g., y ~ X1 + trt + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
 
 \item{ipd}{Individual-level patient data. Dataframe with one row per patient with outcome, treatment and covariate columns.}
 
-\item{ald}{Aggregate-level data. Single row matrix with summary statistics for each covariate and treatment outcomes.
-The format is 'mean.\emph{' and 'sd.}' for covariates and 'y.\emph{.sum', 'y.}.bar', 'y.*.sd' for treatments B and C.
+\item{ald}{Aggregate-level data. Long format summary statistics for each covariate and treatment outcomes.
 We assume a common distribution for each treatment arm.}
 
 \item{rho}{A named square matrix of covariate correlations or single value; default NA takes from IPD.}

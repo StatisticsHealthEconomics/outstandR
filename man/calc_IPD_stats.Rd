@@ -27,15 +27,15 @@ calc_IPD_stats(strategy, analysis_params, ...)
 \arguments{
 \item{strategy}{A list corresponding to different modelling approaches}
 
+\item{analysis_params}{A list containing:
+\itemize{
+\item \code{ald} Aggregate-level trial data
+\item \code{ref_trt} Treatment labels reference (common; e.g. placebo)
+\item \code{comp_trt} Treatment labels comparator
+\item \code{scale} A scaling parameter for the calculation. From "log_odds", "risk_difference", "log_relative_risk".
+}}
+
 \item{...}{Additional arguments}
-
-\item{ipd}{Individual-level patient data. Dataframe with one row per patient with outcome, treatment and covariate columns.}
-
-\item{ald}{Aggregate-level data. Single row matrix with summary statistics for each covariate and treatment outcomes.
-The format is 'mean.\emph{' and 'sd.}' for covariates and 'y.\emph{.sum', 'y.}.bar', 'y.*.sd' for treatments B and C.
-We assume a common distribution for each treatment arm.}
-
-\item{scale}{A scaling parameter for the effect calculation.}
 }
 \value{
 A list containing:
