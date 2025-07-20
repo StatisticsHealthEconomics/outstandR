@@ -22,7 +22,7 @@ navbar:
   structure:
     left:  [home, reference, articles, news]
     right: [search, github]
-  componenets:
+  components:
     home:
       text: "Home"
       href: index.html
