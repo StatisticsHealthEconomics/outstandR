@@ -1,5 +1,9 @@
 url: https://StatisticsHealthEconomics.github.io/outstandR/
 
+authors:
+  Nathan Green:
+    href: https://n8thangreen.github.io/
+
 build:
   vignettes: false
 
@@ -8,14 +12,29 @@ news:
 
 template:
   bootstrap: 5
-  theme: atom-one-light
+  # theme: atom-one-light
   bslib:
     font_scale: 1.0
+  params:
+    bootswatch: flatly
 
 navbar:
   structure:
-    left:  [intro, reference, articles, tutorials, news]
+    left:  [home, reference, articles, news]
     right: [search, github]
+  componenets:
+    home:
+      text: "Home"
+      href: index.html
+    reference:
+      text: "Functions"
+      href: reference/index.html
+    articles:
+      text: "Articles"
+      href: articles/index.html
+    news:
+      text: "News" 
+      href: news/index.html
 
 reference:
 - title: "Main"
@@ -27,20 +46,20 @@ reference:
 - title: "Constituent statistics"
   desc: "Helper functions used by the main functions."
   contents:
-  - calc_ALD_stats
-  - calc_IPD_stats
+  # - calc_ALD_stats
+  # - calc_IPD_stats
   - marginal_treatment_effect
   - marginal_variance
   - calculate_trial_variance
   - calculate_ate
-  - estimate_var_sandwich
+  # - estimate_var_sandwich
   - starts_with("calc_")
-  - find_conversion_path
+  # - find_conversion_path
   - get_treatment_effect
-  - IPD_stat_factory
+  # - IPD_stat_factory
   - BC_ALD_long
-  - get_ref_trt
-  - validate_outstandr
+  # - get_ref_trt
+  # - validate_outstandr
 - title: "Miscellaneous"
   contents:
   - print.outstandR
@@ -52,13 +71,13 @@ reference:
   - BC_ALD
 
 articles:
-- title: "Binary outcome example"
+- title: "Binary outcome data example"
   contents:
     - "Binary_outcome_example"
-- title: "Continuous outcome example"
+- title: "Continuous outcome data example"
   contents:
     - "Continuous_outcome_example"
-- title: "Count outcome example"
+- title: "Count outcome data example"
   contents:
     - "Count_outcome_example"
     
