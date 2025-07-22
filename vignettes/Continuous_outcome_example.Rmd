@@ -52,7 +52,7 @@ We first simulate both the IPD and ALD data. See the binary data example vignett
 N <- 200
 allocation <- 2/3      # active treatment vs. placebo allocation ratio (2:1)
 b_trt <- log(0.17)     # conditional effect of active treatment vs. common comparator
-b_PF <- -log(0.5)       # conditional effect of each prognostic variable
+b_PF <- -log(0.5)      # conditional effect of each prognostic variable
 b_EM <- -log(0.67)     # conditional interaction effect of each effect modifier
 meanX_AC <- c(0.45, 0.45)       # mean of normally-distributed covariate in AC trial
 meanX_BC <- c(0.6, 0.6)         # mean of each normally-distributed covariate in BC
