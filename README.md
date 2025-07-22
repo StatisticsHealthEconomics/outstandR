@@ -14,7 +14,7 @@ badge](https://statisticshealtheconomics.r-universe.dev/outstandR/badges/version
 
 <!-- badges: end -->
 
-> Model-based Standardisation with G-computation
+> Indirect treatment comparison with limited subject-level data
 
 ## Overview
 
