@@ -46,15 +46,15 @@ outstandR_gcomp_ml <-
 
 outstandR_gcomp_stan <-
   outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
+            refresh = 0,  # turns off the iteration updates.
             strategy = strategy_gcomp_stan(
               formula = lin_form,
-              family = binomial(link = "logit"),
-              refresh = 0))
+              family = binomial(link = "logit")))
 
 outstandR_mim <-
   outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
+            refresh = 0,
             strategy = strategy_mim(
               formula = lin_form,
-              family = binomial(link = "logit"),
-              refresh = 0))
+              family = binomial(link = "logit")))
 ```
