@@ -355,7 +355,41 @@ display: none;
 </div>
 
 
+<pre class="r"><code>library(outstandR)
 
+data(&quot;AC_IPD_binY_contX&quot;)
+data(&quot;BC_ALD_binY_contX&quot;)
+
+# individual-level data
+head(AC_IPD_binY_contX)</code></pre>
+<pre><code>##   id PF_cont_1   PF_cont_2   EM_cont_1   EM_cont_2 trt y    true_eta
+## 1  1 0.0826453  0.71645068  0.66422255 -0.09202652   A 0 -1.58891404
+## 2  2 0.6957433  0.38608723  0.79875530  0.74880584   C 1  0.14986776
+## 3  3 0.6516889  0.50572444  0.39944706 -0.07230380   A 0 -1.43868552
+## 4  4 0.2165975  0.35783123  0.25957984 -0.55405590   A 0 -2.09172428
+## 5  5 0.2605580 -0.05826527 -0.10696235  0.33762456   A 0 -2.13936317
+## 6  6 0.1110818  0.64041589  0.04867791  0.34980415   C 1 -0.07910151</code></pre>
+<pre class="r"><code># aggregate-level data
+BC_ALD_binY_contX</code></pre>
+<pre><code>## # A tibble: 16 × 4
+##    variable  statistic   value trt  
+##    &lt;chr&gt;     &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;
+##  1 EM_cont_1 mean        0.651 &lt;NA&gt; 
+##  2 EM_cont_1 sd          0.391 &lt;NA&gt; 
+##  3 EM_cont_2 mean        0.592 &lt;NA&gt; 
+##  4 EM_cont_2 sd          0.416 &lt;NA&gt; 
+##  5 PF_cont_1 mean        0.653 &lt;NA&gt; 
+##  6 PF_cont_1 sd          0.371 &lt;NA&gt; 
+##  7 PF_cont_2 mean        0.583 &lt;NA&gt; 
+##  8 PF_cont_2 sd          0.437 &lt;NA&gt; 
+##  9 y         mean        0.615 C    
+## 10 y         sd          0.490 C    
+## 11 y         sum        40     C    
+## 12 y         mean        0.274 B    
+## 13 y         sd          0.448 B    
+## 14 y         sum        37     B    
+## 15 &lt;NA&gt;      N          65     C    
+## 16 &lt;NA&gt;      N         135     B</code></pre>
 
 
 

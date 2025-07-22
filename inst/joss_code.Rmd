@@ -1,6 +1,6 @@
 ---
 title: "joss_code"
-output: html_document
+output: word_document
 date: "2025-07-22"
 ---
 
@@ -9,5 +9,52 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
+library(outstandR)
 
+data("AC_IPD_binY_contX")
+data("BC_ALD_binY_contX")
+
+# individual-level data
+head(AC_IPD_binY_contX)
+
+# aggregate-level data
+BC_ALD_binY_contX
+
+lin_form <- as.formula("y ~ PF_cont_1 + PF_cont_2 + trt + trt:EM_cont_1 + trt:EM_cont_2")
+
+outstandR_maic <-
+  outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
+            strategy = strategy_maic(
+              formula = lin_form,
+              family = binomial(link = "logit")))
+
+str(outstandR_maic)
+
+print(outstandR_maic)
+
+outstandR_stc <-
+  outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
+            strategy = strategy_stc(
+              formula = lin_form,
+              family = binomial(link = "logit")))
+
+outstandR_gcomp_ml <-
+  outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
+            strategy = strategy_gcomp_ml(
+              formula = lin_form,
+              family = binomial(link = "logit")))
+
+outstandR_gcomp_stan <-
+  outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
+            strategy = strategy_gcomp_stan(
+              formula = lin_form,
+              family = binomial(link = "logit"),
+              refresh = 0))
+
+outstandR_mim <-
+  outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
+            strategy = strategy_mim(
+              formula = lin_form,
+              family = binomial(link = "logit"),
+              refresh = 0))
 ```
