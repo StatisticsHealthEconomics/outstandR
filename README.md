@@ -14,7 +14,7 @@ badge](https://statisticshealtheconomics.r-universe.dev/outstandR/badges/version
 
 <!-- badges: end -->
 
-> Model-based Standardisation with G-computation
+> Indirect treatment comparison with limited subject-level data
 
 ## Overview
 
@@ -84,7 +84,7 @@ methods for this situation including the following:
     enabling probabilistic sensitivity analysis and full uncertainty
     quantification.
 
--   *Marginalization method based on parametric G-computation*: Current
+-   *Multiple imputation marginalization method based on parametric G-computation*: Current
     outcome regression-based alternatives can extrapolate but target a
     conditional treatment effect that is incompatible in the indirect
     comparison. When adjusting for covariates, one must integrate or
