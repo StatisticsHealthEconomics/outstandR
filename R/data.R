@@ -72,7 +72,7 @@
 #' @format ## `y ~ X1 + X3 + X4 + trt + trt:(X2 + X3 + X4)`
 #' \describe{
 #' \item{variable}{String covariate or outcome name. From X1, X2, X3, X4, y.}
-#' \item{statistic}{String summary statistic name. From mean, sd, sum, N}
+#' \item{statistic}{String summary statistic name. From mean, sd, prob, sum, N}
 #' \item{value}{Numeric value}
 #' \item{trt}{Treatment (arm) name. From B, C}
 #' }

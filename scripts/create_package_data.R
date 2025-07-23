@@ -60,7 +60,7 @@ AC_IPD_binY_contX <- simcovariates::gen_data(
   trt_assignment = list(prob_trt1 = allocation),
   family = binomial("logit"))
 
-AC_IPD_binY_contX$trt <- factor(AC_IPD_binY_binX$trt, labels = c("C", "A"))
+AC_IPD_binY_contX$trt <- factor(AC_IPD_binY_contX$trt, labels = c("C", "A"))
 
 ## aggregate-level data
 
@@ -197,7 +197,7 @@ AC_IPD_contY_mixedX <- simcovariates::gen_data(
   trt_assignment = list(prob_trt1 = allocation),
   family = gaussian("identity"))
 
-AC_IPD_contY_mixedX$trt <- factor(ipd_trial$trt, labels = c("C", "A"))
+AC_IPD_contY_mixedX$trt <- factor(AC_IPD_contY_mixedX$trt, labels = c("C", "A"))
 
 # aggregate-level data
 
@@ -227,24 +227,43 @@ BC.IPD$trt <- factor(BC.IPD$trt, labels = c("C", "B"))
 
 # covariate summary statistics
 # assume same between treatments
-cov.X <- 
-  BC.IPD %>%
-  as.data.frame() |> 
-  dplyr::select(matches("^X"), trt) |> 
+variable_types_lookup <- tibble::tibble(
+  variable = names(covariate_defns_ald),
+  var_type_class = sapply(covariate_defns_ald, function(x) class(x$type)[1])
+)
+
+cov.X <- BC.IPD %>%
+  as.data.frame() |>
+  dplyr::select(matches("^X"), trt) |>
   tidyr::pivot_longer(
     cols = starts_with("X"),
     names_to = "variable",
-    values_to = "value") |>
+    values_to = "value"
+  ) %>%
   dplyr::group_by(variable) %>%
   dplyr::summarise(
     mean = mean(value),
-    sd = sd(value)
+    sd = sd(value),
+    .groups = "drop"
+  ) %>%
+  dplyr::left_join(variable_types_lookup, by = "variable") %>%
+  dplyr::mutate(
+    is_binary = var_type_class == "bin_var_type"
   ) %>%
   tidyr::pivot_longer(
     cols = c("mean", "sd"),
-    names_to = "statistic",
-    values_to = "value") %>%
-  dplyr::ungroup() |> 
+    names_to = "stat_type",
+    values_to = "calculated_value"
+  ) %>%
+  dplyr::filter(
+    (is_binary & stat_type == "mean") | # For binary, only keep the 'mean' (which is the probability)
+      (!is_binary & stat_type %in% c("mean", "sd"))
+  ) %>%
+  dplyr::mutate(
+    statistic = ifelse(is_binary & stat_type == "mean", "prop", # Rename mean to proportion for binary
+                       ifelse(stat_type == "mean", "mean", "sd"))
+  ) %>%
+  dplyr::select(variable, statistic, value = calculated_value) %>%
   dplyr::mutate(trt = NA)
 
 # outcome

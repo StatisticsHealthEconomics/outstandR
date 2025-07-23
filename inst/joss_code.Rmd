@@ -75,7 +75,7 @@ outstandR_maic <-
   outstandR(AC_IPD_contY_mixedX, BC_ALD_contY_mixedX,
             strategy = strategy_maic(
               formula = lin_form,
-              family = continuous(link = "identity")))
+              family = gaussian(link = "identity")))
 
 str(outstandR_maic)
 
@@ -85,25 +85,34 @@ outstandR_stc <-
   outstandR(AC_IPD_contY_mixedX, BC_ALD_contY_mixedX,
             strategy = strategy_stc(
               formula = lin_form,
-              family = continuous(link = "identity")))
+              family = gaussian(link = "identity")))
 
 outstandR_gcomp_ml <-
   outstandR(AC_IPD_contY_mixedX, BC_ALD_contY_mixedX,
             strategy = strategy_gcomp_ml(
               formula = lin_form,
-              family = continuous(link = "identity")))
+              family = gaussian(link = "identity")))
 
 outstandR_gcomp_stan <-
   outstandR(AC_IPD_contY_mixedX, BC_ALD_contY_mixedX,
             refresh = 0,  # turns off the iteration updates
             strategy = strategy_gcomp_stan(
               formula = lin_form,
-              family = continuous(link = "identity")))
+              family = gaussian(link = "identity")))
 
 outstandR_mim <-
   outstandR(AC_IPD_contY_mixedX, BC_ALD_contY_mixedX,
             refresh = 0,
             strategy = strategy_mim(
               formula = lin_form,
-              family = continuous(link = "identity")))
+              family = gaussian(link = "identity")))
 ```
+
+Scale example
+
+```{r}
+
+
+```
+
+
