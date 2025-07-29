@@ -6,3 +6,4 @@
 ^Meta$
 inst/joss_code\.Rmd
 scripts/create_package_data\.R
+^joss\_paper/
