@@ -21,7 +21,7 @@ affiliations:
   - name: University College London (UCL), UK
     index: 1
     ror: 02jx3x895
-  - name: Novonodisk
+  - name: Novo Nordisk
     index: 2
     ror: 
 date: 1 August 2025
