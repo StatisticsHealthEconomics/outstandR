@@ -12,7 +12,7 @@
 #' @param ald Aggregate-level data for covariates.
 #'
 #' @return Relative treatment effect
-#' @seealso [strategy_gcomp_ml()], [gcomp_ml_log_odds_ratio()]
+#' @seealso [strategy_gcomp_ml()]
 #' @examples
 #' \dontrun{
 #' data <- data.frame(trt = c("A", "C"),

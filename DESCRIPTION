@@ -1,6 +1,6 @@
 Package: outstandR
 Title: Model-based Standardisation for indirect treatment comparison with limited subject-level data
-Version: 0.0.0.9000
+Version: 1.0.0
 Authors@R: c(
     person("Nathan", "Green", , "n.green@ucl.ac.uk", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-2745-1736", ROR = "02jx3x895")),
@@ -22,13 +22,17 @@ RoxygenNote: 7.3.2.9000
 Imports:
     boot,
     copula,
+    crayon,
     dplyr,
-    MASS,
+    glue,
+    pillar,
     rstanarm,
     stats,
+    stringr,
+    tibble,
+    tidyr,
     Rdpack (>= 0.7)
 Suggests:
-    crayon,
     doSNOW,
     ggplot2,
     gridExtra,
@@ -37,9 +41,7 @@ Suggests:
     parallel,
     purrr,
     rmarkdown,
-    stringr,
-    testthat (>= 3.0.0),
-    tidyr
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 RdMacros: Rdpack

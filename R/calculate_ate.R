@@ -78,6 +78,13 @@ calculate_trial_variance <- function(ald, tid, effect, family) {
   stop("family not recognised.")
 }
 
+#' Calculate trial variance binary
+#' 
+#' @param ald Aggregate level data
+#' @param tid Treatment ID
+#' @param effect Effect
+#' @return Value
+#' 
 #' @export
 calculate_trial_variance_binary <- function(ald, tid, effect) {
   
@@ -119,6 +126,13 @@ calculate_trial_variance_binary <- function(ald, tid, effect) {
   effect_functions[[effect]]()
 }
 
+#' Calculate trial variance continuous
+#' 
+#' @param ald Aggregate level data
+#' @param tid Treatment ID
+#' @param effect Effect
+#' @return Value
+#'
 #' @export
 calculate_trial_variance_continuous <- function(ald, tid, effect) {
   
@@ -161,6 +175,13 @@ calculate_trial_variance_continuous <- function(ald, tid, effect) {
   effect_functions[[effect]]()
 }
 
+#' Calculate trial variance count
+#' 
+#' @param ald Aggregate level data
+#' @param tid Treatment ID
+#' @param effect Effect
+#' @return Value
+#'
 #' @export
 calculate_trial_variance_count <- function(ald, tid, effect) {
   
@@ -205,6 +226,14 @@ calculate_trial_variance_count <- function(ald, tid, effect) {
   effect_functions[[effect]]()
 }
 
+#' Calculate trial mean
+#' 
+#' @param ald Aggregate level data
+#' @param tid Treatment ID
+#' @param effect Effect
+#' @param family Family distribution 
+#' @return Value
+#'
 #' @export
 calculate_trial_mean <- function(ald, tid, effect, family) {
   
@@ -222,6 +251,13 @@ calculate_trial_mean <- function(ald, tid, effect, family) {
   stop("family not recognised.")
 }
 
+#' Calculate trial mean binary
+#' 
+#' @param ald Aggregate level data
+#' @param tid Treatment ID
+#' @param effect Effect
+#' @return Value
+#'
 #' @export
 calculate_trial_mean_binary <- function(ald, tid, effect) {
   
@@ -254,6 +290,13 @@ calculate_trial_mean_binary <- function(ald, tid, effect) {
   effect_fns[[effect]]()
 }
 
+#' Calculate trial mean continuous
+#' 
+#' @param ald Aggregate level data
+#' @param tid Treatment ID
+#' @param effect Effect
+#' @return Value
+#'
 #' @export
 calculate_trial_mean_continuous <- function(ald, tid, effect) {
   
@@ -300,6 +343,13 @@ calculate_trial_mean_continuous <- function(ald, tid, effect) {
   effect_fns[[effect]]()
 }
 
+#' Calculate trial mean count
+#' 
+#' @param ald Aggregate level data
+#' @param tid Treatment ID
+#' @param effect Effect
+#' @return Value
+#'
 #' @export
 calculate_trial_mean_count <- function(ald, tid, effect) {
   
@@ -406,9 +456,14 @@ calc_log_relative_risk <- function(mean_comp, mean_ref) {
 
 #' Continuity Correction
 #' 
+#' @param ald Aggregate level data
+#' @param correction Correction size; numeric
+#' @return Corrected aggregate level data
+#' 
 #' @importFrom dplyr filter group_by mutate pull case_when
 #' @importFrom tidyr spread
 #' @keywords internal
+#' 
 continuity_correction <- function(ald,
                                   correction = 0.5) {
   # missing value

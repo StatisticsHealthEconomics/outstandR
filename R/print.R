@@ -7,6 +7,8 @@
 #' @param x Objects of the class "outstandR"
 #' @param ... Additional arguments passed to other methods
 #' @seealso [outstandR()]
+#' @import pillar
+#' @importFrom tibble tibble
 #' @export
 #' 
 print.outstandR <- function(x, ...) {

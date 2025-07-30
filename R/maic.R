@@ -64,7 +64,7 @@ Q <- function(beta, X) {
 #' @param hat_w MAIC weights; default `NULL` which calls [maic_weights()]
 #' 
 #' @return Vector of fitted probabilities for treatments _A_ and _C_
-#' @seealso [IPD_stats.maic()]
+#' @importFrom glue glue
 #' @keywords internal
 #' 
 maic.boot <- function(ipd, indices = 1:nrow(ipd),
@@ -156,6 +156,11 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
 }
 
 
+#' Calculate MAIC
+#' 
+#' @param strategy Strategy
+#' @param analysis_params Analysis parameters; list
+#' @return Treatment means
 #' @export
 #' @importFrom boot boot
 #' 

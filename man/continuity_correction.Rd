@@ -6,6 +6,14 @@
 \usage{
 continuity_correction(ald, correction = 0.5)
 }
+\arguments{
+\item{ald}{Aggregate level data}
+
+\item{correction}{Correction size; numeric}
+}
+\value{
+Corrected aggregate level data
+}
 \description{
 Continuity Correction
 }

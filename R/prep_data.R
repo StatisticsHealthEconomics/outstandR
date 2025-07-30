@@ -1,11 +1,19 @@
 # prepare data functions
 
-#
+#' Prepare Individual Patient Data
+#'
+#' @param form Formula
+#' @param data Individual patient data
+#' 
 prep_ipd <- function(form, data) {
   # select data according to formula
   model.frame(form, data = data)
 }
 
+#' Prepare Aggregate Level Data
+#' 
+#' @param form Formula
+#' @param data Aggregate level data
 #' @param trt_var Treatment variable name
 #' 
 prep_ald <- function(form, data, trt_var = "trt") {
@@ -69,9 +77,6 @@ reshape_ald_to_wide <- function(df) {
 #'
 #' @importFrom tidyr pivot_longer separate
 #' @importFrom dplyr select mutate bind_rows arrange
-#' 
-#' @examples
-#' ##TODO
 #' 
 reshape_ald_to_long <- function(df) {
   

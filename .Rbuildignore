@@ -7,3 +7,7 @@
 inst/joss_code\.Rmd
 scripts/create_package_data\.R
 ^joss\_paper/
+^\_comparison-with-other-packages\.Rmd
+^\_user-defined-target-pop\.Rmd
+^\_comparison-with-other-packages\.html
+^\_user-defined-target-pop\.html
