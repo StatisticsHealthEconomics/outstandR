@@ -9,7 +9,3 @@ reshape_ald_to_long(df)
 \description{
 Convert from wide to long format
 }
-\examples{
-##TODO
-
-}

@@ -3,6 +3,7 @@
 
 library(dplyr)
 library(MASS)  # sample/simulate covariates from multivariate normal
+library(glue)
 
 set.seed(555)
 
@@ -95,5 +96,5 @@ for (i in seq_len(n_scenarios)) {
                       c(N = params$N, meanX = params$meanX, gen_data_args)),
             simplify = FALSE) |> 
     save(file = glue::glue("Data/IPD_AC_{file_id}.RData"))
-}                       
+}
 

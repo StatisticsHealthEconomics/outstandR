@@ -1,0 +1,118 @@
+---
+title: "joss_code"
+output: word_document
+date: "2025-07-22"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(outstandR)
+
+data("AC_IPD_binY_contX")
+data("BC_ALD_binY_contX")
+
+# individual-level data
+head(AC_IPD_binY_contX)
+
+# aggregate-level data
+BC_ALD_binY_contX
+
+lin_form <- as.formula("y ~ PF_cont_1 + PF_cont_2 + trt + trt:EM_cont_1 + trt:EM_cont_2")
+
+outstandR_maic <-
+  outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
+            strategy = strategy_maic(
+              formula = lin_form,
+              family = binomial(link = "logit")))
+
+str(outstandR_maic)
+
+print(outstandR_maic)
+
+outstandR_stc <-
+  outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
+            strategy = strategy_stc(
+              formula = lin_form,
+              family = binomial(link = "logit")))
+
+outstandR_gcomp_ml <-
+  outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
+            strategy = strategy_gcomp_ml(
+              formula = lin_form,
+              family = binomial(link = "logit")))
+
+outstandR_gcomp_stan <-
+  outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
+            refresh = 0,  # turns off the iteration updates
+            strategy = strategy_gcomp_stan(
+              formula = lin_form,
+              family = binomial(link = "logit")))
+
+outstandR_mim <-
+  outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
+            refresh = 0,
+            strategy = strategy_mim(
+              formula = lin_form,
+              family = binomial(link = "logit")))
+```
+
+```{r}
+data("AC_IPD_contY_mixedX")
+data("BC_ALD_contY_mixedX")
+
+# individual-level data
+head(AC_IPD_contY_mixedX)
+
+# aggregate-level data
+BC_ALD_contY_mixedX
+
+lin_form <- as.formula("y ~ X1 + X2 + X3 + trt + trt:(X1 + X2 + X4)")
+
+outstandR_maic <-
+  outstandR(AC_IPD_contY_mixedX, BC_ALD_contY_mixedX,
+            strategy = strategy_maic(
+              formula = lin_form,
+              family = gaussian(link = "identity")))
+
+str(outstandR_maic)
+
+print(outstandR_maic)
+
+outstandR_stc <-
+  outstandR(AC_IPD_contY_mixedX, BC_ALD_contY_mixedX,
+            strategy = strategy_stc(
+              formula = lin_form,
+              family = gaussian(link = "identity")))
+
+outstandR_gcomp_ml <-
+  outstandR(AC_IPD_contY_mixedX, BC_ALD_contY_mixedX,
+            strategy = strategy_gcomp_ml(
+              formula = lin_form,
+              family = gaussian(link = "identity")))
+
+outstandR_gcomp_stan <-
+  outstandR(AC_IPD_contY_mixedX, BC_ALD_contY_mixedX,
+            refresh = 0,  # turns off the iteration updates
+            strategy = strategy_gcomp_stan(
+              formula = lin_form,
+              family = gaussian(link = "identity")))
+
+outstandR_mim <-
+  outstandR(AC_IPD_contY_mixedX, BC_ALD_contY_mixedX,
+            refresh = 0,
+            strategy = strategy_mim(
+              formula = lin_form,
+              family = gaussian(link = "identity")))
+```
+
+Scale example
+
+```{r}
+
+
+```
+
+

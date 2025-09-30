@@ -108,7 +108,7 @@ test_that("compare with maicplus package with binary outcome", {
   
   ## {outstandR}
   
-  lin_form <- as.formula(glue("y ~ trt * ({paste(adsl_colnames, collapse = ' + ')})"))
+  lin_form <- as.formula(glue::glue("y ~ trt * ({paste(adsl_colnames, collapse = ' + ')})"))
   
   AC.IPD <- adsl_twt |>
     merge(adrs_twt) |> 

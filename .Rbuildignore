@@ -10,3 +10,9 @@ scripts
 raw-data
 docs
 _pkgdown.yml
+scripts/create_package_data\.R
+^joss\_paper/
+^inst/doc/\_comparison-with-other-packages\.Rmd
+^inst/doc/\_user-defined-target-pop\.Rmd
+^inst/doc/\_comparison-with-other-packages\.html
+^inst/doc/\_user-defined-target-pop\.html

@@ -1,6 +1,6 @@
 Package: outstandR
-Title: Model-based Standardisation
-Version: 0.0.0.9000
+Title: Model-based Standardisation for indirect treatment comparison with limited subject-level data
+Version: 1.0.0
 Authors@R: c(
     person("Nathan", "Green", , "n.green@ucl.ac.uk", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-2745-1736", ROR = "02jx3x895")),
@@ -10,7 +10,8 @@ Authors@R: c(
            comment = c(ORCID = "0000-0002-7263-4251"))
   )
 Description:
-    Model-based standardisation with several different computation approaches.
+    For the problem of indirect treatment comparison with limited subject-level data, this 
+    package provides tools for model-based standardisation with several different computation approaches.
     See Remiro‐Azócar A, Heath A, Baio G (2022. Parametric G‐computation for compatible
     indirect treatment comparisons with limited individual patient data, 
     Res. Synth. Methods, 1–31. ISSN 1759-2879, <doi:10.1002/jrsm.1565, 2108.12208>.)

@@ -161,8 +161,8 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
 #' Calculate MAIC
 #' 
 #' @param strategy Strategy
-#' @param analysis_params Analysis parameters
-#'
+#' @param analysis_params Analysis parameters; list
+#' @return Treatment means
 #' @export
 #' @importFrom boot boot
 #' 

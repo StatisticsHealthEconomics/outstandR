@@ -2,17 +2,17 @@
 % Please edit documentation in R/prep_data.R
 \name{prep_ald}
 \alias{prep_ald}
-\title{Prepare ALD}
+\title{Prepare Aggregate Level Data}
 \usage{
 prep_ald(form, data, trt_var = "trt")
 }
 \arguments{
 \item{form}{Formula}
 
-\item{data}{A dataframe of ALD}
+\item{data}{A dataframe of aggregate level data}
 
 \item{trt_var}{Treatment variable name}
 }
 \description{
-Prepare ALD
+Prepare Aggregate Level Data
 }

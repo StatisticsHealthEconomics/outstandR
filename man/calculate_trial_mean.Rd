@@ -7,13 +7,16 @@
 calculate_trial_mean(ald, tid, effect, family)
 }
 \arguments{
-\item{ald}{A Dataframe of ALD}
+\item{ald}{A Dataframe of aggregate level data}
 
-\item{tid}{ID}
+\item{tid}{Treatment ID}
 
 \item{effect}{Effect}
 
-\item{family}{Family}
+\item{family}{Family distribution}
+}
+\value{
+Value
 }
 \description{
 Calculate Trial Mean Wrapper

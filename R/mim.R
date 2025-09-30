@@ -7,7 +7,7 @@
 #' @param ... Argument to pass to Stan model
 #' 
 #' @importFrom rstanarm posterior_predict stan_glm
-#' @importFrom tibble tibble
+#' @importFrom tibble tibble lst
 #' @keywords internal
 #' 
 calc_mim <- function(strategy,

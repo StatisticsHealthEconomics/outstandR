@@ -9,7 +9,10 @@ calc_maic(strategy, analysis_params)
 \arguments{
 \item{strategy}{Strategy}
 
-\item{analysis_params}{Analysis parameters}
+\item{analysis_params}{Analysis parameters; list}
+}
+\value{
+Treatment means
 }
 \description{
 Calculate MAIC

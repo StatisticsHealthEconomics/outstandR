@@ -7,11 +7,14 @@
 calculate_trial_mean_binary(ald, tid, effect)
 }
 \arguments{
-\item{ald}{A Dataframe of ALD}
+\item{ald}{A Dataframe of aggregate level data}
 
-\item{tid}{ID}
+\item{tid}{Treatment ID}
 
 \item{effect}{Effect}
+}
+\value{
+Value
 }
 \description{
 Calculate Trial Mean Binary Data

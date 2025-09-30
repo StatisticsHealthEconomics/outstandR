@@ -10,6 +10,8 @@
 #' @importFrom cli cli_text col_green col_red
 #' @importFrom tibble tibble
 #' @seealso [outstandR()]
+#' @import pillar
+#' @importFrom tibble tibble
 #' @export
 #' 
 print.outstandR <- function(x, ...) {
