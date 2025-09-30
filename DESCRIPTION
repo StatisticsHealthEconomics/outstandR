@@ -17,28 +17,32 @@ Description:
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2.9000
+RoxygenNote: 7.3.3
 Imports:
     boot,
+    cli,
     copula,
+    crayon,
     dplyr,
-    MASS,
+    glue,
+    pillar,
     rstanarm,
     stats,
+    stringr,
+    tibble,
+    tidyr,
     Rdpack (>= 0.7)
 Suggests:
-    crayon,
     doSNOW,
     ggplot2,
     gridExtra,
     here,
     knitr,
+    MASS,
     parallel,
     purrr,
     rmarkdown,
-    stringr,
-    testthat (>= 3.0.0),
-    tidyr
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 RdMacros: Rdpack

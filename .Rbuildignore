@@ -4,5 +4,9 @@
 ^\.github$
 ^doc$
 ^Meta$
-inst/joss_code\.Rmd
-scripts/create_package_data\.R
+inst\\joss\_code\.html
+inst\\joss\_code\.Rmd
+scripts
+raw-data
+docs
+_pkgdown.yml

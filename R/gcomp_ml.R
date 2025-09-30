@@ -1,18 +1,24 @@
 
-#' G-computation maximum likelihood bootstrap
-#' 
-#' Using bootstrap resampling, calculates the relative treatment effect,
-#' such as log odds ratio, log relative risk or risk difference.
-#'     
-#' @param data IPD trial data 
-#' @param indices Indices sampled from rows of `data` for bootstrapping
-#' @eval reg_args(include_formula = TRUE, include_family = TRUE)
-#' @param rho A named square matrix of covariate correlations; default NA.
-#' @param N Synthetic sample size for g-computation
-#' @param ald Aggregate-level data for covariates.
+#' Bootstrap for G-computation via Maximum Likelihood
 #'
-#' @return Relative treatment effect
-#' @seealso [strategy_gcomp_ml()], [gcomp_ml_log_odds_ratio()]
+#' This is a statistic function intended for use with a bootstrapping function
+#' (e.g., [boot::boot()]). On each bootstrap sample of the data, it calculates
+#' a relative treatment effect (e.g., log odds ratio, log relative risk, or
+#' risk difference) using G-computation with maximum likelihood.
+#'     
+#' @param data A data frame containing the original individual participant data (IPD).
+#' @param indices A vector of indices supplied by the bootstrapping function,
+#'   used to resample `data`.
+#' @eval reg_args(include_formula = TRUE, include_family = TRUE)
+#' @param rho A named square matrix specifying the correlation between covariates
+#'   for synthetic data generation. Defaults to `NA`, assuming independence.
+#' @param N Synthetic sample size for G-computation
+#' @param ald A data frame of aggregate-level data providing covariate distributions.
+#'
+#' @return A single numeric value representing the relative treatment effect
+#' 
+#' @seealso [strategy_gcomp_ml()]
+#' 
 #' @examples
 #' \dontrun{
 #' data <- data.frame(trt = c("A", "C"),

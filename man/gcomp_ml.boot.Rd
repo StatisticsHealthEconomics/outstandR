@@ -2,7 +2,7 @@
 % Please edit documentation in R/gcomp_ml.R
 \name{gcomp_ml.boot}
 \alias{gcomp_ml.boot}
-\title{G-computation maximum likelihood bootstrap}
+\title{Bootstrap for G-computation via Maximum Likelihood}
 \usage{
 gcomp_ml.boot(
   data,
@@ -19,9 +19,10 @@ gcomp_ml.boot(
 )
 }
 \arguments{
-\item{data}{IPD trial data}
+\item{data}{A data frame containing the original individual participant data (IPD).}
 
-\item{indices}{Indices sampled from rows of \code{data} for bootstrapping}
+\item{indices}{A vector of indices supplied by the bootstrapping function,
+used to resample \code{data}.}
 
 \item{formula}{Linear regression \code{formula} object. Prognostic factors (PF) are main effects and effect modifiers (EM) are
 interactions with the treatment variable, e.g., y ~ X1 + trt + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
@@ -29,18 +30,21 @@ interactions with the treatment variable, e.g., y ~ X1 + trt + trt:X2. For covar
 \item{family}{A 'family' object specifying the distribution and link function (e.g., 'binomial').
 See stats::family() for more details.}
 
-\item{rho}{A named square matrix of covariate correlations; default NA.}
+\item{rho}{A named square matrix specifying the correlation between covariates
+for synthetic data generation. Defaults to \code{NA}, assuming independence.}
 
-\item{N}{Synthetic sample size for g-computation}
+\item{N}{Synthetic sample size for G-computation}
 
-\item{ald}{Aggregate-level data for covariates.}
+\item{ald}{A data frame of aggregate-level data providing covariate distributions.}
 }
 \value{
-Relative treatment effect
+A single numeric value representing the relative treatment effect
 }
 \description{
-Using bootstrap resampling, calculates the relative treatment effect,
-such as log odds ratio, log relative risk or risk difference.
+This is a statistic function intended for use with a bootstrapping function
+(e.g., \code{\link[boot:boot]{boot::boot()}}). On each bootstrap sample of the data, it calculates
+a relative treatment effect (e.g., log odds ratio, log relative risk, or
+risk difference) using G-computation with maximum likelihood.
 }
 \examples{
 \dontrun{
@@ -51,6 +55,6 @@ gcomp_ml.boot(data, indices = 1:2, formula = y ~ trt,
 }
 }
 \seealso{
-\code{\link[=strategy_gcomp_ml]{strategy_gcomp_ml()}}, \code{\link[=gcomp_ml_log_odds_ratio]{gcomp_ml_log_odds_ratio()}}
+\code{\link[=strategy_gcomp_ml]{strategy_gcomp_ml()}}
 }
 \keyword{internal}

@@ -205,6 +205,13 @@ calculate_trial_variance_count <- function(ald, tid, effect) {
   effect_functions[[effect]]()
 }
 
+#' Calculate Trial Mean Wrapper
+#' 
+#' @param ald A Dataframe of ALD
+#' @param tid ID
+#' @param effect Effect 
+#' @param family Family
+#'
 #' @export
 calculate_trial_mean <- function(ald, tid, effect, family) {
   
@@ -222,6 +229,11 @@ calculate_trial_mean <- function(ald, tid, effect, family) {
   stop("family not recognised.")
 }
 
+#' Calculate Trial Mean Binary Data
+#' 
+#' @param ald A Dataframe of ALD
+#' @param tid ID
+#' @param effect Effect 
 #' @export
 calculate_trial_mean_binary <- function(ald, tid, effect) {
   
@@ -254,6 +266,11 @@ calculate_trial_mean_binary <- function(ald, tid, effect) {
   effect_fns[[effect]]()
 }
 
+#' Calculate Trial Mean Continuous Data
+#' 
+#' @param ald A Dataframe of ALD
+#' @param tid ID
+#' @param effect Effect 
 #' @export
 calculate_trial_mean_continuous <- function(ald, tid, effect) {
   
@@ -300,6 +317,11 @@ calculate_trial_mean_continuous <- function(ald, tid, effect) {
   effect_fns[[effect]]()
 }
 
+#' Calculate Trial Mean Count Data
+#' 
+#' @param ald A Dataframe of ALD
+#' @param tid ID
+#' @param effect Effect 
 #' @export
 calculate_trial_mean_count <- function(ald, tid, effect) {
   
@@ -406,6 +428,9 @@ calc_log_relative_risk <- function(mean_comp, mean_ref) {
 
 #' Continuity Correction
 #' 
+#' @param ald A dataframe of ALD.
+#' @param correction Continuity correction. Default to 0.5.
+#'
 #' @importFrom dplyr filter group_by mutate pull case_when
 #' @importFrom tidyr spread
 #' @keywords internal

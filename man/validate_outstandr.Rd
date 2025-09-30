@@ -9,3 +9,4 @@ validate_outstandr(ipd_trial, ald_trial, strategy, CI, scale)
 \description{
 Input data validator
 }
+\keyword{internal}

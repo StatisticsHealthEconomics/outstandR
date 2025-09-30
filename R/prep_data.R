@@ -6,6 +6,10 @@ prep_ipd <- function(form, data) {
   model.frame(form, data = data)
 }
 
+#' Prepare ALD
+#' 
+#' @param form Formula
+#' @param data A dataframe of ALD
 #' @param trt_var Treatment variable name
 #' 
 prep_ald <- function(form, data, trt_var = "trt") {
@@ -27,6 +31,8 @@ prep_ald <- function(form, data, trt_var = "trt") {
 }
 
 #' Convert from long to wide format
+#'
+#' @param df A Dataframe of ALD
 #'
 #' @importFrom tidyr unite pivot_wider
 #' @importFrom stringr str_replace

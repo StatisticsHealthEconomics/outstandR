@@ -50,7 +50,7 @@
 #' 
 #' # G-computation with maximum likelihood
 #' # outstandR_gcomp_ml <- outstandR(AC_IPD, BC_ALD,
-#'                                   strategy = strategy_gcomp_ml(lin_form))
+#' #                                 strategy = strategy_gcomp_ml(lin_form))
 #' 
 #' # G-computation with Bayesian inference
 #' outstandR_gcomp_stan <- outstandR(AC_IPD, BC_ALD,

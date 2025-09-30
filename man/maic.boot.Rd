@@ -38,6 +38,6 @@ Vector of fitted probabilities for treatments \emph{A} and \emph{C}
 Matching-adjusted indirect comparison bootstrap sampling.
 }
 \seealso{
-\code{\link[=IPD_stats.maic]{IPD_stats.maic()}}
+\code{\link[=calc_IPD_stats.maic]{calc_IPD_stats.maic()}}
 }
 \keyword{internal}

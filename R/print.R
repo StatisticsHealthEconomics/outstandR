@@ -6,6 +6,9 @@
 #' 
 #' @param x Objects of the class "outstandR"
 #' @param ... Additional arguments passed to other methods
+#' @importFrom pillar style_subtle style_bold 
+#' @importFrom cli cli_text col_green col_red
+#' @importFrom tibble tibble
 #' @seealso [outstandR()]
 #' @export
 #' 
@@ -28,8 +31,8 @@ print.outstandR <- function(x, ...) {
   # Function to color CI values
   color_ci <- function(value) {
     if (is.na(value)) pillar::style_subtle("NA")
-    else if (value > 0) pillar::style_success(sprintf("%.3f", value))
-    else if (value < 0) pillar::style_warning(sprintf("%.3f", value))
+    else if (value > 0) cli_text(col_green(sprintf("%.3f", value)))
+    else if (value < 0) cli_text(col_red(sprintf("%.3f", value)))
     else sprintf("%.3f", value)
   }
   

@@ -6,6 +6,11 @@
 \usage{
 continuity_correction(ald, correction = 0.5)
 }
+\arguments{
+\item{ald}{A dataframe of ALD.}
+
+\item{correction}{Continuity correction. Default to 0.5.}
+}
 \description{
 Continuity Correction
 }

@@ -1,6 +1,7 @@
 
 #' Input data validator
-#' @keyword internal
+#' @keywords internal
+#' 
 validate_outstandr <- function(ipd_trial, ald_trial,
                                strategy,
                                CI, scale) {
