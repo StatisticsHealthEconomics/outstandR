@@ -15,9 +15,7 @@ calc_gcomp_ml(strategy, analysis_params)
 \item{N}{Synthetic sample size for g-computation.}
 }}
 
-\item{ipd}{Individual patient data.}
-
-\item{ald}{Aggregate-level data.}
+\item{analysis_params}{List of analysis parameters}
 }
 \value{
 A list containing:

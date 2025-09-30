@@ -2,7 +2,7 @@
 title: "User-defined target population"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Binary data example}
+  %\VignetteIndexEntry{User-defined target population}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 

@@ -12,7 +12,8 @@
 #'     \item{warmup}{Number of warmup iterations for the MCMC sampling.}
 #'     \item{chains}{Number of MCMC chains.}
 #'   }
-#' @eval study_data_args(include_ipd = TRUE, include_ald = TRUE)
+#' @param analysis_params List of analysis parameters 
+#' @param ... Additional arguments
 #'
 #' @return A list of \eqn{y^*_A} and \eqn{y^*_C} posterior predictions:
 #' \describe{
@@ -91,9 +92,7 @@ calc_gcomp_stan <- function(strategy,
 #'     \item{family}{A `family` object specifying the distribution and link function (e.g., `binomial`).}
 #'     \item{N}{Synthetic sample size for g-computation.}
 #'   }
-#' @param ipd Individual patient data.
-#' @param ald Aggregate-level data.
-#'
+#' @param analysis_params List of analysis parameters
 #' @return A list containing:
 #' \describe{
 #'   \item{mean_A}{Bootstrap estimates for comparator treatment group "A".}

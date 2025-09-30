@@ -16,3 +16,4 @@ scripts/create_package_data\.R
 ^inst/doc/\_user-defined-target-pop\.Rmd
 ^inst/doc/\_comparison-with-other-packages\.html
 ^inst/doc/\_user-defined-target-pop\.html
+^man-roxygen$

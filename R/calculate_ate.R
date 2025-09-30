@@ -90,14 +90,16 @@ calculate_trial_variance_binary <- function(ald, tid, effect) {
   
   y <- dplyr::filter(
     ald,
-    variable == "y",
-    trt == tid,
-    statistic == "sum")$value
+    .data$variable == "y",
+    .data$trt == tid,
+    .data$statistic == "sum")|>
+    dplyr::pull(.data$value)
   
   N <- dplyr::filter(
     ald,
-    trt == tid,
-    statistic == "N")$value
+    .data$trt == tid,
+    .data$statistic == "N")|>
+    dplyr::pull(.data$value)
   
   effect_functions <- list(
     "log_odds" = function() {
@@ -138,20 +140,23 @@ calculate_trial_variance_continuous <- function(ald, tid, effect) {
   
   ybar <- dplyr::filter(
     ald,
-    variable == "y",
-    trt == tid,
-    statistic == "mean")$value
+    .data$variable == "y",
+    .data$trt == tid,
+    .data$statistic == "mean")|>
+    dplyr::pull(.data$value)
   
   ysd <- dplyr::filter(
     ald,
-    variable == "y",
-    trt == tid,
-    statistic == "sd")$value
+    .data$variable == "y",
+    .data$trt == tid,
+    .data$statistic == "sd")|>
+    dplyr::pull(.data$value)
   
   N <- dplyr::filter(
     ald,
-    trt == tid,
-    statistic == "N")$value
+    .data$trt == tid,
+    .data$statistic == "N")|>
+    dplyr::pull(.data$value)
   
   effect_functions <- list(
     "log_odds" = function() {
@@ -187,20 +192,23 @@ calculate_trial_variance_count <- function(ald, tid, effect) {
   
   ybar <- dplyr::filter(
     ald,
-    variable == "y",
-    trt == tid,
-    statistic == "mean")$value
+    .data$variable == "y",
+    .data$trt == tid,
+    .data$statistic == "mean")|>
+    dplyr::pull(.data$value)
   
   ysd <- dplyr::filter(
     ald,
-    variable == "y",
-    trt == tid,
-    statistic == "sd")$value
+    .data$variable == "y",
+    .data$trt == tid,
+    .data$statistic == "sd")|>
+    dplyr::pull(.data$value)
   
   N <- dplyr::filter(
     ald,
-    trt == tid,
-    statistic == "N")$value
+    .data$trt == tid,
+    .data$statistic == "N")|>
+    dplyr::pull(.data$value)
   
   effect_functions <- list(
     
@@ -263,14 +271,16 @@ calculate_trial_mean_binary <- function(ald, tid, effect) {
   
   y <- dplyr::filter(
     ald,
-    variable == "y",
-    trt == tid,
-    statistic == "sum")$value
+    .data$variable == "y",
+    .data$trt == tid,
+    .data$statistic == "sum")|>
+    dplyr::pull(.data$value)
   
   N <- dplyr::filter(
     ald,
-    trt == tid,
-    statistic == "N")$value
+    .data$trt == tid,
+    .data$statistic == "N")|>
+    dplyr::pull(.data$value)
   
   p <- y/N
   
@@ -302,20 +312,23 @@ calculate_trial_mean_continuous <- function(ald, tid, effect) {
   
   ybar <- dplyr::filter(
     ald,
-    variable == "y",
-    trt == tid,
-    statistic == "mean")$value
+    .data$variable == "y",
+    .data$trt == tid,
+    .data$statistic == "mean")|>
+    dplyr::pull(.data$value)
   
   ysd <- dplyr::filter(
     ald,
-    variable == "y",
-    trt == tid,
-    statistic == "sd")$value
+    .data$variable == "y",
+    .data$trt == tid,
+    .data$statistic == "sd")|>
+    dplyr::pull(.data$value)
   
   N <- dplyr::filter(
     ald,
-    trt == tid,
-    statistic == "N")$value
+    .data$trt == tid,
+    .data$statistic == "N")|>
+    dplyr::pull(.data$value)
   
   effect_fns <- list(
     log_odds = function() {
@@ -355,20 +368,23 @@ calculate_trial_mean_count <- function(ald, tid, effect) {
   
   ybar <- dplyr::filter(
     ald,
-    variable == "y",
-    trt == tid,
-    statistic == "mean")$value
+    .data$variable == "y",
+    .data$trt == tid,
+    .data$statistic == "mean")|>
+    dplyr::pull(.data$value)
   
   ysd <- dplyr::filter(
     ald,
-    variable == "y",
-    trt == tid,
-    statistic == "sd")$value
+    .data$variable == "y",
+    .data$trt == tid,
+    .data$statistic == "sd")|>
+    dplyr::pull(.data$value)
   
   N <- dplyr::filter(
     ald,
-    trt == tid,
-    statistic == "N")$value
+    .data$trt == tid,
+    .data$statistic == "N")|>
+    dplyr::pull(.data$value)
   
   effect_fns <- list(
     log_relative_risk = function() {
@@ -482,7 +498,7 @@ continuity_correction <- function(ald,
       names_from = statistic,
       values_from = value) |>
     mutate(
-      need_contcorr = (sum == 0 | sum == N)
+      need_contcorr = (sum == 0 | sum == .data$N)
     ) |> dplyr::pull() |> any()
 
   if (!needs_correction) {

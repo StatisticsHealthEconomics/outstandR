@@ -11,10 +11,13 @@ editor_options:
   chunk_output_type: console
 ---
 
-```{r, include = FALSE}
+```{r setup, include = FALSE}
+is_simcovariate_installed <- requireNamespace("simcovariate", quietly = TRUE)
+
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  eval = is_simcovariate_installed
 )
 ```
 
@@ -27,7 +30,7 @@ Related vignettes will provide equivalent analyses for continuous and count data
 
 First, let us load necessary packages.
 
-```{r setup, warning=FALSE, message=FALSE}
+```{r load-packages, warning=FALSE, message=FALSE}
 # install.packages("outstandR",
 #  repos = c("https://statisticshealtheconomics.r-universe.dev", "https://cloud.r-project.org"))
 #
@@ -41,7 +44,7 @@ library(tidyr)
 library(dplyr)
 library(MASS)
 library(outstandR)
-library(simcovariates)
+library(simcovariates)  # from GitHub
 ```
 
 ### Data

@@ -31,7 +31,7 @@ prep_ald <- function(form, data, trt_var = "trt") {
   
   dplyr::filter(
     data,
-    variable %in% c("y", term.labels) | statistic == "N")
+    .data$variable %in% c("y", term.labels) | .data$statistic == "N")
 }
 
 #' Convert from long to wide format
@@ -53,19 +53,19 @@ prep_ald <- function(form, data, trt_var = "trt") {
 reshape_ald_to_wide <- function(df) {
   
   variable_df <- df |> 
-    dplyr::filter(variable != "y") |> 
-    dplyr::arrange(variable) |> 
-    dplyr::select(-study) |> 
-    tidyr::unite("colname", stat, variable, sep = ".") |> 
-    tidyr::pivot_wider(names_from = colname,
-                       values_from = value)
+    dplyr::filter(.data$variable != "y") |> 
+    dplyr::arrange(.data$variable) |> 
+    dplyr::select(-.data$study) |> 
+    tidyr::unite("colname", .data$stat, .data$variable, sep = ".") |> 
+    tidyr::pivot_wider(names_from = .data$colname,
+                       values_from = .data$value)
   
   y_df <- df |> 
-    dplyr::filter(variable == "y") |> 
-    tidyr::unite("colname", variable, trt, stat, sep = ".") |> 
-    dplyr::select(colname, value) |> 
-    tidyr::pivot_wider(names_from = colname,
-                       values_from = value)
+    dplyr::filter(.data$variable == "y") |> 
+    tidyr::unite("colname", .data$variable, .data$trt, .data$stat, sep = ".") |> 
+    dplyr::select(.data$colname, .data$value) |> 
+    tidyr::pivot_wider(names_from = .data$colname,
+                       values_from = .data$value)
   
   # Rename columns: y.X.N to N.X
   # i.e. swap study and stat, removes 'y.'
@@ -76,6 +76,8 @@ reshape_ald_to_wide <- function(df) {
 }
 
 #' Convert from wide to long format
+#'
+#' @param df A dataframe of ALD
 #'
 #' @importFrom tidyr pivot_longer separate
 #' @importFrom dplyr select mutate bind_rows arrange
@@ -88,7 +90,8 @@ reshape_ald_to_long <- function(df) {
     tidyr::pivot_longer(cols = everything(),
                         names_to = "colname",
                         values_to = "value") |> 
-    tidyr::separate(colname, into = c("statistic", "variable"), sep = "\\.") |> 
+    tidyr::separate(.data$colname,
+                    into = c("statistic", "variable"), sep = "\\.") |> 
     dplyr::select(variable, statistic, value) |> 
     dplyr::mutate(trt = NA)  # Set study to NA for these rows
   
@@ -97,7 +100,8 @@ reshape_ald_to_long <- function(df) {
     tidyr::pivot_longer(cols = everything(),
                         names_to = "colname",
                         values_to = "value") |> 
-    tidyr::separate(colname, into = c("statistic", "trt"), sep = "\\.") |> 
+    tidyr::separate(.data$colname,
+                    into = c("statistic", "trt"), sep = "\\.") |> 
     dplyr::select(statistic, trt, value) |> 
     dplyr::mutate(variable = NA)
   
@@ -107,13 +111,13 @@ reshape_ald_to_long <- function(df) {
     tidyr::pivot_longer(cols = everything(),
                         names_to = "colname",
                         values_to = "value") |> 
-    tidyr::separate(colname,
+    tidyr::separate(.data$colname,
                     into = c("variable", "trt", "statistic"),
                     sep = "\\.") |> 
     dplyr::select(variable, statistic, trt, value) 
   
   dplyr::bind_rows(variable_cols, y_cols, N_cols) |> 
-    dplyr::arrange(variable, statistic, trt)
+    dplyr::arrange(.data$variable, .data$statistic, .data$trt)
 }
 
 
@@ -127,6 +131,11 @@ get_comparator <- function(dat, ref_trt, trt_var = "trt") {
 
 #' Get reference treatment
 #'
+#' @param ref_trt Reference treatment
+#' @param trt Treatment
+#' @param ipd_trial A dataframe of IPD
+#' @param ald_trial A dataframe of ALD
+#' @return String
 get_ref_trt <- function(ref_trt, trt, ipd_trial, ald_trial) {
   
   if (!is.na(ref_trt)) {

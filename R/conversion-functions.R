@@ -37,11 +37,16 @@ conversion_map <- function() {
     risk_difference =
       list(relative_risk = convert_rd_to_rr),
     delta_z = 
-      list(odds_ratio = convert_delta_z_to_or),
+      list(odds_ratio = NULL),
+      # list(odds_ratio = convert_delta_z_to_or), ##TODO
   )
 }
 
-#' recursive function to find conversion path
+#' Recursive function to find conversion path
+#'
+#' @param from From scale
+#' @param to To scale
+#' @param visited Path
 #'
 #' @examples
 #' find_conversion_path("log_odds", "relative_risk")

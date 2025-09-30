@@ -25,15 +25,9 @@ calc_IPD_stats(strategy, analysis_params, ...)
 \method{calc_IPD_stats}{gcomp_stan}(strategy, analysis_params, var_method = "sample", ...)
 }
 \arguments{
-\item{strategy}{A list corresponding to different modelling approaches}
+\item{strategy}{}
 
-\item{analysis_params}{A list containing:
-\itemize{
-\item \code{ald} Aggregate-level trial data
-\item \code{ref_trt} Treatment labels reference (common; e.g. placebo)
-\item \code{comp_trt} Treatment labels comparator
-\item \code{scale} A scaling parameter for the calculation. From "log_odds", "risk_difference", "log_relative_risk".
-}}
+\item{analysis_params}{Analysis parameters}
 
 \item{...}{Additional arguments}
 }

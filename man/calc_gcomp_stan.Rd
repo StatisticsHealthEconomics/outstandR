@@ -16,10 +16,9 @@ calc_gcomp_stan(strategy, analysis_params, ...)
 \item{chains}{Number of MCMC chains.}
 }}
 
-\item{ipd}{Individual-level patient data. Dataframe with one row per patient with outcome, treatment and covariate columns.}
+\item{analysis_params}{List of analysis parameters}
 
-\item{ald}{Aggregate-level data. Long format summary statistics for each covariate and treatment outcomes.
-We assume a common distribution for each treatment arm.}
+\item{...}{Additional arguments}
 }
 \value{
 A list of \eqn{y^*_A} and \eqn{y^*_C} posterior predictions:

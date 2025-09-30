@@ -98,12 +98,14 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
       # Attempt to get 'mean' from ALD. If not found, try 'prop'
       # This assumes ALD contains either 'mean' or 'proportion' for each effect modifier
       ald_mean_val <- ald |>
-        dplyr::filter(variable == em_name, statistic == "mean") |>
-        dplyr::pull(value)
+        dplyr::filter(.data$variable == em_name,
+                      .data$statistic == "mean") |>
+        dplyr::pull(.data$value)
       
       ald_prop_val <- ald |>
-        dplyr::filter(variable == em_name, statistic == "prop") |>
-        dplyr::pull(value)
+        dplyr::filter(.data$variable == em_name,
+                      .data$statistic == "prop") |>
+        dplyr::pull(.data$value)
       
       if (length(ald_mean_val) > 0) {
         # continuous if 'mean' in ALD

@@ -6,6 +6,9 @@
 \usage{
 reshape_ald_to_long(df)
 }
+\arguments{
+\item{df}{A dataframe of ALD}
+}
 \description{
 Convert from wide to long format
 }

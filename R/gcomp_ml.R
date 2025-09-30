@@ -137,7 +137,10 @@ simulate_ALD_pseudo_pop <- function(formula,
   covariate_names <- get_covariate_names(formula)
   covariate_names <- covariate_names[covariate_names != trt_var]  # remove treatment
   n_covariates <- length(covariate_names)
-  if (n_covariates == 0) stop("No covariates found to simulate.")
+  
+  if (n_covariates == 0) {
+    stop("No covariates found to simulate.")
+  }
   
   if (is.character(marginal_distns) && is.list(marginal_params)) {
     message("user-supplied marginals.")
@@ -147,9 +150,11 @@ simulate_ALD_pseudo_pop <- function(formula,
     names(auto_params) <- names(auto_distns) <- covariate_names
     
     for (cov in covariate_names) {
-      var_ald <- dplyr::filter(ald, variable == cov)
+      var_ald <- dplyr::filter(ald, .data$variable == cov)
       
-      if (nrow(var_ald) == 0) stop(paste("No ALD found for covariate: ", cov))
+      if (nrow(var_ald) == 0) {
+        stop(paste("No ALD found for covariate: ", cov))
+      }
       
       if ("prop" %in% var_ald$statistic) {
         

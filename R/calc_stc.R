@@ -1,5 +1,10 @@
 
 #' Calculate simulated treatment comparison statistics
+#'
+#' @param strategy Strategy
+#' @param analysis_params List of analysis parameters
+#' @param ... Additional arguments
+#'
 #' @return A list:
 #' \describe{
 #'   \item{`mean_A`}{Mean for comparator treatment group "A".}

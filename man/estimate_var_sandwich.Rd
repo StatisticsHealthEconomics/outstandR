@@ -6,6 +6,16 @@
 \usage{
 estimate_var_sandwich(strategy, ipd_data, ...)
 }
+\arguments{
+\item{strategy}{Strategy}
+
+\item{ipd_data}{IPD data}
+
+\item{...}{Additional arguments}
+}
+\value{
+numeric
+}
 \description{
 Estimate Variance Sandwich Estimator
 }

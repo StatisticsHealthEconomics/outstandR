@@ -2,12 +2,19 @@
 % Please edit documentation in R/conversion-functions.R
 \name{find_conversion_path}
 \alias{find_conversion_path}
-\title{recursive function to find conversion path}
+\title{Recursive function to find conversion path}
 \usage{
 find_conversion_path(from, to, visited = c())
 }
+\arguments{
+\item{from}{From scale}
+
+\item{to}{To scale}
+
+\item{visited}{Path}
+}
 \description{
-recursive function to find conversion path
+Recursive function to find conversion path
 }
 \examples{
 find_conversion_path("log_odds", "relative_risk")

@@ -27,11 +27,13 @@ Imports:
     dplyr,
     glue,
     pillar,
+    rlang,
     rstanarm,
     stats,
     stringr,
     tibble,
     tidyr,
+    tidyselect,
     Rdpack (>= 0.7)
 Suggests:
     doSNOW,
@@ -43,7 +45,10 @@ Suggests:
     parallel,
     purrr,
     rmarkdown,
+    simcovariates,
     testthat (>= 3.0.0)
+Remotes: 
+    n8thangreen/simcovariate
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 RdMacros: Rdpack

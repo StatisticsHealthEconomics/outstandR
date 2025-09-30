@@ -48,6 +48,10 @@ calc_IPD_stats.default <- function(...) {
 }
 
 
+#' @param strategy 
+#' @param analysis_params Analysis parameters
+#' @param ... Additional arguments
+#'
 #' @rdname calc_IPD_stats
 #' 
 #' @section Multiple imputation marginalisation:

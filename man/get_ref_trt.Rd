@@ -6,6 +6,18 @@
 \usage{
 get_ref_trt(ref_trt, trt, ipd_trial, ald_trial)
 }
+\arguments{
+\item{ref_trt}{Reference treatment}
+
+\item{trt}{Treatment}
+
+\item{ipd_trial}{A dataframe of IPD}
+
+\item{ald_trial}{A dataframe of ALD}
+}
+\value{
+String
+}
 \description{
 Get reference treatment
 }

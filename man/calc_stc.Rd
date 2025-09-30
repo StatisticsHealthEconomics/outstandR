@@ -6,6 +6,13 @@
 \usage{
 calc_stc(strategy, analysis_params, ...)
 }
+\arguments{
+\item{strategy}{Strategy}
+
+\item{analysis_params}{List of analysis parameters}
+
+\item{...}{Additional arguments}
+}
 \value{
 A list:
 \describe{
