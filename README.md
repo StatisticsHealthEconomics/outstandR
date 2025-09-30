@@ -110,7 +110,7 @@ specific population. Within the *BC* population there are parameters
 $\mu_{B(BC)}$ and $\mu_{C(BC)}$ representing the expected outcome on
 each treatment (including parameters for treatments not studied in the
 *BC* trial, e.g. treatment *A*). The *BC* trial provides estimators
-$\bar{Y}_{B(BC)}$ and $\bar{Y}_{C(BC)}$ of $\mu_{B(BC)}$, $\mu_{C(BC)}$,
+$\bar Y_{B(BC)}$ and $\bar Y_{C(BC)}$ of $\mu_{B(BC)}$, $\mu_{C(BC)}$,
 respectively, which are the summary outcomes. It is the same situation
 for the *AC* trial.
 
