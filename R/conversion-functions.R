@@ -22,7 +22,8 @@ convert_rr_to_or <- function(rr, P0) rr * ((1 - P0) / (1 - P0 * rr))
 convert_rr_to_rd <- function(rr, P0) P0 * (rr - 1)
 convert_rd_to_rr <- function(rd, P0) 1 + (rd / P0)
 
-#
+#' Conversion Map
+#' 
 conversion_map <- function() {
   list(
     log_odds =
@@ -77,8 +78,14 @@ find_conversion_path <- function(from, to, visited = c()) {
   return(NULL)  # no valid path found
 }
 
-# apply conversions along the found path
-#
+#' Apply conversions along the found path
+#'
+#' @param value Value
+#' @param link Link
+#' @param to To
+#' @param P0 P0
+#' @return Effect
+#' 
 convert_effect <- function(value, link, to, P0) {
   
   from <- get_treatment_effect(link)  # scale

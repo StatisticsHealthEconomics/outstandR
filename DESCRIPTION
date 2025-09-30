@@ -36,16 +36,21 @@ Imports:
     tidyselect,
     Rdpack (>= 0.7)
 Suggests:
+    causaldata,
     doSNOW,
     ggplot2,
     gridExtra,
     here,
     knitr,
+    maicplus,
+    marginaleffects,
     MASS,
     parallel,
     purrr,
+    reshape2,
     rmarkdown,
     simcovariates,
+    stdReg2,
     testthat (>= 3.0.0)
 Remotes: 
     n8thangreen/simcovariate

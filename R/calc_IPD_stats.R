@@ -48,7 +48,7 @@ calc_IPD_stats.default <- function(...) {
 }
 
 
-#' @param strategy 
+#' @param strategy Strategy
 #' @param analysis_params Analysis parameters
 #' @param ... Additional arguments
 #'
