@@ -25,7 +25,7 @@ calc_IPD_stats(strategy, analysis_params, ...)
 \method{calc_IPD_stats}{gcomp_stan}(strategy, analysis_params, var_method = "sample", ...)
 }
 \arguments{
-\item{strategy}{}
+\item{strategy}{Strategy}
 
 \item{analysis_params}{Analysis parameters}
 

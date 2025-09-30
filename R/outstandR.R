@@ -34,8 +34,8 @@
 #' 
 #' @export
 #' @examples
-#' data(AC_IPD)  # AC patient-level data
-#' data(BC_ALD)  # BC aggregate-level data
+#' data(AC_IPD_binY_contX)  # AC patient-level data
+#' data(AC_ALD_binY_contX)  # BC aggregate-level data
 #' 
 #' # linear formula
 #' lin_form <- as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")
