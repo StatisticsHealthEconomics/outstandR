@@ -10,9 +10,9 @@
 
 
 
-<meta name="date" content="2025-07-22" />
+<meta name="date" content="2025-08-01" />
 
-<title>joss_code</title>
+<title>outstandR: An R Package for Indirect Treatment Comparison with Limited Subject-Level Data</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -252,6 +252,29 @@ if (window.hljs) {
 
 
 
+<style type="text/css">
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+}
+</style>
 
 
 
@@ -349,13 +372,149 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">joss_code</h1>
-<h4 class="date">2025-07-22</h4>
+<h1 class="title toc-ignore">outstandR: An R Package for Indirect
+Treatment Comparison with Limited Subject-Level Data</h1>
+<h4 class="date">1 August 2025</h4>
 
 </div>
 
 
-
+<div id="summary" class="section level1">
+<h1>Summary</h1>
+<p>The goal of <code>outstandR</code> is to provide functionality to
+perform population adjustment methods are increasingly used to compare
+marginal treatment effects when there are cross-trial differences in
+effect modifiers and limited patient-level data <span class="citation">(Remiro-Azócar, Heath, and Baio 2022)</span>. This
+presents a significant challenge in evidence synthesis, particularly in
+health technology assessment. Existing methods often face limitations
+such as sensitivity to poor covariate overlap or inability to
+extrapolate beyond observed covariate spaces. The <code>outstandR</code>
+package addresses these challenges by offering a robust framework for
+out- come regression standardisation, focusing on G-estimation. It
+enables researchers to perform model-based standardization with two
+additional crucial steps: covariate simulation (to over- come limited
+subject-level data for one of the studies) and indirect comparison
+across studies <span class="citation">(Remiro-Azócar, Heath, and Baio
+2022)</span>. The target audience of <code>outstandR</code> is those who
+want to perform model-based standardization in the specific context of
+two-study indirect treatment comparisons with limited subject-level
+data.</p>
+</div>
+<div id="statement-of-need" class="section level1">
+<h1>Statement of need</h1>
+<p>Indirect treatment comparisons (ITCs) are a cornerstone of modern
+evidence synthesis, especially in health technology assessment (HTA)
+where decision-makers must compare novel treatments against a range of
+competitors. A common and challenging scenario arises when individual
+patient data (IPD) is available for one trial, but only aggregate-level
+data (ALD) is available for the comparator trial. Naively comparing
+these studies can introduce significant bias because of differences in
+patient populations. There is a clear need for a unified and robust
+software tool that implements a range of modern population adjustment
+techniques to address these challenges systematically.</p>
+</div>
+<div id="method" class="section level1">
+<h1>Method</h1>
+<p>We developed the <code>outstandR</code> R package to provide a
+comprehensive framework for performing anchored ITCs using a suite of
+population adjustment methods, with a focus on robust G-computation
+techniques. <code>outstandR</code> streamlines the entire analytical
+workflow: from fitting outcome models on IPD and standardizing them to
+the ALD population, to performing the final indirect comparison. By
+implementing multiple methods — including Matching-Adjusted Indirect
+Comparison (MAIC), Simulated Treatment Comparison (STC) <span class="citation">(Phillippo et al. 2016)</span>, parametric
+G-computation (both frequentist and Bayesian) <span class="citation">(Remiro-Azócar, Heath, and Baio 2022)</span>, and the
+Multiple Imputation Marginalization (MIM) method <span class="citation">(Remiro-Azócar, Heath, and Baio 2024)</span> — within a
+single interface, our package empowers researchers to conduct
+sensitivity analyses and select the most appropriate approach for their
+data. <code>outstandR</code> lowers the technical barrier to entry for
+these complex analyses, promoting more reliable and transparent evidence
+synthesis for healthcare decision-making.</p>
+<p>Related R packages we are aware of are more general-purpose tools
+implementing specific methods. The <code>marginaleffects</code> <span class="citation">(Arel-Bundock 2024)</span> package is not designed for
+population adjustment between studies. <code>stdReg2</code> focuses on
+standardising outcomes with a single data set <span class="citation">(G.
+Sofer, L. D., and Richardson 2023)</span>. For G-formula
+implementations, <code>gfoRmula</code> can estimate effects in the
+presence of time-varying treatments and confounders <span class="citation">(Sjölander and Dahlqwist 2023)</span>. It is designed
+for estimating causal effects from longitudinal data with one study.
+<code>gFormulaMI</code> employs multiple imputation using the
+<code>mice</code> package <span class="citation">(Sterne et al.
+2023)</span>. Finally, <code>maicplus</code> is a specialist ITC package
+but focused only on the MAIC approach <span class="citation">(maicplus
+2024)</span>.</p>
+<p>Our analysis performs an anchored indirect treatment comparison (ITC)
+to estimate the relative effect of two treatments, A and B. This
+comparison uses individual patient data (IPD) from a trial comparing
+treatments A and C (the AC trial) and aggregate level data (ALD) from a
+trial comparing treatments B and C (the BC trial). To account for
+potential differences in the patient populations between the two trials,
+which can bias the ITC, we use population adjustment methods. These
+methods standardize the results from the AC trial to the baseline
+characteristics of the BC trial population.</p>
+<p>The general procedure involves two main stages. First, we fit an
+outcome regression model using the IPD from the AC trial. This model
+describes the relationship between the outcome, treatment assignment,
+and a set of baseline covariates, including both prognostic factors and
+treatment effect modifiers. Second, we use this fitted model to predict
+the outcomes for treatment A and C in a target population that reflects
+the aggregate baseline characteristics of the BC trial. For
+G-computation, this step can involve simulating a large synthetic
+dataset that mirrors the covariate distributions of the BC population.
+The resulting adjusted treatment effect, <span class="math inline">\(\Delta\)</span>AC(BC), is then indirectly compared
+against the observed effect from the ALD, <span class="math inline">\(\Delta\)</span>BC(BC), to yield the final adjusted
+estimate for A versus B, <span class="math inline">\(\Delta\)</span>AB(BC). Uncertainty is quantified
+using non-parametric bootstrapping for frequentist methods or by
+propagating parameter uncertainty from the full posterior distribution
+in Bayesian implementations.</p>
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-aari_marginaleffects_2024" class="csl-entry">
+Arel-Bundock, Vincent. 2024. <span>“<span class="nocase">marginaleffects: An R Package to Estimate and Plot
+Predictions, Marginal Means, and Marginal Effects</span>.”</span>
+<em>Journal of Open Source Software</em> 9 (97): 6224. <a href="https://doi.org/10.21105/joss.06224">https://doi.org/10.21105/joss.06224</a>.
+</div>
+<div id="ref-g_sofer_2023_10022204" class="csl-entry">
+G. Sofer, Tom, Ryan L. D., and Richardson. 2023. <span>“<span class="nocase">tsa-lab/stdReg2: stdReg2</span>.”</span> Zenodo. <a href="https://doi.org/10.5281/zenodo.10022204">https://doi.org/10.5281/zenodo.10022204</a>.
+</div>
+<div id="ref-maicplus_2024" class="csl-entry">
+maicplus, Maintainer. 2024. <span>“<span class="nocase">maicplus:
+Matching-Adjusted Indirect Comparison Plus</span>.”</span> <a href="https://cran.r-project.org/package=maicplus">https://cran.r-project.org/package=maicplus</a>.
+</div>
+<div id="ref-phillippo2016methods" class="csl-entry">
+Phillippo, David M., Sofia Dias, A. E. Ades, Mark Belger, Tom Briscoe,
+and Keith R. Abrams. 2016. <span>“<span class="nocase">Methods for
+population-adjusted indirect comparisons in submissions to
+NICE</span>.”</span> NICE DSU Technical Support Document 18. NICE
+Decision Support Unit, School of Health; Related Research (ScHARR),
+University of Sheffield.
+</div>
+<div id="ref-RemiroAzocar2022a" class="csl-entry">
+Remiro-Azócar, A., A. Heath, and G. Baio. 2022. <span>“Parametric
+g-Computation for Compatible Indirect Treatment Comparisons with Limited
+Individual Patient Data.”</span> <em>Research Synthesis Methods</em> 11
+(6): 716–44. <a href="https://doi.org/10.1002/jrsm.1565">https://doi.org/10.1002/jrsm.1565</a>.
+</div>
+<div id="ref-RemiroAzocar2022b" class="csl-entry">
+———. 2024. <span>“Model-Based Standardization Using Multiple
+Imputation.”</span> <em>BMC Medical Research Methodology</em> 24 (32):
+1–15. <a href="https://doi.org/10.1186/s12874-024-02157-x">https://doi.org/10.1186/s12874-024-02157-x</a>.
+</div>
+<div id="ref-sjolander2023gformula" class="csl-entry">
+Sjölander, Arvid, and Elin Dahlqwist. 2023. <span>“<span class="nocase">gfoRmula: An R package for implementing the
+g-formula</span>.”</span> <em>Observational Studies</em> 9 (1): 1–19.
+</div>
+<div id="ref-Sterne2023" class="csl-entry">
+Sterne, Jonathan A C, Rhian M Daniel, Amy M B Ferguson, Sanja Sari,
+Margarita Moreno-Betancur, John W R Wallace, Ian R White, Angela M Wood,
+and Kate Tilling. 2023. <span>“A Unified Framework for Multiple
+Imputation and Missing Data in the Parametric g-Formula.”</span>
+<em>Statistics in Medicine</em> 42 (24): 4455–70. <a href="https://doi.org/10.1002/sim.9863">https://doi.org/10.1002/sim.9863</a>.
+</div>
+</div>
+</div>
 
 
 
