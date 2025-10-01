@@ -22,3 +22,4 @@ scripts/create_package_data\.R
 ^inst/doc/\_user-defined-target-pop\.html
 ^man-roxygen$
 ^R/conversion-functions\.R$
+^cran-comments\.md$
