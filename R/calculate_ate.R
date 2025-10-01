@@ -477,7 +477,7 @@ calc_log_relative_risk <- function(mean_comp, mean_ref) {
 #' @return Corrected aggregate level data
 #' 
 #' @importFrom dplyr filter group_by mutate pull case_when
-#' @importFrom tidyr spread
+#' @importFrom tidyr spread pivot_wider
 #' @keywords internal
 #' 
 continuity_correction <- function(ald,
@@ -492,11 +492,11 @@ continuity_correction <- function(ald,
   # check if correction is needed in any group
   needs_correction <- 
     ald |>
-    dplyr::filter((variable == "y" & statistic == "sum") | statistic == "N") |>
+    dplyr::filter((.data$variable == "y" & .data$statistic == "sum") | .data$statistic == "N") |>
     dplyr::select(-variable) |>
-    pivot_wider(
-      names_from = statistic,
-      values_from = value) |>
+    tidyr::pivot_wider(
+      names_from = .data$statistic,
+      values_from = .data$value) |>
     mutate(
       need_contcorr = (sum == 0 | sum == .data$N)
     ) |> dplyr::pull() |> any()

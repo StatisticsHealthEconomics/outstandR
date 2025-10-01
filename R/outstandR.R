@@ -38,26 +38,26 @@
 #' data(BC_ALD_binY_contX)  # BC aggregate-level data
 #' 
 #' # linear formula
-#' lin_form <- as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")
+#' lin_form <- as.formula("y ~ PF_cont_1 + PF_cont_2 + trt*EM_cont_1 + trt*EM_cont_2")
 #' 
 #' # matching-adjusted indirect comparison
-#' outstandR_maic <- outstandR(AC_IPD, BC_ALD,
+#' outstandR_maic <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
 #'                             strategy = strategy_maic(formula = lin_form))
 #' 
 #' # simulated treatment comparison
-#' outstandR_stc <- outstandR(AC_IPD, BC_ALD,
+#' outstandR_stc <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
 #'                            strategy = strategy_stc(lin_form))
 #' 
 #' # G-computation with maximum likelihood
-#' outstandR_gcomp_ml <- outstandR(AC_IPD, BC_ALD,
+#' outstandR_gcomp_ml <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
 #'                                 strategy = strategy_gcomp_ml(lin_form))
 #' 
 #' # G-computation with Bayesian inference
-#' outstandR_gcomp_stan <- outstandR(AC_IPD, BC_ALD,
+#' outstandR_gcomp_stan <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
 #'                                   strategy = strategy_gcomp_stan(lin_form))
 #' 
 #' # Multiple imputation marginalization
-#' outstandR_mim <- outstandR(AC_IPD, BC_ALD,
+#' outstandR_mim <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
 #'                            strategy = strategy_mim(lin_form))
 #' 
 outstandR <- function(ipd_trial, ald_trial, strategy,

@@ -30,6 +30,9 @@ calc_IPD_stats(strategy, analysis_params, ...)
 \item{analysis_params}{Analysis parameters}
 
 \item{...}{Additional arguments}
+
+\item{var_method}{A string specifying the variance estimation method,
+either "sample" (default) or "sandwich".}
 }
 \value{
 A list containing:
@@ -48,8 +51,7 @@ and G-computation via Maximum Likelihood Estimation (MLE) or Bayesian inference.
 Using Stan, compute marginal relative treatment effect for IPD
 comparator "A" vs reference "C" arms for each MCMC sample
 by transforming from probability to linear predictor scale. Approximate by
-using imputation and combining estimates using Rubin's rules,
-in contrast to \code{\link[=calc_IPD_stats.gcomp_stan]{calc_IPD_stats.gcomp_stan()}}.
+using imputation and combining estimates using Rubin's rules.
 }
 
 \section{Simulated treatment comparison statistics}{

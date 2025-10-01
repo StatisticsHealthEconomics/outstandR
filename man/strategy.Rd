@@ -94,7 +94,6 @@ Create a type of strategy class for each modelling approach.
 }
 \section{Matching-adjusted indirect comparison (MAIC)}{
 
-
 MAIC is a form of non-parametric likelihood reweighting method
 which allows the propensity score logistic
 regression model to be estimated without IPD in the \emph{AC} population.
@@ -131,7 +130,6 @@ chosen linear predictor scale with link function \eqn{g(\cdot)}.
 }
 
 \section{G-computation maximum likelihood}{
-
 
 G-computation marginalizes the conditional estimates by separating the regression modelling
 from the estimation of the marginal treatment effect for \emph{A} versus \emph{C}.

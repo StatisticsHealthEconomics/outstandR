@@ -26,6 +26,6 @@ This data set contains summaries of simulated patient covariate and outcome valu
 Corresponds to IPD data set.
 }
 \references{
-Remiro‐Azócar A, Heath A, Baio G (2022)
+Remiro‐Azocar A, Heath A, Baio G (2022)
 }
 \keyword{datasets}

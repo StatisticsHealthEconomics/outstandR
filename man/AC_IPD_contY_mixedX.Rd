@@ -30,6 +30,6 @@ This data set contains simulated patient covariate and outcome values.
 Corresponds to ALD data set.
 }
 \references{
-Remiro‐Azócar A, Heath A, Baio G (2022)
+Remiro‐Azocar A, Heath A, Baio G (2022)
 }
 \keyword{datasets}

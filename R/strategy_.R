@@ -4,7 +4,6 @@
 #' @rdname strategy
 #' 
 #' @section Matching-adjusted indirect comparison (MAIC):
-#' 
 #' MAIC is a form of non-parametric likelihood reweighting method
 #' which allows the propensity score logistic 
 #' regression model to be estimated without IPD in the _AC_ population.
@@ -87,7 +86,6 @@ strategy_stc <- function(formula = NULL,
 #' @rdname strategy
 #' 
 #' @section G-computation maximum likelihood:
-#'
 #' G-computation marginalizes the conditional estimates by separating the regression modelling
 #' from the estimation of the marginal treatment effect for _A_ versus _C_.
 #' For example, a regression model of the observed outcome \eqn{y} on the covariates \eqn{x} and

@@ -25,6 +25,6 @@ BC_ALD_binY_contX
 This data set contains summaries of simulated patient covariate and outcome values.
 }
 \references{
-Remiro‐Azócar A, Heath A, Baio G (2022)
+Remiro‐Azocar A, Heath A, Baio G (2022)
 }
 \keyword{datasets}

@@ -19,6 +19,7 @@ License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
+Depends: R (>= 4.1.0)
 Imports:
     boot,
     cli,
@@ -53,9 +54,10 @@ Suggests:
     stdReg2,
     testthat (>= 3.0.0)
 Remotes: 
-    n8thangreen/simcovariate
+    n8thangreen/simcovariates
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 RdMacros: Rdpack
 URL: https://StatisticsHealthEconomics.github.io/outstandR
 BugReports: https://github.com/StatisticsHealthEconomics/outstandR/issues/
+LazyData: false

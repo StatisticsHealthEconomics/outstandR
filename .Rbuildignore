@@ -6,9 +6,11 @@
 ^Meta$
 inst\\joss\_code\.html
 inst\\joss\_code\.Rmd
-scripts
-raw-data
-docs
+inst\\jss\_code\.html
+inst\\jss\_code\.Rmd
+^scripts$
+^raw-data$
+^docs$
 _pkgdown.yml
 scripts/create_package_data\.R
 ^joss\_paper/
@@ -18,3 +20,4 @@ scripts/create_package_data\.R
 ^inst/doc/\_user-defined-target-pop\.html
 ^man-roxygen$
 ^R/conversion-functions\.R$
+^R/prep_data\.R$

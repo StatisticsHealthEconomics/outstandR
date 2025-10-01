@@ -58,8 +58,7 @@ calc_IPD_stats.default <- function(...) {
 #' Using Stan, compute marginal relative treatment effect for IPD
 #' comparator "A" vs reference "C" arms for each MCMC sample
 #' by transforming from probability to linear predictor scale. Approximate by 
-#' using imputation and combining estimates using Rubin's rules,
-#' in contrast to [calc_IPD_stats.gcomp_stan()].
+#' using imputation and combining estimates using Rubin's rules.
 #' 
 #' @importFrom stats qt var
 #' @export
@@ -154,6 +153,8 @@ IPD_stat_factory <- function(ipd_fun) {
 }
 
 #' @rdname calc_IPD_stats
+#' @param var_method A string specifying the variance estimation method,
+#'   either "sample" (default) or "sandwich".
 #' @section Simulated treatment comparison statistics:
 #' IPD for reference "C" and comparator "A" trial arms are used to fit a regression model describing the
 #' observed outcomes \eqn{y} in terms of the relevant baseline characteristics \eqn{x} and
@@ -163,6 +164,8 @@ IPD_stat_factory <- function(ipd_fun) {
 calc_IPD_stats.stc <- IPD_stat_factory(outstandR:::calc_stc)
 
 #' @rdname calc_IPD_stats
+#' @param var_method A string specifying the variance estimation method,
+#'   either "sample" (default) or "sandwich".
 #' @section Matching-adjusted indirect comparison statistics:
 #' Marginal IPD comparator treatment "A" vs reference treatment "C" treatment effect estimates
 #' using bootstrapping sampling.
@@ -171,6 +174,8 @@ calc_IPD_stats.stc <- IPD_stat_factory(outstandR:::calc_stc)
 calc_IPD_stats.maic <- IPD_stat_factory(outstandR:::calc_maic)
 
 #' @rdname calc_IPD_stats
+#' @param var_method A string specifying the variance estimation method,
+#'   either "sample" (default) or "sandwich".
 #' @section G-computation maximum likelihood statistics:
 #' Compute a non-parametric bootstrap with default \eqn{R=1000} resamples.
 #' @export
@@ -178,6 +183,8 @@ calc_IPD_stats.maic <- IPD_stat_factory(outstandR:::calc_maic)
 calc_IPD_stats.gcomp_ml <- IPD_stat_factory(outstandR:::calc_gcomp_ml)
 
 #' @rdname calc_IPD_stats
+#' @param var_method A string specifying the variance estimation method,
+#'   either "sample" (default) or "sandwich".
 #' @section G-computation Bayesian statistics:
 #' Using Stan, compute marginal relative effects for IPD comparator "A" vs reference "C" treatment arms for each MCMC sample
 #' by transforming from probability to linear predictor scale.
