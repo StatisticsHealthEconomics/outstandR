@@ -14,10 +14,11 @@ inst\\jss\_code\.Rmd
 _pkgdown.yml
 scripts/create_package_data\.R
 ^joss\_paper/
+^vignettes/.*\.html$
+^_.*
 ^inst/doc/\_comparison-with-other-packages\.Rmd
 ^inst/doc/\_user-defined-target-pop\.Rmd
 ^inst/doc/\_comparison-with-other-packages\.html
 ^inst/doc/\_user-defined-target-pop\.html
 ^man-roxygen$
 ^R/conversion-functions\.R$
-^R/prep_data\.R$

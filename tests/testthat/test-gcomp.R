@@ -57,7 +57,7 @@ test_that("different combinations of covariates in formula", {
 test_that("compare with stdReg2 package for continuous outcome", {
   
   ## original
-
+  
   library(causaldata)
   
   # load dataset
@@ -80,22 +80,22 @@ test_that("compare with stdReg2 package for continuous outcome", {
   nhefs_ipd <- nhefs_dat |> 
     dplyr::select(qsmk, sex, age, wt82_71) |> 
     dplyr::rename(trt = qsmk,
-           y = wt82_71) |> 
+                  y = wt82_71) |> 
     dplyr::mutate(sex = as.numeric(sex) - 1,
-           trt = factor(trt, labels = c("C", "A")))
+                  trt = factor(trt, labels = c("C", "A")))
   
   lin_form <- as.formula(y ~ trt * (sex + age))
   
   # create aggregate data
   nhefs.X <- nhefs_ipd |> 
     dplyr::summarise(across(-c(trt, y),
-                     list(mean = mean, sd = sd),
-                     .names = "{fn}.{col}")) |> 
+                            list(mean = mean, sd = sd),
+                            .names = "{fn}.{col}")) |> 
     reshape2::melt() |> 
-    separate(variable,
-             into = c("statistic", "variable"),
-             sep = "\\.") |> 
-    mutate(trt = NA)
+    tidyr::separate(variable,
+                    into = c("statistic", "variable"),
+                    sep = "\\.") |> 
+    dplyr::mutate(trt = NA)
   
   ald_out <- nhefs_ipd |> 
     group_by(trt) |> 
@@ -103,17 +103,18 @@ test_that("compare with stdReg2 package for continuous outcome", {
       y.sum = sum(y),
       y.mean = mean(y),
       y.sd = sd(y),
-      .N = n()) |> 
+      .N = dplyr::n()) |> 
     reshape2::melt(id.vars = "trt") |> 
-    separate(variable,
-             into = c("variable", "statistic"),
-             sep = "\\.") |> 
-    mutate(trt = ifelse(trt == "A", "B", "C"))
+    tidyr::separate(variable,
+                    into = c("variable", "statistic"),
+                    sep = "\\.") |> 
+    dplyr::mutate(trt = ifelse(trt == "A", "B", "C"))
   
-  nhefs_ald <- bind_rows(nhefs.X, ald_out) |>
-    as_tibble() |> 
-    mutate(trt = factor(trt))
-    
+  nhefs_ald <- 
+    dplyr::bind_rows(nhefs.X, ald_out) |>
+    tibble::as_tibble() |> 
+    dplyr::mutate(trt = factor(trt))
+  
   res_outstandr <- gcomp_ml_means(
     formula = lin_form,
     family = "gaussian",
@@ -188,10 +189,10 @@ test_that("compare with stdReg2 package for binary outcome", {
                             list(mean = mean, sd = sd),
                             .names = "{fn}.{col}")) |> 
     reshape2::melt() |> 
-    separate(variable,
-             into = c("statistic", "variable"),
-             sep = "\\.") |> 
-    mutate(trt = NA)
+    tidyr::separate(variable,
+                    into = c("statistic", "variable"),
+                    sep = "\\.") |> 
+    dplyr::mutate(trt = NA)
   
   ald_out <- data |> 
     group_by(trt) |> 
@@ -199,16 +200,16 @@ test_that("compare with stdReg2 package for binary outcome", {
       y.sum = sum(y),
       y.mean = mean(y),
       y.sd = sd(y),
-      .N = n()) |> 
+      .N = dplyr::n()) |> 
     reshape2::melt(id.vars = "trt") |> 
-    separate(variable,
-             into = c("variable", "statistic"),
-             sep = "\\.") |> 
-    mutate(trt = ifelse(trt == "1", "B", "C"))
+    tidyr::separate(variable,
+                    into = c("variable", "statistic"),
+                    sep = "\\.") |> 
+    dplyr::mutate(trt = ifelse(trt == "1", "B", "C"))
   
   data_ald <- bind_rows(data.X, ald_out) |>
-    as_tibble() |> 
-    mutate(trt = factor(trt))
+    tibble::as_tibble() |> 
+    dplyr::mutate(trt = factor(trt))
   
   data$trt <- factor(data$trt, labels = c("C", "A"))
   
@@ -287,10 +288,10 @@ test_that("compare with marginaleffects package for binary outcome", {
                             list(mean = mean, sd = sd),
                             .names = "{fn}.{col}")) |> 
     reshape2::melt() |> 
-    separate(variable,
-             into = c("statistic", "variable"),
-             sep = "\\.") |> 
-    mutate(trt = NA)
+    tidyr::separate(variable,
+                    into = c("statistic", "variable"),
+                    sep = "\\.") |> 
+    dplyr::mutate(trt = NA)
   
   ald_out <- data |> 
     group_by(trt) |> 
@@ -298,16 +299,16 @@ test_that("compare with marginaleffects package for binary outcome", {
       y.sum = sum(y),
       y.mean = mean(y),
       y.sd = sd(y),
-      .N = n()) |> 
+      .N = dplyr::n()) |> 
     reshape2::melt(id.vars = "trt") |> 
-    separate(variable,
-             into = c("variable", "statistic"),
-             sep = "\\.") |> 
-    mutate(trt = ifelse(trt == "1", "B", "C"))
+    tidyr::separate(variable,
+                    into = c("variable", "statistic"),
+                    sep = "\\.") |> 
+    dplyr::mutate(trt = ifelse(trt == "1", "B", "C"))
   
   data_ald <- bind_rows(data.X, ald_out) |>
-    as_tibble() |> 
-    mutate(trt = factor(trt))
+    tibble::as_tibble() |> 
+    dplyr::mutate(trt = factor(trt))
   
   data$trt <- factor(data$trt, labels = c("C", "A"))
   
@@ -365,10 +366,10 @@ test_that("compare with marginaleffects package for continuous outcome", {
                             list(mean = mean, sd = sd),
                             .names = "{fn}.{col}")) |> 
     reshape2::melt() |> 
-    separate(variable,
-             into = c("statistic", "variable"),
-             sep = "\\.") |> 
-    mutate(trt = NA)
+    tidyr::separate(variable,
+                    into = c("statistic", "variable"),
+                    sep = "\\.") |> 
+    dplyr::mutate(trt = NA)
   
   ald_out <- nhefs_ipd |> 
     group_by(trt) |> 
@@ -376,16 +377,16 @@ test_that("compare with marginaleffects package for continuous outcome", {
       y.sum = sum(y),
       y.mean = mean(y),
       y.sd = sd(y),
-      .N = n()) |> 
+      .N = dplyr::n()) |> 
     reshape2::melt(id.vars = "trt") |> 
-    separate(variable,
-             into = c("variable", "statistic"),
-             sep = "\\.") |> 
-    mutate(trt = ifelse(trt == "1", "B", "C"))
+    tidyr::separate(variable,
+                    into = c("variable", "statistic"),
+                    sep = "\\.") |> 
+    dplyr::mutate(trt = ifelse(trt == "1", "B", "C"))
   
   nhefs_ald <- bind_rows(nhefs.X, ald_out) |>
-    as_tibble() |> 
-    mutate(trt = factor(trt))
+    tibble::as_tibble() |> 
+    dplyr::mutate(trt = factor(trt))
   
   res_outstandr <- gcomp_ml_means(
     formula = lin_form,
@@ -421,7 +422,7 @@ test_that("compare with marginaleffects package for continuous outcome", {
 
 #
 test_that("mismatch between covariates in ald and ipd / formula", {
-
+  
   # different order between ald and ipd
   # age sex; sex age
   

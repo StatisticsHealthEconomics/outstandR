@@ -55,7 +55,7 @@ data(AC_IPD_binY_contX)  # AC patient-level data
 data(BC_ALD_binY_contX)  # BC aggregate-level data
 
 # linear formula
-lin_form <- as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")
+lin_form <- as.formula("y ~ PF_cont_1 + PF_cont_2 + trt*EM_cont_1 + trt*EM_cont_2")
 
 # matching-adjusted indirect comparison
 outstandR_maic <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,

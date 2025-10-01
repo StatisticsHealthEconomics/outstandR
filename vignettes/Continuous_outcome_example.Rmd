@@ -13,7 +13,7 @@ vignette: >
 ---
 
 ```{r setup, include = FALSE}
-is_simcovariate_installed <- requireNamespace("simcovariate", quietly = TRUE)
+is_simcovariate_installed <- requireNamespace("simcovariates", quietly = TRUE)
 
 knitr::opts_chunk$set(
   collapse = TRUE,

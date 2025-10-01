@@ -229,6 +229,8 @@ strategy_gcomp_stan <- function(formula = NULL,
 #' @param trt_var Treatment variable name; string
 #' 
 #' @section Multiple imputation marginalization (MIM):
+#' TODO
+#' 
 #' @return `mim` class object
 #' @importFrom utils modifyList
 #' @export

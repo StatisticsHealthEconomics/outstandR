@@ -5,7 +5,7 @@
 \alias{BC_ALD_binY_contX}
 \title{Aggregate level patient data for binary outcome, continuous covariates}
 \format{
-\subsection{\code{y ~ PF1 + PF2 + trt + trt:(EM1 + EM2)}}{
+\subsection{\code{y ~ PF_cont_1 + PF_cont_2 + trt + trt:(EM_cont_1 + EM_cont_2)}}{
 
 \describe{
 \item{variable}{String covariate or outcome name. From EM_cont_1, EM_cont_2, PF_cont_1, PF_cont_2, y.}
@@ -19,7 +19,7 @@
 Simulated data
 }
 \usage{
-BC_ALD_binY_contX
+data(BC_ALD_binY_contX)
 }
 \description{
 This data set contains summaries of simulated patient covariate and outcome values.

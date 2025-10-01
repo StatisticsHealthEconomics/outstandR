@@ -493,10 +493,10 @@ continuity_correction <- function(ald,
   needs_correction <- 
     ald |>
     dplyr::filter((.data$variable == "y" & .data$statistic == "sum") | .data$statistic == "N") |>
-    dplyr::select(-variable) |>
+    dplyr::select(-.data$variable) |>
     tidyr::pivot_wider(
-      names_from = .data$statistic,
-      values_from = .data$value) |>
+      names_from = "statistic",
+      values_from = "value") |>
     mutate(
       need_contcorr = (sum == 0 | sum == .data$N)
     ) |> dplyr::pull() |> any()

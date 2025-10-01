@@ -5,7 +5,7 @@
 \alias{AC_IPD_binY_contX}
 \title{Individual-level patient data for binary outcome, continuous covariates}
 \format{
-\subsection{\code{y ~ PF1 + PF2 + trt + trt:(EM1 + EM2)}}{
+\subsection{\code{y ~ PF_cont_1 + PF_cont_2 + trt + trt:(EM_cont_1 + EM_cont_2)}}{
 
 \describe{
 \item{id}{Numeric unique identifier}
@@ -23,7 +23,7 @@
 Simulated data
 }
 \usage{
-AC_IPD_binY_contX
+data(AC_IPD_binY_contX)
 }
 \description{
 This data set contains simulated patient covariate and outcome values.

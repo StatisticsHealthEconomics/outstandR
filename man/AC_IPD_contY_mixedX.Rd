@@ -23,7 +23,7 @@
 Simulated data
 }
 \usage{
-AC_IPD_contY_mixedX
+data(AC_IPD_contY_mixedX)
 }
 \description{
 This data set contains simulated patient covariate and outcome values.

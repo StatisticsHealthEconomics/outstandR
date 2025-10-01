@@ -19,7 +19,7 @@
 Simulated data
 }
 \usage{
-BC_ALD_contY_mixedX
+data(BC_ALD_contY_mixedX)
 }
 \description{
 This data set contains summaries of simulated patient covariate and outcome values.

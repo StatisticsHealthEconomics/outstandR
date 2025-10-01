@@ -11,11 +11,13 @@ editor_options:
   chunk_output_type: console
 ---
 
-```{r, include = FALSE}
+```{r setup, include = FALSE}
+is_simcovariate_installed <- requireNamespace("simcovariates", quietly = TRUE)
+
 knitr::opts_chunk$set(
-  eval = FALSE,
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  eval = is_simcovariate_installed
 )
 ```
 
@@ -23,7 +25,7 @@ knitr::opts_chunk$set(
 
 See other vignettes for details.
 
-```{r setup, warning=FALSE, message=FALSE}
+```{r load-packages, warning=FALSE, message=FALSE}
 library(boot)      # non-parametric bootstrap in MAIC and ML G-computation
 library(copula)    # simulating BC covariates from Gaussian copula
 library(rstanarm)  # fit outcome regression, draw outcomes in Bayesian G-computation

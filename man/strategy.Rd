@@ -191,6 +191,7 @@ estimation via Markov chain Monte Carlo (MCMC) sampling.
 
 \section{Multiple imputation marginalization (MIM)}{
 
+TODO
 }
 
 \seealso{
