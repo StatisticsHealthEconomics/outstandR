@@ -34,6 +34,7 @@
 #' 
 #' @export
 #' @examples
+#' \dontrun{
 #' data(AC_IPD_binY_contX)  # AC patient-level data
 #' data(BC_ALD_binY_contX)  # BC aggregate-level data
 #' 
@@ -59,7 +60,7 @@
 #' # Multiple imputation marginalization
 #' outstandR_mim <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
 #'                            strategy = strategy_mim(lin_form))
-#' 
+#'} 
 outstandR <- function(ipd_trial, ald_trial, strategy,
                       ref_trt = NA,
                       CI = 0.95, scale = NULL, ...) {
