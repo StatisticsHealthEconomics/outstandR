@@ -121,8 +121,16 @@ this is always represented as a difference so, for example, for the risk
 ratio this is on the log scale.
 
 $$
-\Delta_{AB(BC)} = g(\bar{Y}_{B{(BC)}}) - g(\bar{Y}_{A{(BC)}})
+\Delta_{AC{(AC)}} = g(\bar{Y}_{C{(AC)}}) - g(\bar{Y}_{A{(AC)}})
 $$
+
+and similarly for $\Delta_{BC(BC)}$. If we assume that there is no difference in effect modifiers between trials, then the estimator of the relative treatment effect $d_{AB(BC)}$ is
+
+$$
+\Delta_{AB(BC)} = \Delta_{BC(BC)} - \Delta_{AC(AC)}.
+$$
+
+However, when distributions of the effect modifiers are different between trial populations, the relative treatment effect estimated from each trial cannot simply be combined as above. The purpose of population-adjustment in ITC is to include an estimate for $\Delta_{AC(BC)}$.
 
 ## References
 
