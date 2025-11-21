@@ -303,3 +303,153 @@ BC_ALD_contY_mixedX <- rbind.data.frame(cov.X, summary.y, summary.N)
 save(AC_IPD_contY_mixedX, file = "data/AC_IPD_contY_mixedX.rda")
 save(BC_ALD_contY_mixedX, file = "data/BC_ALD_contY_mixedX.rda")
 
+#################################
+# Count data
+
+set.seed(111)
+
+N <- 200
+allocation <- 2/3      # active treatment vs. placebo allocation ratio (2:1)
+b_trt <- log(0.17)     # conditional effect of active treatment vs. common comparator
+b_PF <- -log(0.5)      # conditional effect of each prognostic variable
+b_EM <- -log(0.67)     # conditional interaction effect of each effect modifier
+b_0 <- -0.6            # baseline intercept coefficient
+
+# Covariate distributions
+meanX_AC <- c(0.45, 0.45)       # mean of normally-distributed covariate in AC trial
+meanX_BC <- c(0.6, 0.6)         # mean of each normally-distributed covariate in BC
+meanX_EM_AC <- c(0.45, 0.45)    # mean of normally-distributed EM covariate in AC trial
+meanX_EM_BC <- c(0.6, 0.6)      # mean of each normally-distributed EM covariate in BC
+sdX <- c(0.4, 0.4)              # standard deviation of each covariate (same for AC and BC)
+sdX_EM <- c(0.4, 0.4)           # standard deviation of each EM covariate
+corX <- 0.2                     # covariate correlation coefficient
+
+# Coefficients vectors
+b_prognostic <- c(PF_cont_1 = b_PF, PF_cont_2 = b_PF)
+b_effect_modifier <- c(EM_cont_1 = b_EM, EM_cont_2 = b_EM)
+
+# Correlation matrix
+num_normal_covs <- 4
+cor_matrix <- matrix(corX, num_normal_covs, num_normal_covs)
+diag(cor_matrix) <- 1
+rownames(cor_matrix) <- colnames(cor_matrix) <- c("PF_cont_1", "PF_cont_2", "EM_cont_1", "EM_cont_2")
+
+
+# Generate AC IPD (Count Outcome) ---------
+
+covariate_defns_ipd <- list(
+  PF_cont_1 = list(type = continuous(mean = meanX_AC[1], sd = sdX[1]),
+                   role = "prognostic"),
+  PF_cont_2 = list(type = continuous(mean = meanX_AC[2], sd = sdX[2]),
+                   role = "prognostic"),
+  EM_cont_1 = list(type = continuous(mean = meanX_EM_AC[1], sd = sdX_EM[1]),
+                   role = "effect_modifier"),
+  EM_cont_2 = list(type = continuous(mean = meanX_EM_AC[2], sd = sdX_EM[2]),
+                   role = "effect_modifier")
+)
+
+AC_IPD_countY_contX <- simcovariates::gen_data(
+  N = N,
+  b_0 = b_0,
+  b_trt = b_trt,
+  covariate_defns = covariate_defns_ipd,
+  b_prognostic = b_prognostic,
+  b_effect_modifier = b_effect_modifier,
+  cor_matrix = cor_matrix,
+  trt_assignment = list(prob_trt1 = allocation),
+  family = poisson("log")
+)
+
+# Label treatments A and C
+AC_IPD_countY_contX$trt <- factor(AC_IPD_countY_contX$trt, labels = c("C", "A"))
+
+
+# Generate BC ALD (Count Outcome) -------------
+
+covariate_defns_ald <- list(
+  PF_cont_1 = list(type = continuous(mean = meanX_BC[1], sd = sdX[1]),
+                   role = "prognostic"),
+  PF_cont_2 = list(type = continuous(mean = meanX_BC[2], sd = sdX[2]),
+                   role = "prognostic"),
+  EM_cont_1 = list(type = continuous(mean = meanX_EM_BC[1], sd = sdX_EM[1]),
+                   role = "effect_modifier"),
+  EM_cont_2 = list(type = continuous(mean = meanX_EM_BC[2], sd = sdX_EM[2]),
+                   role = "effect_modifier")
+)
+
+# Generate underlying IPD for BC first
+BC_IPD_temp <- simcovariates::gen_data(
+  N = N,
+  b_0 = b_0,
+  b_trt = b_trt,
+  covariate_defns = covariate_defns_ald,
+  b_prognostic = b_prognostic,
+  b_effect_modifier = b_effect_modifier,
+  cor_matrix = cor_matrix,
+  trt_assignment = list(prob_trt1 = allocation),
+  family = poisson("log")
+)
+
+# Label treatments B and C
+BC_IPD_temp$trt <- factor(BC_IPD_temp$trt, labels = c("C", "B"))
+
+# Summarize to create Aggregate Level Data (ALD)
+
+# 1. Covariate summaries (mean and sd)
+# Assuming same distribution between treatments (baseline)
+cov_summary <- BC_IPD_temp %>%
+  dplyr::select(matches("^(PF|EM)"), trt) %>%
+  tidyr::pivot_longer(
+    cols = starts_with("PF") | starts_with("EM"),
+    names_to = "variable",
+    values_to = "value"
+  ) %>%
+  group_by(variable) %>%
+  summarise(
+    mean = mean(value),
+    sd = sd(value),
+    .groups = "drop"
+  ) %>%
+  tidyr::pivot_longer(
+    cols = c("mean", "sd"),
+    names_to = "statistic",
+    values_to = "value"
+  ) %>%
+  mutate(trt = NA) # Common baseline
+
+# 2. Outcome summaries (mean, sd, sum) by treatment
+outcome_summary <- BC_IPD_temp %>%
+  dplyr::select(y, trt) %>%
+  tidyr::pivot_longer(
+    cols = "y",
+    names_to = "variable",
+    values_to = "value"
+  ) %>%
+  group_by(variable, trt) %>%
+  summarise(
+    mean = mean(value),
+    sd = sd(value),
+    sum = sum(value),
+    .groups = "drop"
+  ) %>%
+  tidyr::pivot_longer(
+    cols = c("mean", "sd", "sum"),
+    names_to = "statistic",
+    values_to = "value"
+  )
+
+# 3. Sample sizes by treatment
+n_summary <- BC_IPD_temp %>%
+  group_by(trt) %>%
+  count(name = "N") %>%
+  tidyr::pivot_longer(
+    cols = "N",
+    names_to = "statistic",
+    values_to = "value"
+  ) %>%
+  mutate(variable = NA_character_) %>%
+  dplyr::select(variable, statistic, value, trt)
+
+BC_ALD_countY_contX <- bind_rows(cov_summary, outcome_summary, n_summary)
+
+usethis::use_data(AC_IPD_countY_contX, BC_ALD_countY_contX, overwrite = TRUE)
