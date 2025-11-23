@@ -65,7 +65,7 @@ calc_mim <- function(strategy,
   
   # safer than trt_var in case of factor level append
   coef_names <- names(coef(reg2.fits[[1]]))
-  treat_coef_name <- grep(pattern = paste0("^", trt_var, "[^:]*$"), coef_names, value = TRUE)
+  treat_coef_name <- extract_treatment_coef_name(coef_names, trt_var)
   
   ##TODO: how to transform this to the prob scale?
   # point estimates for the variance in each synthesis

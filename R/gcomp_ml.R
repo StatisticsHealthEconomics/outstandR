@@ -26,6 +26,22 @@ create_counterfactual_datasets <- function(x_star, trt_var, comp_trt, ref_trt) {
 }
 
 
+#' Extract treatment coefficient name from model coefficients
+#'
+#' Safely extracts the treatment coefficient name from model coefficients,
+#' handling potential factor level appends.
+#'
+#' @param coef_names Names of model coefficients
+#' @param trt_var Name of the treatment variable
+#' @return The name of the treatment coefficient
+#' @keywords internal
+#'
+extract_treatment_coef_name <- function(coef_names, trt_var) {
+  grep(pattern = paste0("^", trt_var, "[^:]*$"),
+       coef_names, value = TRUE)
+}
+
+
 #' Bootstrap for G-computation via Maximum Likelihood
 #'
 #' This is a statistic function intended for use with a bootstrapping function
