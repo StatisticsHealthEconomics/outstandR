@@ -33,9 +33,9 @@ calc_mim <- function(strategy,
     algorithm = "sampling", ...)
   
   # create augmented target dataset
-  target.comp <- target.ref <- x_star
-  target.comp[[trt_var]] <- comp_trt
-  target.ref[[trt_var]] <- ref_trt
+  counterfactuals <- create_counterfactual_datasets(x_star, trt_var, comp_trt, ref_trt)
+  target.comp <- counterfactuals$comp
+  target.ref <- counterfactuals$ref
   
   aug.target <- rbind(target.ref, target.comp)
   

@@ -1,4 +1,31 @@
 
+
+#' Create counterfactual datasets for treatment comparison
+#'
+#' Creates two copies of a dataset with treatment variable set to different values.
+#'
+#' @param x_star Base dataset to create counterfactuals from
+#' @param trt_var Name of the treatment variable
+#' @param comp_trt Comparator treatment value
+#' @param ref_trt Reference treatment value
+#' @return A list with two elements:
+#'   \describe{
+#'     \item{comp}{Dataset with treatment set to comp_trt}
+#'     \item{ref}{Dataset with treatment set to ref_trt}
+#'   }
+#' @keywords internal
+#'
+create_counterfactual_datasets <- function(x_star, trt_var, comp_trt, ref_trt) {
+  data_comp <- data_ref <- x_star
+  
+  # intervene on treatment while keeping set covariates fixed
+  data_comp[[trt_var]] <- comp_trt
+  data_ref[[trt_var]] <- ref_trt
+  
+  list(comp = data_comp, ref = data_ref)
+}
+
+
 #' Bootstrap for G-computation via Maximum Likelihood
 #'
 #' This is a statistic function intended for use with a bootstrapping function
@@ -84,15 +111,11 @@ gcomp_ml_means <- function(formula,
              data = ipd)
   
   # counterfactual datasets
-  data.comp <- data.ref <- x_star
-  
-  # intervene on treatment while keeping set covariates fixed
-  data.comp[[trt_var]] <- comp_trt  # all receive A
-  data.ref[[trt_var]] <- ref_trt    # all receive C
+  counterfactuals <- create_counterfactual_datasets(x_star, trt_var, comp_trt, ref_trt)
   
   # predict counterfactual event probs, conditional on treatment/covariates
-  hat.mu.comp <- predict(fit, type = "response", newdata = data.comp)
-  hat.mu.ref <- predict(fit, type = "response", newdata = data.ref)
+  hat.mu.comp <- predict(fit, type = "response", newdata = counterfactuals$comp)
+  hat.mu.ref <- predict(fit, type = "response", newdata = counterfactuals$ref)
   
   # (marginal) mean probability prediction under A and C
   c(`0` = mean(hat.mu.ref),
