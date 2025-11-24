@@ -1,5 +1,5 @@
 outstandR: *Out*come regression *stand*ardisation
-<img src="man/figures/logo.png" align="right" />
+<img src="man/figures/logo.png" align="right" height="138"/>
 ================
 
 <!-- <img align="right" src="mime.png" width="100"> -->
