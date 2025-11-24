@@ -1,4 +1,4 @@
-# outstandR: *Out*come regression *stand*ardisation
+outstandR: *Out*come regression *stand*ardisation
 <img src="man/figures/logo.png" align="right" />
 ================
 
