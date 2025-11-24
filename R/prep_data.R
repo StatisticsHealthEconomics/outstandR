@@ -57,12 +57,13 @@ get_ref_trt <- function(ref_trt, trt, ipd_trial, ald_trial) {
       stop("Reference treatment not in IPD and ALD.", call. = FALSE)
     }
     
-    return(ref_trt)
+    return(as.character(ref_trt))
   }
   
   ref_trt <- intersect(
-    unique(ipd_trial[[trt]]),
-    unique(ald_trial[[trt]]))
+    as.character(unique(ipd_trial[[trt]])),
+    as.character(unique(ald_trial[[trt]]))
+  )
   
   if (length(ref_trt) == 0) {
     stop("No common treatment in aggregate and individual level data.", call. = FALSE)
