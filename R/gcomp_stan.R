@@ -63,16 +63,12 @@ calc_gcomp_stan <- function(strategy,
                        ...)
   
   # counterfactual datasets
-  data_comp <- data_ref <- x_star
-  
-  # intervene on treatment while keeping set covariates fixed
-  data_comp[[trt_var]] <- comp_trt  # all receive comparator treatment
-  data_ref[[trt_var]] <- ref_trt    # all receive reference treatment
+  counterfactuals <- create_counterfactual_datasets(x_star, trt_var, comp_trt, ref_trt)
   
   ##TODO: is this going to work for all of the different data types?
   # draw responses from posterior predictive distribution
-  y.star.comp <- rstanarm::posterior_predict(outcome.model, newdata = data_comp)
-  y.star.ref <- rstanarm::posterior_predict(outcome.model, newdata = data_ref)
+  y.star.comp <- rstanarm::posterior_predict(outcome.model, newdata = counterfactuals$comp)
+  y.star.ref <- rstanarm::posterior_predict(outcome.model, newdata = counterfactuals$ref)
   
   # posterior means for each treatment group
   list(
