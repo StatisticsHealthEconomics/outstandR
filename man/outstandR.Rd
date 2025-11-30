@@ -28,7 +28,7 @@ The labels in the treatment are used internally so there must be a common treatm
 }}
 
 \item{strategy}{Computation strategy function. These can be
-\code{strategy_maic()}, \code{strategy_stc()}, \code{strategy_gcomp_ml()} and \code{strategy_gcomp_stan()}.}
+\code{strategy_maic()}, \code{strategy_stc()}, \code{strategy_gcomp_ml()} and \code{strategy_gcomp_bayes()}.}
 
 \item{ref_trt}{Reference / common / anchoring treatment name.}
 
@@ -37,7 +37,7 @@ The labels in the treatment are used internally so there must be a common treatm
 \item{scale}{Relative treatment effect scale. If \code{NULL}, the scale is automatically determined from the model.
 Choose from "log-odds", "log_relative_risk", "risk_difference", "delta_z", "mean_difference", "rate_difference" depending on the data type.}
 
-\item{...}{Additional arguments. Currently, can pass named arguments to \code{rstanarm::stan_glm()} via \code{strategy_gcomp_stan()}.}
+\item{...}{Additional arguments. Currently, can pass named arguments to \code{rstanarm::stan_glm()} via \code{strategy_gcomp_bayes()}.}
 }
 \value{
 List of length 3 of statistics as a \code{outstandR} class object.
@@ -70,8 +70,8 @@ outstandR_gcomp_ml <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
                                 strategy = strategy_gcomp_ml(lin_form))
 
 # G-computation with Bayesian inference
-outstandR_gcomp_stan <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
-                                  strategy = strategy_gcomp_stan(lin_form))
+outstandR_gcomp_bayes <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
+                                  strategy = strategy_gcomp_bayes(lin_form))
 
 # Multiple imputation marginalization
 outstandR_mim <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
@@ -82,5 +82,5 @@ outstandR_mim <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
 \insertRef{RemiroAzocar2022}{outstandR}
 }
 \seealso{
-\code{\link[=strategy_maic]{strategy_maic()}} \code{\link[=strategy_stc]{strategy_stc()}} \code{\link[=strategy_gcomp_ml]{strategy_gcomp_ml()}} \code{\link[=strategy_gcomp_stan]{strategy_gcomp_stan()}}
+\code{\link[=strategy_maic]{strategy_maic()}} \code{\link[=strategy_stc]{strategy_stc()}} \code{\link[=strategy_gcomp_ml]{strategy_gcomp_ml()}} \code{\link[=strategy_gcomp_bayes]{strategy_gcomp_bayes()}}
 }

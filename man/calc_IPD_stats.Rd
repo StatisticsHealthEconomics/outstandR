@@ -7,7 +7,7 @@
 \alias{calc_IPD_stats.stc}
 \alias{calc_IPD_stats.maic}
 \alias{calc_IPD_stats.gcomp_ml}
-\alias{calc_IPD_stats.gcomp_stan}
+\alias{calc_IPD_stats.gcomp_bayes}
 \title{Calculate individual-level patient data statistics}
 \usage{
 calc_IPD_stats(strategy, analysis_params, ...)
@@ -22,7 +22,7 @@ calc_IPD_stats(strategy, analysis_params, ...)
 
 \method{calc_IPD_stats}{gcomp_ml}(strategy, analysis_params, var_method = "sample", ...)
 
-\method{calc_IPD_stats}{gcomp_stan}(strategy, analysis_params, var_method = "sample", ...)
+\method{calc_IPD_stats}{gcomp_bayes}(strategy, analysis_params, var_method = "sample", ...)
 }
 \arguments{
 \item{strategy}{Strategy}

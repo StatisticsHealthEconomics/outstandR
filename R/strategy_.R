@@ -123,7 +123,7 @@ strategy_stc <- function(formula = NULL,
 #' 
 #' @return `gcomp_ml` class object
 #' @importFrom utils modifyList
-#' @seealso [strategy_gcomp_stan()]
+#' @seealso [strategy_gcomp_bayes()]
 #' @export
 #'
 strategy_gcomp_ml <- function(formula = NULL,
@@ -193,12 +193,12 @@ strategy_gcomp_ml <- function(formula = NULL,
 #' @param marginal_params Marginal distributions parameters; list of lists, default NA. See [copula::Mvdc()] for details
 #' @param N Synthetic sample size for g-computation
 #' 
-#' @return `gcomp_stan` class object
+#' @return `gcomp_bayes` class object
 #' @importFrom utils modifyList
 #' @seealso [strategy_gcomp_ml()],[copula::Mvdc()]
 #' @export
 #'
-strategy_gcomp_stan <- function(formula = NULL,
+strategy_gcomp_bayes <- function(formula = NULL,
                                 family = gaussian(link = "identity"),
                                 trt_var = NULL,
                                 rho = NA,
@@ -221,7 +221,7 @@ strategy_gcomp_stan <- function(formula = NULL,
                marginal_params = marginal_params,
                N = N)
   
-  do.call(new_strategy, c(strategy = "gcomp_stan", args))
+  do.call(new_strategy, c(strategy = "gcomp_bayes", args))
 }
 
 #' @rdname strategy
@@ -262,7 +262,7 @@ strategy_mim <- function(formula = NULL,
 #' @description
 #' Create a type of strategy class for each modelling approach.
 #'
-#' @param strategy Class name from `strategy_maic`, `strategy_stc`, `strategy_gcomp_ml`, `strategy_gcomp_stan`
+#' @param strategy Class name from `strategy_maic`, `strategy_stc`, `strategy_gcomp_ml`, `strategy_gcomp_bayes`
 #' @eval reg_args(include_formula = TRUE, include_family = TRUE)
 #' @param ... Additional arguments
 #'
@@ -310,7 +310,7 @@ check_distns <- function(formula,
 ## generic construction 
 ## could be useful if number of method gets big
 #
-# strategy_gcomp_stan <- function(formula = NULL,
+# strategy_gcomp_bayes <- function(formula = NULL,
 #                                 family = gaussian(link = "identity"),
 #                                 rho = NA,
 #                                 N = 1000L) {
@@ -327,7 +327,7 @@ check_distns <- function(formula,
 #   default_args <- formals()
 #   args <- c(formula = formula, as.list(match.call())[-c(1,2)])
 #   args <- modifyList(default_args, args)
-#   do.call(new_strategy, c(strategy = "gcomp_stan", args))
+#   do.call(new_strategy, c(strategy = "gcomp_bayes", args))
 # }
 
 

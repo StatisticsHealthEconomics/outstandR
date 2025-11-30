@@ -190,7 +190,7 @@ calc_IPD_stats.gcomp_ml <- IPD_stat_factory(outstandR:::calc_gcomp_ml)
 #' by transforming from probability to linear predictor scale.
 #' @export
 #'
-calc_IPD_stats.gcomp_stan <- IPD_stat_factory(outstandR:::calc_gcomp_stan)
+calc_IPD_stats.gcomp_bayes <- IPD_stat_factory(outstandR:::calc_gcomp_bayes)
 
 # #' @export
 #' calc_IPD_stats.mim <- IPD_stat_factory(outstandR:::calc_mim)
