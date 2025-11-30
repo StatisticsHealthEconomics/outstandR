@@ -80,7 +80,7 @@ The labels in the treatment are used internally so there must be a common treatm
 
 <dt id="arg-strategy">strategy<a class="anchor" aria-label="anchor" href="#arg-strategy"></a></dt>
 <dd><p>Computation strategy function. These can be
-<code><a href="strategy.html">strategy_maic()</a></code>, <code><a href="strategy.html">strategy_stc()</a></code>, <code><a href="strategy.html">strategy_gcomp_ml()</a></code> and <code><a href="strategy.html">strategy_gcomp_stan()</a></code>.</p></dd>
+<code><a href="strategy.html">strategy_maic()</a></code>, <code><a href="strategy.html">strategy_stc()</a></code>, <code><a href="strategy.html">strategy_gcomp_ml()</a></code> and <code><a href="strategy.html">strategy_gcomp_bayes()</a></code>.</p></dd>
 
 
 <dt id="arg-ref-trt">ref_trt<a class="anchor" aria-label="anchor" href="#arg-ref-trt"></a></dt>
@@ -97,7 +97,7 @@ Choose from "log-odds", "log_relative_risk", "risk_difference", "delta_z", "mean
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional arguments. Currently, can pass named arguments to <code><a href="https://mc-stan.org/rstanarm/reference/stan_glm.html" class="external-link">rstanarm::stan_glm()</a></code> via <code><a href="strategy.html">strategy_gcomp_stan()</a></code>.</p></dd>
+<dd><p>Additional arguments. Currently, can pass named arguments to <code><a href="https://mc-stan.org/rstanarm/reference/stan_glm.html" class="external-link">rstanarm::stan_glm()</a></code> via <code><a href="strategy.html">strategy_gcomp_bayes()</a></code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -117,7 +117,7 @@ ISSN 1759-2879, <a href="https://doi.org/10.1002/jrsm.1565" class="external-link
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="strategy.html">strategy_maic()</a></code> <code><a href="strategy.html">strategy_stc()</a></code> <code><a href="strategy.html">strategy_gcomp_ml()</a></code> <code><a href="strategy.html">strategy_gcomp_stan()</a></code></p></div>
+    <div class="dont-index"><p><code><a href="strategy.html">strategy_maic()</a></code> <code><a href="strategy.html">strategy_stc()</a></code> <code><a href="strategy.html">strategy_gcomp_ml()</a></code> <code><a href="strategy.html">strategy_gcomp_bayes()</a></code></p></div>
     </div>
 
     <div class="section level2">

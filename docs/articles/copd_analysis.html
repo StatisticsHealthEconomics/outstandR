@@ -205,7 +205,7 @@ p(y^*_{^z*} \mid \mathcal{D}_{AC}) = \int_{x^*} p(y^* \mid z^*, x^*, \mathcal{D}
 = \int_{x^*} \int_{\beta} p(y^* \mid z^*, x^*, \beta) p(x^* \mid \beta) p(\beta \mid \mathcal{D}_{AC})\; d\beta \; \text{d}x^*
 </annotation></semantics></math></p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outstandR_gcomp_stan</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>, strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_stan</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">outstandR_gcomp_bayes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>, strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_bayes</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; SAMPLING FOR MODEL 'continuous' NOW (CHAIN 1).</span></span>
 <span><span class="co">#&gt; Chain 1: </span></span>
@@ -256,7 +256,7 @@ p(y^*_{^z*} \mid \mathcal{D}_{AC}) = \int_{x^*} p(y^* \mid z^*, x^*, \mathcal{D}
 <span><span class="co">#&gt; Chain 2:                0.2 seconds (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 2:                0.375 seconds (Total)</span></span>
 <span><span class="co">#&gt; Chain 2:</span></span>
-<span><span class="va">outstandR_gcomp_stan</span></span></code></pre></div>
+<span><span class="va">outstandR_gcomp_bayes</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="multiple-imputation-marginalisation">Multiple imputation marginalisation<a class="anchor" aria-label="anchor" href="#multiple-imputation-marginalisation"></a>
@@ -321,7 +321,7 @@ p(y^*_{^z*} \mid \mathcal{D}_{AC}) = \int_{x^*} p(y^* \mid z^*, x^*, \mathcal{D}
 <span>  `MAIC` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_maic</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span>,</span>
 <span>  `STC` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_stc</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span>,</span>
 <span>  `Gcomp ML` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_gcomp_ml</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span>,</span>
-<span>  `Gcomp Bayes` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_gcomp_stan</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span>,</span>
+<span>  `Gcomp Bayes` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_gcomp_bayes</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span>,</span>
 <span>  `MIM` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_mim</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <table class="table">

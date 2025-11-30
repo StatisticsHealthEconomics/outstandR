@@ -12,7 +12,7 @@
 
 * `simulate_ALD_pseudo_pop()` can now take user-provided marginal arguments for a target distribution with
     `marginal_distns`, `marginal_params`. These are defined optionally in
-    `strategy_gcomp_ml()` and `strategy_gcomp_stan()`
+    `strategy_gcomp_ml()` and `strategy_gcomp_bayes()`
 
 * Included correlation of ALD simulations as optional function argument (d48d0ab)
 

@@ -284,27 +284,27 @@ outstandR_gcomp_ml
 
 The difference between Bayesian G-computation and its maximum-likelihood counterpart is in the estimated distribution of the predicted outcomes. The Bayesian approach also marginalizes, integrates or standardizes over the joint posterior distribution of the conditional nuisance parameters of the outcome regression, as well as the joint covariate distribution.
 
-Pass the `strategy_gcomp_stan()` strategy function.
+Pass the `strategy_gcomp_bayes()` strategy function.
 
-```{r outstandR_gcomp_stan, eval=FALSE}
-outstandR_gcomp_stan <-
+```{r outstandR_gcomp_bayes, eval=FALSE}
+outstandR_gcomp_bayes <-
   outstandR(ipd_trial, ald_trial,
-            strategy = strategy_gcomp_stan(
+            strategy = strategy_gcomp_bayes(
               formula = lin_form,
               family = gaussian(link = "identity")))
 ```
 
-```{r outstandR_gcomp_stan_eval, echo=FALSE}
+```{r outstandR_gcomp_bayes_eval, echo=FALSE}
 xx <- capture.output(
-  outstandR_gcomp_stan <-
+  outstandR_gcomp_bayes <-
     outstandR(ipd_trial, ald_trial,
-              strategy = strategy_gcomp_stan(
+              strategy = strategy_gcomp_bayes(
                 formula = lin_form,
                 family = gaussian(link = "identity"))))
 ```
 
 ```{r}
-outstandR_gcomp_stan
+outstandR_gcomp_bayes
 ```
 
 ### Multiple imputation marginalisation
@@ -344,7 +344,7 @@ res_tab <-
     `MAIC` = unlist(outstandR_maic$contrasts$means),
     `STC` = unlist(outstandR_stc$contrasts$means),
     `Gcomp ML` = unlist(outstandR_gcomp_ml$contrasts$means),
-    `Gcomp Bayes` = unlist(outstandR_gcomp_stan$contrasts$means),
+    `Gcomp Bayes` = unlist(outstandR_gcomp_bayes$contrasts$means),
     `MIM` = unlist(outstandR_mim$contrasts$means)) |> 
   round(2)
 
@@ -355,7 +355,7 @@ res_tab_var <-
     `MAIC` = unlist(outstandR_maic$contrasts$variances),
     `STC` = unlist(outstandR_stc$contrasts$variances),
     `Gcomp ML` = unlist(outstandR_gcomp_ml$contrasts$variances),
-    `Gcomp Bayes` = unlist(outstandR_gcomp_stan$contrasts$variances),
+    `Gcomp Bayes` = unlist(outstandR_gcomp_bayes$contrasts$variances),
     `MIM` = unlist(outstandR_mim$contrasts$variances)) |> 
   round(2)
 

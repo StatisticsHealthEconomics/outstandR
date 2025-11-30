@@ -355,9 +355,9 @@ or standardizes over the joint posterior distribution of the conditional
 nuisance parameters of the outcome regression, as well as the joint
 covariate distribution.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outstandR_gcomp_stan</span> <span class="op">&lt;-</span></span>
+<code class="sourceCode R"><span><span class="va">outstandR_gcomp_bayes</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">ipd_trial</span>, <span class="va">ald_trial</span>,</span>
-<span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_stan</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
+<span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_bayes</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
 <span>                                           family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 1).</span></span>
@@ -459,7 +459,7 @@ covariate distribution.</p>
 <span><span class="co">#&gt; Chain 4:                0.262 seconds (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 4:                0.56 seconds (Total)</span></span>
 <span><span class="co">#&gt; Chain 4:</span></span>
-<span><span class="va">outstandR_gcomp_stan</span></span>
+<span><span class="va">outstandR_gcomp_bayes</span></span>
 <span><span class="co">#&gt; Object of class 'outstandR' </span></span>
 <span><span class="co">#&gt; Model: <span style="color: #949494;">binomial</span> </span></span>
 <span><span class="co">#&gt; Scale: <span style="color: #949494;">log_odds</span> </span></span>
@@ -631,7 +631,7 @@ methods.</p>
 <span>  `MAIC` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_maic</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span>,</span>
 <span>  `STC` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_stc</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span>,</span>
 <span>  `Gcomp ML` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_gcomp_ml</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span>,</span>
-<span>  `Gcomp Bayes` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_gcomp_stan</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span>,</span>
+<span>  `Gcomp Bayes` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_gcomp_bayes</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span>,</span>
 <span>  `MIM` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_mim</span><span class="op">$</span><span class="va">contrasts</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <table class="table">

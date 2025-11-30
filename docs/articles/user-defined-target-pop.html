@@ -188,23 +188,23 @@
 <h3 id="bayesian-g-computation-with-mcmc">Bayesian G-computation with MCMC<a class="anchor" aria-label="anchor" href="#bayesian-g-computation-with-mcmc"></a>
 </h3>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outstandR_gcomp_stan</span> <span class="op">&lt;-</span></span>
+<code class="sourceCode R"><span><span class="va">outstandR_gcomp_bayes</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">ipd_trial</span>, <span class="va">ald_trial</span>,</span>
-<span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_stan</a></span><span class="op">(</span></span>
+<span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_bayes</a></span><span class="op">(</span></span>
 <span>              formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
 <span>              family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outstandR_gcomp_stan</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">outstandR_gcomp_bayes</span></span></code></pre></div>
 <p>As before, we can change the outcome scale to LRR.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outstandR_gcomp_stan_lrr</span> <span class="op">&lt;-</span></span>
+<code class="sourceCode R"><span><span class="va">outstandR_gcomp_bayes_lrr</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">ipd_trial</span>, <span class="va">ald_trial</span>,</span>
-<span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_stan</a></span><span class="op">(</span></span>
+<span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_bayes</a></span><span class="op">(</span></span>
 <span>              formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
 <span>              family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>            scale <span class="op">=</span> <span class="st">"log_relative_risk"</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outstandR_gcomp_stan_lrr</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">outstandR_gcomp_bayes_lrr</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="multiple-imputation-marginalisation">Multiple imputation marginalisation<a class="anchor" aria-label="anchor" href="#multiple-imputation-marginalisation"></a>

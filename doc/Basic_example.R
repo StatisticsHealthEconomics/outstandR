@@ -38,7 +38,7 @@ outstandR_stc
 ## ----outstandR_gcomp_ml--------------------------------------------------------
 # outstandR_gcomp_ml <- outstandR(AC.IPD, BC.ALD, strategy = strategy_gcomp_ml(formula = lin_form))
 
-## ----outstandR_gcomp_stan------------------------------------------------------
-outstandR_gcomp_stan <- outstandR(AC.IPD, BC.ALD, strategy = strategy_gcomp_stan(formula = lin_form))
-outstandR_gcomp_stan
+## ----outstandR_gcomp_bayes------------------------------------------------------
+outstandR_gcomp_bayes <- outstandR(AC.IPD, BC.ALD, strategy = strategy_gcomp_bayes(formula = lin_form))
+outstandR_gcomp_bayes
 

@@ -35,11 +35,11 @@
 #'                   y = c(1, 0),
 #'                   age = c(30, 40))
 #' ald <- data.frame()
-#' calc_gcomp_stan(strategy, ipd, ald)
+#' calc_gcomp_bayes(strategy, ipd, ald)
 #' }
 #' @export
 #'
-calc_gcomp_stan <- function(strategy,
+calc_gcomp_bayes <- function(strategy,
                             analysis_params, ...) {
   
   formula <- strategy$formula

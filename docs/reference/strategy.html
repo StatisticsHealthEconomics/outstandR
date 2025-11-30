@@ -64,7 +64,7 @@
 <span>  N <span class="op">=</span> <span class="fl">1000L</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">strategy_gcomp_stan</span><span class="op">(</span></span>
+<span><span class="fu">strategy_gcomp_bayes</span><span class="op">(</span></span>
 <span>  formula <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">gaussian</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"identity"</span><span class="op">)</span>,</span>
 <span>  trt_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -125,7 +125,7 @@ Available distributions are given in stats::Distributions. See <code><a href="ht
 
 
 <dt id="arg-strategy">strategy<a class="anchor" aria-label="anchor" href="#arg-strategy"></a></dt>
-<dd><p>Class name from <code>strategy_maic</code>, <code>strategy_stc</code>, <code>strategy_gcomp_ml</code>, <code>strategy_gcomp_stan</code></p></dd>
+<dd><p>Class name from <code>strategy_maic</code>, <code>strategy_stc</code>, <code>strategy_gcomp_ml</code>, <code>strategy_gcomp_bayes</code></p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -137,7 +137,7 @@ Available distributions are given in stats::Distributions. See <code><a href="ht
     <p><code>maic</code> class object</p>
 <p><code>stc</code> class object</p>
 <p><code>gcomp_ml</code> class object</p>
-<p><code>gcomp_stan</code> class object</p>
+<p><code>gcomp_bayes</code> class object</p>
 <p><code>mim</code> class object</p>
     </div>
     <div class="section level2">
@@ -240,7 +240,7 @@ estimation via Markov chain Monte Carlo (MCMC) sampling.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code>strategy_gcomp_stan()</code></p>
+    <div class="dont-index"><p><code>strategy_gcomp_bayes()</code></p>
 <p><code>strategy_gcomp_ml()</code>,<code><a href="https://rdrr.io/pkg/copula/man/Mvdc.html" class="external-link">copula::Mvdc()</a></code></p></div>
     </div>
 

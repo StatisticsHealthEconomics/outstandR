@@ -15,19 +15,19 @@
 #'  - `value`: Numerical value of summary statistic
 #'  - `trt`: Treatment label. Because we assume a common covariate distribution between treatment arms this is `NA`
 #' @param strategy Computation strategy function. These can be
-#'    `strategy_maic()`, `strategy_stc()`, `strategy_gcomp_ml()` and `strategy_gcomp_stan()`.
+#'    `strategy_maic()`, `strategy_stc()`, `strategy_gcomp_ml()` and `strategy_gcomp_bayes()`.
 #' @param ref_trt Reference / common / anchoring treatment name.
 #' @param CI Confidence interval; between 0,1
 #' @param scale Relative treatment effect scale. If `NULL`, the scale is automatically determined from the model.
 #'   Choose from "log-odds", "log_relative_risk", "risk_difference", "delta_z", "mean_difference", "rate_difference" depending on the data type.
-#' @param ... Additional arguments. Currently, can pass named arguments to `rstanarm::stan_glm()` via `strategy_gcomp_stan()`.
+#' @param ... Additional arguments. Currently, can pass named arguments to `rstanarm::stan_glm()` via `strategy_gcomp_bayes()`.
 #' 
 #' @return List of length 3 of statistics as a `outstandR` class object.
 #'   Containing statistics between each pair of treatments.
 #'   These are the mean, variances and confidence intervals,
 #'   for contrasts and absolute values.
 #' @importFrom Rdpack reprompt
-#' @seealso [strategy_maic()] [strategy_stc()] [strategy_gcomp_ml()] [strategy_gcomp_stan()]
+#' @seealso [strategy_maic()] [strategy_stc()] [strategy_gcomp_ml()] [strategy_gcomp_bayes()]
 #' 
 #' @references
 #' \insertRef{RemiroAzocar2022}{outstandR}
@@ -53,8 +53,8 @@
 #'                                 strategy = strategy_gcomp_ml(lin_form))
 #' 
 #' # G-computation with Bayesian inference
-#' outstandR_gcomp_stan <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
-#'                                   strategy = strategy_gcomp_stan(lin_form))
+#' outstandR_gcomp_bayes <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
+#'                                   strategy = strategy_gcomp_bayes(lin_form))
 #' 
 #' # Multiple imputation marginalization
 #' outstandR_mim <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,

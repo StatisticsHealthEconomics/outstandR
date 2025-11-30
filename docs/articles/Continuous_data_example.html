@@ -491,13 +491,13 @@ under each set intervention
 from its posterior predictive distribution under the specific
 treatment.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outstandR_gcomp_stan</span> <span class="op">&lt;-</span></span>
+<code class="sourceCode R"><span><span class="va">outstandR_gcomp_bayes</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">ipd_trial</span>, <span class="va">ald_trial</span>,</span>
-<span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_stan</a></span><span class="op">(</span></span>
+<span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_bayes</a></span><span class="op">(</span></span>
 <span>              formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
 <span>              family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">gaussian</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"identity"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outstandR_gcomp_stan</span></span>
+<code class="sourceCode R"><span><span class="va">outstandR_gcomp_bayes</span></span>
 <span><span class="co">#&gt; Object of class 'outstandR' </span></span>
 <span><span class="co">#&gt; Model: <span style="color: #949494;">gaussian</span> </span></span>
 <span><span class="co">#&gt; Scale: <span style="color: #949494;">risk_difference</span> </span></span>
@@ -574,7 +574,7 @@ methods.</p>
 <span>    `MAIC` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_maic</span><span class="op">$</span><span class="va">contrasts</span><span class="op">$</span><span class="va">means</span><span class="op">)</span>,</span>
 <span>    `STC` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_stc</span><span class="op">$</span><span class="va">contrasts</span><span class="op">$</span><span class="va">means</span><span class="op">)</span>,</span>
 <span>    `Gcomp ML` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_gcomp_ml</span><span class="op">$</span><span class="va">contrasts</span><span class="op">$</span><span class="va">means</span><span class="op">)</span>,</span>
-<span>    `Gcomp Bayes` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_gcomp_stan</span><span class="op">$</span><span class="va">contrasts</span><span class="op">$</span><span class="va">means</span><span class="op">)</span>,</span>
+<span>    `Gcomp Bayes` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_gcomp_bayes</span><span class="op">$</span><span class="va">contrasts</span><span class="op">$</span><span class="va">means</span><span class="op">)</span>,</span>
 <span>    `MIM` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">outstandR_mim</span><span class="op">$</span><span class="va">contrasts</span><span class="op">$</span><span class="va">means</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">|&gt;</span> </span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>

@@ -81,7 +81,7 @@ Methods taken from
 
 <dt>strategy</dt>
 <dd><p>Computation strategy function. These can be
-<code><a href="strategy.html">strategy_maic()</a></code>, <code><a href="strategy.html">strategy_stc()</a></code>, <code><a href="strategy.html">strategy_gcomp_ml()</a></code> and  <code><a href="strategy.html">strategy_gcomp_stan()</a></code></p></dd>
+<code><a href="strategy.html">strategy_maic()</a></code>, <code><a href="strategy.html">strategy_stc()</a></code>, <code><a href="strategy.html">strategy_gcomp_ml()</a></code> and  <code><a href="strategy.html">strategy_gcomp_bayes()</a></code></p></dd>
 
 
 <dt>CI</dt>
@@ -127,7 +127,7 @@ ISSN 1759-2879, <a href="https://doi.org/10.1002/jrsm.1565" class="external-link
 <span class="r-in"><span><span class="co"># outstandR_gcomp_ml &lt;- outstandR(AC_IPD, BC_ALD, strategy = strategy_gcomp_ml(lin_form))</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># G-computation with Bayesian inference</span></span></span>
-<span class="r-in"><span><span class="va">outstandR_gcomp_stan</span> <span class="op">&lt;-</span> <span class="fu">outstandR</span><span class="op">(</span><span class="va">AC_IPD</span>, <span class="va">BC_ALD</span>, strategy <span class="op">=</span> <span class="fu"><a href="strategy.html">strategy_gcomp_stan</a></span><span class="op">(</span><span class="va">lin_form</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">outstandR_gcomp_bayes</span> <span class="op">&lt;-</span> <span class="fu">outstandR</span><span class="op">(</span><span class="va">AC_IPD</span>, <span class="va">BC_ALD</span>, strategy <span class="op">=</span> <span class="fu"><a href="strategy.html">strategy_gcomp_bayes</a></span><span class="op">(</span><span class="va">lin_form</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 1).</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: </span>

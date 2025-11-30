@@ -256,10 +256,10 @@ and then a Bayesian approach.</p>
 </h2>
 <p>Matrix of pairwise correlations between IPD covariates.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">hat_Delta_stats_gcomp_stan</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hat_Delta_stats.html">hat_Delta_stats</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>, strategy <span class="op">=</span> <span class="fu">strategy_gcomp_stan</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Called from: gcomp_stan(formula = strategy$formula, dat = data)</span></span>
-<span><span class="co">#&gt; debug at C:/Users/n8tha/Documents/R/mimR/R/gcomp_stan.R#34: colnames(x_star) &lt;- cov_names</span></span>
-<span><span class="co">#&gt; debug at C:/Users/n8tha/Documents/R/mimR/R/gcomp_stan.R#37: outcome.model &lt;- stan_glm(formula, data = dat, family = binomial, </span></span>
+<code class="sourceCode R"><span><span class="va">hat_Delta_stats_gcomp_bayes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hat_Delta_stats.html">hat_Delta_stats</a></span><span class="op">(</span><span class="va">AC.IPD</span>, <span class="va">BC.ALD</span>, strategy <span class="op">=</span> <span class="fu">strategy_gcomp_bayes</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Called from: gcomp_bayes(formula = strategy$formula, dat = data)</span></span>
+<span><span class="co">#&gt; debug at C:/Users/n8tha/Documents/R/mimR/R/gcomp_bayes.R#34: colnames(x_star) &lt;- cov_names</span></span>
+<span><span class="co">#&gt; debug at C:/Users/n8tha/Documents/R/mimR/R/gcomp_bayes.R#37: outcome.model &lt;- stan_glm(formula, data = dat, family = binomial, </span></span>
 <span><span class="co">#&gt;     algorithm = "sampling", iter = 4000, warmup = 2000, chains = 2)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 1).</span></span>
@@ -311,12 +311,12 @@ and then a Bayesian approach.</p>
 <span><span class="co">#&gt; Chain 2:                0.53 seconds (Sampling)</span></span>
 <span><span class="co">#&gt; Chain 2:                1.02 seconds (Total)</span></span>
 <span><span class="co">#&gt; Chain 2: </span></span>
-<span><span class="co">#&gt; debug at C:/Users/n8tha/Documents/R/mimR/R/gcomp_stan.R#43: data.trtA &lt;- data.trtC &lt;- x_star</span></span>
-<span><span class="co">#&gt; debug at C:/Users/n8tha/Documents/R/mimR/R/gcomp_stan.R#46: data.trtA[[treat_names]] &lt;- 1</span></span>
-<span><span class="co">#&gt; debug at C:/Users/n8tha/Documents/R/mimR/R/gcomp_stan.R#47: data.trtC[[treat_names]] &lt;- 0</span></span>
-<span><span class="co">#&gt; debug at C:/Users/n8tha/Documents/R/mimR/R/gcomp_stan.R#50: list(y.star.A = posterior_predict(outcome.model, newdata = data.trtA), </span></span>
+<span><span class="co">#&gt; debug at C:/Users/n8tha/Documents/R/mimR/R/gcomp_bayes.R#43: data.trtA &lt;- data.trtC &lt;- x_star</span></span>
+<span><span class="co">#&gt; debug at C:/Users/n8tha/Documents/R/mimR/R/gcomp_bayes.R#46: data.trtA[[treat_names]] &lt;- 1</span></span>
+<span><span class="co">#&gt; debug at C:/Users/n8tha/Documents/R/mimR/R/gcomp_bayes.R#47: data.trtC[[treat_names]] &lt;- 0</span></span>
+<span><span class="co">#&gt; debug at C:/Users/n8tha/Documents/R/mimR/R/gcomp_bayes.R#50: list(y.star.A = posterior_predict(outcome.model, newdata = data.trtA), </span></span>
 <span><span class="co">#&gt;     y.star.C = posterior_predict(outcome.model, newdata = data.trtC))</span></span>
-<span><span class="va">hat_Delta_stats_gcomp_stan</span></span>
+<span><span class="va">hat_Delta_stats_gcomp_bayes</span></span>
 <span><span class="co">#&gt; [[1]]</span></span>
 <span><span class="co">#&gt; [[1]]$AB</span></span>
 <span><span class="co">#&gt; [1] 0.5567315</span></span>

@@ -27,7 +27,7 @@
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/calculate_trial_variance.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_ALD_stats.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_gcomp_ml.html</loc></url>
-<url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_gcomp_stan.html</loc></url>
+<url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_gcomp_bayes.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_IPD_stats.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_mim.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_stc.html</loc></url>
@@ -42,7 +42,7 @@
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/gcomp_ml.boot.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/gcomp_ml_log_odds_ratio.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/gcomp_ml_means.html</loc></url>
-<url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/gcomp_stan.html</loc></url>
+<url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/gcomp_bayes.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/gen_data.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/get_covariate_names.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/get_effect_modifiers.html</loc></url>
@@ -57,7 +57,7 @@
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/index.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/IPD_stats.default.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/IPD_stats.gcomp_ml.html</loc></url>
-<url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/IPD_stats.gcomp_stan.html</loc></url>
+<url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/IPD_stats.gcomp_bayes.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/IPD_stats.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/IPD_stats.maic.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/IPD_stats.mim.html</loc></url>

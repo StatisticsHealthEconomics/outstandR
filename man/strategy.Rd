@@ -4,7 +4,7 @@
 \alias{strategy_maic}
 \alias{strategy_stc}
 \alias{strategy_gcomp_ml}
-\alias{strategy_gcomp_stan}
+\alias{strategy_gcomp_bayes}
 \alias{strategy_mim}
 \alias{strategy}
 \alias{new_strategy}
@@ -34,7 +34,7 @@ strategy_gcomp_ml(
   N = 1000L
 )
 
-strategy_gcomp_stan(
+strategy_gcomp_bayes(
   formula = NULL,
   family = gaussian(link = "identity"),
   trt_var = NULL,
@@ -74,7 +74,7 @@ Available distributions are given in stats::Distributions. See \code{\link[copul
 
 \item{N}{Synthetic sample size for g-computation}
 
-\item{strategy}{Class name from \code{strategy_maic}, \code{strategy_stc}, \code{strategy_gcomp_ml}, \code{strategy_gcomp_stan}}
+\item{strategy}{Class name from \code{strategy_maic}, \code{strategy_stc}, \code{strategy_gcomp_ml}, \code{strategy_gcomp_bayes}}
 
 \item{...}{Additional arguments}
 }
@@ -85,7 +85,7 @@ Available distributions are given in stats::Distributions. See \code{\link[copul
 
 \code{gcomp_ml} class object
 
-\code{gcomp_stan} class object
+\code{gcomp_bayes} class object
 
 \code{mim} class object
 }
@@ -195,7 +195,7 @@ TODO
 }
 
 \seealso{
-\code{\link[=strategy_gcomp_stan]{strategy_gcomp_stan()}}
+\code{\link[=strategy_gcomp_bayes]{strategy_gcomp_bayes()}}
 
 \code{\link[=strategy_gcomp_ml]{strategy_gcomp_ml()}},\code{\link[copula:Mvdc]{copula::Mvdc()}}
 }

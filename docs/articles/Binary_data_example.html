@@ -918,13 +918,13 @@ under each set intervention
 from its posterior predictive distribution under the specific
 treatment.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outstandR_gcomp_stan</span> <span class="op">&lt;-</span></span>
+<code class="sourceCode R"><span><span class="va">outstandR_gcomp_bayes</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">ipd_trial</span>, <span class="va">ald_trial</span>,</span>
-<span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_stan</a></span><span class="op">(</span></span>
+<span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_bayes</a></span><span class="op">(</span></span>
 <span>              formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
 <span>              family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outstandR_gcomp_stan</span></span>
+<code class="sourceCode R"><span><span class="va">outstandR_gcomp_bayes</span></span>
 <span><span class="co">#&gt; Object of class 'outstandR' </span></span>
 <span><span class="co">#&gt; Model: <span style="color: #949494;">binomial</span> </span></span>
 <span><span class="co">#&gt; Scale: <span style="color: #949494;">log_odds</span> </span></span>
@@ -951,14 +951,14 @@ treatment.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> C             0.693   0.003<span style="text-decoration: underline;">40</span> <span style="color: #BB0000;">NA</span>         <span style="color: #BB0000;">NA</span></span></span></code></pre></div>
 <p>As before, we can change the outcome scale.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outstandR_gcomp_stan_lrr</span> <span class="op">&lt;-</span></span>
+<code class="sourceCode R"><span><span class="va">outstandR_gcomp_bayes_lrr</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/outstandR.html">outstandR</a></span><span class="op">(</span><span class="va">ipd_trial</span>, <span class="va">ald_trial</span>,</span>
-<span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_stan</a></span><span class="op">(</span></span>
+<span>            strategy <span class="op">=</span> <span class="fu"><a href="../reference/strategy.html">strategy_gcomp_bayes</a></span><span class="op">(</span></span>
 <span>              formula <span class="op">=</span> <span class="va">lin_form</span>,</span>
 <span>              family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/family.html" class="external-link">binomial</a></span><span class="op">(</span>link <span class="op">=</span> <span class="st">"logit"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>            scale <span class="op">=</span> <span class="st">"log_relative_risk"</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outstandR_gcomp_stan_lrr</span></span>
+<code class="sourceCode R"><span><span class="va">outstandR_gcomp_bayes_lrr</span></span>
 <span><span class="co">#&gt; Object of class 'outstandR' </span></span>
 <span><span class="co">#&gt; Model: <span style="color: #949494;">binomial</span> </span></span>
 <span><span class="co">#&gt; Scale: <span style="color: #949494;">log_relative_risk</span> </span></span>

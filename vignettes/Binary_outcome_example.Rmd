@@ -612,52 +612,52 @@ The average, variance and interval estimates of the marginal treatment
 effect can be derived empirically from draws of the posterior density.
 
 The strategy function to plug-in to the `outstandR()` call for this
-approach is `strategy_gcomp_stan()`,
+approach is `strategy_gcomp_bayes()`,
 
-```{r outstandR_gcomp_stan, message=FALSE, eval=FALSE}
-outstandR_gcomp_stan <-
+```{r outstandR_gcomp_bayes, message=FALSE, eval=FALSE}
+outstandR_gcomp_bayes <-
   outstandR(ipd_trial, ald_trial,
-            strategy = strategy_gcomp_stan(
+            strategy = strategy_gcomp_bayes(
               formula = lin_form,
               family = binomial(link = "logit")))
 ```
 
-```{r outstandR_gcomp_stan_eval, echo=FALSE, message=FALSE}
+```{r outstandR_gcomp_bayes_eval, echo=FALSE, message=FALSE}
 xx <- capture.output(
-  outstandR_gcomp_stan <-
+  outstandR_gcomp_bayes <-
     outstandR(ipd_trial, ald_trial,
-              strategy = strategy_gcomp_stan(
+              strategy = strategy_gcomp_bayes(
                 formula = lin_form,
                 family = binomial(link = "logit"))))
 ```
 
 ```{r}
-outstandR_gcomp_stan
+outstandR_gcomp_bayes
 ```
 
 As before, we can change the outcome scale to LRR.
 
-```{r outstandR_gcomp_stan_lrr, eval=FALSE}
-outstandR_gcomp_stan_lrr <-
+```{r outstandR_gcomp_bayes_lrr, eval=FALSE}
+outstandR_gcomp_bayes_lrr <-
   outstandR(ipd_trial, ald_trial,
-            strategy = strategy_gcomp_stan(
+            strategy = strategy_gcomp_bayes(
               formula = lin_form,
               family = binomial(link = "logit")),
             scale = "log_relative_risk")
 ```
 
-```{r outstandR_gcomp_stan_lrr_eval, echo=FALSE}
+```{r outstandR_gcomp_bayes_lrr_eval, echo=FALSE}
 xx <- capture.output(
-  outstandR_gcomp_stan_lrr <-
+  outstandR_gcomp_bayes_lrr <-
     outstandR(ipd_trial, ald_trial,
-              strategy = strategy_gcomp_stan(
+              strategy = strategy_gcomp_bayes(
                 formula = lin_form,
                 family = binomial(link = "logit")),
               scale = "log_relative_risk"))
 ```
 
 ```{r}
-outstandR_gcomp_stan_lrr
+outstandR_gcomp_bayes_lrr
 ```
 
 ### Multiple imputation marginalisation
@@ -815,7 +815,7 @@ res_tab <-
     `MAIC` = unlist(outstandR_maic$contrasts$means),
     `STC` = unlist(outstandR_stc$contrasts$means),
     `Gcomp ML` = unlist(outstandR_gcomp_ml$contrasts$means),
-    `Gcomp Bayes` = unlist(outstandR_gcomp_stan$contrasts$means),
+    `Gcomp Bayes` = unlist(outstandR_gcomp_bayes$contrasts$means),
     `MIM` = unlist(outstandR_mim$contrasts$means)) |> 
   round(2)
 
@@ -826,7 +826,7 @@ res_tab_var <-
     `MAIC` = unlist(outstandR_maic$contrasts$variances),
     `STC` = unlist(outstandR_stc$contrasts$variances),
     `Gcomp ML` = unlist(outstandR_gcomp_ml$contrasts$variances),
-    `Gcomp Bayes` = unlist(outstandR_gcomp_stan$contrasts$variances),
+    `Gcomp Bayes` = unlist(outstandR_gcomp_bayes$contrasts$variances),
     `MIM` = unlist(outstandR_mim$contrasts$variances)) |> 
   round(2)
 
@@ -855,7 +855,7 @@ res_tab_lrr <-
     `MAIC` = unlist(outstandR_maic_lrr$contrasts$means),
     `STC` = unlist(outstandR_stc_lrr$contrasts$means),
     `Gcomp ML` = unlist(outstandR_gcomp_ml_lrr$contrasts$means),
-    `Gcomp Bayes` = unlist(outstandR_gcomp_stan_lrr$contrasts$means),
+    `Gcomp Bayes` = unlist(outstandR_gcomp_bayes_lrr$contrasts$means),
     `MIM` = unlist(outstandR_mim_lrr$contrasts$means)) |> 
   round(2)
 
@@ -866,7 +866,7 @@ res_tab_var_lrr <-
     `MAIC` = unlist(outstandR_maic_lrr$contrasts$variances),
     `STC` = unlist(outstandR_stc_lrr$contrasts$variances),
     `Gcomp ML` = unlist(outstandR_gcomp_ml_lrr$contrasts$variances),
-    `Gcomp Bayes` = unlist(outstandR_gcomp_stan_lrr$contrasts$variances),
+    `Gcomp Bayes` = unlist(outstandR_gcomp_bayes_lrr$contrasts$variances),
     `MIM` = unlist(outstandR_mim_lrr$contrasts$variances)) |> 
   round(2)
 

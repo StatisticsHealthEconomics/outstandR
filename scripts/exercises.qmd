@@ -531,17 +531,17 @@ print(out_stc_bin)
 
 ```{r gcomp-bayes-binary-code, eval=FALSE}
 # This would require rstanarm and can be slow.
-out_gcomp_stan_bin <- outstandR(
+out_gcomp_bayes_bin <- outstandR(
   ipd_trial = ipd_trial_bin, 
   ald_trial = ald_trial_bin,
-  strategy = strategy_gcomp_stan(
+  strategy = strategy_gcomp_bayes(
     formula = lin_form_bin,
     family = binomial(link = "logit")
     # For a faster demo if options are passed through:
     # stan_args = list(iter = 500, chains = 2, refresh = 0) 
   )
 )
-print(out_gcomp_stan_bin)
+print(out_gcomp_bayes_bin)
 ```
 
 -   **Multiple Imputation Marginalisation (MIM):** Another approach for marginalization.

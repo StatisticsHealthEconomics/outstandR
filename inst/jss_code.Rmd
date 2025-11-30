@@ -44,10 +44,10 @@ outstandR_gcomp_ml <-
               formula = lin_form,
               family = binomial(link = "logit")))
 
-outstandR_gcomp_stan <-
+outstandR_gcomp_bayes <-
   outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
             refresh = 0,  # turns off the iteration updates
-            strategy = strategy_gcomp_stan(
+            strategy = strategy_gcomp_bayes(
               formula = lin_form,
               family = binomial(link = "logit")))
 
@@ -93,10 +93,10 @@ outstandR_gcomp_ml <-
               formula = lin_form,
               family = gaussian(link = "identity")))
 
-outstandR_gcomp_stan <-
+outstandR_gcomp_bayes <-
   outstandR(AC_IPD_contY_mixedX, BC_ALD_contY_mixedX,
             refresh = 0,  # turns off the iteration updates
-            strategy = strategy_gcomp_stan(
+            strategy = strategy_gcomp_bayes(
               formula = lin_form,
               family = gaussian(link = "identity")))
 
