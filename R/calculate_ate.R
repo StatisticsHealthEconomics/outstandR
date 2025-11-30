@@ -1,5 +1,47 @@
 #
 
+# Helper functions for extracting ALD data ------------------------------
+
+#' Extract value from ALD by filter criteria
+#' 
+#' Helper function to reduce duplication in extracting values from aggregate-level data.
+#'
+#' @param ald Aggregate-level data
+#' @param trt Treatment identifier  
+#' @param variable Variable name (optional)
+#' @param statistic Statistic name (e.g., "N", "sum", "mean", "sd")
+#' @return Extracted value
+#' @keywords internal
+#'
+extract_ald_value <- function(ald, trt, variable = NULL, statistic) {
+  filtered_data <- dplyr::filter(ald, .data$trt == trt, .data$statistic == statistic)
+  
+  if (!is.null(variable)) {
+    filtered_data <- dplyr::filter(filtered_data, .data$variable == variable)
+  }
+  
+  dplyr::pull(filtered_data, .data$value)
+}
+
+#' Execute effect function with validation
+#'
+#' Helper function to reduce duplication in executing effect functions.
+#'
+#' @param effect Effect type to execute
+#' @param effect_functions Named list of effect functions
+#' @return Result of executing the effect function
+#' @keywords internal
+#'
+execute_effect_function <- function(effect, effect_functions) {
+  if (!effect %in% names(effect_functions)) {
+    stop(
+      paste0("Unsupported effect function. Choose from ", 
+             paste(names(effect_functions), collapse = ", ")))
+  }
+  
+  effect_functions[[effect]]()
+}
+
 #' Calculate Average Treatment Effect
 #'
 #' Computes the average treatment effect (ATE) based on the specified effect scale.
@@ -88,18 +130,8 @@ calculate_trial_variance <- function(ald, tid, effect, family) {
 #' @export
 calculate_trial_variance_binary <- function(ald, tid, effect) {
   
-  y <- dplyr::filter(
-    ald,
-    .data$variable == "y",
-    .data$trt == tid,
-    .data$statistic == "sum")|>
-    dplyr::pull(.data$value)
-  
-  N <- dplyr::filter(
-    ald,
-    .data$trt == tid,
-    .data$statistic == "N")|>
-    dplyr::pull(.data$value)
+  y <- extract_ald_value(ald, tid, variable = "y", statistic = "sum")
+  N <- extract_ald_value(ald, tid, variable = NULL, statistic = "N")
   
   effect_functions <- list(
     "log_odds" = function() {
@@ -119,13 +151,7 @@ calculate_trial_variance_binary <- function(ald, tid, effect) {
     }
   )
   
-  if (!effect %in% names(effect_functions)) {
-    stop(
-      paste0("Unsupported effect function. Choose from ", 
-             paste(names(effect_functions), collapse = ", ")))
-  }
-  
-  effect_functions[[effect]]()
+  execute_effect_function(effect, effect_functions)
 }
 
 #' Calculate trial variance continuous
@@ -138,25 +164,9 @@ calculate_trial_variance_binary <- function(ald, tid, effect) {
 #' @export
 calculate_trial_variance_continuous <- function(ald, tid, effect) {
   
-  ybar <- dplyr::filter(
-    ald,
-    .data$variable == "y",
-    .data$trt == tid,
-    .data$statistic == "mean")|>
-    dplyr::pull(.data$value)
-  
-  ysd <- dplyr::filter(
-    ald,
-    .data$variable == "y",
-    .data$trt == tid,
-    .data$statistic == "sd")|>
-    dplyr::pull(.data$value)
-  
-  N <- dplyr::filter(
-    ald,
-    .data$trt == tid,
-    .data$statistic == "N")|>
-    dplyr::pull(.data$value)
+  ybar <- extract_ald_value(ald, tid, variable = "y", statistic = "mean")
+  ysd <- extract_ald_value(ald, tid, variable = "y", statistic = "sd")
+  N <- extract_ald_value(ald, tid, variable = NULL, statistic = "N")
   
   effect_functions <- list(
     "log_odds" = function() {
@@ -171,13 +181,7 @@ calculate_trial_variance_continuous <- function(ald, tid, effect) {
     }
   )
   
-  if (!effect %in% names(effect_functions)) {
-    stop(
-      paste0("Unsupported effect function. Choose from ", 
-             paste(names(effect_functions), collapse = ", ")))
-  }
-
-  effect_functions[[effect]]()
+  execute_effect_function(effect, effect_functions)
 }
 
 #' Calculate trial variance count
@@ -190,25 +194,9 @@ calculate_trial_variance_continuous <- function(ald, tid, effect) {
 #' @export
 calculate_trial_variance_count <- function(ald, tid, effect) {
   
-  ybar <- dplyr::filter(
-    ald,
-    .data$variable == "y",
-    .data$trt == tid,
-    .data$statistic == "mean")|>
-    dplyr::pull(.data$value)
-  
-  ysd <- dplyr::filter(
-    ald,
-    .data$variable == "y",
-    .data$trt == tid,
-    .data$statistic == "sd")|>
-    dplyr::pull(.data$value)
-  
-  N <- dplyr::filter(
-    ald,
-    .data$trt == tid,
-    .data$statistic == "N")|>
-    dplyr::pull(.data$value)
+  ybar <- extract_ald_value(ald, tid, variable = "y", statistic = "mean")
+  ysd <- extract_ald_value(ald, tid, variable = "y", statistic = "sd")
+  N <- extract_ald_value(ald, tid, variable = NULL, statistic = "N")
   
   effect_functions <- list(
     
@@ -225,13 +213,7 @@ calculate_trial_variance_count <- function(ald, tid, effect) {
     }
   )
   
-  if (!effect %in% names(effect_functions)) {
-    stop(
-      paste0("Unsupported effect function. Choose from ", 
-             paste(names(effect_functions), collapse = ", ")))
-  }
-  
-  effect_functions[[effect]]()
+  execute_effect_function(effect, effect_functions)
 }
 
 #' Calculate Trial Mean Wrapper
@@ -269,18 +251,8 @@ calculate_trial_mean <- function(ald, tid, effect, family) {
 #' @export
 calculate_trial_mean_binary <- function(ald, tid, effect) {
   
-  y <- dplyr::filter(
-    ald,
-    .data$variable == "y",
-    .data$trt == tid,
-    .data$statistic == "sum")|>
-    dplyr::pull(.data$value)
-  
-  N <- dplyr::filter(
-    ald,
-    .data$trt == tid,
-    .data$statistic == "N")|>
-    dplyr::pull(.data$value)
+  y <- extract_ald_value(ald, tid, variable = "y", statistic = "sum")
+  N <- extract_ald_value(ald, tid, variable = NULL, statistic = "N")
   
   p <- y/N
   
@@ -292,12 +264,7 @@ calculate_trial_mean_binary <- function(ald, tid, effect) {
     log_relative_risk = function() log(p)
   )
   
-  if (!effect %in% names(effect_fns)) {
-    stop(paste0("Unsupported link function. Choose from ",
-                names(effect_fns)))
-  }
-  
-  effect_fns[[effect]]()
+  execute_effect_function(effect, effect_fns)
 }
 
 #' Calculate Trial Mean Continuous Data
@@ -310,25 +277,9 @@ calculate_trial_mean_binary <- function(ald, tid, effect) {
 #' @export
 calculate_trial_mean_continuous <- function(ald, tid, effect) {
   
-  ybar <- dplyr::filter(
-    ald,
-    .data$variable == "y",
-    .data$trt == tid,
-    .data$statistic == "mean")|>
-    dplyr::pull(.data$value)
-  
-  ysd <- dplyr::filter(
-    ald,
-    .data$variable == "y",
-    .data$trt == tid,
-    .data$statistic == "sd")|>
-    dplyr::pull(.data$value)
-  
-  N <- dplyr::filter(
-    ald,
-    .data$trt == tid,
-    .data$statistic == "N")|>
-    dplyr::pull(.data$value)
+  ybar <- extract_ald_value(ald, tid, variable = "y", statistic = "mean")
+  ysd <- extract_ald_value(ald, tid, variable = "y", statistic = "sd")
+  N <- extract_ald_value(ald, tid, variable = NULL, statistic = "N")
   
   effect_fns <- list(
     log_odds = function() {
@@ -348,12 +299,7 @@ calculate_trial_mean_continuous <- function(ald, tid, effect) {
     # log_relative_risk_rare_events intentionally unsupported
   )
   
-  if (!effect %in% names(effect_fns)) {
-    stop(paste0("Unsupported link function. Choose from ",
-         names(effect_fns)))
-  }
-  
-  effect_fns[[effect]]()
+  execute_effect_function(effect, effect_fns)
 }
 
 #' Calculate Trial Mean Count Data
@@ -366,25 +312,9 @@ calculate_trial_mean_continuous <- function(ald, tid, effect) {
 #' @export
 calculate_trial_mean_count <- function(ald, tid, effect) {
   
-  ybar <- dplyr::filter(
-    ald,
-    .data$variable == "y",
-    .data$trt == tid,
-    .data$statistic == "mean")|>
-    dplyr::pull(.data$value)
-  
-  ysd <- dplyr::filter(
-    ald,
-    .data$variable == "y",
-    .data$trt == tid,
-    .data$statistic == "sd")|>
-    dplyr::pull(.data$value)
-  
-  N <- dplyr::filter(
-    ald,
-    .data$trt == tid,
-    .data$statistic == "N")|>
-    dplyr::pull(.data$value)
+  ybar <- extract_ald_value(ald, tid, variable = "y", statistic = "mean")
+  ysd <- extract_ald_value(ald, tid, variable = "y", statistic = "sd")
+  N <- extract_ald_value(ald, tid, variable = NULL, statistic = "N")
   
   effect_fns <- list(
     log_relative_risk = function() {
@@ -401,12 +331,7 @@ calculate_trial_mean_count <- function(ald, tid, effect) {
     # log_relative_risk_rare_events intentionally unsupported
   )
   
-  if (!effect %in% names(effect_fns)) {
-    stop(paste0("Unsupported link function. Choose from ",
-         names(effect_fns)))
-  }
-  
-  effect_fns[[effect]]()
+  execute_effect_function(effect, effect_fns)
 }
 
 

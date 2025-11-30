@@ -1,4 +1,3 @@
-
 #' Bootstrap for G-computation via Maximum Likelihood
 #'
 #' This is a statistic function intended for use with a bootstrapping function
@@ -84,15 +83,11 @@ gcomp_ml_means <- function(formula,
              data = ipd)
   
   # counterfactual datasets
-  data.comp <- data.ref <- x_star
-  
-  # intervene on treatment while keeping set covariates fixed
-  data.comp[[trt_var]] <- comp_trt  # all receive A
-  data.ref[[trt_var]] <- ref_trt    # all receive C
+  counterfactuals <- create_counterfactual_datasets(x_star, trt_var, comp_trt, ref_trt)
   
   # predict counterfactual event probs, conditional on treatment/covariates
-  hat.mu.comp <- predict(fit, type = "response", newdata = data.comp)
-  hat.mu.ref <- predict(fit, type = "response", newdata = data.ref)
+  hat.mu.comp <- predict(fit, type = "response", newdata = counterfactuals$comp)
+  hat.mu.ref <- predict(fit, type = "response", newdata = counterfactuals$ref)
   
   # (marginal) mean probability prediction under A and C
   c(`0` = mean(hat.mu.ref),

@@ -33,9 +33,9 @@ calc_mim <- function(strategy,
     algorithm = "sampling", ...)
   
   # create augmented target dataset
-  target.comp <- target.ref <- x_star
-  target.comp[[trt_var]] <- comp_trt
-  target.ref[[trt_var]] <- ref_trt
+  counterfactuals <- create_counterfactual_datasets(x_star, trt_var, comp_trt, ref_trt)
+  target.comp <- counterfactuals$comp
+  target.ref <- counterfactuals$ref
   
   aug.target <- rbind(target.ref, target.comp)
   
@@ -65,7 +65,7 @@ calc_mim <- function(strategy,
   
   # safer than trt_var in case of factor level append
   coef_names <- names(coef(reg2.fits[[1]]))
-  treat_coef_name <- grep(pattern = paste0("^", trt_var, "[^:]*$"), coef_names, value = TRUE)
+  treat_coef_name <- extract_treatment_coef_name(coef_names, trt_var)
   
   ##TODO: how to transform this to the prob scale?
   # point estimates for the variance in each synthesis
