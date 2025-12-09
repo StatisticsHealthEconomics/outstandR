@@ -13,6 +13,10 @@ prep_ald(form, data, trt_var = "trt")
 
 \item{trt_var}{Treatment variable name}
 }
+\value{
+A data frame of filtered ALD by variables in formula.
+}
 \description{
 Prepare Aggregate Level Data
 }
+\keyword{internal}

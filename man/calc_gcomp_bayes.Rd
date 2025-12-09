@@ -32,18 +32,29 @@ Calculate draws of binary responses from posterior predictive distribution
 from the Bayesian G-computation method using Hamiltonian Monte Carlo.
 }
 \examples{
-\dontrun{
 strategy <- list(
-  formula = y ~ trt + age,
+  formula = y ~ trt:X1,
   family = binomial(),
+  rho = NA,
+  N = 1000L,
+  trt_var = "trt",
   iter = 2000,
   warmup = 500,
-  chains = 4
-)
-ipd <- data.frame(trt = c("A", "C"),
-                  y = c(1, 0),
-                  age = c(30, 40))
-ald <- data.frame()
-calc_gcomp_bayes(strategy, ipd, ald)
-}
+  chains = 4)
+
+ipd <- data.frame(trt = sample(c("A", "C"), size = 100, replace = TRUE),
+                  X1 = rnorm(100, 1, 1),
+                  y = sample(c(1,0), size = 100, prob = c(0.7,0.3), replace = TRUE))
+
+ald <- data.frame(trt = c(NA, NA, "B", "C", "B", "C"),
+                  variable = c("X1", "X1", "y", "y", NA, NA),
+                  statistic = c("mean", "sd", "sum", "sum", "N", "N"),
+                  value = c(0.5, 0.1, 10, 12, 20, 25))
+
+calc_gcomp_bayes(
+  strategy,
+  analysis_params = 
+    list(ipd = ipd, ald = ald, 
+         ref_trt = "C", ipd_comp = "A"))
+
 }

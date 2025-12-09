@@ -88,6 +88,8 @@ Available distributions are given in stats::Distributions. See \code{\link[copul
 \code{gcomp_bayes} class object
 
 \code{mim} class object
+
+Strategy list object
 }
 \description{
 Create a type of strategy class for each modelling approach.

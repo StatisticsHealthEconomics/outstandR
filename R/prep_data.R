@@ -1,10 +1,11 @@
-# prepare data functions
+# prepare data functions ---
 
 #' Prepare Individual Patient Data
 #'
 #' @param form Formula
 #' @param data Individual patient data
-#' 
+#' @returns Model frame
+#' @keywords internal
 prep_ipd <- function(form, data) {
   # select data according to formula
   model.frame(form, data = data)
@@ -15,6 +16,8 @@ prep_ipd <- function(form, data) {
 #' @param form Formula
 #' @param data A dataframe of aggregate level data
 #' @param trt_var Treatment variable name
+#' @returns A data frame of filtered ALD by variables in formula.
+#' @keywords internal
 #' 
 prep_ald <- function(form, data, trt_var = "trt") {
   
@@ -34,8 +37,15 @@ prep_ald <- function(form, data, trt_var = "trt") {
     .data$variable %in% c("y", term.labels) | .data$statistic == "N")
 }
 
-# Get study comparator treatment names
-#
+#' Get study comparator treatment names
+#'
+#' @param dat Data frame.
+#' @param ref_trt Reference treatment. String.
+#' @param trt_var Treatment variable. String default "trt".
+#'
+#' @returns Comparator string names
+#' @keywords internal
+#'
 get_comparator <- function(dat, ref_trt, trt_var = "trt") {
   
   all_trt <- levels(as.factor(dat[[trt_var]]))
@@ -48,7 +58,8 @@ get_comparator <- function(dat, ref_trt, trt_var = "trt") {
 #' @param trt Treatment
 #' @param ipd_trial A dataframe of IPD
 #' @param ald_trial A dataframe of ALD
-#' @return String
+#' @return String of reference treatment name.
+#' @keywords internal
 get_ref_trt <- function(ref_trt, trt, ipd_trial, ald_trial) {
   
   if (!is.na(ref_trt)) {
@@ -56,7 +67,6 @@ get_ref_trt <- function(ref_trt, trt, ipd_trial, ald_trial) {
     if (!ref_trt %in% names(ipd_trial) || !ref_trt %in% names(ald_trial)) {
       stop("Reference treatment not in IPD and ALD.", call. = FALSE)
     }
-    
     return(ref_trt)
   }
   

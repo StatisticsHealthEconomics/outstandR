@@ -6,6 +6,20 @@
 \usage{
 validate_outstandr(ipd_trial, ald_trial, strategy, CI, scale)
 }
+\arguments{
+\item{ipd_trial}{Individual patient data}
+
+\item{ald_trial}{Aggregate level data}
+
+\item{strategy}{Strategy object}
+
+\item{CI}{Confidence interval}
+
+\item{scale}{Outcome scale}
+}
+\value{
+No return value, called for side effects
+}
 \description{
 Input data validator
 }

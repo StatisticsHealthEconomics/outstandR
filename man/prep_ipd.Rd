@@ -11,6 +11,10 @@ prep_ipd(form, data)
 
 \item{data}{Individual patient data}
 }
+\value{
+Model frame
+}
 \description{
 Prepare Individual Patient Data
 }
+\keyword{internal}

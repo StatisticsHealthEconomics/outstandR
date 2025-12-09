@@ -39,16 +39,6 @@ comparator "A" (\code{0}) and reference "C" (\code{1}) treatments.
 \description{
 G-computation maximum likelihood mean outcomes by arm
 }
-\examples{
-\dontrun{
-formula <- y ~ trt
-family <- binomial()
-ipd <- data.frame(trt = c("A", "C"),
-                   y = c(1, 0))
-ald <- data.frame()
-gcomp_ml_means(formula, family, N = 1000, ipd = ipd, ald = ald)
-}
-}
 \seealso{
 \code{\link[=strategy_gcomp_ml]{strategy_gcomp_ml()}}, \code{\link[=gcomp_ml.boot]{gcomp_ml.boot()}}
 }

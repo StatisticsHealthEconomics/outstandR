@@ -7,14 +7,14 @@
 calculate_trial_variance_continuous(ald, tid, effect)
 }
 \arguments{
-\item{ald}{Aggregate level data}
+\item{ald}{Aggregate level data. Data frame in long format.}
 
 \item{tid}{Treatment ID}
 
-\item{effect}{Effect}
+\item{effect}{Effect name. String.}
 }
 \value{
-Value
+Numeric value of total variance.
 }
 \description{
 Calculate trial variance continuous

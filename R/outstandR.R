@@ -26,6 +26,7 @@
 #'   Containing statistics between each pair of treatments.
 #'   These are the mean, variances and confidence intervals,
 #'   for contrasts and absolute values.
+#'   
 #' @importFrom Rdpack reprompt
 #' @seealso [strategy_maic()] [strategy_stc()] [strategy_gcomp_ml()] [strategy_gcomp_bayes()]
 #' 
@@ -34,7 +35,6 @@
 #' 
 #' @export
 #' @examples
-#' \dontrun{
 #' data(AC_IPD_binY_contX)  # AC patient-level data
 #' data(BC_ALD_binY_contX)  # BC aggregate-level data
 #' 
@@ -60,7 +60,7 @@
 #' # Multiple imputation marginalization
 #' outstandR_mim <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
 #'                            strategy = strategy_mim(lin_form))
-#'} 
+#'
 outstandR <- function(ipd_trial, ald_trial, strategy,
                       ref_trt = NA,
                       CI = 0.95, scale = NULL, ...) {

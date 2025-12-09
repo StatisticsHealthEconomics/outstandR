@@ -16,8 +16,9 @@ get_ref_trt(ref_trt, trt, ipd_trial, ald_trial)
 \item{ald_trial}{A dataframe of ALD}
 }
 \value{
-String
+String of reference treatment name.
 }
 \description{
 Get reference treatment
 }
+\keyword{internal}

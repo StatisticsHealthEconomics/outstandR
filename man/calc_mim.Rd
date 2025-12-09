@@ -14,9 +14,20 @@ calc_mim(strategy, ipd, ald, ref_trt, comp_trt, ...)
 \item{ald}{Aggregate-level data. Long format summary statistics for each covariate and treatment outcomes.
 We assume a common distribution for each treatment arm.}
 
-\item{ref_trt, comp_trt}{Reference and comparison treatment names}
+\item{ref_trt}{Reference treatment. String.}
 
-\item{...}{Argument to pass to Stan model}
+\item{comp_trt}{Comparator treatment. String.}
+
+\item{...}{Additional argument to pass to Stan model}
+}
+\value{
+Named list:
+\describe{
+\item{mean_comp}{Comparator mean numeric value}
+\item{mean_ref}{Reference mean numeric value}
+\item{hats.v}{Point estimates for the variance in each synthesis}
+\item{M}{Number of posterior prediction draws}
+}
 }
 \description{
 Multiple imputation marginalization (MIM)

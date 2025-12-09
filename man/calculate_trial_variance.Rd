@@ -7,7 +7,7 @@
 calculate_trial_variance(ald, tid, effect, family)
 }
 \arguments{
-\item{ald}{Aggregate-level data.}
+\item{ald}{Aggregate-level data. Data frame.}
 
 \item{tid}{Treatment identifier used to extract relevant columns from \code{ald}.}
 
@@ -16,17 +16,18 @@ calculate_trial_variance(ald, tid, effect, family)
 \item{family}{A character string specifying the model family (e.g., "binomial", "gaussian").}
 }
 \value{
-The computed variance of treatment effects.
+Numeric computed variance of treatment effects.
 }
 \description{
 Computes the variance of treatment effects for a trial based on the specified family distribution.
 }
 \examples{
-\dontrun{
 ald <- data.frame(trt = c("B","C","B","C"),
                   variable = c(NA, NA, "y", "y"),
                   statistic = c("N", "N", "sum", "sum"),
-                  value = c(100, 100, 50, 60)
-calculate_trial_variance(ald, tid = "B", effect = "log_odds", family = "binomial")
-}
+                  value = c(100, 100, 50, 60))
+                  
+calculate_trial_variance(
+  ald, tid = "B", effect = "log_odds", family = "binomial")
+  
 }

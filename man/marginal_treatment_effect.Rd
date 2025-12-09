@@ -18,19 +18,17 @@ marginal_treatment_effect(ald, ref_trt = NA, comp_trt = NA, scale, family)
 \item{family}{A character string specifying the family distribution (e.g., "binomial").}
 }
 \value{
-The relative treatment effect.
+Numeric relative treatment effect.
 }
 \description{
 Computes the relative treatment effect from aggregate-level data using event counts.
 }
 \examples{
-\dontrun{
 ald <- data.frame(trt = c("B","C","B","C"),
                   variable = c(NA, NA, "y", "y"),
                   statistic = c("N", "N", "sum", "sum"),
-                  value = c(100, 100, 50, 60)
+                  value = c(100, 100, 50, 60))
                   
 marginal_treatment_effect(ald, ref_trt = "C", comp_trt = "B",
-                          scale = "log", family = "binomial")
-}
+                          scale = "log_odds", family = "binomial")
 }

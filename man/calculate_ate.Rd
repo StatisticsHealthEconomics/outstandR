@@ -19,14 +19,13 @@ calculate_ate(mean_comp, mean_ref, effect)
 }}
 }
 \value{
-The computed average treatment effect on the specified scale.
+Numeric computed average treatment effect on the specified scale.
 }
 \description{
 Computes the average treatment effect (ATE) based on the specified effect scale.
 }
 \examples{
-\dontrun{
 calculate_ate(mean_comp = 0.7, mean_ref = 0.5, effect = "log_odds")
 calculate_ate(mean_comp = 0.7, mean_ref = 0.5, effect = "risk_difference")
-}
+
 }

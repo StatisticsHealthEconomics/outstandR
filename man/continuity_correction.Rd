@@ -7,12 +7,12 @@
 continuity_correction(ald, correction = 0.5)
 }
 \arguments{
-\item{ald}{A dataframe of aggregate level data}
+\item{ald}{Aggregate level data. Data frame in long format.}
 
 \item{correction}{Continuity correction numeric size. Default to 0.5.}
 }
 \value{
-Corrected aggregate level data
+Corrected aggregate level data frame.
 }
 \description{
 Continuity Correction

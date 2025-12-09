@@ -6,12 +6,13 @@
 #' 
 #' @param x Objects of the class "outstandR"
 #' @param ... Additional arguments passed to other methods
+#' @return No return value, called for side effects
+#' 
 #' @importFrom pillar style_subtle style_bold 
 #' @importFrom cli cli_text col_green col_red
 #' @importFrom tibble tibble
+#' 
 #' @seealso [outstandR()]
-#' @import pillar
-#' @importFrom tibble tibble
 #' @export
 #' 
 print.outstandR <- function(x, ...) {

@@ -19,13 +19,6 @@
 #' 
 #' @seealso [strategy_gcomp_ml()]
 #' 
-#' @examples
-#' \dontrun{
-#' data <- data.frame(trt = c("A", "C"),
-#'                    y = c(1, 0))
-#' gcomp_ml.boot(data, indices = 1:2, formula = y ~ trt,
-#'               R = 100, family = binomial(), N = 1000, ald = NULL)
-#' }
 #' @keywords internal
 #' 
 gcomp_ml.boot <- function(data, indices,
@@ -50,18 +43,10 @@ gcomp_ml.boot <- function(data, indices,
 #'
 #' @return A named vector containing the marginal mean probabilities under
 #'   comparator "A" (`0`) and reference "C" (`1`) treatments.
+#'   
 #' @seealso [strategy_gcomp_ml()], [gcomp_ml.boot()]
 #' @importFrom copula normalCopula mvdc rMvdc
 #' @importFrom stats predict glm
-#' @examples
-#' \dontrun{
-#' formula <- y ~ trt
-#' family <- binomial()
-#' ipd <- data.frame(trt = c("A", "C"),
-#'                    y = c(1, 0))
-#' ald <- data.frame()
-#' gcomp_ml_means(formula, family, N = 1000, ipd = ipd, ald = ald)
-#' }
 #' @keywords internal
 #'
 gcomp_ml_means <- function(formula,
@@ -116,13 +101,6 @@ gcomp_ml_means <- function(formula,
 #' @return A data frame representing the synthetic pseudo-population.
 #' @importFrom copula normalCopula mvdc
 #' 
-#' @examples
-#' \dontrun{
-#' formula <- y ~ trt + age
-#' ipd <- data.frame(tr = c("A", "C"), y = c(1, 0), age = c(30, 40))
-#' ald <- data.frame()
-#' simulate_ALD_pseudo_pop(formula, ipd, ald, trt_var = "trt", N = 1000)
-#' }
 #' @keywords internal
 #' 
 simulate_ALD_pseudo_pop <- function(formula,
@@ -131,15 +109,18 @@ simulate_ALD_pseudo_pop <- function(formula,
                                     rho = NA,
                                     N = 1000,
                                     marginal_distns = NA,
-                                    marginal_params = NA) {
-  set.seed(1234)
+                                    marginal_params = NA,
+                                    seed = NULL) {
+  if (!is.null(seed)) {
+    set.seed(seed)
+  }
   
   covariate_names <- get_covariate_names(formula)
   covariate_names <- covariate_names[covariate_names != trt_var]  # remove treatment
   n_covariates <- length(covariate_names)
   
   if (n_covariates == 0) {
-    stop("No covariates found to simulate.")
+    stop("No covariates found to simulate.", call. = FALSE)
   }
   
   if (is.character(marginal_distns) && is.list(marginal_params)) {

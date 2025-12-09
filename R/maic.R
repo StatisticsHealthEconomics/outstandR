@@ -47,6 +47,7 @@ maic_weights <- function(X_EM) {
 #'
 #' @param beta Beta coefficient to find
 #' @param X Covariate value matrix, centred
+#' @return Numeric value
 #' @keywords internal
 #' 
 Q <- function(beta, X) {
@@ -162,9 +163,9 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
 
 #' Calculate MAIC
 #' 
-#' @param strategy Strategy
+#' @param strategy Strategy object
 #' @param analysis_params Analysis parameters; list
-#' @return Treatment means
+#' @return List of numeric treatment means.
 #' @export
 #' @importFrom boot boot
 #' 

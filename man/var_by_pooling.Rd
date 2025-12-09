@@ -13,6 +13,9 @@ var_by_pooling(M, bar.v, b)
 
 \item{b}{"between" variance (sample variance of point estimates)}
 }
+\value{
+Numeric value of variance estimate using pooling.
+}
 \description{
 Use combining rules to estimate.
 }

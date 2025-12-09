@@ -16,22 +16,25 @@
 #' @param ... Additional arguments
 #' 
 #' @return A list containing:
-#' \describe{
-#'   \item{mean}{Estimated mean treatment effect.}
-#'   \item{var}{Estimated variance of the treatment effect.}
+#' \itemize{
+#'   \item \code{contrasts}: A list with elements \code{mean} and \code{var}.
+#'   \item \code{absolute}: A list with elements \code{mean} and \code{var}.
 #' }
 #' @examples
-#' \dontrun{
-#' strategy <- strategy_maic()
-#' ipd <- data.frame(trt = sample(c("A", "C"), 100, replace = TRUE),
+#' strategy <- strategy_maic(formula = as.formula(y~trt:X1), family = binomial())
+# 
+#' ipd <- data.frame(trt = sample(c("A", "C"), size = 100, replace = TRUE),
 #'                   X1 = rnorm(100, 1, 1),
-#'                   y = rnorm(100, 10, 2))
+#'                   y = sample(c(1,0), size = 100, prob = c(0.7,0.3), replace = TRUE))
+#' 
 #' ald <- data.frame(trt = c(NA, "B", "C", "B", "C"),
 #'                   variable = c("X1", "y", "y", NA, NA),
 #'                   statistic = c("mean", "sum", "sum", "N", "N"),
 #'                   value = c(0.5, 10, 12, 20, 25))
-#' calc_IPD_stats(strategy, ipd, ald, scale = "log_odds")
-#' }
+#' 
+#' calc_IPD_stats(strategy,
+#'   analysis_params = list(ipd = ipd, ald = ald, scale = "log_odds"))
+#'   
 #' @export
 #' 
 calc_IPD_stats <- function(strategy, analysis_params, ...)
@@ -44,7 +47,7 @@ calc_IPD_stats <- function(strategy, analysis_params, ...)
 calc_IPD_stats.default <- function(...) {
   strategy_classes <- sub("calc_IPD_stats\\.", "", methods(calc_IPD_stats)[-1])
   avail_strategies <- paste0("strategy_", strategy_classes, "()", collapse = ", ")
-  stop(paste0("strategy not available. Select from ", avail_strategies))
+  stop(paste0("strategy not available. Select from ", avail_strategies), call. = FALSE)
 }
 
 

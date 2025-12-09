@@ -28,18 +28,29 @@ A list containing:
 Computes the mean difference in treatment effects using bootstrap resampling.
 }
 \examples{
-\dontrun{
 strategy <- list(
-  R = 1000,
-  formula = y ~ trt + age,
+  formula = y ~ trt:X1,
   family = binomial(),
-  trt_var = "treatment",
-  N = 1000
-)
-ipd <- data.frame(trt = c("A", "C"),
-                  y = c(1, 0),
-                  age = c(30, 40))
-ald <- data.frame()
-calc_gcomp_ml(strategy, ipd, ald)
-}
+  rho = NA,
+  N = 1000L,
+  R = 1000L,
+  marginal_distns = NA,
+  marginal_params = NA,
+  trt_var = "trt")
+
+ipd <- data.frame(trt = sample(c("A", "C"), size = 100, replace = TRUE),
+                  X1 = rnorm(100, 1, 1),
+                  y = sample(c(1,0), size = 100, prob = c(0.7,0.3), replace = TRUE))
+
+ald <- data.frame(trt = c(NA, NA, "B", "C", "B", "C"),
+                  variable = c("X1", "X1", "y", "y", NA, NA),
+                  statistic = c("mean", "sd", "sum", "sum", "N", "N"),
+                  value = c(0.5, 0.1, 10, 12, 20, 25))
+
+calc_gcomp_ml(
+  strategy,
+  analysis_params = 
+    list(ipd = ipd, ald = ald, 
+         ref_trt = "C", ipd_comp = "A"))
+         
 }

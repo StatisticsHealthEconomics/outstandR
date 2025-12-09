@@ -1,8 +1,9 @@
 
-#' Convert from long to wide format
+#' Convert aggregate data from long to wide format
 #'
 #' @param df A Dataframe of ALD
-#'
+#' @returns Data frame in wide format
+#' 
 #' @importFrom tidyr unite pivot_wider
 #' @importFrom stringr str_replace
 #' @importFrom dplyr filter arrange select bind_cols
@@ -40,10 +41,11 @@ reshape_ald_to_wide <- function(df) {
   dplyr::bind_cols(variable_df, y_df)
 }
 
-#' Convert from wide to long format
+#' Convert aggregate data from wide to long format
 #'
 #' @param df A dataframe of ALD
-#'
+#' @returns Data frame in long format
+#' 
 #' @importFrom tidyr pivot_longer separate
 #' @importFrom dplyr select mutate bind_rows arrange
 #' 

@@ -7,14 +7,14 @@
 calculate_trial_mean_count(ald, tid, effect)
 }
 \arguments{
-\item{ald}{A Dataframe of aggregate level data}
+\item{ald}{Aggregate level data. Data frame in long format.}
 
 \item{tid}{Treatment ID}
 
-\item{effect}{Effect}
+\item{effect}{Effect name. String.}
 }
 \value{
-Value
+Numeric mean value.
 }
 \description{
 Calculate Trial Mean Count Data

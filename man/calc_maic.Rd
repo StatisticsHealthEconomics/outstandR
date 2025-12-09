@@ -7,12 +7,12 @@
 calc_maic(strategy, analysis_params)
 }
 \arguments{
-\item{strategy}{Strategy}
+\item{strategy}{Strategy object}
 
 \item{analysis_params}{Analysis parameters; list}
 }
 \value{
-Treatment means
+List of numeric treatment means.
 }
 \description{
 Calculate MAIC

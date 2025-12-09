@@ -3,8 +3,17 @@
 #' 
 #' @param strategy Strategy object
 #' @eval study_data_args(include_ipd = TRUE, include_ald = TRUE)
-#' @param ref_trt,comp_trt Reference and comparison treatment names
-#' @param ... Argument to pass to Stan model
+#' @param ref_trt Reference treatment. String.
+#' @param comp_trt Comparator treatment. String.
+#' @param ... Additional argument to pass to Stan model
+#' 
+#' @return Named list:
+#' \describe{
+#'    \item{mean_comp}{Comparator mean numeric value}
+#'    \item{mean_ref}{Reference mean numeric value}
+#'    \item{hats.v}{Point estimates for the variance in each synthesis}
+#'    \item{M}{Number of posterior prediction draws}
+#' }
 #' 
 #' @importFrom rstanarm posterior_predict stan_glm
 #' @importFrom tibble tibble lst
@@ -87,7 +96,7 @@ calc_mim <- function(strategy,
 #' @param M Number of syntheses used in analysis stage (high for low Monte Carlo error)
 #' @param bar.v "within" variance (average of variance point estimates)
 #' @param b "between" variance (sample variance of point estimates)
-#'
+#' @return Numeric value of Wald-type interval estimates.
 #' @keywords internal
 #' 
 wald_type_interval <- function(M, bar.v, b) {
@@ -101,7 +110,7 @@ wald_type_interval <- function(M, bar.v, b) {
 #' @param M Number of syntheses used in analysis stage (high for low Monte Carlo error)
 #' @param bar.v "within" variance (average of variance point estimates)
 #' @param b "between" variance (sample variance of point estimates)
-#' 
+#' @return Numeric value of variance estimate using pooling.
 #' @keywords internal
 #' 
 var_by_pooling <- function(M, bar.v, b) {

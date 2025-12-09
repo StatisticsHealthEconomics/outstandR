@@ -14,7 +14,7 @@ estimate_var_sandwich(strategy, ipd_data, ...)
 \item{...}{Additional arguments}
 }
 \value{
-numeric
+Numeric variance estimate
 }
 \description{
 Estimate Variance Sandwich Estimator

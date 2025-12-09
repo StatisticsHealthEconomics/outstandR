@@ -7,7 +7,21 @@
 #' @param ipd_stats,ald_stats 
 #' @param CI Confidence interval 1-alpha; dafault 0.95
 #'
-#' @returns List
+#' @returns List of ITC output:
+#' \itemize{
+#'   \item \code{contrasts}: A list containing:
+#'     \itemize{
+#'       \item \code{means}
+#'       \item \code{variances}
+#'       \item \code{CI}
+#'     }
+#'   \item \code{absolute}: A list containing:
+#'     \itemize{
+#'       \item \code{means}
+#'       \item \code{variances}
+#'       \item \code{CI}
+#'     }
+#' }
 #' @keywords internal
 #'
 result_stats <- function(ipd_stats,

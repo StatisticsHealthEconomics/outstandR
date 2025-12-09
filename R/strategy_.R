@@ -1,5 +1,4 @@
-
-# create S3 class for each approach
+# create S3 class for each approach ---
 
 #' @rdname strategy
 #' 
@@ -265,6 +264,7 @@ strategy_mim <- function(formula = NULL,
 #' @param strategy Class name from `strategy_maic`, `strategy_stc`, `strategy_gcomp_ml`, `strategy_gcomp_bayes`
 #' @eval reg_args(include_formula = TRUE, include_family = TRUE)
 #' @param ... Additional arguments
+#' @returns Strategy list object
 #'
 #' @export
 #'
@@ -272,17 +272,17 @@ new_strategy <- function(strategy, ...) {
   structure(list(...), class = c(strategy, "strategy", "list"))
 }
 
-#
+#' @keywords internal
 is_family <- function(obj) inherits(obj, "family")
 
-#
+#' @keywords internal
 check_family <- function(obj) {
   if (!is_family(obj)) {
-    stop("family must be a family object")
+    stop("family must be a family object", call. = FALSE)
   }
 }
 
-#
+#' @keywords internal
 check_distns <- function(formula,
                          marginal_distns,
                          marginal_params) {
@@ -297,12 +297,12 @@ check_distns <- function(formula,
   
   if (length(marginal_distns) != n_covariates) {
     stop("Number of marginal distributions must match
-           the number of covariates in the formula.")
+           the number of covariates in the formula.", call. = FALSE)
   }
   
   if (length(marginal_params) != n_covariates) {
     stop("Number of marginal parameter lists must match
-           the number of covariates in the formula.")
+           the number of covariates in the formula.", call. = FALSE)
   }
 }
 

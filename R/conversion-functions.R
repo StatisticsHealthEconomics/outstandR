@@ -9,7 +9,8 @@
 # converted_effect <- convert_effect(
 #   coef_est, link = strategy$family$link, to_scale = scale, P0)
 
-# transformation functions
+# transformation functions ---
+
 convert_lor_to_or <- function(lor, P0 = NULL) exp(lor)
 convert_or_to_lor <- function(or, P0 = NULL) log(or)
 
@@ -23,6 +24,8 @@ convert_rr_to_rd <- function(rr, P0) P0 * (rr - 1)
 convert_rd_to_rr <- function(rd, P0) 1 + (rd / P0)
 
 #' Conversion Map
+#' @returns Scale look-up list
+#' @keywords internal
 #' 
 conversion_map <- function() {
   list(
@@ -48,7 +51,8 @@ conversion_map <- function() {
 #' @param from From scale
 #' @param to To scale
 #' @param visited Path
-#'
+#' @return Either list of step to convert between scales or `NULL` if not possible.
+#' 
 #' @examples
 #' find_conversion_path("log_odds", "relative_risk")
 #' 
@@ -84,7 +88,7 @@ find_conversion_path <- function(from, to, visited = c()) {
 #' @param link Link
 #' @param to To
 #' @param P0 P0
-#' @return Effect
+#' @return Numeric converted effect size.
 #' 
 convert_effect <- function(value, link, to, P0) {
   

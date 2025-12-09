@@ -19,8 +19,9 @@ test_that("different combinations of covariates in formula", {
   strat_13 <- strategy_mim(formula = as.formula("y ~ trt*X1 + X3"))
   strat_1 <- strategy_mim(formula = as.formula("y ~ trt*X1"))
   
-  expect_length(outstandR(AC_IPD, BC_ALD, strategy = strat_1234), 2)
-  expect_named(outstandR(AC_IPD, BC_ALD, strategy = strat_1234),
-               expected = c("contrasts", "absolute"))
+  out_1234 <- outstandR(AC_IPD, BC_ALD, strategy = strat_1234)
+  
+  expect_length(out_1234, 2)
+  expect_named(out_1234, expected = c("contrasts", "absolute"))
 })
 

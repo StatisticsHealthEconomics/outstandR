@@ -12,7 +12,21 @@ result_stats(ipd_stats, ald_stats, CI = 0.95)
 \item{CI}{Confidence interval 1-alpha; dafault 0.95}
 }
 \value{
-List
+List of ITC output:
+\itemize{
+\item \code{contrasts}: A list containing:
+\itemize{
+\item \code{means}
+\item \code{variances}
+\item \code{CI}
+}
+\item \code{absolute}: A list containing:
+\itemize{
+\item \code{means}
+\item \code{variances}
+\item \code{CI}
+}
+}
 }
 \description{
 Combining output from aggregate level data studies BC and

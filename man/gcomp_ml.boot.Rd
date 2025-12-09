@@ -46,14 +46,6 @@ This is a statistic function intended for use with a bootstrapping function
 a relative treatment effect (e.g., log odds ratio, log relative risk, or
 risk difference) using G-computation with maximum likelihood.
 }
-\examples{
-\dontrun{
-data <- data.frame(trt = c("A", "C"),
-                   y = c(1, 0))
-gcomp_ml.boot(data, indices = 1:2, formula = y ~ trt,
-              R = 100, family = binomial(), N = 1000, ald = NULL)
-}
-}
 \seealso{
 \code{\link[=strategy_gcomp_ml]{strategy_gcomp_ml()}}
 }
