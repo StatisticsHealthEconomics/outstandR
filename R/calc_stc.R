@@ -1,7 +1,9 @@
 
 #' Calculate simulated treatment comparison statistics
 #'
-#' @param strategy Strategy
+#' @param strategy An object of class `strategy` created by functions such as 
+#'   [strategy_maic()], [strategy_stc()], or [strategy_mim()]. 
+#'   Contains modelling details like the formula and family.
 #' @param analysis_params List of analysis parameters
 #' @param ... Additional arguments
 #'
@@ -11,7 +13,7 @@
 #'   \item{`mean_C`}{Mean for reference treatment group "C".}
 #' }
 #' @importFrom stats glm
-#' @export
+#' @keywords internal
 #' 
 calc_stc <- function(strategy, analysis_params, ...) {
   
@@ -36,7 +38,7 @@ calc_stc <- function(strategy, analysis_params, ...) {
          names(coef_fit), value = TRUE)
   
   # probability for control and treatment group
-  # estimating treatment effect at means because of centring
+  # estimating treatment effect at means because of centering
   linkinv <- strategy$family$linkinv
   mean_C <- linkinv(coef_fit[1])
   mean_A <- linkinv(coef_fit[1] + coef_fit[treat_coef_name])

@@ -7,7 +7,9 @@
 calc_maic(strategy, analysis_params)
 }
 \arguments{
-\item{strategy}{Strategy object}
+\item{strategy}{An object of class \code{strategy} created by functions such as
+\code{\link[=strategy_maic]{strategy_maic()}}, \code{\link[=strategy_stc]{strategy_stc()}}, or \code{\link[=strategy_mim]{strategy_mim()}}.
+Contains modelling details like the formula and family.}
 
 \item{analysis_params}{Analysis parameters; list}
 }
@@ -17,3 +19,4 @@ List of numeric treatment means.
 \description{
 Calculate MAIC
 }
+\keyword{internal}

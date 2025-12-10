@@ -163,10 +163,12 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
 
 #' Calculate MAIC
 #' 
-#' @param strategy Strategy object
+#' @param strategy An object of class `strategy` created by functions such as 
+#'   [strategy_maic()], [strategy_stc()], or [strategy_mim()]. 
+#'   Contains modelling details like the formula and family.
 #' @param analysis_params Analysis parameters; list
 #' @return List of numeric treatment means.
-#' @export
+#' @keywords internal
 #' @importFrom boot boot
 #' 
 calc_maic <- function(strategy,

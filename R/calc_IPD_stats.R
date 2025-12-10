@@ -8,11 +8,12 @@
 #' and G-computation via Maximum Likelihood Estimation (MLE) or Bayesian inference.
 #' 
 #' @param strategy A list corresponding to different modelling approaches
-#' @param analysis_params A list containing: 
-#'   - `ald` Aggregate-level trial data
-#'   - `ref_trt` Treatment labels reference (common; e.g. placebo)
-#'   - `comp_trt` Treatment labels comparator
-#'   - `scale` A scaling parameter for the calculation. From "log_odds", "risk_difference", "log_relative_risk".
+#' @param analysis_params A list containing:
+#'   - `ipd`: Individual-level patient data (data frame)
+#'   - `ald`: Aggregate-level trial data (data frame)
+#'   - `ref_trt`: Treatment label for the reference arm (common; e.g., "C")
+#'   - `ipd_comp`: Treatment label for the comparator arm in the IPD (e.g., "A")
+#'   - `scale`: Scaling parameter ("log_odds", "risk_difference", "log_relative_risk")
 #' @param ... Additional arguments
 #' 
 #' @return A list containing:
@@ -51,7 +52,9 @@ calc_IPD_stats.default <- function(...) {
 }
 
 
-#' @param strategy Strategy
+#' @param strategy An object of class `strategy` created by functions such as 
+#'   [strategy_maic()], [strategy_stc()], or [strategy_mim()]. 
+#'   Contains modelling details like the formula and family.
 #' @param analysis_params Analysis parameters
 #' @param ... Additional arguments
 #'

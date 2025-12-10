@@ -74,7 +74,7 @@ Available distributions are given in stats::Distributions. See \code{\link[copul
 
 \item{N}{Synthetic sample size for g-computation}
 
-\item{strategy}{Class name from \code{strategy_maic}, \code{strategy_stc}, \code{strategy_gcomp_ml}, \code{strategy_gcomp_bayes}}
+\item{strategy}{Class name from \code{strategy_maic}, \code{strategy_stc}, \code{strategy_gcomp_ml}, \code{strategy_gcomp_bayes}, \code{strategy_mim}}
 
 \item{...}{Additional arguments}
 }

@@ -3,7 +3,9 @@
 #' 
 #' @param ipd_trial Individual patient data
 #' @param ald_trial Aggregate level data
-#' @param strategy Strategy object
+#' @param strategy An object of class `strategy` created by functions such as 
+#'   [strategy_maic()], [strategy_stc()], or [strategy_mim()]. 
+#'   Contains modelling details like the formula and family.
 #' @param CI Confidence interval
 #' @param scale Outcome scale
 #' @returns No return value, called for side effects

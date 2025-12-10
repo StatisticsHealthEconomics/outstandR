@@ -7,7 +7,9 @@
 calc_mim(strategy, ipd, ald, ref_trt, comp_trt, ...)
 }
 \arguments{
-\item{strategy}{Strategy object}
+\item{strategy}{An object of class \code{strategy} created by functions such as
+\code{\link[=strategy_maic]{strategy_maic()}}, \code{\link[=strategy_stc]{strategy_stc()}}, or \code{\link[=strategy_mim]{strategy_mim()}}.
+Contains modelling details like the formula and family.}
 
 \item{ipd}{Individual-level patient data. Dataframe with one row per patient with outcome, treatment and covariate columns.}
 

@@ -1,7 +1,9 @@
 
 #' Multiple imputation marginalization (MIM)
 #' 
-#' @param strategy Strategy object
+#' @param strategy An object of class `strategy` created by functions such as 
+#'   [strategy_maic()], [strategy_stc()], or [strategy_mim()]. 
+#'   Contains modelling details like the formula and family.
 #' @eval study_data_args(include_ipd = TRUE, include_ald = TRUE)
 #' @param ref_trt Reference treatment. String.
 #' @param comp_trt Comparator treatment. String.

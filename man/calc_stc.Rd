@@ -7,7 +7,9 @@
 calc_stc(strategy, analysis_params, ...)
 }
 \arguments{
-\item{strategy}{Strategy}
+\item{strategy}{An object of class \code{strategy} created by functions such as
+\code{\link[=strategy_maic]{strategy_maic()}}, \code{\link[=strategy_stc]{strategy_stc()}}, or \code{\link[=strategy_mim]{strategy_mim()}}.
+Contains modelling details like the formula and family.}
 
 \item{analysis_params}{List of analysis parameters}
 
@@ -23,3 +25,4 @@ A list:
 \description{
 Calculate simulated treatment comparison statistics
 }
+\keyword{internal}
