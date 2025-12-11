@@ -13,7 +13,9 @@ gcomp_ml_means(
   rho = NA,
   N = 1000,
   ref_trt,
-  comp_trt
+  comp_trt,
+  marginal_distns = NA,
+  marginal_params = NA
 )
 }
 \arguments{
@@ -31,6 +33,8 @@ We assume a common distribution for each treatment arm.}
 \item{rho}{A named square matrix of covariate correlations; default NA.}
 
 \item{N}{Synthetic sample size for g-computation}
+
+\item{marginal_distns, marginal_params}{Marginal distributions and parameters}
 }
 \value{
 A named vector containing the marginal mean probabilities under

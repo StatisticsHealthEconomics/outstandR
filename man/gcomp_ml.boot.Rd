@@ -15,6 +15,8 @@ gcomp_ml.boot(
   comp_trt = NA,
   rho = NA,
   N = 1000,
+  marginal_distns = NA,
+  marginal_params = NA,
   ald
 )
 }
@@ -34,6 +36,8 @@ See stats::family() for more details.}
 for synthetic data generation. Defaults to \code{NA}, assuming independence.}
 
 \item{N}{Synthetic sample size for G-computation}
+
+\item{marginal_distns, marginal_params}{Marginal distributions and parameters}
 
 \item{ald}{A data frame of aggregate-level data providing covariate distributions.}
 }

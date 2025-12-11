@@ -62,8 +62,12 @@ calc_gcomp_bayes <- function(strategy,
   ald <- analysis_params$ald 
   ref_trt <- analysis_params$ref_trt
   comp_trt <- analysis_params$ipd_comp
+  marginal_distns <- strategy$marginal_distns
+  marginal_params <- strategy$marginal_params
   
-  x_star <- simulate_ALD_pseudo_pop(formula, ipd, ald, trt_var, rho, N)
+  x_star <- simulate_ALD_pseudo_pop(formula, ipd, ald, trt_var, rho, N,
+                                    marginal_distns = marginal_distns,
+                                    marginal_params = marginal_params)
   
   # outcome logistic regression fitted to IPD using MCMC (Stan)
   outcome.model <-
@@ -84,7 +88,7 @@ calc_gcomp_bayes <- function(strategy,
   
   # draw responses from posterior predictive distribution
   y.star.comp <- rstanarm::posterior_predict(outcome.model, newdata = data_comp)
-  y.star.ref <- rstanarm::posterior_predict(outcome.model, newdata = data_ref)
+  y.star.ref  <- rstanarm::posterior_predict(outcome.model, newdata = data_ref)
   
   # posterior means for each treatment group
   list(
@@ -151,6 +155,8 @@ calc_gcomp_ml <- function(strategy,
          comp_trt = analysis_params$ipd_comp,
          rho = strategy$rho,
          N = strategy$N,
+         marginal_distns = strategy$marginal_distns,
+         marginal_params = strategy$marginal_params,
          data = analysis_params$ipd,
          ald = analysis_params$ald)
   
