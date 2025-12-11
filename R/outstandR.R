@@ -63,7 +63,10 @@
 #'
 outstandR <- function(ipd_trial, ald_trial, strategy,
                       ref_trt = NA,
-                      CI = 0.95, scale = NULL, ...) {
+                      CI = 0.95, 
+                      scale = NULL, 
+                      var_method = "sample",
+                      ...) {
   
   validate_outstandr(ipd_trial, ald_trial, strategy, CI, scale)
 
@@ -87,7 +90,8 @@ outstandR <- function(ipd_trial, ald_trial, strategy,
     trt_var = trt_var,
     ref_trt = ref_trt,
     ipd_comp = ipd_comp,
-    ald_comp = ald_comp
+    ald_comp = ald_comp,
+    var_method = var_method
   )
   
   ipd_stats <- calc_IPD_stats(strategy, analysis_params, ...) 

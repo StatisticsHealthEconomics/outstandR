@@ -129,6 +129,9 @@ IPD_stat_factory <- function(ipd_fun) {
     ald <- analysis_params$ald
     scale <- analysis_params$scale
     
+    var_method <- analysis_params$var_method
+    if (is.null(var_method)) var_method <- "sample"
+    
     out <- ipd_fun(strategy, analysis_params, ...)
     
     # relative treatment effect
@@ -141,6 +144,8 @@ IPD_stat_factory <- function(ipd_fun) {
       var_est <- estimate_var_sandwich(strategy, analysis_params, ...)
     } else if (var_method == "sample") {
       var_est <- var(hat.delta.AC, na.rm = TRUE)
+    } else {
+      stop("Variance method not known.", call. = FALSE)
     }
     
     p_est <- sapply(out, mean, na.rm = TRUE)
