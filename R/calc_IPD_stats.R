@@ -138,8 +138,7 @@ IPD_stat_factory <- function(ipd_fun) {
     coef_est <- mean(hat.delta.AC, na.rm = TRUE)
     
     if (var_method == "sandwich") {
-      ##TODO:
-      var_est <- estimate_var_sandwich(strategy, ipd, ...)
+      var_est <- estimate_var_sandwich(strategy, analysis_params, ...)
     } else if (var_method == "sample") {
       var_est <- var(hat.delta.AC, na.rm = TRUE)
     }
