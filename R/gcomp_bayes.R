@@ -70,7 +70,7 @@ calc_gcomp_bayes <- function(strategy,
                                     marginal_params = marginal_params)
   
   # outcome logistic regression fitted to IPD using MCMC (Stan)
-  outcome.model <-
+  outcome_model <-
     rstanarm::stan_glm(formula,
                        data = ipd,
                        family = family,
@@ -87,13 +87,17 @@ calc_gcomp_bayes <- function(strategy,
   ##TODO: is this going to work for all of the different data types?
   
   # draw responses from posterior predictive distribution
-  y.star.comp <- rstanarm::posterior_predict(outcome.model, newdata = data_comp)
-  y.star.ref  <- rstanarm::posterior_predict(outcome.model, newdata = data_ref)
+  y.star.comp <- rstanarm::posterior_predict(outcome_model, newdata = data_comp)
+  y.star.ref  <- rstanarm::posterior_predict(outcome_model, newdata = data_ref)
   
   # posterior means for each treatment group
   list(
-    mean_A = rowMeans(y.star.comp),
-    mean_C = rowMeans(y.star.ref))
+    means = list(
+      A = rowMeans(y.star.comp),
+      C = rowMeans(y.star.ref)),
+    model = list(
+      fit = outcome_model)
+  )
 }
 
 
@@ -145,23 +149,34 @@ calc_gcomp_bayes <- function(strategy,
 #'
 calc_gcomp_ml <- function(strategy,
                           analysis_params) {
+  common_args <- list(
+    formula = strategy$formula,
+    family = strategy$family,
+    trt_var = strategy$trt_var,
+    ref_trt = analysis_params$ref_trt,
+    comp_trt = analysis_params$ipd_comp,
+    rho = strategy$rho,
+    N = strategy$N,
+    marginal_distns = strategy$marginal_distns,
+    marginal_params = strategy$marginal_params,
+    ald = analysis_params$ald)
   
-  args_list <- 
-    list(R = strategy$R,
-         formula = strategy$formula,
-         family = strategy$family,
-         trt_var = strategy$trt_var,
-         ref_trt = analysis_params$ref_trt,
-         comp_trt = analysis_params$ipd_comp,
-         rho = strategy$rho,
-         N = strategy$N,
-         marginal_distns = strategy$marginal_distns,
-         marginal_params = strategy$marginal_params,
-         data = analysis_params$ipd,
-         ald = analysis_params$ald)
+  # single run for fit
+  args_orig <- c(common_args, list(ipd = analysis_params$ipd))
+  original_run <- do.call(gcomp_ml_means, args_orig)
   
-  gcomp_boot <- do.call(boot::boot, c(statistic = gcomp_ml.boot, args_list))
+  args_boot <- c(
+    common_args, list(
+      data = analysis_params$ipd, 
+      R = strategy$R))
   
-  list(mean_A = gcomp_boot$t[, 2],
-       mean_C = gcomp_boot$t[, 1])  
+  gcomp_boot <- do.call(boot::boot, c(statistic = gcomp_ml.boot, args_boot))
+  
+  list(
+    means = list(
+      A = gcomp_boot$t[, 2],
+      C = gcomp_boot$t[, 1]),
+    model = list(
+      fit = original_run$model)
+  )
 }

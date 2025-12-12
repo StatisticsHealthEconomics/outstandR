@@ -43,6 +43,9 @@ calc_stc <- function(strategy, analysis_params, ...) {
   mean_C <- linkinv(coef_fit[1])
   mean_A <- linkinv(coef_fit[1] + coef_fit[treat_coef_name])
   
-  list(mean_A = mean_A,
-       mean_C = mean_C)
+  list(
+    means = list(
+      A = mean_A,
+      C = mean_C),
+    model = fit)
 }

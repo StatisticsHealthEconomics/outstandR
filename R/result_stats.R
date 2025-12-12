@@ -5,23 +5,18 @@
 #' adjusted individual level data studies AC into a single object.
 #'
 #' @param ipd_stats,ald_stats 
-#' @param CI Confidence interval 1-alpha; dafault 0.95
+#' @param CI Confidence interval 1-alpha; default 0.95
 #'
 #' @returns List of ITC output:
-#' \itemize{
-#'   \item \code{contrasts}: A list containing:
-#'     \itemize{
-#'       \item \code{means}
-#'       \item \code{variances}
-#'       \item \code{CI}
-#'     }
-#'   \item \code{absolute}: A list containing:
-#'     \itemize{
-#'       \item \code{means}
-#'       \item \code{variances}
-#'       \item \code{CI}
-#'     }
-#' }
+#' * `contrasts`: A list containing:
+#'     * `means`
+#'     * `variances`
+#'     * `CI`
+#' * `absolute`: A list containing:
+#'     * `means`
+#'     * `variances`
+#'     * `CI`
+#'     
 #' @keywords internal
 #'
 result_stats <- function(ipd_stats,
@@ -50,6 +45,11 @@ result_stats <- function(ipd_stats,
     AB = contrasts$AB + z_vals*as.vector(sqrt(contrast_variances$AB)),
     AC = contrasts$AC + z_vals*as.vector(sqrt(contrast_variances$AC)),
     BC = contrasts$BC + z_vals*as.vector(sqrt(contrast_variances$BC)))
+  
+  
+  ##TODO: MIM CI
+  # lci.mim <- coef_est + qt(0.025, df = model$nu) * sqrt(var_est)
+  # uci.mim <- coef_est + qt(0.975, df = model$nu) * sqrt(var_est)
   
   # absolute values
   

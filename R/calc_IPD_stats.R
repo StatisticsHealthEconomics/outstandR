@@ -85,10 +85,10 @@ calc_IPD_stats.mim <- function(strategy,
              ...)
   
   hat.delta.AC <-
-    calculate_ate(mis_res$mean_comp, mis_res$mean_ref,
+    calculate_ate(mis_res$means$A, mis_res$means$C,
                   effect = scale)
   
-  M <- mis_res$M
+  M <- mis_res$model$M
   
   # quantities originally defined by Rubin (1987) for multiple imputation
   coef_est <- mean(hat.delta.AC)   # average of treatment effect point estimates
@@ -97,18 +97,16 @@ calc_IPD_stats.mim <- function(strategy,
   
   var_est <- var_by_pooling(M, bar.v, b)
   nu <- wald_type_interval(M, bar.v, b)
-  
-  ##TODO: how are these used?
-  lci.Delta <- coef_est + qt(0.025, df = nu) * sqrt(var_est)
-  uci.Delta <- coef_est + qt(0.975, df = nu) * sqrt(var_est)
-  
+
   list(
     contrasts = list(
       mean = coef_est,
       var = var_est),
     absolute = list(
       mean = NA,  #p_est,  ##TODO:
-      var = NA)   #p_var)
+      var = NA),  #p_var)
+    model = c(nu = nu, 
+              mis_res$model)
   )
 } 
 
@@ -134,8 +132,11 @@ IPD_stat_factory <- function(ipd_fun) {
     
     out <- ipd_fun(strategy, analysis_params, ...)
     
+    mean_comp <- out$means$A
+    mean_ref <- out$means$C
+    
     # relative treatment effect
-    hat.delta.AC <- calculate_ate(out$mean_A, out$mean_C,
+    hat.delta.AC <- calculate_ate(mean_comp, mean_ref,
                                   effect = scale)
     
     coef_est <- mean(hat.delta.AC, na.rm = TRUE)
@@ -157,7 +158,8 @@ IPD_stat_factory <- function(ipd_fun) {
         var = var_est),
       absolute = list(
         mean = p_est,
-        var = p_var)
+        var = p_var),
+      model = out$model
     )
   }
 }

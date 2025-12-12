@@ -17,7 +17,7 @@
 #' 
 print.outstandR <- function(x, ...) {
   if (!requireNamespace("tibble", quietly = TRUE) || !requireNamespace("pillar", quietly = TRUE)) {
-    stop("Please install the 'tibble' and 'pillar' packages for colored tibble output.")
+    stop("Please install the 'tibble' and 'pillar' packages for colored tibble output.", call. = FALSE)
   }
   
   ref_trt <- attr(x, "ref_trt")
@@ -31,7 +31,7 @@ print.outstandR <- function(x, ...) {
   cat("Aggregate level data study:", pillar::style_subtle("BC"), "\n")
   cat("Confidence interval level:", pillar::style_subtle(attr(x, "CI")), "\n\n")
   
-  # Function to color CI values
+  # Function to colour CI values
   color_ci <- function(value) {
     if (is.na(value)) pillar::style_subtle("NA")
     else if (value > 0) cli_text(col_green(sprintf("%.3f", value)))

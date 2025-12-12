@@ -34,9 +34,10 @@ gcomp_ml.boot <- function(data, indices,
                           ald) {
   dat <- data[indices, ]
   
-  gcomp_ml_means(formula, family, dat, ald, trt_var, rho, N,
-                 ref_trt, comp_trt,
-                 marginal_distns, marginal_params)
+  res <- gcomp_ml_means(formula, family, dat, ald, trt_var, rho, N,
+                        ref_trt, comp_trt,
+                        marginal_distns, marginal_params)
+  return(res$stats)
 }
 
 
@@ -48,8 +49,9 @@ gcomp_ml.boot <- function(data, indices,
 #' @param N Synthetic sample size for g-computation
 #' @param marginal_distns,marginal_params Marginal distributions and parameters
 #'
-#' @return A named vector containing the marginal mean probabilities under
-#'   comparator "A" (`0`) and reference "C" (`1`) treatments.
+#' @return A list containing:
+#'   * `stats`: Named vector of marginal mean probabilities
+#'   * `model`: The fitted glm object
 #'   
 #' @seealso [strategy_gcomp_ml()], [gcomp_ml.boot()]
 #' @importFrom copula normalCopula mvdc rMvdc
@@ -90,9 +92,12 @@ gcomp_ml_means <- function(formula,
   hat.mu.comp <- predict(fit, type = "response", newdata = data.comp)
   hat.mu.ref <- predict(fit, type = "response", newdata = data.ref)
   
-  # (marginal) mean probability prediction under A and C
-  c(`0` = mean(hat.mu.ref),
-    `1` = mean(hat.mu.comp))
+  list(
+    # (marginal) mean probability prediction under A and C
+    stats = c(`0` = mean(hat.mu.ref),
+              `1` = mean(hat.mu.comp)),
+    model = fit
+  )
 }
 
 

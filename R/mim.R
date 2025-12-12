@@ -34,10 +34,10 @@ calc_mim <- function(strategy,
   
   x_star <- simulate_ALD_pseudo_pop(formula, ipd, ald, trt_var, rho, N)
   
-  ## SYNTHESIS STAGE ##
+  # SYNTHESIS STAGE ---
   
   # first-stage logistic regression model fitted to index RCT using MCMC (Stan)
-  outcome.model <- stan_glm(
+  outcome_model <- stan_glm(
     formula = formula,
     data = ipd,
     family = family,
@@ -58,9 +58,9 @@ calc_mim <- function(strategy,
   # from their posterior predictive distribution
   y_star <-
     rstanarm::posterior_predict(
-      outcome.model, newdata = aug.target)
+      outcome_model, newdata = aug.target)
   
-  ## ANALYSIS STAGE ##
+  # ANALYSIS STAGE ---
   
   M <- nrow(y_star)
   
@@ -84,11 +84,18 @@ calc_mim <- function(strategy,
                           function(fit)
                             vcov(fit)[treat_coef_name, treat_coef_name]))
   
-  mean_ref <- family$linkinv(coef_fit[, 1])                  # probability for reference
+  mean_ref <- family$linkinv(coef_fit[, 1])     # probability for reference
   mean_comp <- family$linkinv(coef_fit[, 1] + coef_fit[, treat_coef_name])  # probability for comparator
   
-  tibble::lst(mean_comp, mean_ref,
-              hats.v, M)
+  list(
+    means = list(
+      A = mean_comp,
+      C = mean_ref),
+    model = list(
+      fit = outcome_model,
+      hats.v = hats.v,
+      M = M)
+  )
 }
 
 #' Wald-type interval estimates
