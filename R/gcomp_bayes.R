@@ -96,7 +96,10 @@ calc_gcomp_bayes <- function(strategy,
       A = rowMeans(y.star.comp),
       C = rowMeans(y.star.ref)),
     model = list(
-      fit = outcome_model)
+      fit = outcome_model,
+      rho = rho,
+      N = N,
+      stan_args = list(...)
   )
 }
 
@@ -177,6 +180,8 @@ calc_gcomp_ml <- function(strategy,
       A = gcomp_boot$t[, 2],
       C = gcomp_boot$t[, 1]),
     model = list(
-      fit = original_run$model)
+      fit = original_run$model,
+      rho = strategy$rho,
+      N = strategy$N)
   )
 }
