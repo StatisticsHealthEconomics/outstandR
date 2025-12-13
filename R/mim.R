@@ -94,7 +94,10 @@ calc_mim <- function(strategy,
     model = list(
       fit = outcome_model,
       hats.v = hats.v,
-      M = M)
+      M = M,
+      rho = rho,
+      N = N,
+      stan_args = list(...))
   )
 }
 
