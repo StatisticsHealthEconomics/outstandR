@@ -1,25 +1,26 @@
 
-#' G-computation using Stan
+#' Bayesian G-computation using Stan
 #'
 #' Calculate draws of binary responses from posterior predictive distribution
 #' from the Bayesian G-computation method using Hamiltonian Monte Carlo.
-#' 
-#' @param strategy A list specifying the model strategy, including:
-#'   \describe{
-#'     \item{formula}{A linear regression `formula` object.}
-#'     \item{family}{A `family` object specifying the distribution and link function (e.g., `binomial`).}
-#'     \item{iter}{Number of iterations for the MCMC sampling.}
-#'     \item{warmup}{Number of warmup iterations for the MCMC sampling.}
-#'     \item{chains}{Number of MCMC chains.}
-#'   }
-#' @param analysis_params List of analysis parameters 
-#' @param ... Additional arguments
 #'
-#' @return A list of \eqn{y^*_A} and \eqn{y^*_C} posterior predictions:
-#' \describe{
-#'   \item{\code{`0`}}{Posterior means for reference treatment group "C".}
-#'   \item{\code{`1`}}{Posterior means for comparator treatment group "A".}
-#' }
+#' @param strategy A list specifying the model strategy, including:
+#'   * `formula`: A linear regression `formula` object.
+#'   * `family`: A `family` object specifying the distribution and link function
+#'     (e.g., `binomial`).
+#'   * `iter`: Number of iterations for the MCMC sampling.
+#'   * `warmup`: Number of warmup iterations for the MCMC sampling.
+#'   * `chains`: Number of MCMC chains.
+#' @param analysis_params List of analysis parameters. Must contain `ipd` and `ald`.
+#' @param ... Additional arguments passed to [rstanarm::stan_glm()].
+#'
+#' @return A list containing:
+#' * `means`: A list containing:
+#'     * `A`: Posterior means for comparator treatment group "A".
+#'     * `C`: Posterior means for reference treatment group "C".
+#' * `model`: A list containing the `fit` object (from `stan_glm`), `rho`, `N`,
+#'   and `stan_args`.
+#'
 #' @importFrom copula normalCopula mvdc rMvdc
 #' @importFrom rstanarm stan_glm posterior_predict
 #' @examples
@@ -33,20 +34,23 @@
 #'   warmup = 500,
 #'   chains = 4)
 #' 
-#' ipd <- data.frame(trt = sample(c("A", "C"), size = 100, replace = TRUE),
-#'                   X1 = rnorm(100, 1, 1),
-#'                   y = sample(c(1,0), size = 100, prob = c(0.7,0.3), replace = TRUE))
+#' ipd <- data.frame(
+#'    trt = sample(c("A", "C"), size = 100, replace = TRUE),
+#'    X1 = rnorm(100, 1, 1),
+#'    y = sample(c(1,0), size = 100, prob = c(0.7, 0.3), replace = TRUE))
 #' 
-#' ald <- data.frame(trt = c(NA, NA, "B", "C", "B", "C"),
-#'                   variable = c("X1", "X1", "y", "y", NA, NA),
-#'                   statistic = c("mean", "sd", "sum", "sum", "N", "N"),
-#'                   value = c(0.5, 0.1, 10, 12, 20, 25))
+#' ald <- data.frame(
+#'   trt = c(NA, NA, "B", "C", "B", "C"),
+#'   variable = c("X1", "X1", "y", "y", NA, NA),
+#'   statistic = c("mean", "sd", "sum", "sum", "N", "N"),
+#'   value = c(0.5, 0.1, 10, 12, 20, 25))
 #' 
 #' calc_gcomp_bayes(
 #'   strategy,
-#'   analysis_params = 
-#'     list(ipd = ipd, ald = ald, 
-#'          ref_trt = "C", ipd_comp = "A"))
+#'   analysis_params = list(
+#'     ipd = ipd, ald = ald, 
+#'     ref_trt = "C",
+#'     ipd_comp = "A"))
 #' 
 #' @export
 #'
@@ -99,8 +103,8 @@ calc_gcomp_bayes <- function(strategy,
       fit = outcome_model,
       rho = rho,
       N = N,
-      stan_args = list(...)
-  )
+      stan_args = list(...))
+    )
 }
 
 
@@ -109,18 +113,19 @@ calc_gcomp_bayes <- function(strategy,
 #' Computes the mean difference in treatment effects using bootstrap resampling.
 #'
 #' @param strategy A list specifying the model strategy, including:
-#'   \describe{
-#'     \item{R}{Number of bootstrap replications.}
-#'     \item{formula}{A linear regression `formula` object.}
-#'     \item{family}{A `family` object specifying the distribution and link function (e.g., `binomial`).}
-#'     \item{N}{Synthetic sample size for g-computation.}
-#'   }
-#' @param analysis_params List of analysis parameters
+#'   * `R`: Number of bootstrap replications.
+#'   * `formula`: A linear regression `formula` object.
+#'   * `family`: A `family` object specifying the distribution and link function
+#'     (e.g., `binomial`).
+#'   * `N`: Synthetic sample size for g-computation.
+#' @param analysis_params List of analysis parameters.
+#'
 #' @return A list containing:
-#' \describe{
-#'   \item{mean_A}{Bootstrap estimates for comparator treatment group "A".}
-#'   \item{mean_C}{Bootstrap estimates for reference treatment group "C".}
-#' }
+#' * `means`: A list containing:
+#'     * `A`: Bootstrap estimates for comparator treatment group "A".
+#'     * `C`: Bootstrap estimates for reference treatment group "C".
+#' * `model`: A list containing the `fit` object, `rho`, and `N`.
+#'
 #' @importFrom boot boot
 #' @examples
 #' strategy <- list(
@@ -128,7 +133,7 @@ calc_gcomp_bayes <- function(strategy,
 #'   family = binomial(),
 #'   rho = NA,
 #'   N = 1000L,
-#'   R = 1000L,
+#'   R = 100L,
 #'   marginal_distns = NA,
 #'   marginal_params = NA,
 #'   trt_var = "trt")
@@ -146,7 +151,8 @@ calc_gcomp_bayes <- function(strategy,
 #'   strategy,
 #'   analysis_params = 
 #'     list(ipd = ipd, ald = ald, 
-#'          ref_trt = "C", ipd_comp = "A"))
+#'          ref_trt = "C", 
+#'          ipd_comp = "A"))
 #'          
 #' @export
 #'
