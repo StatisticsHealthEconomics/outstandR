@@ -2,9 +2,12 @@
 % Please edit documentation in R/summary.R
 \name{summary.outstandR}
 \alias{summary.outstandR}
+\alias{print.summary.outstandR}
 \title{Summary method for outstandR}
 \usage{
-\method{summary}{outstandR}(object, ...)
+\method{summary}{outstandR}(object, CI = NA, ...)
+
+\method{print}{summary.outstandR}(x, digits = 3, ...)
 }
 \arguments{
 \item{object}{\code{\link[=outstandR]{outstandR()}} output object}

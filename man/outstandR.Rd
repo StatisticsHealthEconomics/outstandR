@@ -11,6 +11,7 @@ outstandR(
   ref_trt = NA,
   CI = 0.95,
   scale = NULL,
+  var_method = "sample",
   ...
 )
 }

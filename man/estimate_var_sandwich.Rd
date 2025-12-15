@@ -4,20 +4,20 @@
 \alias{estimate_var_sandwich}
 \title{Estimate Variance Sandwich Estimator}
 \usage{
-estimate_var_sandwich(strategy, ipd_data, ...)
+estimate_var_sandwich(strategy, analysis_params, ...)
 }
 \arguments{
 \item{strategy}{An object of class \code{strategy} created by functions such as
 \code{\link[=strategy_maic]{strategy_maic()}}, \code{\link[=strategy_stc]{strategy_stc()}}, or \code{\link[=strategy_mim]{strategy_mim()}}.
 Contains modelling details like the formula and family.}
 
-\item{ipd_data}{IPD data}
+\item{analysis_params}{List of analysis parameters (ipd, ald, etc.)}
 
 \item{...}{Additional arguments}
 }
 \value{
-Numeric variance estimate
+Numeric variance estimate for the treatment contrast
 }
 \description{
-Estimate Variance Sandwich Estimator
+Computes the robust (sandwich) variance estimator for the treatment effect.
 }

@@ -88,6 +88,7 @@ calc_IPD_stats.mim <- function(strategy,
     calculate_ate(mis_res$means$A, mis_res$means$C,
                   effect = scale)
   
+  #
   M <- mis_res$model$M
   
   # quantities originally defined by Rubin (1987) for multiple imputation

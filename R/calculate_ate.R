@@ -77,7 +77,7 @@ calculate_trial_variance <- function(ald, tid, effect, family) {
       calculate_trial_variance_count(ald, tid, effect))
   }
   
-  stop("family not recognised.")
+  stop("family not recognised.", call. = FALSE)
 }
 
 #' Calculate trial variance binary
@@ -258,7 +258,7 @@ calculate_trial_mean <- function(ald, tid, effect, family) {
       calculate_trial_mean_count(ald, tid, effect))
   }
   
-  stop("family not recognised.")
+  stop("family not recognised.", call. = FALSE)
 }
 
 #' Calculate Trial Mean Binary Data
