@@ -2,29 +2,35 @@
 % Please edit documentation in R/gcomp_bayes.R
 \name{calc_gcomp_bayes}
 \alias{calc_gcomp_bayes}
-\title{G-computation using Stan}
+\title{Bayesian G-computation using Stan}
 \usage{
 calc_gcomp_bayes(strategy, analysis_params, ...)
 }
 \arguments{
 \item{strategy}{A list specifying the model strategy, including:
-\describe{
-\item{formula}{A linear regression \code{formula} object.}
-\item{family}{A \code{family} object specifying the distribution and link function (e.g., \code{binomial}).}
-\item{iter}{Number of iterations for the MCMC sampling.}
-\item{warmup}{Number of warmup iterations for the MCMC sampling.}
-\item{chains}{Number of MCMC chains.}
+\itemize{
+\item \code{formula}: A linear regression \code{formula} object.
+\item \code{family}: A \code{family} object specifying the distribution and link function
+(e.g., \code{binomial}).
+\item \code{iter}: Number of iterations for the MCMC sampling.
+\item \code{warmup}: Number of warmup iterations for the MCMC sampling.
+\item \code{chains}: Number of MCMC chains.
 }}
 
-\item{analysis_params}{List of analysis parameters}
+\item{analysis_params}{List of analysis parameters. Must contain \code{ipd} and \code{ald}.}
 
-\item{...}{Additional arguments}
+\item{...}{Additional arguments passed to \code{\link[rstanarm:stan_glm]{rstanarm::stan_glm()}}.}
 }
 \value{
-A list of \eqn{y^*_A} and \eqn{y^*_C} posterior predictions:
-\describe{
-\item{\code{`0`}}{Posterior means for reference treatment group "C".}
-\item{\code{`1`}}{Posterior means for comparator treatment group "A".}
+A list containing:
+\itemize{
+\item \code{means}: A list containing:
+\itemize{
+\item \code{A}: Posterior means for comparator treatment group "A".
+\item \code{C}: Posterior means for reference treatment group "C".
+}
+\item \code{model}: A list containing the \code{fit} object (from \code{stan_glm}), \code{rho}, \code{N},
+and \code{stan_args}.
 }
 }
 \description{
@@ -42,19 +48,22 @@ strategy <- list(
   warmup = 500,
   chains = 4)
 
-ipd <- data.frame(trt = sample(c("A", "C"), size = 100, replace = TRUE),
-                  X1 = rnorm(100, 1, 1),
-                  y = sample(c(1,0), size = 100, prob = c(0.7,0.3), replace = TRUE))
+ipd <- data.frame(
+   trt = sample(c("A", "C"), size = 100, replace = TRUE),
+   X1 = rnorm(100, 1, 1),
+   y = sample(c(1,0), size = 100, prob = c(0.7, 0.3), replace = TRUE))
 
-ald <- data.frame(trt = c(NA, NA, "B", "C", "B", "C"),
-                  variable = c("X1", "X1", "y", "y", NA, NA),
-                  statistic = c("mean", "sd", "sum", "sum", "N", "N"),
-                  value = c(0.5, 0.1, 10, 12, 20, 25))
+ald <- data.frame(
+  trt = c(NA, NA, "B", "C", "B", "C"),
+  variable = c("X1", "X1", "y", "y", NA, NA),
+  statistic = c("mean", "sd", "sum", "sum", "N", "N"),
+  value = c(0.5, 0.1, 10, 12, 20, 25))
 
 calc_gcomp_bayes(
   strategy,
-  analysis_params = 
-    list(ipd = ipd, ald = ald, 
-         ref_trt = "C", ipd_comp = "A"))
+  analysis_params = list(
+    ipd = ipd, ald = ald, 
+    ref_trt = "C",
+    ipd_comp = "A"))
 
 }

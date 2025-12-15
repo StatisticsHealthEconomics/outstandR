@@ -35,6 +35,9 @@ Contents vary by strategy:
 \item \code{family}: The error distribution and link function.
 \item \code{fit}: The underlying model object (e.g., for STC, G-Comp ML, or Bayesian G-Comp).
 \item \code{weights}, \code{ESS}: (MAIC only) The estimated weights and Effective Sample Size.
+\item \code{stan_args}: (Bayesian G-Comp, MIM) Arguments passed to Stan.
+\item \code{rho}: (G-Comp ML, MIM, Bayesian G-Comp) Correlation coefficient.
+\item \code{N}: (G-Comp ML, MIM, Bayesian G-Comp) Number of iterations.
 \item \code{nu}, \code{hats.v}, \code{M}: (MIM only) Imputation parameters and matrices.
 }
 }

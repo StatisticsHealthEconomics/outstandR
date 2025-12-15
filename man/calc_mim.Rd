@@ -23,12 +23,20 @@ We assume a common distribution for each treatment arm.}
 \item{...}{Additional argument to pass to Stan model}
 }
 \value{
-Named list:
-\describe{
-\item{mean_comp}{Comparator mean numeric value}
-\item{mean_ref}{Reference mean numeric value}
-\item{hats.v}{Point estimates for the variance in each synthesis}
-\item{M}{Number of posterior prediction draws}
+A list containing:
+\itemize{
+\item \code{means}: A list containing vectors of posterior means (one per synthesis \code{M}):
+\itemize{
+\item \code{A}: Comparator means.
+\item \code{C}: Reference means.
+}
+\item \code{model}: A list containing:
+\itemize{
+\item \code{fit}: The first-stage \code{\link[rstanarm:stan_glm]{rstanarm::stan_glm()}} object.
+\item \code{hats.v}: Vector of variance point estimates for each synthesis.
+\item \code{M}: Number of posterior prediction draws (syntheses).
+\item \code{rho}, \code{N}, \code{stan_args}: Strategy and model parameters.
+}
 }
 }
 \description{

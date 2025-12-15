@@ -33,9 +33,13 @@
 #'       \item `family`: The error distribution and link function.
 #'       \item `fit`: The underlying model object (e.g., for STC, G-Comp ML, or Bayesian G-Comp).
 #'       \item `weights`, `ESS`: (MAIC only) The estimated weights and Effective Sample Size.
+#'       \item `stan_args`: (Bayesian G-Comp, MIM) Arguments passed to Stan.
+#'       \item `rho`: (G-Comp ML, MIM, Bayesian G-Comp) Correlation coefficient.
+#'       \item `N`: (G-Comp ML, MIM, Bayesian G-Comp) Number of iterations.
 #'       \item `nu`, `hats.v`, `M`: (MIM only) Imputation parameters and matrices.
 #'     }
 #'   }
 #' }
 #'
 NULL
+

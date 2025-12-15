@@ -11,15 +11,20 @@ calc_stc(strategy, analysis_params, ...)
 \code{\link[=strategy_maic]{strategy_maic()}}, \code{\link[=strategy_stc]{strategy_stc()}}, or \code{\link[=strategy_mim]{strategy_mim()}}.
 Contains modelling details like the formula and family.}
 
-\item{analysis_params}{List of analysis parameters}
+\item{analysis_params}{List of analysis parameters. Must contain \code{ipd}
+(individual patient data).}
 
-\item{...}{Additional arguments}
+\item{...}{Additional arguments.}
 }
 \value{
-A list:
-\describe{
-\item{\code{mean_A}}{Mean for comparator treatment group "A".}
-\item{\code{mean_C}}{Mean for reference treatment group "C".}
+A list containing:
+\itemize{
+\item \code{means}: A list containing:
+\itemize{
+\item \code{A}: Mean for comparator treatment group "A".
+\item \code{C}: Mean for reference treatment group "C".
+}
+\item \code{model}: The fitted \code{\link[stats:glm]{stats::glm()}} object.
 }
 }
 \description{

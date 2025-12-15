@@ -8,20 +8,25 @@ calc_gcomp_ml(strategy, analysis_params)
 }
 \arguments{
 \item{strategy}{A list specifying the model strategy, including:
-\describe{
-\item{R}{Number of bootstrap replications.}
-\item{formula}{A linear regression \code{formula} object.}
-\item{family}{A \code{family} object specifying the distribution and link function (e.g., \code{binomial}).}
-\item{N}{Synthetic sample size for g-computation.}
+\itemize{
+\item \code{R}: Number of bootstrap replications.
+\item \code{formula}: A linear regression \code{formula} object.
+\item \code{family}: A \code{family} object specifying the distribution and link function
+(e.g., \code{binomial}).
+\item \code{N}: Synthetic sample size for g-computation.
 }}
 
-\item{analysis_params}{List of analysis parameters}
+\item{analysis_params}{List of analysis parameters.}
 }
 \value{
 A list containing:
-\describe{
-\item{mean_A}{Bootstrap estimates for comparator treatment group "A".}
-\item{mean_C}{Bootstrap estimates for reference treatment group "C".}
+\itemize{
+\item \code{means}: A list containing:
+\itemize{
+\item \code{A}: Bootstrap estimates for comparator treatment group "A".
+\item \code{C}: Bootstrap estimates for reference treatment group "C".
+}
+\item \code{model}: A list containing the \code{fit} object, \code{rho}, and \code{N}.
 }
 }
 \description{
@@ -33,7 +38,7 @@ strategy <- list(
   family = binomial(),
   rho = NA,
   N = 1000L,
-  R = 1000L,
+  R = 100L,
   marginal_distns = NA,
   marginal_params = NA,
   trt_var = "trt")
@@ -51,6 +56,7 @@ calc_gcomp_ml(
   strategy,
   analysis_params = 
     list(ipd = ipd, ald = ald, 
-         ref_trt = "C", ipd_comp = "A"))
+         ref_trt = "C", 
+         ipd_comp = "A"))
          
 }
