@@ -9,16 +9,18 @@
 #' @param comp_trt Comparator treatment. String.
 #' @param ... Additional argument to pass to Stan model
 #' 
-#' @return Named list:
-#' \describe{
-#'    \item{mean_comp}{Comparator mean numeric value}
-#'    \item{mean_ref}{Reference mean numeric value}
-#'    \item{hats.v}{Point estimates for the variance in each synthesis}
-#'    \item{M}{Number of posterior prediction draws}
-#' }
-#' 
+#' @return A list containing:
+#' * `means`: A list containing vectors of posterior means (one per synthesis `M`):
+#'     * `A`: Comparator means.
+#'     * `C`: Reference means.
+#' * `model`: A list containing:
+#'     * `fit`: The first-stage [rstanarm::stan_glm()] object.
+#'     * `hats.v`: Vector of variance point estimates for each synthesis.
+#'     * `M`: Number of posterior prediction draws (syntheses).
+#'     * `rho`, `N`, `stan_args`: Strategy and model parameters.
+#'
 #' @importFrom rstanarm posterior_predict stan_glm
-#' @importFrom tibble tibble lst
+#' @importFrom stats glm coef vcov as.formula
 #' @keywords internal
 #' 
 calc_mim <- function(strategy,
@@ -94,7 +96,10 @@ calc_mim <- function(strategy,
     model = list(
       fit = outcome_model,
       hats.v = hats.v,
-      M = M)
+      M = M,
+      rho = rho,
+      N = N,
+      stan_args = list(...))
   )
 }
 

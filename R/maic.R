@@ -173,8 +173,17 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
 #' @param strategy An object of class `strategy` created by functions such as 
 #'   [strategy_maic()], [strategy_stc()], or [strategy_mim()]. 
 #'   Contains modelling details like the formula and family.
-#' @param analysis_params Analysis parameters; list
-#' @return List of numeric treatment means.
+#' @param analysis_params List of analysis parameters. Must contain `ipd`
+#'   (individual patient data) and `ald` (aggregated lead data).
+#'
+#' @return A list containing:
+#' * `means`: A list containing:
+#'     * `A`: Bootstrap estimates for comparator treatment group "A".
+#'     * `C`: Bootstrap estimates for reference treatment group "C".
+#' * `model`: A list containing model diagnostics derived from the original data:
+#'     * `weights`: Vector of calculated weights for the patients in `ipd`.
+#'     * `ESS`: The Effective Sample Size.
+#'
 #' @keywords internal
 #' @importFrom boot boot
 #' 

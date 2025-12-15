@@ -1,20 +1,21 @@
 
 #' Calculate simulated treatment comparison statistics
 #'
-#' @param strategy An object of class `strategy` created by functions such as 
-#'   [strategy_maic()], [strategy_stc()], or [strategy_mim()]. 
+#' @param strategy An object of class `strategy` created by functions such as
+#'   [strategy_maic()], [strategy_stc()], or [strategy_mim()].
 #'   Contains modelling details like the formula and family.
-#' @param analysis_params List of analysis parameters
-#' @param ... Additional arguments
+#' @param analysis_params List of analysis parameters. Must contain `ipd`
+#'   (individual patient data).
+#' @param ... Additional arguments.
 #'
-#' @return A list:
-#' \describe{
-#'   \item{`mean_A`}{Mean for comparator treatment group "A".}
-#'   \item{`mean_C`}{Mean for reference treatment group "C".}
-#' }
-#' @importFrom stats glm
+#' @return A list containing:
+#' * `means`: A list containing:
+#'     * `A`: Mean for comparator treatment group "A".
+#'     * `C`: Mean for reference treatment group "C".
+#' * `model`: The fitted [stats::glm()] object.
+#'
+#' @importFrom stats glm coef
 #' @keywords internal
-#' 
 calc_stc <- function(strategy, analysis_params, ...) {
   
   ipd <- analysis_params$ipd
