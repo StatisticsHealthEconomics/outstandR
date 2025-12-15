@@ -3,7 +3,7 @@
 #'  
 #' @param object [outstandR()] output object
 #' @param ... Additional arguments
-#' @return No return value, called for side effects
+#' @return List of class `summary.outstandR`
 #' 
 #' @export
 summary.outstandR <- function(object, CI = NA, ...) {
@@ -33,6 +33,7 @@ summary.outstandR <- function(object, CI = NA, ...) {
 }
 
 #' @rdname summary.outstandR
+#' @return Original argument, but mainly called for side effects
 #' @export
 #' @method print summary.outstandR
 print.summary.outstandR <- function(x, digits = 3, ...) {
