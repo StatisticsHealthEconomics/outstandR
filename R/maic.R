@@ -136,7 +136,6 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
   }
   
   # Calculate Effective Sample Size (ESS)
-  # Definition: (Sum w)^2 / Sum (w^2)
   ESS <- sum(hat_w)^2 / sum(hat_w^2)
   
   formula_treat <- glue::glue("{formula[[2]]} ~ {trt_var}")
