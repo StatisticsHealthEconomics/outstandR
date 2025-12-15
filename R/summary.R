@@ -13,9 +13,19 @@ summary.outstandR <- function(object, CI = NA, ...) {
   
   # lazy evaluation confidence interval
   if (!is.na(CI)) {
+    res$contrast$CI <- list(
+      AB = calc_ci(mean_val = res$contrasts$AB, sd_val = sqrt(res$contrast_variances$AB), level = CI),
+      AC = calc_ci(mean_val = res$contrasts$AC, sd_val = sqrt(res$contrast_variances$AC), level = CI),
+      BC = calc_ci(mean_val = res$contrasts$BC, sd_val = sqrt(res$contrast_variances$BC), level = CI)
+    )
     ##TODO:
-    # res$coefficients <- calc_ci(object$boot_dist, level = CI)
-    attr(res, "ci_level") <- CI 
+    res$absolute$CI <- list(
+      AB = NA,
+      AC = NA,
+      BC = NA
+    )
+    
+    attr(res, "CI") <- CI
   }
   
   class(res) <- "summary.outstandR"
