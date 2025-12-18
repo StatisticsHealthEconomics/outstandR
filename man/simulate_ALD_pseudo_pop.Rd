@@ -13,7 +13,8 @@ simulate_ALD_pseudo_pop(
   N = 1000,
   marginal_distns = NA,
   marginal_params = NA,
-  seed = NULL
+  seed = NULL,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -34,6 +35,10 @@ Available distributions are given in stats::Distributions. See \code{\link[copul
 
 \item{marginal_params}{Marginal distributions parameters;
 named list of lists, default NA. See \code{\link[copula:Mvdc]{copula::Mvdc()}} for details}
+
+\item{seed}{Random seed}
+
+\item{verbose}{Default \code{FALSE}}
 }
 \value{
 A data frame representing the synthetic pseudo-population.

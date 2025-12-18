@@ -32,11 +32,11 @@ strategy_maic <- function(formula = NULL,
                           R = 1000L) {
   check_formula(formula, trt_var)
   check_family(family)
-   
+  
   if (R <= 0 || R %% 1 != 0) {
     stop("R not positive whole number.")
   }
-
+  
   args <- list(formula = formula,
                family = family,
                trt_var = get_treatment_name(formula, trt_var),
@@ -136,6 +136,7 @@ strategy_gcomp_ml <- function(formula = NULL,
   check_formula(formula, trt_var)
   check_family(family)
   check_distns(formula, marginal_distns, marginal_params)
+  check_rho(rho)
   
   if (R <= 0 || R %% 1 != 0) {
     stop("R not positive whole number.")
@@ -198,15 +199,16 @@ strategy_gcomp_ml <- function(formula = NULL,
 #' @export
 #'
 strategy_gcomp_bayes <- function(formula = NULL,
-                                family = gaussian(link = "identity"),
-                                trt_var = NULL,
-                                rho = NA,
-                                marginal_distns = NA,
-                                marginal_params = NA,
-                                N = 1000L) {
+                                 family = gaussian(link = "identity"),
+                                 trt_var = NULL,
+                                 rho = NA,
+                                 marginal_distns = NA,
+                                 marginal_params = NA,
+                                 N = 1000L) {
   check_formula(formula, trt_var)
   check_family(family)
   check_distns(formula, marginal_distns, marginal_params)
+  check_rho(rho)
   
   if (N <= 0 || N %% 1 != 0) {
     stop("N not positive whole number.")
@@ -241,6 +243,7 @@ strategy_mim <- function(formula = NULL,
                          N = 1000L) {
   check_formula(formula, trt_var)
   check_family(family)
+  check_rho(rho)
   
   if (N <= 0 || N %% 1 != 0) {
     stop("N not positive whole number.")
@@ -279,6 +282,24 @@ is_family <- function(obj) inherits(obj, "family")
 check_family <- function(obj) {
   if (!is_family(obj)) {
     stop("family must be a family object", call. = FALSE)
+  }
+}
+
+#' @keywords internal
+check_rho <- function(mat) {
+  if (is.na(mat)) return()
+  
+  rn <- rownames(mat)
+  cn <- colnames(mat)
+  
+  # names actually exist
+  if (is.null(rn) || is.null(cn)) {
+    stop("Validation Failed: Matrix must have both row and column names.", call. = FALSE)
+  }
+  
+  # names are identical
+  if (!identical(rn, cn)) {
+    stop("Validation Failed: Row names and column names do not match.", call. = FALSE)
   }
 }
 
