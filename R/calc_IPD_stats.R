@@ -88,12 +88,12 @@ calc_IPD_stats.mim <- function(strategy,
     calculate_ate(mis_res$means$A, mis_res$means$C,
                   effect = scale)
   
-  #
+  # posterior predictive sample size
   M <- mis_res$model$M
   
   # quantities originally defined by Rubin (1987) for multiple imputation
   coef_est <- mean(hat.delta.AC)   # average of treatment effect point estimates
-  bar.v <- mean(mis_res$hats.v)    # "within" variance (average of variance point estimates)
+  bar.v <- mean(mis_res$model$hats.v)    # "within" variance (average of variance point estimates)
   b <- var(hat.delta.AC)           # "between" variance (sample variance of point estimates)
   
   var_est <- var_by_pooling(M, bar.v, b)

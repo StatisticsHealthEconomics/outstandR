@@ -48,5 +48,6 @@ calc_stc <- function(strategy, analysis_params, ...) {
     means = list(
       A = mean_A,
       C = mean_C),
-    model = fit)
+    model = list(
+      fit = fit))
 }

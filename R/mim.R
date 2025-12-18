@@ -28,6 +28,15 @@ calc_mim <- function(strategy,
                      ref_trt,
                      comp_trt, ...) {
   
+  default_stan_args <- list(
+    algorithm = "sampling",
+    chains = 2,
+    iter = 2000,
+    seed = 1234
+  )
+  
+  stan_args <- modifyList(default_stan_args, list(...))
+  
   formula <- strategy$formula
   family <- strategy$family
   rho <- strategy$rho
@@ -39,11 +48,10 @@ calc_mim <- function(strategy,
   # SYNTHESIS STAGE ---
   
   # first-stage logistic regression model fitted to index RCT using MCMC (Stan)
-  outcome_model <- stan_glm(
-    formula = formula,
-    data = ipd,
-    family = family,
-    algorithm = "sampling", ...)
+  outcome_model <- do.call(rstanarm::stan_glm, c(
+    list(formula = formula, data = ipd, family = family),
+    stan_args
+  ))
   
   # create augmented target dataset
   target.comp <- target.ref <- x_star
@@ -82,9 +90,8 @@ calc_mim <- function(strategy,
   
   ##TODO: how to transform this to the prob scale?
   # point estimates for the variance in each synthesis
-  hats.v <- unlist(lapply(reg2.fits,
-                          function(fit)
-                            vcov(fit)[treat_coef_name, treat_coef_name]))
+  hats.v <- unlist(lapply(reg2.fits, function(fit)
+    vcov(fit)[treat_coef_name, treat_coef_name]))
   
   mean_ref <- family$linkinv(coef_fit[, 1])     # probability for reference
   mean_comp <- family$linkinv(coef_fit[, 1] + coef_fit[, treat_coef_name])  # probability for comparator
@@ -99,7 +106,7 @@ calc_mim <- function(strategy,
       M = M,
       rho = rho,
       N = N,
-      stan_args = list(...))
+      stan_args = stan_args)
   )
 }
 

@@ -57,6 +57,17 @@
 calc_gcomp_bayes <- function(strategy,
                              analysis_params, ...) {
   
+  default_stan_args <- list(
+    algorithm = "sampling",
+    chains = 2,
+    iter = 2000,
+    refresh = 0  # quiet
+  )
+  
+  # merge with user-provided dots
+  user_args <- list(...)
+  stan_args <- modifyList(default_stan_args, user_args)
+  
   formula <- strategy$formula
   family <- strategy$family
   rho <- strategy$rho
@@ -74,12 +85,10 @@ calc_gcomp_bayes <- function(strategy,
                                     marginal_params = marginal_params)
   
   # outcome logistic regression fitted to IPD using MCMC (Stan)
-  outcome_model <-
-    rstanarm::stan_glm(formula,
-                       data = ipd,
-                       family = family,
-                       algorithm = "sampling",
-                       ...)
+  outcome_model <- do.call(rstanarm::stan_glm, c(
+    list(formula = formula, data = ipd, family = family),
+    stan_args
+  ))
   
   # counterfactual datasets
   data_comp <- data_ref <- x_star
@@ -103,7 +112,7 @@ calc_gcomp_bayes <- function(strategy,
       fit = outcome_model,
       rho = rho,
       N = N,
-      stan_args = list(...))
+      stan_args = stan_args)
     )
 }
 
