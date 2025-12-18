@@ -23,6 +23,7 @@ print.outstandR <- function(x, ...) {
   ref_trt <- x$ref_trt
   
   cat(pillar::style_bold("Object of class 'outstandR'"), "\n")
+  cat("ITC algorithm:", pillar::style_subtle(x$method_name), "\n")
   cat("Model:", pillar::style_subtle(x$family), "\n")
   cat("Scale:", pillar::style_subtle(x$scale), "\n")
   cat("Common treatment:", pillar::style_subtle(ref_trt), "\n")

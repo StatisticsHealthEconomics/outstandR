@@ -63,7 +63,9 @@ calc_stc <- function(strategy, analysis_params, ...) {
     means = list(
       A = boot_A,
       C = boot_C),
-    point_estimates = list(A = main_res$A, C = main_res$C),
+    point_estimates = list(
+      A = main_res$A, 
+      C = main_res$C),  ##TODO: should we use these instead of `means`?
     model = list(
       fit = main_res$fit,
       boot_iter = n_boot)

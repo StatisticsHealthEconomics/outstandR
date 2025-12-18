@@ -50,21 +50,21 @@ test_that("Sandwich variance estimator works for MAIC", {
 })
 
 test_that("Sandwich variance works via top-level outstandR() wrapper", {
-  # This tests that the wrapper correctly passes the argument down into params
+  # tests that the wrapper correctly passes the argument down into params
+  load(test_path("testdata/BC_ALD.RData"))
+  load(test_path("testdata/AC_IPD.RData"))
   
-  # 1. Naive run
   res_naive <- outstandR(
-    ipd_trial = AC_IPD_binY_contX,
-    ald_trial = BC_ALD_binY_contX,
-    strategy = strategy_stc(formula = y ~ PF_cont_1 + trt, family = binomial()),
+    ipd_trial = AC_IPD,
+    ald_trial = BC_ALD,
+    strategy = strategy_stc(formula = y ~ X1 + trt, family = binomial()),
     var_method = "sample"
   )
   
-  # 2. Robust run
   res_robust <- outstandR(
-    ipd_trial = AC_IPD_binY_contX,
-    ald_trial = BC_ALD_binY_contX,
-    strategy = strategy_stc(formula = y ~ PF_cont_1 + trt, family = binomial()),
+    ipd_trial = AC_IPD,
+    ald_trial = BC_ALD,
+    strategy = strategy_stc(formula = y ~ X1 + trt, family = binomial()),
     var_method = "sandwich" 
   )
   

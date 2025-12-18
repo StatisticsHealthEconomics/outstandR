@@ -121,6 +121,13 @@ calc_IPD_stats.mim <- function(strategy,
 #'
 IPD_stat_factory <- function(ipd_fun) {
   
+  # capture name of the function passed in
+  method_raw <- deparse(substitute(ipd_fun))
+  method_name <- method_raw |> 
+    gsub(pattern = ".*[:]", replacement = "") |> 
+    gsub(pattern = "calc_", replacement = "") |> 
+    toupper()
+  
   function(strategy, analysis_params,
            var_method = "sample", ...) {
     
@@ -160,6 +167,7 @@ IPD_stat_factory <- function(ipd_fun) {
       absolute = list(
         mean = p_est,
         var = p_var),
+      method_name = method_name,
       model = out$model
     )
   }
