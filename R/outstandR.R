@@ -107,7 +107,7 @@ outstandR <- function(ipd_trial, ald_trial, strategy,
       scale = scale,
       var_method = var_method,
       family = strategy$family$family,
-      method_name = ipd_stats$method_name,
-      model = ipd_stats$model),
+      model = c(method_name = ipd_stats$method_name,
+                ipd_stats$model)),
     class = c("outstandR", class(stats)))
 }

@@ -23,7 +23,7 @@ test_that("different combinations of covariates in formula", {
   strat_1 <- strategy_maic(formula = as.formula("y ~ trt*X1"))
   
   res <- outstandR(AC_IPD, BC_ALD, strategy = strat_1234)
-  expect_length(res, 2)
+  expect_length(res, 7)
   
   res <- outstandR(AC_IPD, BC_ALD, strategy = strat_123)
   
@@ -43,16 +43,16 @@ test_that("different combinations of covariates in formula", {
   strat_13 <- strategy_stc(formula = as.formula("y ~ trt*X1 + X3"))
   strat_1 <- strategy_stc(formula = as.formula("y ~ trt*X1"))
 
-  expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_1234)$contrasts$means$AC,
+  expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_1234)$results$contrasts$means$AC,
                expected = -0.27, tolerance = 0.1)
   
-  expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_31)$contrasts$means$AC,
+  expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_31)$results$contrasts$means$AC,
                expected = -0.27, tolerance = 0.1)
   
-  expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_13)$contrasts$means$AC,
+  expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_13)$results$contrasts$means$AC,
                expected = -0.27, tolerance = 0.1)
   
-  expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_1)$contrasts$means$AC,
+  expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_1)$results$contrasts$means$AC,
                expected = -0.30, tolerance = 0.1)
 })
 
