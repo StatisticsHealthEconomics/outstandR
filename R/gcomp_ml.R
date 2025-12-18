@@ -113,6 +113,8 @@ gcomp_ml_means <- function(formula,
 #'    Available distributions are given in stats::Distributions. See [copula::Mvdc()] for details
 #' @param marginal_params Marginal distributions parameters;
 #'    named list of lists, default NA. See [copula::Mvdc()] for details
+#' @param seed Random seed
+#' @param verbose Default `FALSE`
 #' 
 #' @return A data frame representing the synthetic pseudo-population.
 #' @importFrom copula normalCopula mvdc
@@ -126,7 +128,8 @@ simulate_ALD_pseudo_pop <- function(formula,
                                     N = 1000,
                                     marginal_distns = NA,
                                     marginal_params = NA,
-                                    seed = NULL) {
+                                    seed = NULL,
+                                    verbose = FALSE) {
   if (!is.null(seed)) {
     set.seed(seed)
   }
@@ -176,7 +179,9 @@ simulate_ALD_pseudo_pop <- function(formula,
     
   } else {
     # CASE 2: Distributions provided -> Fill missing parameters
-    message("Using user-supplied marginal distributions.")
+    if (verbose) {
+      message("Using user-supplied marginal distributions.")
+    }
     
     # Initialize params list if missing
     if (!is.list(marginal_params)) {
@@ -189,7 +194,7 @@ simulate_ALD_pseudo_pop <- function(formula,
       if (length(marginal_distns) == n_covariates) {
         names(marginal_distns) <- covariate_names
       } else {
-        stop("marginal_distns must be named or match number of covariates")
+        stop("marginal_distns must be named or match number of covariates", call. = FALSE)
       }
     }
     
@@ -268,7 +273,7 @@ simulate_ALD_pseudo_pop <- function(formula,
     if (is.na(rho)) {
       
       if (is.null(ipd)) {
-        stop("'rho' must be provided when 'ipd' is not available.")
+        stop("'rho' must be provided when 'ipd' is not available.", call. = FALSE)
       }
       
       rho <- cor(ipd[, covariate_names], use = "pairwise.complete.obs")

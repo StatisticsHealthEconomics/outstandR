@@ -20,16 +20,16 @@ print.outstandR <- function(x, ...) {
     stop("Please install the 'tibble' and 'pillar' packages for colored tibble output.", call. = FALSE)
   }
   
-  ref_trt <- attr(x, "ref_trt")
+  ref_trt <- x$ref_trt
   
   cat(pillar::style_bold("Object of class 'outstandR'"), "\n")
-  cat("Model:", pillar::style_subtle(attr(x, "model")), "\n")
-  cat("Scale:", pillar::style_subtle(attr(x, "scale")), "\n")
+  cat("Model:", pillar::style_subtle(x$family), "\n")
+  cat("Scale:", pillar::style_subtle(x$scale), "\n")
   cat("Common treatment:", pillar::style_subtle(ref_trt), "\n")
   # cat(pillar::style_subtle("Common treatment:"), attr(x, "reference"), "\n")  ##TODO:
-  cat("Individual patient data study:", pillar::style_subtle("AC"), "\n")
+  cat("Individual patient data study:", pillar::style_subtle("AC"), "\n")  ## not hard coded
   cat("Aggregate level data study:", pillar::style_subtle("BC"), "\n")
-  cat("Confidence interval level:", pillar::style_subtle(attr(x, "CI")), "\n\n")
+  cat("Confidence interval level:", pillar::style_subtle(x$CI), "\n\n")
   
   # Function to colour CI values
   color_ci <- function(value) {
@@ -39,8 +39,8 @@ print.outstandR <- function(x, ...) {
     else sprintf("%.3f", value)
   }
   
-  contrasts <- x$contrasts
-  absolute <- x$absolute
+  contrasts <- x$results$contrasts
+  absolute <- x$results$absolute
   
   con_tab <- tibble::tibble(
     Treatments = names(contrasts$means),

@@ -258,9 +258,9 @@ test_that("simulate_ALD_pseudo_pop directly", {
   # with marginals
   
   meanX_BC <- c(0.6, 0.6)  # mean of each normally-distributed covariate in BC
-  sdX <- c(0.4, 0.4)  # standard deviation of each covariate (same for AC and BC)
+  sdX <- c(0.4, 0.4)       # standard deviation of each covariate (same for AC and BC)
   meanX_EM_BC <- c(0.6, 0.6)  # mean of each normally-distributed EM covariate in BC
-  sdX_EM <- c(0.4, 0.4)  # standard deviation of each EM covariate
+  sdX_EM <- c(0.4, 0.4)    # standard deviation of each EM covariate
   
   marginals_orig <- list(
     marginal_dists = c(EM_cont_1 = "norm",
@@ -439,10 +439,10 @@ test_that("simulate_ALD_pseudo_pop continuous via outstandR", {
   form <- y ~ PF_cont_1 + PF_cont_2 + trt*EM_cont_1 + trt*EM_cont_2
   corX <- 0.2
   
-  meanX_BC <- c(0.6, 0.6)  # mean of each normally-distributed covariate in BC
+  meanX_BC <- c(0.6, 0.6)     # mean of each normally-distributed covariate in BC
   meanX_EM_BC <- c(0.6, 0.6)  # mean of each normally-distributed EM covariate in BC
-  sdX_EM <- c(0.4, 0.4)  # standard deviation of each EM covariate
-  sdX <- c(0.4, 0.4)  # standard deviation of each covariate (same for AC and BC)
+  sdX_EM <- c(0.4, 0.4)       # standard deviation of each EM covariate
+  sdX <- c(0.4, 0.4)          # standard deviation of each covariate (same for AC and BC)
   
   marginals_orig <- list(
     marginal_dists = c(EM_cont_1 = "norm",

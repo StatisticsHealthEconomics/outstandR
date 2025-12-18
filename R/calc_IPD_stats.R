@@ -150,8 +150,8 @@ IPD_stat_factory <- function(ipd_fun) {
       stop("Variance method not known.", call. = FALSE)
     }
     
-    p_est <- sapply(out, mean, na.rm = TRUE)
-    p_var <- sapply(out, var, na.rm = TRUE)
+    p_est <- sapply(out$means, mean, na.rm = TRUE)
+    p_var <- sapply(out$means, var, na.rm = TRUE)
     
     list(
       contrasts = list(

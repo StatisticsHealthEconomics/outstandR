@@ -15,7 +15,9 @@
 \item{...}{Additional arguments}
 }
 \value{
-No return value, called for side effects
+List of class \code{summary.outstandR}
+
+Original argument, but mainly called for side effects
 }
 \description{
 Summary method for outstandR

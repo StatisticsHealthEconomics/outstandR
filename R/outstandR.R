@@ -100,10 +100,13 @@ outstandR <- function(ipd_trial, ald_trial, strategy,
   stats <- result_stats(ipd_stats, ald_stats, CI)
   
   structure(
-    stats,
-    CI = CI,
-    ref_trt = ref_trt,
-    scale = scale,
-    model = strategy$family$family,
+    .Data = list(
+      results = stats,
+      CI = CI,
+      ref_trt = ref_trt,
+      scale = scale,
+      var_method = var_method,
+      family = strategy$family$family,
+      model = ipd_stats$model),
     class = c("outstandR", class(stats)))
 }
