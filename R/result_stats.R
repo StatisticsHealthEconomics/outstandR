@@ -1,18 +1,18 @@
 
-#' Result Statistics
+#' Calculate and arrange result statistics
 #'
 #' Combining output from aggregate level data studies BC and 
 #' adjusted individual level data studies AC into a single object.
 #'
 #' @param ipd_stats,ald_stats 
-#' @param CI Confidence interval 1-alpha; default 0.95
+#' @param CI Confidence interval level, i.e. 1-alpha; default 0.95
 #'
 #' @returns List of ITC output:
-#' * `contrasts`: A list containing:
+#' * `contrasts`: A list for relative effects containing:
 #'     * `means`
 #'     * `variances`
 #'     * `CI`
-#' * `absolute`: A list containing:
+#' * `absolute`: A list for absolute effects containing:
 #'     * `means`
 #'     * `variances`
 #'     * `CI`
