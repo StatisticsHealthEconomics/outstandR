@@ -19,7 +19,7 @@
 calc_stc <- function(strategy, analysis_params, ...) {
   args <- list(...)
   
-  n_boot <- if (!is.null(args$boot_iter)) args$boot_iter else 1000
+  n_boot <- if (!is.null(args$N)) args$N else 1000
   
   # single fit
   run_stc_once <- function(data) {
@@ -68,6 +68,6 @@ calc_stc <- function(strategy, analysis_params, ...) {
       C = main_res$C),  ##TODO: should we use these instead of `means`?
     model = list(
       fit = main_res$fit,
-      boot_iter = n_boot)
+      N = n_boot)
   )
 }
