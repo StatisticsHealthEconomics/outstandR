@@ -24,7 +24,7 @@ test_that("different combinations of covariates in formula", {
   
   res <- outstandR(ipd_trial = AC_IPD, ald_trial = BC_ALD, strategy = strat_1234)
   
-  expect_length(res, 2)
+  expect_length(res, 7)
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_31))
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_13))
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_1))
@@ -44,7 +44,7 @@ test_that("different combinations of covariates in formula", {
   
   res <- outstandR(ipd_trial = AC_IPD, ald_trial = BC_ALD, strategy = strat_1234)
   
-  expect_length(res, 2)
+  expect_length(res, 7)
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_31))
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_13))
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_1))
@@ -126,11 +126,11 @@ test_that("compare with stdReg2 package for continuous outcome", {
   
   stdReg2_estimates <- res_stdReg2$res$estimates
   
-  expect_equal(unname(res_outstandr["0"]),
+  expect_equal(unname(res_outstandr$stats["0"]),
                stdReg2_estimates$estimates[stdReg2_estimates$qsmk == 0],
                tolerance = 0.1)
   
-  expect_equal(unname(res_outstandr["1"]),
+  expect_equal(unname(res_outstandr$stats["1"]),
                stdReg2_estimates$estimates[stdReg2_estimates$qsmk == 1],
                tolerance = 0.1)
   
@@ -141,15 +141,15 @@ test_that("compare with stdReg2 package for continuous outcome", {
   
   expect_equal(
     res_stdReg2$res_contrast[[2]]$est_table$Estimate[2],
-    calculate_ate(mean_comp = unname(res_outstandr["1"]),
-                  mean_ref = unname(res_outstandr["0"]),
+    calculate_ate(mean_comp = unname(res_outstandr$stats["1"]),
+                  mean_ref = unname(res_outstandr$stats["0"]),
                   effect = "risk_difference"),
     tolerance = 0.01)
   
   expect_equal(
     res_stdReg2$res_contrast[[3]]$est_table$Estimate[2],
-    exp(calculate_ate(mean_comp = unname(res_outstandr["1"]),
-                      mean_ref = unname(res_outstandr["0"]),
+    exp(calculate_ate(mean_comp = unname(res_outstandr$stats["1"]),
+                      mean_ref = unname(res_outstandr$stats["0"]),
                       effect = "log_relative_risk")),
     tolerance = 0.01)
 })
@@ -226,11 +226,11 @@ test_that("compare with stdReg2 package for binary outcome", {
   
   stdReg2_estimates <- res_stdReg2$res$estimates
   
-  expect_equal(unname(res_outstandr["0"]),
+  expect_equal(unname(res_outstandr$stats["0"]),
                stdReg2_estimates$estimates[stdReg2_estimates$trt == 0],
                tolerance = 0.1)
   
-  expect_equal(unname(res_outstandr["1"]),
+  expect_equal(unname(res_outstandr$stats["1"]),
                stdReg2_estimates$estimates[stdReg2_estimates$trt == 1],
                tolerance = 0.1)
   
@@ -241,15 +241,15 @@ test_that("compare with stdReg2 package for binary outcome", {
   
   expect_equal(
     res_stdReg2$res_contrast[[2]]$est_table$Estimate[2],
-    calculate_ate(mean_comp = unname(res_outstandr["1"]),
-                  mean_ref = unname(res_outstandr["0"]),
+    calculate_ate(mean_comp = unname(res_outstandr$stats["1"]),
+                  mean_ref = unname(res_outstandr$stats["0"]),
                   effect = "risk_difference"),
     tolerance = 0.01)
   
   expect_equal(
     res_stdReg2$res_contrast[[3]]$est_table$Estimate[2],
-    exp(calculate_ate(mean_comp = unname(res_outstandr["1"]),
-                      mean_ref = unname(res_outstandr["0"]),
+    exp(calculate_ate(mean_comp = unname(res_outstandr$stats["1"]),
+                      mean_ref = unname(res_outstandr$stats["0"]),
                       effect = "log_relative_risk")),
     tolerance = 0.01)
 })
@@ -275,7 +275,8 @@ test_that("compare with marginaleffects package for binary outcome", {
   
   fit <- glm(lin_form, family = binomial(link = "logit"), data = data)
   
-  m_eff_pred <- marginaleffects::avg_predictions(fit, variables = "trt", by = "trt")
+  m_eff_pred <- 
+    marginaleffects::avg_predictions(fit, variables = "trt", by = "trt")
   
   ## {outstandR}
   
@@ -323,11 +324,11 @@ test_that("compare with marginaleffects package for binary outcome", {
   
   estimates <- m_eff_pred$estimate
   
-  expect_equal(unname(res_outstandr["0"]),
+  expect_equal(unname(res_outstandr$stats["0"]),
                estimates[1],
                tolerance = 0.1)
   
-  expect_equal(unname(res_outstandr["1"]),
+  expect_equal(unname(res_outstandr$stats["1"]),
                estimates[2],
                tolerance = 0.1)
 })
@@ -397,11 +398,11 @@ test_that("compare with marginaleffects package for continuous outcome", {
   
   # means
   
-  expect_equal(unname(res_outstandr["0"]),
+  expect_equal(unname(res_outstandr$stats["0"]),
                m_eff_pred$estimate[1],
                tolerance = 0.1)
   
-  expect_equal(unname(res_outstandr["1"]),
+  expect_equal(unname(res_outstandr$stats["1"]),
                m_eff_pred$estimate[2],
                tolerance = 0.1)
   

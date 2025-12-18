@@ -1,43 +1,45 @@
+# variance estimation unit tests
+
 test_that("Sandwich variance estimator works for STC", {
-  ipd <- AC_IPD_binY_contX
-  ald <- BC_ALD_binY_contX
+  load(test_path("testdata/BC_ALD.RData"))
+  load(test_path("testdata/AC_IPD.RData"))
   
-  form <- y ~ PF_cont_1 + PF_cont_2 + trt + trt:EM_cont_1 + trt:EM_cont_2
+  form <- y ~ X1 + X2 + trt + trt:X3 + trt:X4
   strat <- strategy_stc(formula = form, 
                         family = binomial(link = "logit"), 
                         trt_var = "trt")
   
   # Base parameters
-  params <- list(ipd = ipd, ald = ald, 
-                 ref_trt = "C", ipd_comp = "A", 
+  params <- list(ipd = AC_IPD, ald = BC_ALD, 
+                 ref_trt = "C",
+                 ipd_comp = "A", 
                  scale = "log_odds")
   
-  # 1. Run with Naive Variance (Default)
   res_naive <- calc_IPD_stats(strat, params) # Defaults to "sample" internally
   
-  # 2. Run with Sandwich Variance
+  # Sandwich Variance
   params_sand <- params
   params_sand$var_method <- "sandwich"
   res_sandwich <- calc_IPD_stats(strat, params_sand)
   
-  # Checks
   expect_true(is.numeric(res_sandwich$contrasts$var))
   expect_gt(res_sandwich$contrasts$var, 0)
   expect_false(res_sandwich$contrasts$var == res_naive$contrasts$var)
 })
 
 test_that("Sandwich variance estimator works for MAIC", {
-  ipd <- AC_IPD_binY_contX
-  ald <- BC_ALD_binY_contX
+  load(test_path("testdata/BC_ALD.RData"))
+  load(test_path("testdata/AC_IPD.RData"))
   
-  form <- y ~ PF_cont_1 + PF_cont_2 + trt + trt:EM_cont_1 + trt:EM_cont_2
+  form <- y ~ X1 + X2 + trt + trt:X3 + trt:X4
   strat <- strategy_maic(formula = form, 
                          family = binomial(link = "logit"), 
                          trt_var = "trt")
   
   # Specify method inside params
-  params <- list(ipd = ipd, ald = ald, 
-                 ref_trt = "C", ipd_comp = "A", 
+  params <- list(ipd = AC_IPD, ald = BC_ALD, 
+                 ref_trt = "C", 
+                 ipd_comp = "A", 
                  scale = "risk_difference",
                  var_method = "sandwich")
   
