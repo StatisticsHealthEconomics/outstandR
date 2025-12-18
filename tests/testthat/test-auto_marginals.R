@@ -1,11 +1,11 @@
 # This test suite checks three key scenarios:
 #   
-# Auto- calculation: Providing just the distribution name (e.g., "gamma") and
-#                    verifying that outstandR correctly converts the ALD's Mean/SD into the correct Shape/Rate.
+# * Auto- calculation: Providing just the distribution name (e.g., "gamma") and
+#                     verifying that outstandR correctly converts the ALD's Mean/SD into the correct Shape/Rate.
 #
-# Manual override: Providing both distribution and parameters to ensure the user can still force specific values.
+# * Manual override: Providing both distribution and parameters to ensure the user can still force specific values.
 #
-# Integration: Ensuring these arguments work when passed through the top-level outstandR() function.
+# * Integration: Ensuring these arguments work when passed through the top-level outstandR() function.
 
 # test simulate_ALD_pseudo_pop()
 
@@ -22,7 +22,6 @@ test_that("Method of Moments Auto-Calculation (Gamma & Beta)", {
     trt = NA
   )
   
-  # Formula (Treatment is not in ALD covariate rows)
   form <- outcome ~ cost + util*trt + trt
   trt_var_name <- "trt"
   
@@ -98,7 +97,7 @@ test_that("Manual Override of ALD Parameters", {
   
   form <- outcome ~ age + trt
   
-  # We want to force Mean=70 (Sensitivity Analysis)
+  # want to force Mean=70 (Sensitivity Analysis)
   # target_mean=70, target_sd=10 -> shape=49, rate=0.7
   forced_params <- list(
     age = list(shape = 49, rate = 0.7)
@@ -113,7 +112,7 @@ test_that("Manual Override of ALD Parameters", {
     rho = 1,
     N = 10000,
     marginal_distns = c(age = "gamma"),
-    marginal_params = forced_params # <--- OVERRIDE
+    marginal_params = forced_params
   )
   
   # Should match Manual (70), NOT ALD (50)
@@ -124,32 +123,24 @@ test_that("Manual Override of ALD Parameters", {
 
 test_that("Integration: Arguments pass through outstandR() wrapper", {
   
-  # Load package data
-  # Use AC_IPD_binY_contX / BC_ALD_binY_contX (loaded in helper or available in pkg)
-  # Variables: EM_cont_1 (mean~0.65, sd~0.39)
+  load(test_path("testdata/BC_ALD.RData"))
+  load(test_path("testdata/AC_IPD.RData"))
   
-  # 1. Define strategy with custom distribution
+  # custom distribution
   my_strategy <- strategy_gcomp_ml(
-    formula = y ~ PF_cont_1 + PF_cont_2 + trt + trt:EM_cont_1 + trt:EM_cont_2,
+    formula = y ~ X1 + X2 + trt + trt:X3 + trt:X4,
     family = binomial(link = "logit"),
-    marginal_distns = c(EM_cont_1 = "gamma", 
-                        EM_cont_2 = "norm", 
-                        PF_cont_1 = "norm", 
-                        PF_cont_2 = "norm"),
-    N = 200 # Small N for speed
-  )
-  
-  # 2. Run wrapper
-  # If the arguments weren't threaded correctly in R/gcomp_ml.R, 
-  # this would crash (Gamma needs shape/rate, defaults to norm if missing) 
-  # or silently fail to produce Gamma data.
+    marginal_distns = c(X1 = "gamma", 
+                        X2 = "norm", 
+                        X3 = "norm", 
+                        X4 = "norm"),
+    N = 200)
   
   res <- outstandR(
-    ipd_trial = AC_IPD_binY_contX,
-    ald_trial = BC_ALD_binY_contX,
-    strategy = my_strategy
-  )
+    ipd_trial = AC_IPD,
+    ald_trial = BC_ALD,
+    strategy = my_strategy)
   
   expect_s3_class(res, "outstandR")
-  expect_true(is.numeric(res$contrasts$mean))
+  expect_true(is.numeric(unlist(res$results$contrasts$means)))
 })

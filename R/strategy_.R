@@ -321,9 +321,11 @@ check_distns <- function(formula,
            the number of covariates in the formula.", call. = FALSE)
   }
   
-  if (length(marginal_params) != n_covariates) {
-    stop("Number of marginal parameter lists must match
+  if (!all(is.na(marginal_params))) {
+    if (length(marginal_params) != n_covariates) {
+      stop("Number of marginal parameter lists must match
            the number of covariates in the formula.", call. = FALSE)
+    }
   }
 }
 
