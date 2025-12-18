@@ -8,6 +8,7 @@ inst\\joss\_code\.html
 inst\\joss\_code\.Rmd
 inst\\jss\_code\.html
 inst\\jss\_code\.Rmd
+inst/jss-section\.qmd
 ^scripts$
 ^raw-data$
 ^docs$

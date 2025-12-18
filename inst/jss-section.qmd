@@ -1,0 +1,445 @@
+---
+title: "Using the outstandR package"
+format: html
+editor: visual
+---
+
+# Using the outstandR package
+
+This section gives a practical demonstration of the core functionality available in the package.
+
+## Available internal data sets
+
+To illustrate the use of `outstandR`, we demonstrate its application with synthetic datasets. These are contained in the `outstandR` package and can be loaded via the `data()` function.
+
+The naming convention that we use is:
+
+`<comparator><reference>_<level>_<outcome>_<covariates>`
+
+Where:
+
+-   **comparator** and **reference** are the treatment arm names.
+-   **level** is either `IPD` for individual-level patient data or `ALD` for aggregate-level data.
+-   **outcome** is binary or continuous.
+-   **covariates** is binary, continuous, or mixed.
+
+For example, `AC_IPD_binY_binX` is the name of the data set for treatments $A$ vs $C$, patient-level data, and both binary-valued outcome and covariates.
+
+## Installation
+
+First, install the development version from GitHub using R-universe.
+
+```{r}
+#| eval: false
+install.packages("outstandR",
+                 repos = c("[https://statisticshealtheconomics.r-universe.dev](https://statisticshealtheconomics.r-universe.dev)",
+                           "[https://cloud.r-project.org](https://cloud.r-project.org)"))
+```
+
+## Illustrative examples
+
+Attach the package to the current environment.
+
+```{r}
+#| message: false
+#| warning: false
+library(outstandR)
+library(dplyr) # Loaded for convenient printing if needed
+```
+
+### Binary outcome data
+
+In the first example, consider binary outcome data and continuous covariates only. Load the aggregate level and individual-patient data into the environment.
+
+```{r}
+data(AC_IPD_binY_contX) # AC individual-level patient data
+data(BC_ALD_binY_contX) # BC aggregate-level data
+```
+
+Inspecting the IPD, we can see that each row corresponds to an individual and it has four covariates: two effect modifiers only, and two prognostic factors only. These are all continuous valued and the outcome is binary values 0, 1.
+
+```{r}
+# individual-level data
+head(AC_IPD_binY_contX)
+```
+
+Similarly, the ALD has the corresponding covariates but not as separate columns (wide format) but in a long format with all covariate names in the `variable` column. Notice that the treatment column `trt` is NA for the covariate because we assume that the covariate distribution is the same between treatment arms.
+
+```{r}
+# aggregate-level data
+print(BC_ALD_binY_contX)
+```
+
+The next thing is to define the formula which specifies the relationship between the covariates, treatments and outcome. For this example the regression is:
+
+$$
+\text{logit}(p) = \beta_0 + \beta^{PF}_{1} X^{PF}_{1} + \beta^{PF}_{2 }X^{PF}_{2} + (\beta_{trt} + \beta^{EM}_{1} X^{EM}_{1} + + \beta^{EM}_{2} X^{EM}_{2}) \mathbb{I}(trt = 1),
+$$
+
+where $\mathbb{I}()$ is the indicator function, taking value 1 when true and 0 otherwise. The corresponding R formula used by `outstandR` is independent of the particular type of data and so we do not include a link function at this stage.
+
+```{r}
+# linear formula for the outcome model
+lin_form <- as.formula("y ~ PF_cont_1 + PF_cont_2 + trt + trt:EM_cont_1 + trt:EM_cont_2")
+```
+
+That is, the main effects are the prognostic factors (`PF_cont_1` and `PF_cont_2`) and the treatment `trt`. The interaction terms are with the treatment defined as effect modifiers (`EM_cont_1` and `EM_cont_2`).
+
+#### Relative treatment effects
+
+Let $p_C$ be the proportion of events in the comparator treatment arm and $p_B$ be the proportion of events in the reference treatment arm. For the logit link with binary data, the mean treatment effect is the log-odds ratio:
+
+$$
+\Delta_{BC} = \text{logit}(p_B) - \text{logit}(p_C)
+$$
+
+with variance:
+
+$$
+\text{Var}(\Delta_{BC}) = \frac{1}{y_B} + \frac{1}{N_B - y_B} + \frac{1}{y_C} + \frac{1}{N_C - y_C},
+$$
+
+where $y_t$ are the number of events and $N_t$ are the total number of subjects for treatment $t$.
+
+#### Running outstandR()
+
+Having completed the set-up steps, we are ready to proceed with performing the indirect treatment comparison with `outstandR()`.
+
+First, for an MAIC analysis use `strategy_maic()`.
+
+```{r}
+outstandR_maic <- outstandR(
+  ipd_trial = AC_IPD_binY_contX,
+  ald_trial = BC_ALD_binY_contX,
+  strategy = strategy_maic(
+    formula = lin_form,
+    family = binomial(link = "logit")
+  )
+)
+```
+
+To help with interpreting the results, `outstandR` includes a convenience `print` method.
+
+```{r}
+print(outstandR_maic)
+```
+
+Similarly, the STC, G-computation and MIM analyses are:
+
+```{r}
+# STC Analysis
+outstandR_stc <- outstandR(
+  ipd_trial = AC_IPD_binY_contX,
+  ald_trial = BC_ALD_binY_contX,
+  strategy = strategy_stc(
+    formula = lin_form,
+    family = binomial(link = "logit")
+  )
+)
+
+# G-Computation (ML)
+outstandR_gcomp_ml <- outstandR(
+  ipd_trial = AC_IPD_binY_contX,
+  ald_trial = BC_ALD_binY_contX,
+  strategy = strategy_gcomp_ml(
+    formula = lin_form,
+    family = binomial(link = "logit")
+  )
+)
+
+# G-Computation (Bayes)
+# Note: refresh = 0 turns off iteration updates
+outstandR_gcomp_bayes <- outstandR(
+  ipd_trial = AC_IPD_binY_contX,
+  ald_trial = BC_ALD_binY_contX,
+  refresh = 0, 
+  strategy = strategy_gcomp_bayes(
+    formula = lin_form,
+    family = binomial(link = "logit")
+  )
+)
+
+# MIM Analysis
+outstandR_mim <- outstandR(
+  ipd_trial = AC_IPD_binY_contX,
+  ald_trial = BC_ALD_binY_contX,
+  refresh = 0,
+  strategy = strategy_mim(
+    formula = lin_form,
+    family = binomial(link = "logit")
+  )
+)
+```
+
+------------------------------------------------------------------------
+
+### Continuous outcome data
+
+Analogous to the first example with binary outcomes and continuous covariates, we now extend this for the case of continuous outcomes and a mixture of binary and continuous covariates. The same steps are followed.
+
+First, read in the data.
+
+```{r}
+# individual-level data
+data(AC_IPD_contY_mixedX)
+head(AC_IPD_contY_mixedX)
+
+# aggregate-level data
+data(BC_ALD_contY_mixedX)
+print(BC_ALD_contY_mixedX)
+```
+
+The formats are the same as the previous example but now in the ALD the binary-valued covariates have `statistic` entry `prop`. `X1` and `X3` are continuous and `X2` and `X4` are binary.
+
+The formula for this example is also a little more complicated. We shall assume that some of the covariate can be both prognostic factors and effect modifiers, so the regression is:
+
+$$
+y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_3 X_3 + (\beta_{trt} + \alpha_1 X_1 + \alpha_2 X_2 + \alpha_4 X_4 ) \mathbb{I}(trt = 1) 
+$$
+
+This corresponds to the R formula given by:
+
+```{r}
+lin_form <- as.formula("y ~ X1 + X2 + X3 + trt + trt:(X1 + X2 + X4)")
+```
+
+#### Relative treatment effect
+
+Let $\bar{y}_B$ be the mean in the comparator arm and $\bar{y}_C$ be the mean in the reference arm. Then the mean treatment difference is simply:
+
+$$
+\Delta_{BC} = \bar{y}_B - \bar{y}_C
+$$
+
+The variance of the relative treatment effect is:
+
+$$
+\text{Var}(\Delta_{BC}) = \frac{s_B^2}{N_B} + \frac{s_C^2}{N_C}
+$$
+
+where $N_t$ is the number of subjects for treatment arm $t$.
+
+#### Running outstandR()
+
+A difference from the previous binary outcome data example is the `family = gaussian(link = "identity")` argument indicating a Normal linear regression. The full call to `outstandR()` is:
+
+```{r}
+outstandR_maic <- outstandR(
+  ipd_trial = AC_IPD_contY_mixedX, 
+  ald_trial = BC_ALD_contY_mixedX,
+  strategy = strategy_maic(
+    formula = lin_form,
+    family = gaussian(link = "identity")
+  )
+)
+```
+
+Interrogating the output:
+
+```{r}
+str(outstandR_maic, max.level = 1)
+print(outstandR_maic)
+```
+
+------------------------------------------------------------------------
+
+### Count outcome data
+
+First, read in and view the two data sets.
+
+```{r}
+# individual-level data
+data(AC_IPD_countY_contX)
+head(AC_IPD_countY_contX)
+
+# aggregate-level data
+data(BC_ALD_countY_contX)
+print(BC_ALD_countY_contX)
+```
+
+Let $\lambda$ be the event rate, then the equation for the outcome regression for the count data is:
+
+$$
+\log(\lambda) = \beta_0 + \beta^{PF}_{1} X^{PF}_{1} + \beta^{PF}_{2 }X^{PF}_{2} + (\beta_{trt} + \beta^{EM}_{1} X^{EM}_{1} + + \beta^{EM}_{2} X^{EM}_{2}) \mathbb{I}(trt = 1).
+$$
+
+Recalling that the log link is defined separately in the function call, the corresponding R formula is:
+
+```{r}
+# linear formula for the outcome model
+lin_form <- as.formula("y ~ PF_cont_1 + PF_cont_2 + trt + trt:EM_cont_1 + trt:EM_cont_2")
+```
+
+#### Relative treatment effects
+
+The default relative effect with the log link is the log relative risk, with mean:
+
+$$
+\Delta_{BC} = \ln(\bar{y}_C) - \ln(\bar{y}_B)
+$$
+
+and variance:
+
+$$
+\text{Var}(\Delta_{BC}) = \frac{1}{N_B \bar{y}_B} + \frac{1}{N_C \bar{y}_C}
+$$
+
+#### Running outstandR()
+
+A difference from the previous outcome data examples is the `family = poisson(link = "log")` argument indicating a log linear regression.
+
+```{r}
+outstandR_maic <- outstandR(
+  ipd_trial = AC_IPD_countY_mixedX,
+  ald_trial = BC_ALD_countY_contX,
+  strategy = strategy_maic(
+    formula = lin_form,
+    family = poisson(link = "log")
+  )
+)
+
+print(outstandR_maic)
+```
+
+## User-specified outcome scales
+
+By default, `outstandR` reports treatment effects on the scale corresponding to the regression model's link function. However, health economic models often require parameters on specific scales, such as Risk Differences (RD) or Relative Risks (RR).
+
+| Data Type | Model Metric | Mean Difference | Variance Component |
+|:-----------------|:-----------------|:-----------------|:-----------------|
+| **Binary** | Log Odds Ratio$^\dagger$ | $\text{logit}(p_B) - \text{logit}(p_C)$ | $\frac{1}{y_t} + \frac{1}{N_t - y_t}$ |
+|  | Risk Difference | $p_C - p_B$ | $\frac{p_t(1 - p_t)}{N_t}$ |
+|  | Probit Scale Difference | $\text{probit}(p_C) - \text{probit}(p_B)$ | $\frac{1}{y_t} + \frac{1}{N_t - y_t}$ |
+|  | Log RR (cloglog) | $\ln(-\ln(1 - p_C)) - \ln(-\ln(1 - p_B))$ | $\frac{1}{y_t} - \frac{1}{N_t}$ |
+|  | Log RR (Log Link) | $\ln(p_C) - \ln(p_B)$ | $\frac{1}{y_t} - \frac{1}{N_t}$ |
+| **Count** | Log Relative Risk$^\dagger$ | $\ln(\bar{y}_C) - \ln(\bar{y}_B)$ | $\frac{1}{N_t \bar{y}_t}$ |
+|  | Rate Difference | $\bar{y}_C - \bar{y}_B$ | $\frac{\bar{y}_t}{N_t}$ |
+|  | Delta $z$ (Signal-to-noise) | $\sqrt{\bar{y}_C} - \sqrt{\bar{y}_B}$ | $\frac{1}{4 N_t \bar{y}_t}$ |
+| **Continuous** | Mean Difference$^\dagger$ | $\bar{y}_B - \bar{y}_C$ | $\frac{s_t^2}{N_t}$ |
+
+: Relative treatment effect statistics for different outcome data types ($^\dagger$default).
+
+The `scale` argument in `outstandR()` allows users to request these alternative summary statistics directly. For example, to obtain a risk difference instead of the default log-odds ratio for the binary outcome analysis:
+
+```{r}
+# Reloading the binary data for this example
+data(AC_IPD_binY_contX) 
+data(BC_ALD_binY_contX)
+lin_form <- as.formula("y ~ PF_cont_1 + PF_cont_2 + trt + trt:EM_cont_1 + trt:EM_cont_2")
+
+outstandR_maic_rd <- outstandR(
+  ipd_trial = AC_IPD_binY_contX, 
+  ald_trial = BC_ALD_binY_contX,
+  strategy = strategy_maic(
+    formula = lin_form,
+    family = binomial(link = "logit")
+  ),
+  scale = "risk_difference"  # instead of default log-odds ratio
+)
+
+print(outstandR_maic_rd)
+```
+
+## Robust variance estimation
+
+Standard errors in population-adjusted analyses can be sensitive to model misspecification. Users can request robust (sandwich) standard errors by setting the `var_method` argument to `"sandwich"`.
+
+The following example demonstrates how to compare the naive model-based standard error with the robust sandwich estimate for an STC analysis:
+
+```{r}
+# 1. Standard STC analysis (Model-based variance)
+stc_naive <- outstandR(
+  ipd_trial = AC_IPD_binY_contX,
+  ald_trial = BC_ALD_binY_contX,
+  strategy = strategy_stc(formula = lin_form, family = binomial()),
+  var_method = "sample") # Default
+
+# 2. STC with Robust Variance (Sandwich estimator)
+stc_robust <- outstandR(
+  ipd_trial = AC_IPD_binY_contX,
+  ald_trial = BC_ALD_binY_contX,
+  strategy = strategy_stc(formula = lin_form, family = binomial()),
+  var_method = "sandwich")
+
+# Compare standard errors
+print(paste("Naive SE:", round(sqrt(stc_naive$contrasts$var), 4)))
+print(paste("Robust SE:", round(sqrt(stc_robust$contrasts$var), 4)))
+```
+
+## User-defined covariate distributions in G-computation
+
+By default, the simulation step in G-computation assumes that covariates in the target population follow a multivariate normal distribution. `outstandR` allows users to specify alternative marginal distributions via the `marginal_distns` argument.
+
+The package automatically parameterizes these distributions using the summary statistics available in the ALD (e.g., converting mean/sd to Gamma shape/rate).
+
+```{r}
+#| eval: false
+# This example requires datasets with specific columns (age/sex) 
+# We will simulate the data structure for demonstration if not in current environment
+# (Assuming AC_IPD and BC_ALD are loaded as generic placeholders here)
+
+# 1. Define the target distributions
+# We specify "gamma" for age and "binom" for sex.
+# Covariates not listed (like 'bmi') default to "norm".
+my_distns <- c(age = "gamma", sex = "binom")
+
+# 2. Run G-computation
+# automatically converts ALD mean/sd to shape/rate for 'age'
+# Note: This code block requires the specific AC_IPD/BC_ALD datasets 
+# containing 'age' and 'sex' columns to run successfully.
+# outstandR_gcomp_custom <- outstandR(...)
+```
+
+#### Manual parameter specification
+
+There are scenarios where manual specification via the `marginal_params` argument is necessary, such as sensitivity analysis.
+
+```{r}
+#| eval: false
+# 1. Define the distribution forms
+my_distns <- c(age = "gamma", sex = "binom")
+
+# 2. Manually specify parameters for 'age' (mean=70, sd=10.5)
+# Note: We convert mean=70/sd=10.5 to shape/rate manually 
+# or pass them if we already know the specific shape/rate we want
+target_mean <- 70
+target_sd <- 10.5
+
+my_params <- list(
+  age = list(shape = (target_mean/target_sd)^2, 
+             rate = target_mean/(target_sd^2)))
+
+# 3. Run G-computation with manual override
+# outstandR_sens <- outstandR(
+#    ipd_trial = AC_IPD,
+#    ald_trial = BC_ALD,
+#    strategy = strategy_gcomp_ml(
+#      formula = lin_form,
+#      marginal_distns = my_distns,
+#      marginal_params = my_params, # Overrides ALD for 'age'
+#      N = 5000))
+```
+
+## Model diagnostics
+
+While `outstandR()` focuses on estimation, assessing model fit is crucial. For an MAIC analysis, we can inspect the distribution of weights to check for outliers or near-zero effective sample sizes.
+
+```{r}
+# Check Effective Sample Size
+print(outstandR_maic$model$ESS)   
+
+# Histogram of weights
+hist(outstandR_maic$model$weights)
+```
+
+Similarly, for G-computation, users can extract the fitted model to check residuals or inspect MCMC convergence.
+
+```{r}
+#| eval: false
+# Extract stanfit object
+stan_obj <- outstandR_gcomp_bayes$model$fit 
+
+# Use external package for diagnostics
+library(bayesplot)
+mcmc_trace(stan_obj, pars = c("alpha", "beta"))
+```
