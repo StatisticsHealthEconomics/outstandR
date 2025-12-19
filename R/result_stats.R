@@ -52,21 +52,20 @@ result_stats <- function(ipd_stats,
   
   absolute <- list(
     A = AC_absolute$mean[1],
-    # B = AB_absolute$mean["mean_B"],
+    B = AC_absolute$mean[2] + ald_stats$mean,
     C = AC_absolute$mean[2]
   )
   
   absolute_var <- list(
     A = AC_absolute$var[1],
-    # B = AB_absolute$var["mean_B"],
+    B = AC_absolute$var[2] + ald_stats$var,
     C = AC_absolute$var[2]
   )
   
-  ##TODO:
   absolute_ci <- list(
-    AB = NA,
-    AC = NA,
-    BC = NA
+    A = calc_ci(mean_val = absolute$A, sd_val = sqrt(absolute_var$A), level = CI),
+    B = calc_ci(mean_val = absolute$B, sd_val = sqrt(absolute_var$B), level = CI),
+    C = calc_ci(mean_val = absolute$C, sd_val = sqrt(absolute_var$C), level = CI)
   )
   
   list(

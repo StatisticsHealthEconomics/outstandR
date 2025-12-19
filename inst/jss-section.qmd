@@ -2,6 +2,8 @@
 title: "Using the outstandR package"
 format: html
 editor: visual
+editor_options: 
+  chunk_output_type: console
 ---
 
 This section gives a practical demonstration of the core functionality available in the package.
