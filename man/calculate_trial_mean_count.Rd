@@ -12,6 +12,8 @@ calculate_trial_mean_count(ald, tid, effect)
 \item{tid}{Treatment ID}
 
 \item{effect}{Effect name. String.}
+
+\item{verbatim}{Print messages, logical}
 }
 \value{
 Numeric mean value.

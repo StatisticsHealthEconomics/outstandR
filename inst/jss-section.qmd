@@ -16,7 +16,7 @@ The naming convention that we use is:
 
 `<comparator><reference>_<level>_<outcome>_<covariates>`
 
-Where:
+where:
 
 -   **comparator** and **reference** are the treatment arm names.
 -   **level** is either `IPD` for individual-level patient data or `ALD` for aggregate-level data.
@@ -290,7 +290,7 @@ A difference from the previous outcome data examples is the `family = poisson(li
 
 ```{r}
 outstandR_maic <- outstandR(
-  ipd_trial = AC_IPD_countY_mixedX,
+  ipd_trial = AC_IPD_countY_contX,  # EDITED
   ald_trial = BC_ALD_countY_contX,
   strategy = strategy_maic(
     formula = lin_form,

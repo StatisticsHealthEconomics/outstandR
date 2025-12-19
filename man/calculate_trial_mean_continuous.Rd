@@ -4,7 +4,7 @@
 \alias{calculate_trial_mean_continuous}
 \title{Calculate Trial Mean Continuous Data}
 \usage{
-calculate_trial_mean_continuous(ald, tid, effect)
+calculate_trial_mean_continuous(ald, tid, effect, verbatim = FALSE)
 }
 \arguments{
 \item{ald}{Aggregate level data. Data frame in long format.}
@@ -12,6 +12,8 @@ calculate_trial_mean_continuous(ald, tid, effect)
 \item{tid}{Treatment ID}
 
 \item{effect}{Effect name. String.}
+
+\item{verbatim}{Print messages, logical}
 }
 \value{
 Numeric mean value.

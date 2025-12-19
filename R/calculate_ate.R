@@ -1,4 +1,5 @@
-#
+# all mean and variance functions
+# for continuous, binary and count outcomes
 
 #' Calculate Average Treatment Effect
 #'
@@ -37,7 +38,7 @@ calculate_ate <- function(mean_comp, mean_ref, effect) {
   } else if (effect == "log_relative_risk") {  # Poisson log link
     ate <- log(mean_comp) - log(mean_ref)
   } else {
-    stop("Unsupported link function.")
+    stop("Unsupported link function.", call. = FALSE)
   }
   
   ate
@@ -90,6 +91,8 @@ calculate_trial_variance <- function(ald, tid, effect, family) {
 #' @export
 calculate_trial_variance_binary <- function(ald, tid, effect) {
   
+  tid <- as.character(tid)
+  
   y <- dplyr::filter(
     ald,
     .data$variable == "y",
@@ -124,7 +127,7 @@ calculate_trial_variance_binary <- function(ald, tid, effect) {
   if (!effect %in% names(effect_functions)) {
     stop(
       paste0("Unsupported effect function. Choose from ", 
-             paste(names(effect_functions), collapse = ", ")))
+             paste(names(effect_functions), collapse = ", ")), call. = FALSE)
   }
   
   effect_functions[[effect]]()
@@ -135,10 +138,13 @@ calculate_trial_variance_binary <- function(ald, tid, effect) {
 #' @param ald Aggregate level data. Data frame in long format.
 #' @param tid Treatment ID
 #' @param effect Effect name. String.
+#' @param verbatim Print messages, logical
 #' @return Numeric value of total variance.
 #'
 #' @export
-calculate_trial_variance_continuous <- function(ald, tid, effect) {
+calculate_trial_variance_continuous <- function(ald, tid, effect,
+                                                verbatim = FALSE) {
+  tid <- as.character(tid)
   
   ybar <- dplyr::filter(
     ald,
@@ -165,7 +171,7 @@ calculate_trial_variance_continuous <- function(ald, tid, effect) {
       pi^2/3 * (1/N)
     },
     "log_relative_risk" = function() {
-      message("log mean used\n")
+      if (verbatim) message("log mean used\n")
       log(ybar)
     },
     "mean_difference" = function() {
@@ -191,6 +197,8 @@ calculate_trial_variance_continuous <- function(ald, tid, effect) {
 #'
 #' @export
 calculate_trial_variance_count <- function(ald, tid, effect) {
+  
+  tid <- as.character(tid)
   
   ybar <- dplyr::filter(
     ald,
@@ -271,6 +279,8 @@ calculate_trial_mean <- function(ald, tid, effect, family) {
 #' @export
 calculate_trial_mean_binary <- function(ald, tid, effect) {
   
+  tid <- as.character(tid)
+  
   y <- dplyr::filter(
     ald,
     .data$variable == "y",
@@ -307,10 +317,13 @@ calculate_trial_mean_binary <- function(ald, tid, effect) {
 #' @param ald Aggregate level data. Data frame in long format.
 #' @param tid Treatment ID
 #' @param effect Effect name. String.
+#' @param verbatim Print messages, logical
 #' @return Numeric mean value.
 #'
 #' @export
-calculate_trial_mean_continuous <- function(ald, tid, effect) {
+calculate_trial_mean_continuous <- function(ald, tid, effect,
+                                            verbatim = FALSE) {
+  tid <- as.character(tid)
   
   ybar <- dplyr::filter(
     ald,
@@ -334,7 +347,7 @@ calculate_trial_mean_continuous <- function(ald, tid, effect) {
   
   effect_fns <- list(
     log_odds = function() {
-      message("log mean used\n")
+      if (verbatim) message("log mean used\n")
       log(ybar)
     },
     mean_difference = function() {
@@ -344,7 +357,7 @@ calculate_trial_mean_continuous <- function(ald, tid, effect) {
       ybar / ysd
     },
     log_relative_risk = function() {
-      message("log mean used\n")
+      if (verbatim) message("log mean used\n")
       log(ybar)
     }
     # log_relative_risk_rare_events intentionally unsupported
@@ -364,10 +377,13 @@ calculate_trial_mean_continuous <- function(ald, tid, effect) {
 #' @param ald Aggregate level data. Data frame in long format.
 #' @param tid Treatment ID
 #' @param effect Effect name. String.
+#' @param verbatim Print messages, logical
 #' @return Numeric mean value.
 #'
 #' @export
-calculate_trial_mean_count <- function(ald, tid, effect) {
+calculate_trial_mean_count <- function(ald, tid, effect,
+                                       verbatim = FALSE) {
+  tid <- as.character(tid)
   
   ybar <- dplyr::filter(
     ald,
@@ -391,7 +407,7 @@ calculate_trial_mean_count <- function(ald, tid, effect) {
   
   effect_fns <- list(
     log_relative_risk = function() {
-      message("log rate used\n")
+      if (verbatim) message("log rate used\n")
       log(ybar)
     },
     rate_difference = function() {
@@ -406,7 +422,7 @@ calculate_trial_mean_count <- function(ald, tid, effect) {
   
   if (!effect %in% names(effect_fns)) {
     stop(paste0("Unsupported link function. Choose from ",
-                paste(names(effect_fns), collapse = ", ")))
+                paste(names(effect_fns), collapse = ", ")), call. = FALSE)
   }
   
   effect_fns[[effect]]()
@@ -445,7 +461,7 @@ get_treatment_effect <- function(link) {
   
   if (!link %in% names(link_map)) {
     stop(paste0("Unsupported link function. Choose from ",
-                paste(names(link_map), collapse = ", ")))
+                paste(names(link_map), collapse = ", ")), call. = FALSE)
     
   }
   
@@ -483,6 +499,7 @@ calc_log_relative_risk <- function(mean_comp, mean_ref) {
 #' 
 #' @param ald Aggregate level data. Data frame in long format.
 #' @param correction Continuity correction numeric size. Default to 0.5.
+#' @param verbatim Print messages, logical
 #'
 #' @return Corrected aggregate level data frame.
 #' 
@@ -515,9 +532,10 @@ continuity_correction <- function(ald,
     return(ald)
   }
   
-  message(sprintf(
-    "Applying continuity correction: %.2f", correction)
-  )
+  if (verbatim) {
+    message(sprintf(
+      "Applying continuity correction: %.2f", correction))
+  } 
   
   ald_corrected <- ald |> 
     dplyr::mutate(
