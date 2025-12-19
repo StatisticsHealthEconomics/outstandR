@@ -4,7 +4,7 @@
 \alias{calculate_trial_mean_count}
 \title{Calculate Trial Mean Count Data}
 \usage{
-calculate_trial_mean_count(ald, tid, effect)
+calculate_trial_mean_count(ald, tid, effect, verbatim = FALSE)
 }
 \arguments{
 \item{ald}{Aggregate level data. Data frame in long format.}

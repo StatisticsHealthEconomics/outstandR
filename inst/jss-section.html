@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.11">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Using the outstandR package</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="jss-section_files/libs/clipboard/clipboard.min.js"></script>
+<script src="jss-section_files/libs/quarto-html/quarto.js"></script>
+<script src="jss-section_files/libs/quarto-html/popper.min.js"></script>
+<script src="jss-section_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="jss-section_files/libs/quarto-html/anchor.min.js"></script>
+<link href="jss-section_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="jss-section_files/libs/quarto-html/quarto-syntax-highlighting-79bb3942e891885f9f7af119cd221462.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="jss-section_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="jss-section_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="jss-section_files/libs/bootstrap/bootstrap-b4859f80379277dd227e7c6eb891e56d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Using the outstandR package</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="using-the-outstandr-package" class="level1">
+<h1>Using the outstandR package</h1>
+<p>This section gives a practical demonstration of the core functionality available in the package.</p>
+<section id="available-internal-data-sets" class="level2">
+<h2 class="anchored" data-anchor-id="available-internal-data-sets">Available internal data sets</h2>
+<p>To illustrate the use of <code>outstandR</code>, we demonstrate its application with synthetic datasets. These are contained in the <code>outstandR</code> package and can be loaded via the <code>data()</code> function.</p>
+<p>The naming convention that we use is:</p>
+<p><code>&lt;comparator&gt;&lt;reference&gt;_&lt;level&gt;_&lt;outcome&gt;_&lt;covariates&gt;</code></p>
+<p>where:</p>
+<ul>
+<li><strong>comparator</strong> and <strong>reference</strong> are the treatment arm names.</li>
+<li><strong>level</strong> is either <code>IPD</code> for individual-level patient data or <code>ALD</code> for aggregate-level data.</li>
+<li><strong>outcome</strong> is binary or continuous.</li>
+<li><strong>covariates</strong> is binary, continuous, or mixed.</li>
+</ul>
+<p>For example, <code>AC_IPD_binY_binX</code> is the name of the data set for treatments <span class="math inline">\(A\)</span> vs <span class="math inline">\(C\)</span>, patient-level data, and both binary-valued outcome and covariates.</p>
+</section>
+<section id="installation" class="level2">
+<h2 class="anchored" data-anchor-id="installation">Installation</h2>
+<p>First, install the development version from GitHub using R-universe.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"outstandR"</span>,</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">repos =</span> <span class="fu">c</span>(<span class="st">"[https://statisticshealtheconomics.r-universe.dev](https://statisticshealtheconomics.r-universe.dev)"</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"[https://cloud.r-project.org](https://cloud.r-project.org)"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="illustrative-examples" class="level2">
+<h2 class="anchored" data-anchor-id="illustrative-examples">Illustrative examples</h2>
+<p>Attach the package to the current environment.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(outstandR)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr) <span class="co"># Loaded for convenient printing if needed</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="binary-outcome-data" class="level3">
+<h3 class="anchored" data-anchor-id="binary-outcome-data">Binary outcome data</h3>
+<p>In the first example, consider binary outcome data and continuous covariates only. Load the aggregate level and individual-patient data into the environment.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(AC_IPD_binY_contX) <span class="co"># AC individual-level patient data</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(BC_ALD_binY_contX) <span class="co"># BC aggregate-level data</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Inspecting the IPD, we can see that each row corresponds to an individual and it has four covariates: two effect modifiers only, and two prognostic factors only. These are all continuous valued and the outcome is binary values 0, 1.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># individual-level data</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(AC_IPD_binY_contX)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  id PF_cont_1   PF_cont_2   EM_cont_1   EM_cont_2 trt y    true_eta
+1  1 0.0826453  0.71645068  0.66422255 -0.09202652   A 0 -1.58891404
+2  2 0.6957433  0.38608723  0.79875530  0.74880584   C 1  0.14986776
+3  3 0.6516889  0.50572444  0.39944706 -0.07230380   A 0 -1.43868552
+4  4 0.2165975  0.35783123  0.25957984 -0.55405590   A 0 -2.09172428
+5  5 0.2605580 -0.05826527 -0.10696235  0.33762456   A 0 -2.13936317
+6  6 0.1110818  0.64041589  0.04867791  0.34980415   C 1 -0.07910151</code></pre>
+</div>
+</div>
+<p>Similarly, the ALD has the corresponding covariates but not as separate columns (wide format) but in a long format with all covariate names in the <code>variable</code> column. Notice that the treatment column <code>trt</code> is NA for the covariate because we assume that the covariate distribution is the same between treatment arms.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># aggregate-level data</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(BC_ALD_binY_contX)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 16 × 4
+   variable  statistic   value trt  
+   &lt;chr&gt;     &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;
+ 1 EM_cont_1 mean        0.651 &lt;NA&gt; 
+ 2 EM_cont_1 sd          0.391 &lt;NA&gt; 
+ 3 EM_cont_2 mean        0.592 &lt;NA&gt; 
+ 4 EM_cont_2 sd          0.416 &lt;NA&gt; 
+ 5 PF_cont_1 mean        0.653 &lt;NA&gt; 
+ 6 PF_cont_1 sd          0.371 &lt;NA&gt; 
+ 7 PF_cont_2 mean        0.583 &lt;NA&gt; 
+ 8 PF_cont_2 sd          0.437 &lt;NA&gt; 
+ 9 y         mean        0.615 C    
+10 y         sd          0.490 C    
+11 y         sum        40     C    
+12 y         mean        0.274 B    
+13 y         sd          0.448 B    
+14 y         sum        37     B    
+15 &lt;NA&gt;      N          65     C    
+16 &lt;NA&gt;      N         135     B    </code></pre>
+</div>
+</div>
+<p>The next thing is to define the formula which specifies the relationship between the covariates, treatments and outcome. For this example the regression is:</p>
+<p><span class="math display">\[
+\text{logit}(p) = \beta_0 + \beta^{PF}_{1} X^{PF}_{1} + \beta^{PF}_{2 }X^{PF}_{2} + (\beta_{trt} + \beta^{EM}_{1} X^{EM}_{1} + + \beta^{EM}_{2} X^{EM}_{2}) \mathbb{I}(trt = 1),
+\]</span></p>
+<p>where <span class="math inline">\(\mathbb{I}()\)</span> is the indicator function, taking value 1 when true and 0 otherwise. The corresponding R formula used by <code>outstandR</code> is independent of the particular type of data and so we do not include a link function at this stage.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># linear formula for the outcome model</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>lin_form <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="st">"y ~ PF_cont_1 + PF_cont_2 + trt + trt:EM_cont_1 + trt:EM_cont_2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>That is, the main effects are the prognostic factors (<code>PF_cont_1</code> and <code>PF_cont_2</code>) and the treatment <code>trt</code>. The interaction terms are with the treatment defined as effect modifiers (<code>EM_cont_1</code> and <code>EM_cont_2</code>).</p>
+<section id="relative-treatment-effects" class="level4">
+<h4 class="anchored" data-anchor-id="relative-treatment-effects">Relative treatment effects</h4>
+<p>Let <span class="math inline">\(p_C\)</span> be the proportion of events in the comparator treatment arm and <span class="math inline">\(p_B\)</span> be the proportion of events in the reference treatment arm. For the logit link with binary data, the mean treatment effect is the log-odds ratio:</p>
+<p><span class="math display">\[
+\Delta_{BC} = \text{logit}(p_B) - \text{logit}(p_C)
+\]</span></p>
+<p>with variance:</p>
+<p><span class="math display">\[
+\text{Var}(\Delta_{BC}) = \frac{1}{y_B} + \frac{1}{N_B - y_B} + \frac{1}{y_C} + \frac{1}{N_C - y_C},
+\]</span></p>
+<p>where <span class="math inline">\(y_t\)</span> are the number of events and <span class="math inline">\(N_t\)</span> are the total number of subjects for treatment <span class="math inline">\(t\)</span>.</p>
+</section>
+<section id="running-outstandr" class="level4">
+<h4 class="anchored" data-anchor-id="running-outstandr">Running outstandR()</h4>
+<p>Having completed the set-up steps, we are ready to proceed with performing the indirect treatment comparison with <code>outstandR()</code>.</p>
+<p>First, for an MAIC analysis use <code>strategy_maic()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>outstandR_maic <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_binY_contX,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_maic</span>(</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>To help with interpreting the results, <code>outstandR</code> includes a convenience <code>print</code> method.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(outstandR_maic)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Object of class 'outstandR' 
+ITC algorithm: MAIC 
+Model: binomial 
+Scale: log_odds 
+Common treatment: C 
+Individual patient data study: AC 
+Aggregate level data study: BC 
+Confidence interval level: 0.95 
+
+Contrasts:
+
+# A tibble: 3 × 5
+  Treatments Estimate Std.Error lower.0.95 upper.0.95
+  &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
+1 AB            0.600     0.239     -0.357      1.56 
+2 AC           -0.844     0.136     -1.57      -0.120
+3 BC           -1.44      0.102     -2.07      -0.817
+
+Absolute:
+
+# A tibble: 2 × 5
+  Treatments Estimate Std.Error lower.0.95 upper.0.95
+  &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt; &lt;lgl&gt;      &lt;lgl&gt;     
+1 A             0.245   0.00206 NA         NA        
+2 C             0.427   0.00551 NA         NA        </code></pre>
+</div>
+</div>
+<p>Similarly, the STC, G-computation and MIM analyses are:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># STC Analysis</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>outstandR_stc <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_binY_contX,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_stc</span>(</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form,</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co"># G-Computation (ML)</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>outstandR_gcomp_ml <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_binY_contX,</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_gcomp_ml</span>(</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form,</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>)</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="co"># G-Computation (Bayes)</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Note: refresh = 0 turns off iteration updates</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>outstandR_gcomp_bayes <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_binY_contX,</span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">refresh =</span> <span class="dv">0</span>, </span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_gcomp_bayes</span>(</span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form,</span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>)</span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a><span class="co"># MIM Analysis</span></span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>outstandR_mim <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_binY_contX,</span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">refresh =</span> <span class="dv">0</span>,</span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_mim</span>(</span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form,</span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>)</span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+</section>
+</section>
+<section id="continuous-outcome-data" class="level3">
+<h3 class="anchored" data-anchor-id="continuous-outcome-data">Continuous outcome data</h3>
+<p>Analogous to the first example with binary outcomes and continuous covariates, we now extend this for the case of continuous outcomes and a mixture of binary and continuous covariates. The same steps are followed.</p>
+<p>First, read in the data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># individual-level data</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(AC_IPD_contY_mixedX)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(AC_IPD_contY_mixedX)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  id        X1 X2        X3 X4 trt          y   true_eta
+1  1 0.3066158  0 1.0794085  0   A -2.3321553 -0.9789591
+2  2 0.5961703  1 0.6164710  0   A -0.7473152 -0.8840576
+3  3 0.1496635  1 0.5737457  0   A -1.2441749 -1.2402780
+4  4 0.1393548  0 0.4687338  0   C -0.7905105 -0.1785051
+5  5 0.5672248  0 0.5305725  0   A -3.3441703 -1.3985394
+6  6 0.4897103  1 0.1289250  1   A -1.2286456 -0.3974177</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># aggregate-level data</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(BC_ALD_contY_mixedX)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(BC_ALD_contY_mixedX)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 14 × 4
+   variable statistic   value trt  
+   &lt;chr&gt;    &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;
+ 1 X1       mean        0.608 &lt;NA&gt; 
+ 2 X1       sd          0.436 &lt;NA&gt; 
+ 3 X2       prop        0.72  &lt;NA&gt; 
+ 4 X3       mean        0.598 &lt;NA&gt; 
+ 5 X3       sd          0.385 &lt;NA&gt; 
+ 6 X4       prop        0.51  &lt;NA&gt; 
+ 7 y        mean        0.493 C    
+ 8 y        sd          1.08  C    
+ 9 y        sum        36.0   C    
+10 y        mean       -0.434 B    
+11 y        sd          1.39  B    
+12 y        sum       -55.1   B    
+13 &lt;NA&gt;     N          73     C    
+14 &lt;NA&gt;     N         127     B    </code></pre>
+</div>
+</div>
+<p>The formats are the same as the previous example but now in the ALD the binary-valued covariates have <code>statistic</code> entry <code>prop</code>. <code>X1</code> and <code>X3</code> are continuous and <code>X2</code> and <code>X4</code> are binary.</p>
+<p>The formula for this example is also a little more complicated. We shall assume that some of the covariate can be both prognostic factors and effect modifiers, so the regression is:</p>
+<p><span class="math display">\[
+y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_3 X_3 + (\beta_{trt} + \alpha_1 X_1 + \alpha_2 X_2 + \alpha_4 X_4 ) \mathbb{I}(trt = 1)
+\]</span></p>
+<p>This corresponds to the R formula given by:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>lin_form <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="st">"y ~ X1 + X2 + X3 + trt + trt:(X1 + X2 + X4)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="relative-treatment-effect" class="level4">
+<h4 class="anchored" data-anchor-id="relative-treatment-effect">Relative treatment effect</h4>
+<p>Let <span class="math inline">\(\bar{y}_B\)</span> be the mean in the comparator arm and <span class="math inline">\(\bar{y}_C\)</span> be the mean in the reference arm. Then the mean treatment difference is simply:</p>
+<p><span class="math display">\[
+\Delta_{BC} = \bar{y}_B - \bar{y}_C
+\]</span></p>
+<p>The variance of the relative treatment effect is:</p>
+<p><span class="math display">\[
+\text{Var}(\Delta_{BC}) = \frac{s_B^2}{N_B} + \frac{s_C^2}{N_C}
+\]</span></p>
+<p>where <span class="math inline">\(N_t\)</span> is the number of subjects for treatment arm <span class="math inline">\(t\)</span>.</p>
+</section>
+<section id="running-outstandr-1" class="level4">
+<h4 class="anchored" data-anchor-id="running-outstandr-1">Running outstandR()</h4>
+<p>A difference from the previous binary outcome data example is the <code>family = gaussian(link = "identity")</code> argument indicating a Normal linear regression. The full call to <code>outstandR()</code> is:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>outstandR_maic <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_contY_mixedX, </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_contY_mixedX,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_maic</span>(</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">gaussian</span>(<span class="at">link =</span> <span class="st">"identity"</span>)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Interrogating the output:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(outstandR_maic, <span class="at">max.level =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>List of 7
+ $ results   :List of 2
+ $ CI        : num 0.95
+ $ ref_trt   : chr "C"
+ $ scale     : chr "mean_difference"
+ $ var_method: chr "sample"
+ $ family    : chr "gaussian"
+ $ model     :List of 3
+ - attr(*, "class")= chr [1:2] "outstandR" "list"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(outstandR_maic)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Object of class 'outstandR' 
+ITC algorithm: MAIC 
+Model: gaussian 
+Scale: mean_difference 
+Common treatment: C 
+Individual patient data study: AC 
+Aggregate level data study: BC 
+Confidence interval level: 0.95 
+
+Contrasts:
+
+# A tibble: 3 × 5
+  Treatments Estimate Std.Error lower.0.95 upper.0.95
+  &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
+1 AB           -0.174    0.127      -0.874      0.525
+2 AC           -1.10     0.0962     -1.71      -0.493
+3 BC           -0.926    0.0311     -1.27      -0.581
+
+Absolute:
+
+# A tibble: 2 × 5
+  Treatments Estimate Std.Error lower.0.95 upper.0.95
+  &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt; &lt;lgl&gt;      &lt;lgl&gt;     
+1 A            -0.567    0.0310 NA         NA        
+2 C             0.534    0.0575 NA         NA        </code></pre>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="count-outcome-data" class="level3">
+<h3 class="anchored" data-anchor-id="count-outcome-data">Count outcome data</h3>
+<p>First, read in and view the two data sets.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># individual-level data</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(AC_IPD_countY_contX)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(AC_IPD_countY_contX)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  id   PF_cont_1 PF_cont_2 EM_cont_1   EM_cont_2 trt y    true_eta
+1  1 -0.03120828 0.2000877 0.7946610  0.59843299   A 0 -1.69699568
+2  2  0.55281009 0.8153046 0.7419797  0.02458683   A 0 -1.11665932
+3  3  0.89707959 0.4406488 0.3849872  0.39262556   C 1  0.32724269
+4  4  0.51890292 1.6089275 1.1134732  0.88850641   A 0 -0.09530927
+5  5  0.49349123 0.9075975 0.6009318 -0.02910612   A 1 -1.17179280
+6  6  0.48906050 0.2393630 0.4741692  0.45545576   C 1 -0.09509531</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># aggregate-level data</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(BC_ALD_countY_contX)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(BC_ALD_countY_contX)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 16 × 4
+   variable  statistic   value trt  
+   &lt;chr&gt;     &lt;chr&gt;       &lt;dbl&gt; &lt;fct&gt;
+ 1 EM_cont_1 mean        0.649 &lt;NA&gt; 
+ 2 EM_cont_1 sd          0.387 &lt;NA&gt; 
+ 3 EM_cont_2 mean        0.554 &lt;NA&gt; 
+ 4 EM_cont_2 sd          0.412 &lt;NA&gt; 
+ 5 PF_cont_1 mean        0.585 &lt;NA&gt; 
+ 6 PF_cont_1 sd          0.423 &lt;NA&gt; 
+ 7 PF_cont_2 mean        0.629 &lt;NA&gt; 
+ 8 PF_cont_2 sd          0.394 &lt;NA&gt; 
+ 9 y         mean        1.65  C    
+10 y         sd          1.52  C    
+11 y         sum        94     C    
+12 y         mean        0.469 B    
+13 y         sd          0.730 B    
+14 y         sum        67     B    
+15 &lt;NA&gt;      N          57     C    
+16 &lt;NA&gt;      N         143     B    </code></pre>
+</div>
+</div>
+<p>Let <span class="math inline">\(\lambda\)</span> be the event rate, then the equation for the outcome regression for the count data is:</p>
+<p><span class="math display">\[
+\log(\lambda) = \beta_0 + \beta^{PF}_{1} X^{PF}_{1} + \beta^{PF}_{2 }X^{PF}_{2} + (\beta_{trt} + \beta^{EM}_{1} X^{EM}_{1} + + \beta^{EM}_{2} X^{EM}_{2}) \mathbb{I}(trt = 1).
+\]</span></p>
+<p>Recalling that the log link is defined separately in the function call, the corresponding R formula is:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># linear formula for the outcome model</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>lin_form <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="st">"y ~ PF_cont_1 + PF_cont_2 + trt + trt:EM_cont_1 + trt:EM_cont_2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="relative-treatment-effects-1" class="level4">
+<h4 class="anchored" data-anchor-id="relative-treatment-effects-1">Relative treatment effects</h4>
+<p>The default relative effect with the log link is the log relative risk, with mean:</p>
+<p><span class="math display">\[
+\Delta_{BC} = \ln(\bar{y}_C) - \ln(\bar{y}_B)
+\]</span></p>
+<p>and variance:</p>
+<p><span class="math display">\[
+\text{Var}(\Delta_{BC}) = \frac{1}{N_B \bar{y}_B} + \frac{1}{N_C \bar{y}_C}
+\]</span></p>
+</section>
+<section id="running-outstandr-2" class="level4">
+<h4 class="anchored" data-anchor-id="running-outstandr-2">Running outstandR()</h4>
+<p>A difference from the previous outcome data examples is the <code>family = poisson(link = "log")</code> argument indicating a log linear regression.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>outstandR_maic <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_countY_contX,  <span class="co"># EDITED</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_countY_contX,</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_maic</span>(</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form,</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">poisson</span>(<span class="at">link =</span> <span class="st">"log"</span>)</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(outstandR_maic)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Object of class 'outstandR' 
+ITC algorithm: MAIC 
+Model: poisson 
+Scale: log_relative_risk 
+Common treatment: C 
+Individual patient data study: AC 
+Aggregate level data study: BC 
+Confidence interval level: 0.95 
+
+Contrasts:
+
+# A tibble: 3 × 5
+  Treatments Estimate Std.Error lower.0.95 upper.0.95
+  &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
+1 AB           0.0875    0.0688     -0.427      0.601
+2 AC          -1.17      0.0432     -1.58      -0.763
+3 BC          -1.26      0.0256     -1.57      -0.945
+
+Absolute:
+
+# A tibble: 2 × 5
+  Treatments Estimate Std.Error lower.0.95 upper.0.95
+  &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt; &lt;lgl&gt;      &lt;lgl&gt;     
+1 A             0.403   0.00371 NA         NA        
+2 C             1.30    0.0334  NA         NA        </code></pre>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="user-specified-outcome-scales" class="level2">
+<h2 class="anchored" data-anchor-id="user-specified-outcome-scales">User-specified outcome scales</h2>
+<p>By default, <code>outstandR</code> reports treatment effects on the scale corresponding to the regression model’s link function. However, health economic models often require parameters on specific scales, such as Risk Differences (RD) or Relative Risks (RR).</p>
+<table class="caption-top table">
+<caption>Relative treatment effect statistics for different outcome data types (<span class="math inline">\(^\dagger\)</span>default).</caption>
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Data Type</th>
+<th style="text-align: left;">Model Metric</th>
+<th style="text-align: left;">Mean Difference</th>
+<th style="text-align: left;">Variance Component</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Binary</strong></td>
+<td style="text-align: left;">Log Odds Ratio<span class="math inline">\(^\dagger\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\text{logit}(p_B) - \text{logit}(p_C)\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\frac{1}{y_t} + \frac{1}{N_t - y_t}\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Risk Difference</td>
+<td style="text-align: left;"><span class="math inline">\(p_C - p_B\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\frac{p_t(1 - p_t)}{N_t}\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Probit Scale Difference</td>
+<td style="text-align: left;"><span class="math inline">\(\text{probit}(p_C) - \text{probit}(p_B)\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\frac{1}{y_t} + \frac{1}{N_t - y_t}\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Log RR (cloglog)</td>
+<td style="text-align: left;"><span class="math inline">\(\ln(-\ln(1 - p_C)) - \ln(-\ln(1 - p_B))\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\frac{1}{y_t} - \frac{1}{N_t}\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Log RR (Log Link)</td>
+<td style="text-align: left;"><span class="math inline">\(\ln(p_C) - \ln(p_B)\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\frac{1}{y_t} - \frac{1}{N_t}\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Count</strong></td>
+<td style="text-align: left;">Log Relative Risk<span class="math inline">\(^\dagger\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\ln(\bar{y}_C) - \ln(\bar{y}_B)\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\frac{1}{N_t \bar{y}_t}\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Rate Difference</td>
+<td style="text-align: left;"><span class="math inline">\(\bar{y}_C - \bar{y}_B\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\frac{\bar{y}_t}{N_t}\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Delta <span class="math inline">\(z\)</span> (Signal-to-noise)</td>
+<td style="text-align: left;"><span class="math inline">\(\sqrt{\bar{y}_C} - \sqrt{\bar{y}_B}\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\frac{1}{4 N_t \bar{y}_t}\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Continuous</strong></td>
+<td style="text-align: left;">Mean Difference<span class="math inline">\(^\dagger\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\bar{y}_B - \bar{y}_C\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\frac{s_t^2}{N_t}\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>The <code>scale</code> argument in <code>outstandR()</code> allows users to request these alternative summary statistics directly. For example, to obtain a risk difference instead of the default log-odds ratio for the binary outcome analysis:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reloading the binary data for this example</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(AC_IPD_binY_contX) </span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(BC_ALD_binY_contX)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>lin_form <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="st">"y ~ PF_cont_1 + PF_cont_2 + trt + trt:EM_cont_1 + trt:EM_cont_2"</span>)</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>outstandR_maic_rd <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_binY_contX, </span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_maic</span>(</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form,</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>)</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">scale =</span> <span class="st">"risk_difference"</span>  <span class="co"># instead of default log-odds ratio</span></span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(outstandR_maic_rd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Object of class 'outstandR' 
+ITC algorithm: MAIC 
+Model: binomial 
+Scale: risk_difference 
+Common treatment: C 
+Individual patient data study: AC 
+Aggregate level data study: BC 
+Confidence interval level: 0.95 
+
+Contrasts:
+
+# A tibble: 3 × 5
+  Treatments Estimate Std.Error lower.0.95 upper.0.95
+  &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
+1 AB            0.168   0.442       -1.14      1.47  
+2 AC           -0.173   0.00685     -0.336    -0.0110
+3 BC           -0.341   0.436       -1.63      0.952 
+
+Absolute:
+
+# A tibble: 2 × 5
+  Treatments Estimate Std.Error lower.0.95 upper.0.95
+  &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt; &lt;lgl&gt;      &lt;lgl&gt;     
+1 A             0.247   0.00200 NA         NA        
+2 C             0.421   0.00539 NA         NA        </code></pre>
+</div>
+</div>
+</section>
+<section id="robust-variance-estimation" class="level2">
+<h2 class="anchored" data-anchor-id="robust-variance-estimation">Robust variance estimation</h2>
+<p>Standard errors in population-adjusted analyses can be sensitive to model misspecification. Users can request robust (sandwich) standard errors by setting the <code>var_method</code> argument to <code>"sandwich"</code>.</p>
+<p>The following example demonstrates how to compare the naive model-based standard error with the robust sandwich estimate for an STC analysis:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Standard STC analysis (Model-based variance)</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>stc_naive <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_binY_contX,</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_stc</span>(<span class="at">formula =</span> lin_form, <span class="at">family =</span> <span class="fu">binomial</span>()),</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">var_method =</span> <span class="st">"sample"</span>) <span class="co"># Default</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. STC with Robust Variance (Sandwich estimator)</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>stc_robust <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_binY_contX,</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_stc</span>(<span class="at">formula =</span> lin_form, <span class="at">family =</span> <span class="fu">binomial</span>()),</span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">var_method =</span> <span class="st">"sandwich"</span>)</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare standard errors</span></span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>stc_naive<span class="sc">$</span>contrasts<span class="sc">$</span>var</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>NULL</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>stc_robust<span class="sc">$</span>contrasts<span class="sc">$</span>var</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>NULL</code></pre>
+</div>
+</div>
+</section>
+<section id="user-defined-covariate-distributions-in-g-computation" class="level2">
+<h2 class="anchored" data-anchor-id="user-defined-covariate-distributions-in-g-computation">User-defined covariate distributions in G-computation</h2>
+<p>By default, the simulation step in G-computation assumes that covariates in the target population follow a multivariate normal distribution. <code>outstandR</code> allows users to specify alternative marginal distributions via the <code>marginal_distns</code> argument.</p>
+<p>The package automatically parameterizes these distributions using the summary statistics available in the ALD (e.g., converting mean/sd to Gamma shape/rate).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This example requires datasets with specific columns (age/sex) </span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="co"># We will simulate the data structure for demonstration if not in current environment</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="co"># (Assuming AC_IPD and BC_ALD are loaded as generic placeholders here)</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Define the target distributions</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="co"># We specify "gamma" for age and "binom" for sex.</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Covariates not listed (like 'bmi') default to "norm".</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>my_distns <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">age =</span> <span class="st">"gamma"</span>, <span class="at">sex =</span> <span class="st">"binom"</span>)</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Run G-computation</span></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a><span class="co"># automatically converts ALD mean/sd to shape/rate for 'age'</span></span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Note: This code block requires the specific AC_IPD/BC_ALD datasets </span></span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a><span class="co"># containing 'age' and 'sex' columns to run successfully.</span></span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a><span class="co"># outstandR_gcomp_custom &lt;- outstandR(...)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="manual-parameter-specification" class="level4">
+<h4 class="anchored" data-anchor-id="manual-parameter-specification">Manual parameter specification</h4>
+<p>There are scenarios where manual specification via the <code>marginal_params</code> argument is necessary, such as sensitivity analysis.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Define the distribution forms</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>my_distns <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">age =</span> <span class="st">"gamma"</span>, <span class="at">sex =</span> <span class="st">"binom"</span>)</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Manually specify parameters for 'age' (mean=70, sd=10.5)</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Note: We convert mean=70/sd=10.5 to shape/rate manually </span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="co"># or pass them if we already know the specific shape/rate we want</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>target_mean <span class="ot">&lt;-</span> <span class="dv">70</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>target_sd <span class="ot">&lt;-</span> <span class="fl">10.5</span></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>my_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">age =</span> <span class="fu">list</span>(<span class="at">shape =</span> (target_mean<span class="sc">/</span>target_sd)<span class="sc">^</span><span class="dv">2</span>, </span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">rate =</span> target_mean<span class="sc">/</span>(target_sd<span class="sc">^</span><span class="dv">2</span>)))</span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Run G-computation with manual override</span></span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a><span class="co"># outstandR_sens &lt;- outstandR(</span></span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a><span class="co">#    ipd_trial = AC_IPD,</span></span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a><span class="co">#    ald_trial = BC_ALD,</span></span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a><span class="co">#    strategy = strategy_gcomp_ml(</span></span>
+<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a><span class="co">#      formula = lin_form,</span></span>
+<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a><span class="co">#      marginal_distns = my_distns,</span></span>
+<span id="cb37-21"><a href="#cb37-21" aria-hidden="true" tabindex="-1"></a><span class="co">#      marginal_params = my_params, # Overrides ALD for 'age'</span></span>
+<span id="cb37-22"><a href="#cb37-22" aria-hidden="true" tabindex="-1"></a><span class="co">#      N = 5000))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="model-diagnostics" class="level2">
+<h2 class="anchored" data-anchor-id="model-diagnostics">Model diagnostics</h2>
+<p>While <code>outstandR()</code> focuses on estimation, assessing model fit is crucial. For an MAIC analysis, we can inspect the distribution of weights to check for outliers or near-zero effective sample sizes.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check Effective Sample Size</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(outstandR_maic<span class="sc">$</span>model<span class="sc">$</span>ESS)   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    ESS 
+151.053 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Histogram of weights</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(outstandR_maic<span class="sc">$</span>model<span class="sc">$</span>weights)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="jss-section_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Similarly, for G-computation, users can extract the fitted model to check residuals or inspect MCMC convergence.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract stanfit object</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>stan_obj <span class="ot">&lt;-</span> outstandR_gcomp_bayes<span class="sc">$</span>model<span class="sc">$</span>fit </span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Use external package for diagnostics</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bayesplot)</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="fu">mcmc_trace</span>(stan_obj, <span class="at">pars =</span> <span class="fu">c</span>(<span class="st">"alpha"</span>, <span class="st">"beta"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -4,8 +4,6 @@ format: html
 editor: visual
 ---
 
-# Using the outstandR package
-
 This section gives a practical demonstration of the core functionality available in the package.
 
 ## Available internal data sets
@@ -362,8 +360,8 @@ stc_robust <- outstandR(
   var_method = "sandwich")
 
 # Compare standard errors
-print(paste("Naive SE:", round(sqrt(stc_naive$contrasts$var), 4)))
-print(paste("Robust SE:", round(sqrt(stc_robust$contrasts$var), 4)))
+stc_naive$contrasts$var
+stc_robust$contrasts$var
 ```
 
 ## User-defined covariate distributions in G-computation
