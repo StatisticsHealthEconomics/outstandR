@@ -134,126 +134,17 @@ simulate_ALD_pseudo_pop <- function(formula,
     set.seed(seed)
   }
   
-  covariate_names <- get_covariate_names(formula)
-  covariate_names <- covariate_names[covariate_names != trt_var]  # remove treatment
+  resolved <- 
+    prepare_covariate_distns(
+      formula, ald, trt_var, 
+      marginal_distns, marginal_params, 
+      verbose)
+  
+  marginal_distns <- resolved$distns
+  marginal_params <- resolved$params
+  
+  covariate_names <- names(marginal_distns)
   n_covariates <- length(covariate_names)
-  
-  if (n_covariates == 0) {
-    stop("No covariates found to simulate.", call. = FALSE)
-  }
-  
-  # --- Logic for User-Defined Distributions with Auto-Parameterization ---
-  
-  # CASE 1: No distributions provided -> Full Auto-Detection (Norm/Binom only)
-  # default behaviour
-  if (all(is.na(marginal_distns))) {
-    
-    auto_distns <- character(n_covariates)
-    auto_params <- vector("list", n_covariates)
-    names(auto_params) <- names(auto_distns) <- covariate_names
-    
-    for (cov in covariate_names) {
-      var_ald <- dplyr::filter(ald, .data$variable == cov)
-      
-      if (nrow(var_ald) == 0) {
-        stop(paste("No ALD found for covariate: ", cov), call. = FALSE)
-      }
-      
-      if ("prop" %in% var_ald$statistic) {
-        auto_distns[cov] <- "binom"
-        prob <- var_ald$value[var_ald$statistic == "prop"]
-        auto_params[[cov]] <- list(size = 1, prob = prob)
-        
-      } else if (all(c("mean", "sd") %in% var_ald$statistic)) {
-        auto_distns[cov] <- "norm"
-        mean_val <- var_ald$value[var_ald$statistic == "mean"]
-        sd_val <- var_ald$value[var_ald$statistic == "sd"]
-        auto_params[[cov]] <- list(mean = mean_val, sd = sd_val)
-        
-      } else {
-        stop(paste("For", cov, "provide 'prop' or 'mean'/'sd' in ALD."), call. = FALSE)
-      }
-    }
-    marginal_distns <- auto_distns
-    marginal_params <- auto_params
-    
-  } else {
-    # CASE 2: Distributions provided -> Fill missing parameters
-    if (verbose) {
-      message("Using user-supplied marginal distributions.")
-    }
-    
-    # Initialize params list if missing
-    if (!is.list(marginal_params)) {
-      marginal_params <- vector("list", n_covariates)
-      names(marginal_params) <- covariate_names
-    }
-    
-    # Handle unnamed distribution vectors (assume order matches formula)
-    if (is.null(names(marginal_distns))) {
-      if (length(marginal_distns) == n_covariates) {
-        names(marginal_distns) <- covariate_names
-      } else {
-        stop("marginal_distns must be named or match number of covariates", call. = FALSE)
-      }
-    }
-    
-    for (cov in covariate_names) {
-      # If parameters already exist for this covariate, skip calculation
-      if (!is.null(marginal_params[[cov]])) next
-      
-      dist <- marginal_distns[cov]
-      if (is.na(dist)) stop("Missing distribution for ", cov)
-      
-      var_ald <- dplyr::filter(ald, .data$variable == cov)
-      if (nrow(var_ald) == 0) stop("No ALD found for ", cov)
-      
-      # Extract common stats
-      m <- var_ald$value[var_ald$statistic == "mean"]
-      s <- var_ald$value[var_ald$statistic == "sd"]
-      p <- var_ald$value[var_ald$statistic == "prop"]
-      
-      # --- Parameter Transformations ---
-      if (dist == "norm") {
-        if (length(m) == 0 || length(s) == 0) stop("Need mean/sd for norm: ", cov)
-        marginal_params[[cov]] <- list(mean = m, sd = s)
-        
-      } else if (dist == "binom") {
-        if (length(p) == 0) stop("Need prop for binom: ", cov)
-        marginal_params[[cov]] <- list(size = 1, prob = p)
-        
-      } else if (dist == "gamma") {
-        # Method of Moments: shape = m^2/s^2, rate = m/s^2
-        if (length(m) == 0 || length(s) == 0) stop("Need mean/sd for gamma: ", cov)
-        rate_val <- m / (s^2)
-        shape_val <- m^2 / (s^2)
-        marginal_params[[cov]] <- list(shape = shape_val, rate = rate_val)
-        
-      } else if (dist == "lnorm") {
-        # Method of Moments: Log-normal
-        if (length(m) == 0 || length(s) == 0) stop("Need mean/sd for lnorm: ", cov)
-        var_log <- log(1 + (s^2 / m^2))
-        mean_log <- log(m) - 0.5 * var_log
-        sd_log <- sqrt(var_log)
-        marginal_params[[cov]] <- list(meanlog = mean_log, sdlog = sd_log)
-        
-      } else if (dist == "beta") {
-        # Method of Moments: Beta
-        if (length(m) == 0 || length(s) == 0) stop("Need mean/sd for beta: ", cov)
-        if (s^2 >= m * (1 - m)) stop("Variance too high for Beta distribution: ", cov)
-        
-        term <- (m * (1 - m) / s^2) - 1
-        shape1 <- m * term
-        shape2 <- (1 - m) * term
-        marginal_params[[cov]] <- list(shape1 = shape1, shape2 = shape2)
-        
-      } else {
-        # Fallback for other distributions (e.g. t, weibull) not implemented
-        stop(paste("Automatic parameter transformation not implemented for '", dist, 
-                   "'. Please supply marginal_params for: ", cov, sep=""))
-      }
-    }
-  }
   
   # --- Standard Simulation Logic ---
   
@@ -265,6 +156,7 @@ simulate_ALD_pseudo_pop <- function(formula,
     
     x_star <- matrix(sim_vals, ncol = 1,
                      dimnames = list(NULL, covariate_names))
+    # return(as.data.frame(setNames(list(sim_vals), covariate_names)))  ##TODO
     return(as.data.frame(x_star))
   }
   
@@ -292,14 +184,6 @@ simulate_ALD_pseudo_pop <- function(formula,
   cop <- copula::normalCopula(param = cor_params,
                               dim = n_covariates,
                               dispstr = "un")
-  
-  # marginal_params add size = 1 if 'binom' and size is missing
-  for (i in seq_along(marginal_distns)) {
-    if (marginal_distns[i] == "binom" &&
-        is.null(marginal_params[[i]]$size)) {
-      marginal_params[[i]]$size <- 1
-    }
-  }
   
   mvd <- copula::mvdc(copula = cop,
                       margins = marginal_distns,

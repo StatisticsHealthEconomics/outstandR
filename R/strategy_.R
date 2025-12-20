@@ -145,8 +145,6 @@ strategy_gcomp_ml <- function(formula = NULL,
     stop("N not positive whole number.")
   }
   
-  marginal_distns <- fill_covariate_dists(formula, marginal_distns, trt_var)
-  
   args <- list(formula = formula,
                family = family,
                rho = rho,
@@ -159,26 +157,6 @@ strategy_gcomp_ml <- function(formula = NULL,
   do.call(new_strategy, c(strategy = "gcomp_ml", args))
 }
 
-#' @keywords internal
-fill_covariate_dists <- function(formula, new_distns, trt_var) {
-  
-  if (length(new_distns) == 1 && is.na(new_distns)) return(new_distns)
-  
-  # extract all variables from RHS of formula
-  # 'all.vars' gets names; 'delete.response' removes 'y'
-  req_vars <- all.vars(delete.response(terms(formula)))
-  
-  # filter out trt_var
-  # identify which variables are missing from definitions
-  if (is.null(trt_var)) trt_var <- "trt" # default
-  covariates <- setdiff(req_vars, trt_var)
-  missing_vars <- setdiff(covariates, names(new_distns))
-  
-  # 'norm' vector for missing vars and combine
-  defaults <- setNames(rep("norm", length(missing_vars)), missing_vars)
-  
-  c(new_distns, defaults)
-}
 
 #' @rdname strategy
 #' 
