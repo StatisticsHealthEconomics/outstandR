@@ -67,6 +67,7 @@ outstandR <- function(ipd_trial, ald_trial, strategy,
                       scale = NULL, 
                       var_method = "sample",
                       ...) {
+  cl <- match.call()
   
   validate_outstandr(ipd_trial, ald_trial, strategy, CI, scale)
 
@@ -102,6 +103,8 @@ outstandR <- function(ipd_trial, ald_trial, strategy,
   structure(
     .Data = list(
       results = stats,
+      call = cl,
+      formula = strategy$formula,
       CI = CI,
       ref_trt = ref_trt,
       ipd_comp = ipd_comp,
