@@ -1,6 +1,10 @@
 ---
 title: "Using the outstandR package"
-format: html
+format: 
+  html:
+    theme:
+      light: cosmo
+      dark: darkly
 editor: visual
 editor_options: 
   chunk_output_type: console
@@ -29,7 +33,7 @@ For example, `AC_IPD_binY_binX` is the name of the data set for treatments $A$ v
 
 First, install the development version from GitHub using R-universe.
 
-```{r}
+```{r install-package}
 #| eval: false
 install.packages("outstandR",
                  repos = c("[https://statisticshealtheconomics.r-universe.dev](https://statisticshealtheconomics.r-universe.dev)",
@@ -321,10 +325,11 @@ By default, `outstandR` reports treatment effects on the scale corresponding to 
 
 The `scale` argument in `outstandR()` allows users to request these alternative summary statistics directly. For example, to obtain a risk difference instead of the default log-odds ratio for the binary outcome analysis:
 
-```{r}
+```{r user-specified-scales}
 # Reloading the binary data for this example
 data(AC_IPD_binY_contX) 
 data(BC_ALD_binY_contX)
+
 lin_form <- as.formula("y ~ PF_cont_1 + PF_cont_2 + trt + trt:EM_cont_1 + trt:EM_cont_2")
 
 outstandR_maic_rd <- outstandR(
@@ -346,48 +351,51 @@ Standard errors in population-adjusted analyses can be sensitive to model misspe
 
 The following example demonstrates how to compare the naive model-based standard error with the robust sandwich estimate for an STC analysis:
 
-```{r}
-# 1. Standard STC analysis (Model-based variance)
+```{r robust-variance}
+# standard STC analysis
 stc_naive <- outstandR(
   ipd_trial = AC_IPD_binY_contX,
   ald_trial = BC_ALD_binY_contX,
   strategy = strategy_stc(formula = lin_form, family = binomial()),
   var_method = "sample") # Default
 
-# 2. STC with Robust Variance (Sandwich estimator)
+# STC with robust variance (sandwich estimator)
 stc_robust <- outstandR(
   ipd_trial = AC_IPD_binY_contX,
   ald_trial = BC_ALD_binY_contX,
   strategy = strategy_stc(formula = lin_form, family = binomial()),
   var_method = "sandwich")
 
-# Compare standard errors
-stc_naive$contrasts$var
-stc_robust$contrasts$var
+# compare standard errors
+unlist(stc_naive$results$contrasts$var)
+unlist(stc_robust$results$contrasts$var)
 ```
 
 ## User-defined covariate distributions in G-computation
 
-By default, the simulation step in G-computation assumes that covariates in the target population follow a multivariate normal distribution. `outstandR` allows users to specify alternative marginal distributions via the `marginal_distns` argument.
+By default, the simulation step in `outstandR` for G-computation assumes that covariates in the target population follow a multivariate normal distribution. Further, `outstandR` allows users to specify alternative marginal distributions via the `marginal_distns` argument.
 
 The package automatically parameterizes these distributions using the summary statistics available in the ALD (e.g., converting mean/sd to Gamma shape/rate).
 
+First, define the target distributions. We specify a Gamma distribution with "gamma" for `X1` and a Binomial with "binom" for `X2`. The other covariates not listed (`X3`, `X4`) default to a Normal distribution i.e. "norm".
+
 ```{r}
 #| eval: false
-# This example requires datasets with specific columns (age/sex) 
-# We will simulate the data structure for demonstration if not in current environment
-# (Assuming AC_IPD and BC_ALD are loaded as generic placeholders here)
 
-# 1. Define the target distributions
-# We specify "gamma" for age and "binom" for sex.
-# Covariates not listed (like 'bmi') default to "norm".
-my_distns <- c(age = "gamma", sex = "binom")
+lin_form <- as.formula("y ~ X1 + X2 + X3 + trt + trt:(X1 + X2 + X4)")
 
-# 2. Run G-computation
-# automatically converts ALD mean/sd to shape/rate for 'age'
-# Note: This code block requires the specific AC_IPD/BC_ALD datasets 
-# containing 'age' and 'sex' columns to run successfully.
-# outstandR_gcomp_custom <- outstandR(...)
+# define distributions
+new_distns <- c(X1 = "gamma", X2 = "binom")
+
+# run G-computation ML
+outstandR_sens <- outstandR(
+   ipd_trial = AC_IPD_contY_mixedX,
+   ald_trial = BC_ALD_contY_mixedX,
+   strategy = strategy_gcomp_ml(
+     formula = lin_form,
+     family = gaussian(link = "identity"),
+     marginal_distns = new_distns,
+     N = 1000))
 ```
 
 #### Manual parameter specification
@@ -396,50 +404,49 @@ There are scenarios where manual specification via the `marginal_params` argumen
 
 ```{r}
 #| eval: false
-# 1. Define the distribution forms
-my_distns <- c(age = "gamma", sex = "binom")
 
-# 2. Manually specify parameters for 'age' (mean=70, sd=10.5)
-# Note: We convert mean=70/sd=10.5 to shape/rate manually 
-# or pass them if we already know the specific shape/rate we want
+# manually specify parameters for 'age' (mean=70, sd=10.5)
+# convert mean=70/sd=10.5 to shape/rate manually 
+# or pass them if we already know the specific shape/rate
 target_mean <- 70
 target_sd <- 10.5
 
-my_params <- list(
-  age = list(shape = (target_mean/target_sd)^2, 
-             rate = target_mean/(target_sd^2)))
+new_params <- list(
+  X1 = list(shape = (target_mean/target_sd)^2, 
+            rate = target_mean/(target_sd^2)))
 
-# 3. Run G-computation with manual override
-# outstandR_sens <- outstandR(
-#    ipd_trial = AC_IPD,
-#    ald_trial = BC_ALD,
-#    strategy = strategy_gcomp_ml(
-#      formula = lin_form,
-#      marginal_distns = my_distns,
-#      marginal_params = my_params, # Overrides ALD for 'age'
-#      N = 5000))
+# run G-computation with manual override
+outstandR_sens <- outstandR(
+   ipd_trial = AC_IPD_contY_mixedX,
+   ald_trial = BC_ALD_contY_mixedX,
+   strategy = strategy_gcomp_ml(
+     formula = lin_form,
+     family = gaussian(link = "identity"),
+     marginal_distns = new_distns,
+     marginal_params = new_params, # overrides ALD for X1
+     N = 1000))
 ```
 
 ## Model diagnostics
 
 While `outstandR()` focuses on estimation, assessing model fit is crucial. For an MAIC analysis, we can inspect the distribution of weights to check for outliers or near-zero effective sample sizes.
 
-```{r}
-# Check Effective Sample Size
+```{r maic-diagnostics}
+# check Effective Sample Size
 print(outstandR_maic$model$ESS)   
 
-# Histogram of weights
-hist(outstandR_maic$model$weights)
+# histogram of MAIC weights
+hist(outstandR_maic$model$weights, xlab = "Weights")
 ```
 
 Similarly, for G-computation, users can extract the fitted model to check residuals or inspect MCMC convergence.
 
-```{r}
+```{r gcomp-diagnostics}
 #| eval: false
-# Extract stanfit object
+# extract stanfit object
 stan_obj <- outstandR_gcomp_bayes$model$fit 
 
-# Use external package for diagnostics
+# use external package for diagnostics
 library(bayesplot)
 mcmc_trace(stan_obj, pars = c("alpha", "beta"))
 ```
