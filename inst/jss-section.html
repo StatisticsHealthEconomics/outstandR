@@ -211,7 +211,7 @@ window.Quarto = {
 <p>where <span class="math inline">\(\mathbb{I}()\)</span> is the indicator function, taking value 1 when true and 0 otherwise. The corresponding R formula used by <code>outstandR</code> is independent of the particular type of data and so we do not include a link function at this stage.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># linear formula for the outcome model</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>lin_form <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="st">"y ~ PF_cont_1 + PF_cont_2 + trt + trt:EM_cont_1 + trt:EM_cont_2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>lin_form_contX <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="st">"y ~ PF_cont_1 + PF_cont_2 + trt + trt:EM_cont_1 + trt:EM_cont_2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>That is, the main effects are the prognostic factors (<code>PF_cont_1</code> and <code>PF_cont_2</code>) and the treatment <code>trt</code>. The interaction terms are with the treatment defined as effect modifiers (<code>EM_cont_1</code> and <code>EM_cont_2</code>).</p>
 <section id="relative-treatment-effects" class="level4">
@@ -235,7 +235,7 @@ window.Quarto = {
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_binY_contX,</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_maic</span>(</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form_contX,</span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>)</span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -258,8 +258,8 @@ Contrasts:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-1 AB            0.616     0.251     -0.365     1.60  
-2 AC           -0.828     0.149     -1.58     -0.0723
+1 AB            0.622     0.252     -0.363     1.61  
+2 AC           -0.822     0.150     -1.58     -0.0622
 3 BC           -1.44      0.102     -2.07     -0.817 
 
 Absolute:
@@ -267,9 +267,9 @@ Absolute:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-1 A             0.244   0.00216      0.153      0.335
-2 B            -1.02    0.108       -1.67      -0.379
-3 C             0.422   0.00548      0.277      0.567</code></pre>
+1 A             0.246   0.00195      0.160      0.333
+2 B            -1.02    0.108       -1.66      -0.376
+3 C             0.424   0.00573      0.276      0.573</code></pre>
 </div>
 </div>
 <p>Similarly, the STC, G-computation and MIM analyses are performed as follows.</p>
@@ -279,7 +279,7 @@ Absolute:
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_binY_contX,</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_stc</span>(</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form,</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form_contX,</span>
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>)</span>
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -289,7 +289,7 @@ Absolute:
 <span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_binY_contX,</span>
 <span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
 <span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_gcomp_ml</span>(</span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form,</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form_contX,</span>
 <span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>)</span>
 <span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -301,7 +301,7 @@ Absolute:
 <span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
 <span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">refresh =</span> <span class="dv">0</span>, </span>
 <span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_gcomp_bayes</span>(</span>
-<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form,</span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form_contX,</span>
 <span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>)</span>
 <span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -312,7 +312,7 @@ Absolute:
 <span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
 <span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>  <span class="at">refresh =</span> <span class="dv">0</span>,</span>
 <span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_mim</span>(</span>
-<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form,</span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form_contX,</span>
 <span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>)</span>
 <span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -360,14 +360,14 @@ Absolute:
 14 &lt;NA&gt;     N         127     B    </code></pre>
 </div>
 </div>
-<p>The formats are the same as the previous example but now in the ALD the binary-valued covariates have <code>statistic</code> entry <code>prop</code>. <code>X1</code> and <code>X3</code> are continuous and <code>X2</code> and <code>X4</code> are binary.</p>
+<p>The formats are the same as the previous example but now in the ALD the binary-valued covariates have <code>statistic</code> entry <code>prop</code>. Covariates <code>X1</code> and <code>X3</code> are continuous and <code>X2</code> and <code>X4</code> are binary.</p>
 <p>The formula for this example is also a little more complicated. We shall assume that some of the covariate can be both prognostic factors and effect modifiers, so the regression is:</p>
 <p><span class="math display">\[
 y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_3 X_3 + (\beta_{trt} + \alpha_1 X_1 + \alpha_2 X_2 + \alpha_4 X_4 ) \mathbb{I}(trt = 1)
 \]</span></p>
 <p>This corresponds to the R formula given by:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>lin_form <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="st">"y ~ X1 + X2 + X3 + trt + trt:(X1 + X2 + X4)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>lin_form_mixedX <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="st">"y ~ X1 + X2 + X3 + trt + trt:(X1 + X2 + X4)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="relative-treatment-effect" class="level4">
 <h4 class="anchored" data-anchor-id="relative-treatment-effect">Relative treatment effect</h4>
@@ -389,7 +389,7 @@ y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_3 X_3 + (\beta_{trt} + \alpha_1 
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_contY_mixedX, </span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_contY_mixedX,</span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_maic</span>(</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form_mixedX,</span>
 <span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">gaussian</span>(<span class="at">link =</span> <span class="st">"identity"</span>)</span>
 <span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -429,8 +429,8 @@ Contrasts:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-1 AB           -0.174    0.128      -0.875      0.526
-2 AC           -1.10     0.0966     -1.71      -0.492
+1 AB           -0.172    0.128      -0.873      0.530
+2 AC           -1.10     0.0970     -1.71      -0.488
 3 BC           -0.926    0.0311     -1.27      -0.581
 
 Absolute:
@@ -438,9 +438,9 @@ Absolute:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-1 A            -0.572    0.0309    -0.917      -0.228
-2 B            -0.398    0.0886    -0.981       0.185
-3 C             0.528    0.0575     0.0587      0.998</code></pre>
+1 A            -0.571    0.0305    -0.914      -0.229
+2 B            -0.399    0.0894    -0.986       0.187
+3 C             0.527    0.0584     0.0535      1.00 </code></pre>
 </div>
 </div>
 <hr>
@@ -491,10 +491,10 @@ Absolute:
 <p><span class="math display">\[
 \log(\lambda) = \beta_0 + \beta^{PF}_{1} X^{PF}_{1} + \beta^{PF}_{2 }X^{PF}_{2} + (\beta_{trt} + \beta^{EM}_{1} X^{EM}_{1} + + \beta^{EM}_{2} X^{EM}_{2}) \mathbb{I}(trt = 1).
 \]</span></p>
-<p>Recalling that the log link is defined separately in the function call, the corresponding R formula used by <code>outstandR</code> is:</p>
+<p>Recalling that the log link is defined separately in the function call, we shall use the same linear formula as for the binary outcome example.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># linear formula for the outcome model</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>lin_form <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="st">"y ~ PF_cont_1 + PF_cont_2 + trt + trt:EM_cont_1 + trt:EM_cont_2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># linear formula for the counts outcome model</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>lin_form_contX <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="st">"y ~ PF_cont_1 + PF_cont_2 + trt + trt:EM_cont_1 + trt:EM_cont_2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="relative-treatment-effects-1" class="level4">
 <h4 class="anchored" data-anchor-id="relative-treatment-effects-1">Relative treatment effects</h4>
@@ -515,7 +515,7 @@ Absolute:
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_countY_contX,</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_countY_contX,</span>
 <span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_maic</span>(</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form,</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form_contX,</span>
 <span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">poisson</span>(<span class="at">link =</span> <span class="st">"log"</span>)</span>
 <span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -536,8 +536,8 @@ Contrasts:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-1 AB           0.0789    0.0736     -0.453      0.611
-2 AC          -1.18      0.0481     -1.61      -0.750
+1 AB           0.0825    0.0723     -0.445      0.610
+2 AC          -1.18      0.0468     -1.60      -0.752
 3 BC          -1.26      0.0256     -1.57      -0.945
 
 Absolute:
@@ -545,9 +545,9 @@ Absolute:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-1 A            0.401    0.00408      0.276      0.527
-2 B            0.0445   0.0608      -0.439      0.528
-3 C            1.30     0.0353       0.935      1.67 </code></pre>
+1 A            0.401    0.00378      0.280      0.521
+2 B            0.0375   0.0597      -0.442      0.517
+3 C            1.30     0.0342       0.934      1.66 </code></pre>
 </div>
 </div>
 </section>
@@ -631,23 +631,17 @@ Absolute:
 </table>
 <p>The <code>scale</code> argument in <code>outstandR()</code> allows users to request these alternative summary statistics directly. For example, to obtain a risk difference instead of the default log-odds ratio for the binary outcome analysis (previously shown in Section 4), we specify <code>scale = "risk_difference"</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reloading the binary data for this example</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(AC_IPD_binY_contX) </span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(BC_ALD_binY_contX)</span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>lin_form <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="st">"y ~ PF_cont_1 + PF_cont_2 + trt + trt:EM_cont_1 + trt:EM_cont_2"</span>)</span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>outstandR_maic_rd <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_binY_contX, </span>
-<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
-<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_maic</span>(</span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form,</span>
-<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>)</span>
-<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">scale =</span> <span class="st">"risk_difference"</span>  <span class="co"># instead of default log-odds ratio</span></span>
-<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(outstandR_maic_rd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>outstandR_maic_rd <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_binY_contX, </span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_maic</span>(</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form_contX,</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>)</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">scale =</span> <span class="st">"risk_difference"</span>  <span class="co"># instead of default log-odds ratio</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(outstandR_maic_rd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Object of class 'outstandR' 
 ITC algorithm: MAIC 
@@ -663,48 +657,50 @@ Contrasts:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-1 AB            0.168   0.443       -1.14     1.47   
-2 AC           -0.174   0.00719     -0.340   -0.00732
-3 BC           -0.341   0.436       -1.63     0.952  
+1 AB            0.166   0.442       -1.14      1.47  
+2 AC           -0.175   0.00616     -0.329    -0.0210
+3 BC           -0.341   0.436       -1.63      0.952 
 
 Absolute:
 
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-1 A            0.247    0.00204      0.158      0.335
-2 B            0.0788   0.441       -1.22       1.38 
-3 C            0.420    0.00560      0.273      0.567</code></pre>
+1 A            0.244    0.00221      0.152      0.336
+2 B            0.0774   0.441       -1.22       1.38 
+3 C            0.419    0.00496      0.281      0.557</code></pre>
 </div>
 </div>
 <p>The package determines the validity of a conversion path based on the underlying data distribution; for instance, requesting a “mean difference” for a binary outcome model will raise a validation error.</p>
 </section>
 <section id="robust-variance-estimation" class="level2">
 <h2 class="anchored" data-anchor-id="robust-variance-estimation">Robust variance estimation</h2>
-<p>Standard errors in population-adjusted analyses can be sensitive to model misspecification. Users can request robust (sandwich) standard errors by setting the <code>var_method</code> argument to <code>"sandwich"</code>. <!-- TODO --> This is particularly useful for methods like STC and G-computation (ML) where the outcome model parameters directly drive the effect estimate.</p>
+<p>Standard errors in population-adjusted analyses can be sensitive to model misspecification. Users can request robust (sandwich) standard errors by setting the <code>var_method</code> argument to <code>"sandwich"</code>. <!-- TODO: include this? --> This is particularly useful for methods like STC and G-computation (ML) where the outcome model parameters directly drive the effect estimate.</p>
 <p>The following example demonstrates how to compare the naive model-based standard error with the robust sandwich estimate for an STC analysis:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># standard STC analysis</span></span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>stc_naive <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_binY_contX,</span>
 <span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_stc</span>(<span class="at">formula =</span> lin_form,</span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>                          <span class="at">family =</span> <span class="fu">binomial</span>()),</span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">var_method =</span> <span class="st">"sample"</span>) <span class="co"># Default</span></span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="co"># STC with robust variance (sandwich estimator)</span></span>
-<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>stc_robust <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
-<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_binY_contX,</span>
-<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
-<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_stc</span>(<span class="at">formula =</span> lin_form,</span>
-<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>                          <span class="at">family =</span> <span class="fu">binomial</span>()),</span>
-<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">var_method =</span> <span class="st">"sandwich"</span>)</span>
-<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a><span class="co"># compare standard errors</span></span>
-<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a><span class="fu">unlist</span>(stc_naive<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>var)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_stc</span>(</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form_contX,</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>()),</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">var_method =</span> <span class="st">"sample"</span>) <span class="co"># Default</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a><span class="co"># STC with robust variance (sandwich estimator)</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>stc_robust <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_binY_contX,</span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_stc</span>(</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form_contX,</span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>()),</span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">var_method =</span> <span class="st">"sandwich"</span>)</span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a><span class="co"># compare standard errors</span></span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a><span class="fu">unlist</span>(stc_naive<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>var)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       AB        AC        BC 
-0.2727807 0.1705496 0.1022311 </code></pre>
+0.2643421 0.1621110 0.1022311 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unlist</span>(stc_robust<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>var)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -720,22 +716,20 @@ Absolute:
 <p>The package automatically parameterizes these distributions using the summary statistics available in the ALD (e.g., converting mean/sd to Gamma shape/rate).</p>
 <p>First, define the target distributions. We specify a Gamma distribution with “gamma” for <code>X1</code> and a Binomial with “binom” for <code>X2</code>. The other covariates not listed (<code>X3</code>, <code>X4</code>) default to a Normal distribution i.e.&nbsp;“norm”.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>lin_form <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="st">"y ~ X1 + X2 + X3 + trt + trt:(X1 + X2 + X4)"</span>)</span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="co"># define distributions</span></span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>new_distns <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">X1 =</span> <span class="st">"gamma"</span>, <span class="at">X2 =</span> <span class="st">"binom"</span>)</span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="co"># run G-computation ML</span></span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>outstandR_sens <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
-<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>   <span class="at">ipd_trial =</span> AC_IPD_contY_mixedX,</span>
-<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>   <span class="at">ald_trial =</span> BC_ALD_contY_mixedX,</span>
-<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>   <span class="at">strategy =</span> <span class="fu">strategy_gcomp_ml</span>(</span>
-<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>     <span class="at">formula =</span> lin_form,</span>
-<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>     <span class="at">family =</span> <span class="fu">gaussian</span>(<span class="at">link =</span> <span class="st">"identity"</span>),</span>
-<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>     <span class="at">marginal_distns =</span> new_distns,</span>
-<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>     <span class="at">N =</span> <span class="dv">1000</span>))</span>
-<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>outstandR_sens</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define distributions</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>new_distns <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">X1 =</span> <span class="st">"gamma"</span>, <span class="at">X2 =</span> <span class="st">"binom"</span>)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co"># run G-computation ML</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>outstandR_sens <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>   <span class="at">ipd_trial =</span> AC_IPD_contY_mixedX,</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>   <span class="at">ald_trial =</span> BC_ALD_contY_mixedX,</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>   <span class="at">strategy =</span> <span class="fu">strategy_gcomp_ml</span>(</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">formula =</span> lin_form_mixedX,</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">family =</span> <span class="fu">gaussian</span>(<span class="at">link =</span> <span class="st">"identity"</span>),</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>     <span class="at">marginal_distns =</span> new_distns,</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>     <span class="at">N =</span> <span class="dv">1000</span>))</span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>outstandR_sens</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Object of class 'outstandR' 
 ITC algorithm: GCOMP_ML 
@@ -751,8 +745,8 @@ Contrasts:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-1 AB           -0.282    0.0889     -0.867      0.303
-2 AC           -1.21     0.0579     -1.68      -0.737
+1 AB           -0.285    0.0892     -0.871      0.300
+2 AC           -1.21     0.0581     -1.68      -0.739
 3 BC           -0.926    0.0311     -1.27      -0.581
 
 Absolute:
@@ -760,9 +754,9 @@ Absolute:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-1 A            -0.504    0.0163     -0.754     -0.254
-2 B            -0.222    0.0767     -0.765      0.321
-3 C             0.704    0.0456      0.286      1.12 </code></pre>
+1 A            -0.514    0.0170     -0.770     -0.259
+2 B            -0.229    0.0765     -0.772      0.313
+3 C             0.697    0.0454      0.279      1.11 </code></pre>
 </div>
 </div>
 <section id="manual-parameter-specification" class="level4">
@@ -785,7 +779,7 @@ Absolute:
 <span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>   <span class="at">ipd_trial =</span> AC_IPD_contY_mixedX,</span>
 <span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>   <span class="at">ald_trial =</span> BC_ALD_contY_mixedX,</span>
 <span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>   <span class="at">strategy =</span> <span class="fu">strategy_gcomp_ml</span>(</span>
-<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>     <span class="at">formula =</span> lin_form,</span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>     <span class="at">formula =</span> lin_form_mixedX,</span>
 <span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>     <span class="at">family =</span> <span class="fu">gaussian</span>(<span class="at">link =</span> <span class="st">"identity"</span>),</span>
 <span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>     <span class="at">marginal_distns =</span> new_distns,</span>
 <span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a>     <span class="at">marginal_params =</span> new_params, <span class="co"># overrides ALD for X1</span></span>
@@ -807,8 +801,8 @@ Contrasts:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-1 AB          -20.8   1120.         -86.4      44.8  
-2 AC          -21.7   1120.         -87.3      43.9  
+1 AB          -22.1   1160.         -88.9      44.6  
+2 AC          -23.1   1160.         -89.8      43.7  
 3 BC           -0.926    0.0311      -1.27     -0.581
 
 Absolute:
@@ -816,9 +810,9 @@ Absolute:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-1 A              63.2      256.       31.9       94.6
-2 B              84.0      872.       26.1      142. 
-3 C              84.9      872.       27.1      143. </code></pre>
+1 A              62.4      271.       30.2       94.7
+2 B              84.6      914.       25.3      144. 
+3 C              85.5      914.       26.2      145. </code></pre>
 </div>
 </div>
 </section>
@@ -844,29 +838,15 @@ Absolute:
 </div>
 </div>
 </div>
+<!-- save plot -->
 <p>Similarly, for G-computation, users can extract the fitted model to check residuals or, in the Bayesian case, inspect MCMC convergence using for example the bayesplot package.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extract stanfit object</span></span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>stan_obj <span class="ot">&lt;-</span> outstandR_gcomp_bayes<span class="sc">$</span>model<span class="sc">$</span>fit </span>
 <span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="co"># use external package for diagnostics</span></span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bayesplot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>This is bayesplot version 1.15.0</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>- Online documentation and vignettes at mc-stan.org/bayesplot</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>- bayesplot theme set to bayesplot::theme_default()</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>   * Does _not_ affect other ggplot2 plots</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>   * See ?bayesplot_theme_set for details on theme setting</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mcmc_trace</span>(stan_obj)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bayesplot)</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="fu">mcmc_trace</span>(stan_obj)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -875,6 +855,7 @@ Absolute:
 </div>
 </div>
 </div>
+<!-- save plot -->
 </section>
 
 </main>
