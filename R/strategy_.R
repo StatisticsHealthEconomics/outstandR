@@ -4,7 +4,6 @@
 #' @rdname strategy
 #' 
 #' @section Matching-adjusted indirect comparison (MAIC):
-#' 
 #' MAIC is a form of non-parametric likelihood reweighting method
 #' which allows the propensity score logistic 
 #' regression model to be estimated without IPD in the _AC_ population.
@@ -21,6 +20,7 @@
 #' where the weight \eqn{w_{it}} assigned to the \eqn{i}-th individual receiving treatment
 #' \eqn{t} is equal to the odds of being enrolled in the _AC_ trial vs the _AB_ trial.
 #' 
+#' @param trt_var Treatment variable name
 #' @param R The number of resamples used for the non-parametric bootstrap
 #' @return `maic` class object
 #' 
@@ -29,17 +29,20 @@
 #'
 strategy_maic <- function(formula = NULL,
                           family = gaussian(link = "identity"),
+                          trt_var = NULL,
                           R = 1000L) {
-  check_formula(formula)
+  check_formula(formula, trt_var)
   check_family(family)
    
   if (R <= 0 || R %% 1 != 0) {
     stop("R not positive whole number.")
   }
+
+  args <- list(formula = formula,
+               family = family,
+               trt_var = get_treatment_name(formula, trt_var),
+               R = R)
   
-  default_args <- formals()
-  args <- c(formula = formula, as.list(match.call())[-c(1,2)])
-  args <- modifyList(default_args, args)
   do.call(new_strategy, c(strategy = "maic", args))
 }
 
@@ -48,7 +51,7 @@ strategy_maic <- function(formula = NULL,
 #' @section Simulated treatment comparison (STC):
 #' Outcome regression-based method which targets a conditional treatment effect.
 #' STC is a modification of the covariate adjustment method.
-#' An outcome model is fitted using IPD in the _AB_ trial
+#' An outcome model is fitted using IPD in the _AB_ trial. For example,
 #' 
 #' \deqn{
 #' g(\mu_{t(AB)}(X)) = \beta_0 + \beta_1^T X + (\beta_B + \beta_2^T X^{EM}) I(t=B)
@@ -60,33 +63,38 @@ strategy_maic <- function(formula = NULL,
 #' \eqn{\mu_{t(AB)}(X)} is the expected outcome of an individual assigned
 #' treatment \eqn{t} with covariate values \eqn{X} which is transformed onto a
 #' chosen linear predictor scale with link function \eqn{g(\cdot)}.
+#' 
+#' @param trt_var Treatment variable name
+#'
 #' @return `stc` class object
 #' @importFrom utils modifyList
 #' @export
 # 
 strategy_stc <- function(formula = NULL,
-                         family = gaussian(link = "identity")) {
-  check_formula(formula)
+                         family = gaussian(link = "identity"),
+                         trt_var = NULL) {
+  check_formula(formula, trt_var)
   check_family(family)
   
-  default_args <- formals()
-  args <- c(formula = formula, as.list(match.call())[-c(1,2)])
-  args <- modifyList(default_args, args)
+  args <- list(formula = formula,
+               family = family,
+               trt_var = get_treatment_name(formula, trt_var))
+  
   do.call(new_strategy, c(strategy = "stc", args))
 }
 
 #' @rdname strategy
 #' 
 #' @section G-computation maximum likelihood:
-#'
 #' G-computation marginalizes the conditional estimates by separating the regression modelling
 #' from the estimation of the marginal treatment effect for _A_ versus _C_.
-#' First, a regression model of the observed outcome \eqn{y} on the covariates \eqn{x} and treatment \eqn{z} is fitted to the _AC_ IPD:
+#' For example, a regression model of the observed outcome \eqn{y} on the covariates \eqn{x} and
+#' treatment \eqn{z} is fitted to the _AC_ IPD:
 #' 
 #' \deqn{
 #' g(\mu_n) = \beta_0 + \boldsymbol{x}_n \boldsymbol{\beta_1} + (\beta_z + \boldsymbol{x_n^{EM}} \boldsymbol{\beta_2}) \mbox{I}(z_n=1)
 #' }
-#' In the context of G-computation, this regression model is often called the “Q-model.”
+#' In the context of G-computation, this regression model is called the “Q-model".
 #' Having fitted the Q-model, the regression coefficients are treated as nuisance parameters.
 #' The parameters are applied to the simulated covariates \eqn{x*} to predict hypothetical outcomes
 #' for each subject under both possible treatments. Namely, a pair of predicted outcomes,
@@ -106,21 +114,29 @@ strategy_stc <- function(formula = NULL,
 #' \hat{\Delta}^{(2)}_{10} = g(\hat{\mu}_1) - g(\hat{\mu}_0)
 #' }
 #'
-#' @param rho A named square matrix of covariate correlations; default NA.
-#' @param R The number of resamples used for the non-parametric bootstrap
-#' @param N Synthetic sample size for g-computation
+#' @param trt_var Treatment variable name; string
+#' @param rho A named square matrix of covariate correlations; default NA
+#' @param marginal_distns Marginal distributions names; vector default NA
+#' @param marginal_params Marginal distributions parameters; list of lists, default NA
+#' @param R The number of resamples used for the non-parametric bootstrap; integer
+#' @param N Synthetic sample size for g-computation; integer; integer
 #' 
 #' @return `gcomp_ml` class object
 #' @importFrom utils modifyList
+#' @seealso [strategy_gcomp_bayes()]
 #' @export
 #'
 strategy_gcomp_ml <- function(formula = NULL,
                               family = gaussian(link = "identity"),
+                              trt_var = NULL,
                               rho = NA,
+                              marginal_distns = NA,
+                              marginal_params = NA,
                               R = 1000L,
                               N = 1000L) {
-  check_formula(formula)
+  check_formula(formula, trt_var)
   check_family(family)
+  check_distns(formula, marginal_distns, marginal_params)
   
   if (R <= 0 || R %% 1 != 0) {
     stop("R not positive whole number.")
@@ -129,9 +145,15 @@ strategy_gcomp_ml <- function(formula = NULL,
     stop("N not positive whole number.")
   }
   
-  default_args <- formals()
-  args <- c(formula = formula, as.list(match.call())[-c(1,2)])
-  args <- modifyList(default_args, args)
+  args <- list(formula = formula,
+               family = family,
+               rho = rho,
+               trt_var = get_treatment_name(formula, trt_var),
+               marginal_distns = marginal_distns,
+               marginal_params = marginal_params,
+               R = R,
+               N = N)
+  
   do.call(new_strategy, c(strategy = "gcomp_ml", args))
 }
 
@@ -164,51 +186,73 @@ strategy_gcomp_ml <- function(formula = NULL,
 #' In practice, the integrals above can be approximated numerically, using full Bayesian
 #' estimation via Markov chain Monte Carlo (MCMC) sampling.
 #' 
-#' @param rho A named square matrix of covariate correlations; default NA.
+#' @param trt_var Treatment variable name
+#' @param rho A named square matrix of covariate correlations; default NA
+#' @param marginal_distns Marginal distributions names; vector default NA.
+#'    Available distributions are given in stats::Distributions. See [copula::Mvdc()] for details
+#' @param marginal_params Marginal distributions parameters; list of lists, default NA. See [copula::Mvdc()] for details
 #' @param N Synthetic sample size for g-computation
 #' 
-#' @return `gcomp_stan` class object
+#' @return `gcomp_bayes` class object
 #' @importFrom utils modifyList
+#' @seealso [strategy_gcomp_ml()],[copula::Mvdc()]
 #' @export
 #'
-strategy_gcomp_stan <- function(formula = NULL,
+strategy_gcomp_bayes <- function(formula = NULL,
                                 family = gaussian(link = "identity"),
+                                trt_var = NULL,
                                 rho = NA,
+                                marginal_distns = NA,
+                                marginal_params = NA,
                                 N = 1000L) {
-  check_formula(formula)
+  check_formula(formula, trt_var)
   check_family(family)
+  check_distns(formula, marginal_distns, marginal_params)
   
   if (N <= 0 || N %% 1 != 0) {
     stop("N not positive whole number.")
   }
   
-  default_args <- formals()
-  args <- c(formula = formula, as.list(match.call())[-c(1,2)])
-  args <- modifyList(default_args, args)
-  do.call(new_strategy, c(strategy = "gcomp_stan", args))
+  args <- list(formula = formula,
+               family = family,
+               trt_var = get_treatment_name(formula, trt_var),
+               rho = rho,
+               marginal_distns = marginal_distns,
+               marginal_params = marginal_params,
+               N = N)
+  
+  do.call(new_strategy, c(strategy = "gcomp_bayes", args))
 }
 
 #' @rdname strategy
+#'
+#' @param trt_var Treatment variable name; string
 #' 
 #' @section Multiple imputation marginalization (MIM):
+#' TODO
+#' 
 #' @return `mim` class object
 #' @importFrom utils modifyList
 #' @export
 # 
 strategy_mim <- function(formula = NULL,
                          family = gaussian(link = "identity"),
+                         trt_var= NULL,
                          rho = NA,
                          N = 1000L) {
-  check_formula(formula)
+  check_formula(formula, trt_var)
   check_family(family)
   
   if (N <= 0 || N %% 1 != 0) {
     stop("N not positive whole number.")
   }
   
-  default_args <- formals()
-  args <- c(formula = formula, as.list(match.call())[-c(1,2)])
-  args <- modifyList(default_args, args)
+  args <- list(formula = formula,
+               family = family,
+               trt_var = get_treatment_name(formula, trt_var),
+               rho = rho,
+               N = N)
+  
   do.call(new_strategy, c(strategy = "mim", args))
 }
 
@@ -218,9 +262,8 @@ strategy_mim <- function(formula = NULL,
 #' @description
 #' Create a type of strategy class for each modelling approach.
 #'
-#' @param strategy Class name from `strategy_maic`, `strategy_stc`, `strategy_gcomp_ml`, `strategy_gcomp_stan`
-#' @param formula Linear regression `formula` object
-#' @param family `family` object from the `stats` library
+#' @param strategy Class name from `strategy_maic`, `strategy_stc`, `strategy_gcomp_ml`, `strategy_gcomp_bayes`
+#' @eval reg_args(include_formula = TRUE, include_family = TRUE)
 #' @param ... Additional arguments
 #'
 #' @export
@@ -238,3 +281,53 @@ check_family <- function(obj) {
     stop("family must be a family object")
   }
 }
+
+#
+check_distns <- function(formula,
+                         marginal_distns,
+                         marginal_params) {
+  
+  if (length(marginal_distns) == 1 && is.na(marginal_distns) &&
+      length(marginal_params) == 1 && is.na(marginal_params)) {
+    return()
+  }
+  
+  covariate_names <- get_covariate_names(formula)
+  n_covariates <- length(covariate_names) - 1  # remove treatment
+  
+  if (length(marginal_distns) != n_covariates) {
+    stop("Number of marginal distributions must match
+           the number of covariates in the formula.")
+  }
+  
+  if (length(marginal_params) != n_covariates) {
+    stop("Number of marginal parameter lists must match
+           the number of covariates in the formula.")
+  }
+}
+
+
+## generic construction 
+## could be useful if number of method gets big
+#
+# strategy_gcomp_bayes <- function(formula = NULL,
+#                                 family = gaussian(link = "identity"),
+#                                 rho = NA,
+#                                 N = 1000L) {
+#   check_formula(formula)
+#   check_family(family)
+#   
+#   if (N <= 0 || N %% 1 != 0) {
+#     stop("N not positive whole number.")
+#   }
+#   
+#   force(family)
+#   force(formula) 
+#   
+#   default_args <- formals()
+#   args <- c(formula = formula, as.list(match.call())[-c(1,2)])
+#   args <- modifyList(default_args, args)
+#   do.call(new_strategy, c(strategy = "gcomp_bayes", args))
+# }
+
+

@@ -1,9 +1,22 @@
 
 #' Calculate simulated treatment comparison statistics
+#'
+#' @param strategy Strategy
+#' @param analysis_params List of analysis parameters
+#' @param ... Additional arguments
+#'
+#' @return A list:
+#' \describe{
+#'   \item{`mean_A`}{Mean for comparator treatment group "A".}
+#'   \item{`mean_C`}{Mean for reference treatment group "C".}
+#' }
 #' @importFrom stats glm
 #' @export
 #' 
-calc_stc <- function(strategy, ipd, ...) {
+calc_stc <- function(strategy, analysis_params, ...) {
+  
+  ipd <- analysis_params$ipd
+  trt_var <- strategy$trt_var
   
   # centre covariates
   centre_vars <- get_eff_mod_names(strategy$formula)
@@ -17,10 +30,10 @@ calc_stc <- function(strategy, ipd, ...) {
   # extract model coefficients
   coef_fit <- coef(fit)
   
-  treat_nm <- get_treatment_name(strategy$formula)
-  
-  # safer than treat_nm in case of factor level append
-  treat_coef_name <- grep(paste0("^", treat_nm), names(coef_fit), value = TRUE)
+  # safer than trt_var in case of factor level append
+  treat_coef_name <-
+    grep(pattern = paste0("^", trt_var, "[^:]*$"),
+         names(coef_fit), value = TRUE)
   
   # probability for control and treatment group
   # estimating treatment effect at means because of centring

@@ -1,16 +1,24 @@
 # prepare data functions
 
-#
+#' Prepare Individual Patient Data
+#'
+#' @param form Formula
+#' @param data Individual patient data
+#' 
 prep_ipd <- function(form, data) {
   # select data according to formula
   model.frame(form, data = data)
 }
 
-#
-prep_ald <- function(form, data) {
+#' Prepare Aggregate Level Data
+#' 
+#' @param form Formula
+#' @param data A dataframe of aggregate level data
+#' @param trt_var Treatment variable name
+#' 
+prep_ald <- function(form, data, trt_var = "trt") {
   
   all_term_labels <- attr(terms(form), "term.labels")
-  trt_name <- get_treatment_name(form)
   
   # pull out original of transformed variable
   # remove duplicates (since X and I(X^2) will both appear)
@@ -19,20 +27,51 @@ prep_ald <- function(form, data) {
   # remove treatment
   # interaction separate by :
   term.labels <- unlist(strsplit(term.labels, ":", fixed = TRUE))
-  term.labels <- setdiff(term.labels, trt_name)
+  term.labels <- setdiff(term.labels, trt_var)
   
-  mean_names <- paste0("mean.", term.labels)
-  sd_names <- paste0("sd.", term.labels)  ##TODO: for maic do we need these?
-  term_names <- c(mean_names, sd_names)
+  dplyr::filter(
+    data,
+    .data$variable %in% c("y", term.labels) | .data$statistic == "N")
+}
+
+# Get study comparator treatment names
+#
+get_comparator <- function(dat, ref_trt, trt_var = "trt") {
   
-  # replace outcome variable name
-  response_var <- all.vars(form)[1]
-  response_names <- gsub(pattern = "y", replacement = response_var,
-                         x = c("y.B.sum", "y.B.bar", "y.B.sd", "N.B",
-                               "y.C.sum", "y.C.bar", "y.C.sd", "N.C")) 
+  all_trt <- levels(as.factor(dat[[trt_var]]))
+  all_trt[all_trt != ref_trt]
+}
+
+#' Get reference treatment
+#'
+#' @param ref_trt Reference treatment
+#' @param trt Treatment
+#' @param ipd_trial A dataframe of IPD
+#' @param ald_trial A dataframe of ALD
+#' @return String
+get_ref_trt <- function(ref_trt, trt, ipd_trial, ald_trial) {
   
-  keep_names <- c(term_names, response_names)
-  data_names <- names(data)
+  if (!is.na(ref_trt)) {
+    # check exists
+    if (!ref_trt %in% names(ipd_trial) || !ref_trt %in% names(ald_trial)) {
+      stop("Reference treatment not in IPD and ALD.", call. = FALSE)
+    }
+    
+    return(as.character(ref_trt))
+  }
   
-  data[data_names %in% keep_names]
+  ref_trt <- intersect(
+    as.character(unique(ipd_trial[[trt]])),
+    as.character(unique(ald_trial[[trt]]))
+  )
+  
+  if (length(ref_trt) == 0) {
+    stop("No common treatment in aggregate and individual level data.", call. = FALSE)
+  }
+  
+  if (length(ref_trt) > 1) {
+    stop("More than one common treatment in aggregate and individual level data.", call. = FALSE)
+  }
+  
+  ref_trt
 }

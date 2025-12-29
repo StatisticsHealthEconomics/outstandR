@@ -2,42 +2,49 @@
 % Please edit documentation in R/gcomp_ml.R
 \name{gcomp_ml_means}
 \alias{gcomp_ml_means}
-\title{G-computation Maximum Likelihood mean outcome}
+\title{G-computation maximum likelihood mean outcomes by arm}
 \usage{
-gcomp_ml_means(formula, family, ipd, ald, rho = NA, N = 1000)
+gcomp_ml_means(
+  formula,
+  family,
+  ipd,
+  ald,
+  trt_var,
+  rho = NA,
+  N = 1000,
+  ref_trt,
+  comp_trt
+)
 }
 \arguments{
-\item{formula}{Linear regression \code{formula} object}
+\item{formula}{Linear regression \code{formula} object. Prognostic factors (PF) are main effects and effect modifiers (EM) are
+interactions with the treatment variable, e.g., y ~ X1 + trt + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
 
-\item{family}{A family object specifying the distribution and link function (e.g., "binomial").}
+\item{family}{A 'family' object specifying the distribution and link function (e.g., 'binomial').
+See stats::family() for more details.}
 
-\item{ipd}{Individual-level data}
+\item{ipd}{Individual-level patient data. Dataframe with one row per patient with outcome, treatment and covariate columns.}
 
-\item{ald}{Aggregate-level data}
+\item{ald}{Aggregate-level data. Long format summary statistics for each covariate and treatment outcomes.
+We assume a common distribution for each treatment arm.}
 
 \item{rho}{A named square matrix of covariate correlations; default NA.}
 
 \item{N}{Synthetic sample size for g-computation}
 }
 \value{
-A named vector containing the marginal mean probabilities under treatments A (\code{0}) and C (\code{1}).
+A named vector containing the marginal mean probabilities under
+comparator "A" (\code{0}) and reference "C" (\code{1}) treatments.
 }
 \description{
-G-computation Maximum Likelihood mean outcome
+G-computation maximum likelihood mean outcomes by arm
 }
-\section{Log-Odds Ratio}{
-
-Marginal \emph{A} vs \emph{C} log-odds ratio (mean difference in expected log-odds)
-estimated by transforming from probability to linear predictor scale.
-
-\eqn{\log(\hat{\mu}_A/(1 - \hat{\mu}_A)) - \log(\hat{\mu}_C/(1 - \hat{\mu}_C))}
-}
-
 \examples{
 \dontrun{
-formula <- outcome ~ treatment
+formula <- y ~ trt
 family <- binomial()
-ipd <- data.frame(treatment = c(0, 1), outcome = c(1, 0))
+ipd <- data.frame(trt = c("A", "C"),
+                   y = c(1, 0))
 ald <- data.frame()
 gcomp_ml_means(formula, family, N = 1000, ipd = ipd, ald = ald)
 }

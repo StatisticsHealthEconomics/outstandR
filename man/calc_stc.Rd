@@ -4,7 +4,21 @@
 \alias{calc_stc}
 \title{Calculate simulated treatment comparison statistics}
 \usage{
-calc_stc(strategy, ipd, ...)
+calc_stc(strategy, analysis_params, ...)
+}
+\arguments{
+\item{strategy}{Strategy}
+
+\item{analysis_params}{List of analysis parameters}
+
+\item{...}{Additional arguments}
+}
+\value{
+A list:
+\describe{
+\item{\code{mean_A}}{Mean for comparator treatment group "A".}
+\item{\code{mean_C}}{Mean for reference treatment group "C".}
+}
 }
 \description{
 Calculate simulated treatment comparison statistics

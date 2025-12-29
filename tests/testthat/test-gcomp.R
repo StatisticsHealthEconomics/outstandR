@@ -1,4 +1,4 @@
-#
+# G-computation
 
 library(dplyr)
 library(stdReg2)
@@ -9,38 +9,45 @@ test_that("different combinations of covariates in formula", {
   load(test_path("testdata/BC_ALD.RData"))
   load(test_path("testdata/AC_IPD.RData"))
   
-  # gcomp_ml
+  BC_ALD <- reshape_ald_to_long(BC_ALD)
+  AC_IPD$trt <- factor(AC_IPD$trt, labels = c("C", "A"))  # from 0, 1
+  
+  ### gcomp_ml
   
   expect_error(strategy_gcomp_ml(formula = as.formula("y ~ 1")),
-               regexp = "Treatment term, trt, is missing in the formula")
+               regexp = "Treatment term 'trt' is missing in the formula")
   
-  expect_error(strategy_gcomp_ml(formula = as.formula("y ~ X3 + X4")),
-               regexp = "Treatment term, trt, is missing in the formula")
+  expect_error(strategy_gcomp_ml(formula = as.formula("y ~ X3 + X4"), trt_var = "trt"),
+               regexp = "Treatment term 'trt' is missing in the formula")
   
   strat_1234 <- strategy_gcomp_ml(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"))
   strat_31 <- strategy_gcomp_ml(formula = as.formula("y ~ X3 + trt*X1"))
   strat_13 <- strategy_gcomp_ml(formula = as.formula("y ~ trt*X1 + X3"))
   strat_1 <- strategy_gcomp_ml(formula = as.formula("y ~ trt*X1"))
   
-  expect_length(outstandR(AC_IPD, BC_ALD, strategy = strat_1234), 3)
+  res <- outstandR(ipd_trial = AC_IPD, ald_trial = BC_ALD, strategy = strat_1234)
+  
+  expect_length(res, 2)
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_31))
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_13))
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_1))
   
-  # gcomp_stan
+  ### gcomp_bayes
   
-  expect_error(strategy_gcomp_stan(formula = as.formula("y ~ 1")),
-               regexp = "Treatment term, trt, is missing in the formula")
+  expect_error(strategy_gcomp_bayes(formula = as.formula("y ~ 1")),
+               regexp = "Treatment term 'trt' is missing in the formula")
   
-  expect_error(strategy_gcomp_stan(formula = as.formula("y ~ X3 + X4")),
-               regexp = "Treatment term, trt, is missing in the formula")
+  expect_error(strategy_gcomp_bayes(formula = as.formula("y ~ X3 + X4"), trt_var = "trt"),
+               regexp = "Treatment term 'trt' is missing in the formula")
   
-  strat_1234 <- strategy_gcomp_stan(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"))
-  strat_31 <- strategy_gcomp_stan(formula = as.formula("y ~ X3 + trt*X1"))
-  strat_13 <- strategy_gcomp_stan(formula = as.formula("y ~ trt*X1 + X3"))
-  strat_1 <- strategy_gcomp_stan(formula = as.formula("y ~ trt*X1"))
+  strat_1234 <- strategy_gcomp_bayes(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"))
+  strat_31 <- strategy_gcomp_bayes(formula = as.formula("y ~ X3 + trt*X1"))
+  strat_13 <- strategy_gcomp_bayes(formula = as.formula("y ~ trt*X1 + X3"))
+  strat_1 <- strategy_gcomp_bayes(formula = as.formula("y ~ trt*X1"))
   
-  expect_length(outstandR(AC_IPD, BC_ALD, strategy = strat_1234), 3)
+  res <- outstandR(ipd_trial = AC_IPD, ald_trial = BC_ALD, strategy = strat_1234)
+  
+  expect_length(res, 2)
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_31))
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_13))
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_1))
@@ -50,7 +57,7 @@ test_that("different combinations of covariates in formula", {
 test_that("compare with stdReg2 package for continuous outcome", {
   
   ## original
-
+  
   library(causaldata)
   
   # load dataset
@@ -60,7 +67,7 @@ test_that("compare with stdReg2 package for continuous outcome", {
   #          data = nhefs_dat)
   
   res_stdReg2 <-
-    standardize_glm(
+    stdReg2::standardize_glm(
       wt82_71 ~ qsmk + sex + age,
       data = nhefs_dat, 
       values = list(qsmk = c(0,1)),
@@ -71,38 +78,51 @@ test_that("compare with stdReg2 package for continuous outcome", {
   ## {outstandR}
   
   nhefs_ipd <- nhefs_dat |> 
-    select(qsmk, sex, age, wt82_71) |> 
-    rename(trt = qsmk,
-           y = wt82_71) |> 
-    mutate(sex = as.numeric(sex) - 1)
+    dplyr::select(qsmk, sex, age, wt82_71) |> 
+    dplyr::rename(trt = qsmk,
+                  y = wt82_71) |> 
+    dplyr::mutate(sex = as.numeric(sex) - 1,
+                  trt = factor(trt, labels = c("C", "A")))
   
   lin_form <- as.formula(y ~ trt * (sex + age))
   
   # create aggregate data
   nhefs.X <- nhefs_ipd |> 
-    summarise(across(-c(trt, y),
-                     list(mean = mean, sd = sd),
-                     .names = "{fn}.{col}"))
+    dplyr::summarise(across(-c(trt, y),
+                            list(mean = mean, sd = sd),
+                            .names = "{fn}.{col}")) |> 
+    reshape2::melt() |> 
+    tidyr::separate(variable,
+                    into = c("statistic", "variable"),
+                    sep = "\\.") |> 
+    dplyr::mutate(trt = NA)
   
-  nhefs.B <- dplyr::filter(nhefs_ipd, trt == 1) |> 
-    summarise(y.B.sum = sum(y),
-              y.B.bar = mean(y),
-              y.B.sd = sd(y),
-              N.B = n())
+  ald_out <- nhefs_ipd |> 
+    group_by(trt) |> 
+    dplyr::summarise(
+      y.sum = sum(y),
+      y.mean = mean(y),
+      y.sd = sd(y),
+      .N = dplyr::n()) |> 
+    reshape2::melt(id.vars = "trt") |> 
+    tidyr::separate(variable,
+                    into = c("variable", "statistic"),
+                    sep = "\\.") |> 
+    dplyr::mutate(trt = ifelse(trt == "A", "B", "C"))
   
-  nhefs.C <- dplyr::filter(nhefs_ipd, trt == 0) |> 
-    summarise(y.C.sum = sum(y),
-              y.C.bar = mean(y),
-              y.C.sd = sd(y),
-              N.C = n())
-  
-  nhefs_ald <- cbind.data.frame(nhefs.X, nhefs.C, nhefs.B)
+  nhefs_ald <- 
+    dplyr::bind_rows(nhefs.X, ald_out) |>
+    tibble::as_tibble() |> 
+    dplyr::mutate(trt = factor(trt))
   
   res_outstandr <- gcomp_ml_means(
     formula = lin_form,
     family = "gaussian",
-    ald = nhefs_ald,
     ipd = nhefs_ipd,
+    ald = nhefs_ald,
+    ref_trt = "C",
+    comp_trt = "A",
+    trt_var = "trt",
     N = 100000)
   
   # means
@@ -124,15 +144,15 @@ test_that("compare with stdReg2 package for continuous outcome", {
   
   expect_equal(
     res_stdReg2$res_contrast[[2]]$est_table$Estimate[2],
-    calculate_ate(mean_A = unname(res_outstandr["1"]),
-                  mean_C = unname(res_outstandr["0"]),
+    calculate_ate(mean_comp = unname(res_outstandr["1"]),
+                  mean_ref = unname(res_outstandr["0"]),
                   effect = "risk_difference"),
     tolerance = 0.01)
   
   expect_equal(
     res_stdReg2$res_contrast[[3]]$est_table$Estimate[2],
-    exp(calculate_ate(mean_A = unname(res_outstandr["1"]),
-                      mean_C = unname(res_outstandr["0"]),
+    exp(calculate_ate(mean_comp = unname(res_outstandr["1"]),
+                      mean_ref = unname(res_outstandr["0"]),
                       effect = "log_relative_risk")),
     tolerance = 0.01)
 })
@@ -141,11 +161,11 @@ test_that("compare with stdReg2 package for binary outcome", {
   
   # simulate data
   n <- 1000
+  
   data <- data.frame(
     age = rnorm(n, mean = 50, sd = 10),
     sex = rbinom(n, 1, 0.5),
-    trt = rbinom(n, 1, 0.5)
-  )
+    trt = rbinom(n, 1, 0.5))
   
   # generate a binary outcome with logit link
   logit_p <- -1 + data$trt * (0.03 * data$age + 0.2 * data$sex)
@@ -164,34 +184,45 @@ test_that("compare with stdReg2 package for binary outcome", {
   ## {outstandR}
   
   # create aggregate data
-  nhefs.X <- data |> 
-    summarise(across(-c(trt, y),
-                     list(mean = mean, sd = sd),
-                     .names = "{fn}.{col}"))
+  data.X <- data |> 
+    dplyr::summarise(across(-c(trt, y),
+                            list(mean = mean, sd = sd),
+                            .names = "{fn}.{col}")) |> 
+    reshape2::melt() |> 
+    tidyr::separate(variable,
+                    into = c("statistic", "variable"),
+                    sep = "\\.") |> 
+    dplyr::mutate(trt = NA)
   
-  nhefs.B <- dplyr::filter(data, trt == 1) |> 
-    summarise(y.B.sum = sum(y),
-              y.B.bar = mean(y),
-              y.B.sd = sd(y),
-              N.B = n())
+  ald_out <- data |> 
+    group_by(trt) |> 
+    dplyr::summarise(
+      y.sum = sum(y),
+      y.mean = mean(y),
+      y.sd = sd(y),
+      .N = dplyr::n()) |> 
+    reshape2::melt(id.vars = "trt") |> 
+    tidyr::separate(variable,
+                    into = c("variable", "statistic"),
+                    sep = "\\.") |> 
+    dplyr::mutate(trt = ifelse(trt == "1", "B", "C"))
   
-  nhefs.C <- dplyr::filter(data, trt == 0) |> 
-    summarise(y.C.sum = sum(y),
-              y.C.bar = mean(y),
-              y.C.sd = sd(y),
-              N.C = n())
+  data_ald <- bind_rows(data.X, ald_out) |>
+    tibble::as_tibble() |> 
+    dplyr::mutate(trt = factor(trt))
   
-  data_ald <- cbind.data.frame(nhefs.X, nhefs.C, nhefs.B)
-  
-  ##TODO: check if we have covariates as EM and PF in outstandR? 
+  data$trt <- factor(data$trt, labels = c("C", "A"))
   
   lin_form <- as.formula(y ~ trt * (sex + age))
   
   res_outstandr <- gcomp_ml_means(
     formula = lin_form,
     family = "binomial",
-    ald = data_ald,
     ipd = data,
+    ald = data_ald,
+    trt_var = "trt",
+    comp_trt = "A",
+    ref_trt = "C",
     N = 10000)
   
   # means
@@ -213,15 +244,15 @@ test_that("compare with stdReg2 package for binary outcome", {
   
   expect_equal(
     res_stdReg2$res_contrast[[2]]$est_table$Estimate[2],
-    calculate_ate(mean_A = unname(res_outstandr["1"]),
-                  mean_C = unname(res_outstandr["0"]),
+    calculate_ate(mean_comp = unname(res_outstandr["1"]),
+                  mean_ref = unname(res_outstandr["0"]),
                   effect = "risk_difference"),
     tolerance = 0.01)
   
   expect_equal(
     res_stdReg2$res_contrast[[3]]$est_table$Estimate[2],
-    exp(calculate_ate(mean_A = unname(res_outstandr["1"]),
-                      mean_C = unname(res_outstandr["0"]),
+    exp(calculate_ate(mean_comp = unname(res_outstandr["1"]),
+                      mean_ref = unname(res_outstandr["0"]),
                       effect = "log_relative_risk")),
     tolerance = 0.01)
 })
@@ -231,16 +262,17 @@ test_that("compare with marginaleffects package for binary outcome", {
   
   # simulate data
   n <- 1000
+  
   data <- data.frame(
     age = rnorm(n, mean = 50, sd = 10),
     sex = rbinom(n, 1, 0.5),
-    trt = rbinom(n, 1, 0.5)
-  )
+    trt = rbinom(n, 1, 0.5))
   
   # generate a binary outcome with logit link
   logit_p <- -1 + data$trt * (0.03 * data$age + 0.2 * data$sex)
   prob <- 1 / (1 + exp(-logit_p))
   data$y <- rbinom(n, 1, prob)
+  data$trt <- factor(data$trt, labels = c("C", "A"))
   
   lin_form <- as.formula(y ~ trt * (sex + age))
   
@@ -251,30 +283,43 @@ test_that("compare with marginaleffects package for binary outcome", {
   ## {outstandR}
   
   # create aggregate data
-  nhefs.X <- data |> 
-    summarise(across(-c(trt, y),
-                     list(mean = mean, sd = sd),
-                     .names = "{fn}.{col}"))
+  data.X <- data |> 
+    dplyr::summarise(across(-c(trt, y),
+                            list(mean = mean, sd = sd),
+                            .names = "{fn}.{col}")) |> 
+    reshape2::melt() |> 
+    tidyr::separate(variable,
+                    into = c("statistic", "variable"),
+                    sep = "\\.") |> 
+    dplyr::mutate(trt = NA)
   
-  nhefs.B <- dplyr::filter(data, trt == 1) |> 
-    summarise(y.B.sum = sum(y),
-              y.B.bar = mean(y),
-              y.B.sd = sd(y),
-              N.B = n())
+  ald_out <- data |> 
+    group_by(trt) |> 
+    dplyr::summarise(
+      y.sum = sum(y),
+      y.mean = mean(y),
+      y.sd = sd(y),
+      .N = dplyr::n()) |> 
+    reshape2::melt(id.vars = "trt") |> 
+    tidyr::separate(variable,
+                    into = c("variable", "statistic"),
+                    sep = "\\.") |> 
+    dplyr::mutate(trt = ifelse(trt == "1", "B", "C"))
   
-  nhefs.C <- dplyr::filter(data, trt == 0) |> 
-    summarise(y.C.sum = sum(y),
-              y.C.bar = mean(y),
-              y.C.sd = sd(y),
-              N.C = n())
+  data_ald <- bind_rows(data.X, ald_out) |>
+    tibble::as_tibble() |> 
+    dplyr::mutate(trt = factor(trt))
   
-  data_ald <- cbind.data.frame(nhefs.X, nhefs.C, nhefs.B)
+  data$trt <- factor(data$trt, labels = c("C", "A"))
   
   res_outstandr <- gcomp_ml_means(
     formula = lin_form,
     family = "binomial",
-    ald = data_ald,
     ipd = data,
+    ald = data_ald,
+    trt_var = "trt",
+    comp_trt = "A",
+    ref_trt = "C",
     N = 10000)
   
   # means
@@ -309,35 +354,48 @@ test_that("compare with marginaleffects package for continuous outcome", {
     select(qsmk, sex, age, wt82_71) |> 
     rename(trt = qsmk,
            y = wt82_71) |> 
-    mutate(sex = as.numeric(sex) - 1)
+    mutate(sex = as.numeric(sex) - 1,
+           trt = factor(trt, labels = c("C", "A")))
   
   lin_form <- as.formula(y ~ trt * (sex + age))
   
   # create aggregate data
+  
   nhefs.X <- nhefs_ipd |> 
-    summarise(across(-c(trt, y),
-                     list(mean = mean, sd = sd),
-                     .names = "{fn}.{col}"))
+    dplyr::summarise(across(-c(trt, y),
+                            list(mean = mean, sd = sd),
+                            .names = "{fn}.{col}")) |> 
+    reshape2::melt() |> 
+    tidyr::separate(variable,
+                    into = c("statistic", "variable"),
+                    sep = "\\.") |> 
+    dplyr::mutate(trt = NA)
   
-  nhefs.B <- dplyr::filter(nhefs_ipd, trt == 1) |> 
-    summarise(y.B.sum = sum(y),
-              y.B.bar = mean(y),
-              y.B.sd = sd(y),
-              N.B = n())
+  ald_out <- nhefs_ipd |> 
+    group_by(trt) |> 
+    dplyr::summarise(
+      y.sum = sum(y),
+      y.mean = mean(y),
+      y.sd = sd(y),
+      .N = dplyr::n()) |> 
+    reshape2::melt(id.vars = "trt") |> 
+    tidyr::separate(variable,
+                    into = c("variable", "statistic"),
+                    sep = "\\.") |> 
+    dplyr::mutate(trt = ifelse(trt == "1", "B", "C"))
   
-  nhefs.C <- dplyr::filter(nhefs_ipd, trt == 0) |> 
-    summarise(y.C.sum = sum(y),
-              y.C.bar = mean(y),
-              y.C.sd = sd(y),
-              N.C = n())
-  
-  nhefs_ald <- cbind.data.frame(nhefs.X, nhefs.C, nhefs.B)
+  nhefs_ald <- bind_rows(nhefs.X, ald_out) |>
+    tibble::as_tibble() |> 
+    dplyr::mutate(trt = factor(trt))
   
   res_outstandr <- gcomp_ml_means(
     formula = lin_form,
     family = "gaussian",
-    ald = nhefs_ald,
     ipd = nhefs_ipd,
+    ald = nhefs_ald,
+    trt_var = "trt",
+    comp_trt = "A",
+    ref_trt = "C",
     N = 100000)
   
   # means
@@ -364,7 +422,7 @@ test_that("compare with marginaleffects package for continuous outcome", {
 
 #
 test_that("mismatch between covariates in ald and ipd / formula", {
-
+  
   # different order between ald and ipd
   # age sex; sex age
   

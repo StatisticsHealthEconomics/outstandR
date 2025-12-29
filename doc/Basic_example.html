@@ -694,7 +694,7 @@ density.</p>
 of predicted outcomes <span class="math inline">\(y^*_z\)</span> under
 each set intervention <span class="math inline">\(z^*\)</span> from its
 posterior predictive distribution under the specific treatment.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>outstandR_gcomp_stan <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(AC.IPD, BC.ALD, <span class="at">strategy =</span> <span class="fu">strategy_gcomp_stan</span>(<span class="at">formula =</span> lin_form))</span>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>outstandR_gcomp_bayes <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(AC.IPD, BC.ALD, <span class="at">strategy =</span> <span class="fu">strategy_gcomp_bayes</span>(<span class="at">formula =</span> lin_form))</span>
 <span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="co">#&gt; SAMPLING FOR MODEL &#39;bernoulli&#39; NOW (CHAIN 1).</span></span>
 <span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co">#&gt; Chain 1: </span></span>
@@ -745,7 +745,7 @@ posterior predictive distribution under the specific treatment.</p>
 <span id="cb10-49"><a href="#cb10-49" tabindex="-1"></a><span class="co">#&gt; Chain 2:                0.746 seconds (Sampling)</span></span>
 <span id="cb10-50"><a href="#cb10-50" tabindex="-1"></a><span class="co">#&gt; Chain 2:                1.422 seconds (Total)</span></span>
 <span id="cb10-51"><a href="#cb10-51" tabindex="-1"></a><span class="co">#&gt; Chain 2:</span></span></code></pre></div>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>outstandR_gcomp_stan</span>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>outstandR_gcomp_bayes</span>
 <span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="co">#&gt; $contrasts</span></span>
 <span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="co">#&gt; $contrasts$AB</span></span>
 <span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a><span class="co">#&gt; [1] 0.5567315</span></span>

@@ -12,40 +12,47 @@
 #'     \item{warmup}{Number of warmup iterations for the MCMC sampling.}
 #'     \item{chains}{Number of MCMC chains.}
 #'   }
-#' @template args-ipd
-#' @template args-ald
+#' @param analysis_params List of analysis parameters 
+#' @param ... Additional arguments
 #'
 #' @return A list of \eqn{y^*_A} and \eqn{y^*_C} posterior predictions:
 #' \describe{
-#'   \item{\code{`0`}}{Posterior means for treatment group C.}
-#'   \item{\code{`1`}}{Posterior means for treatment group A.}
+#'   \item{\code{`0`}}{Posterior means for reference treatment group "C".}
+#'   \item{\code{`1`}}{Posterior means for comparator treatment group "A".}
 #' }
 #' @importFrom copula normalCopula mvdc rMvdc
 #' @importFrom rstanarm stan_glm posterior_predict
 #' @examples
 #' \dontrun{
 #' strategy <- list(
-#'   formula = outcome ~ treatment + age,
+#'   formula = y ~ trt + age,
 #'   family = binomial(),
 #'   iter = 2000,
 #'   warmup = 500,
 #'   chains = 4
 #' )
-#' ipd <- data.frame(treatment = c(0, 1), outcome = c(1, 0), age = c(30, 40))
+#' ipd <- data.frame(trt = c("A", "C"),
+#'                   y = c(1, 0),
+#'                   age = c(30, 40))
 #' ald <- data.frame()
-#' calc_gcomp_stan(strategy, ipd, ald)
+#' calc_gcomp_bayes(strategy, ipd, ald)
 #' }
 #' @export
 #'
-calc_gcomp_stan <- function(strategy,
-                            ipd, ald, ...) {
+calc_gcomp_bayes <- function(strategy,
+                            analysis_params, ...) {
   
   formula <- strategy$formula
   family <- strategy$family
   rho <- strategy$rho
   N <- strategy$N
+  trt_var <- strategy$trt_var
+  ipd <- analysis_params$ipd 
+  ald <- analysis_params$ald 
+  ref_trt <- analysis_params$ref_trt
+  comp_trt <- analysis_params$ipd_comp
   
-  x_star <- simulate_ALD_pseudo_pop(formula, ipd, ald, rho, N)
+  x_star <- simulate_ALD_pseudo_pop(formula, ipd, ald, trt_var, rho, N)
   
   # outcome logistic regression fitted to IPD using MCMC (Stan)
   outcome.model <-
@@ -56,23 +63,21 @@ calc_gcomp_stan <- function(strategy,
                        ...)
   
   # counterfactual datasets
-  data.trtA <- data.trtC <- x_star
-  
-  treat_name <- get_treatment_name(formula)
+  data_comp <- data_ref <- x_star
   
   # intervene on treatment while keeping set covariates fixed
-  data.trtA[[treat_name]] <- 1  # everyone receives treatment A
-  data.trtC[[treat_name]] <- 0  # receive treatment C
+  data_comp[[trt_var]] <- comp_trt  # all receive comparator treatment
+  data_ref[[trt_var]] <- ref_trt    # all receive reference treatment
   
   ##TODO: is this going to work for all of the different data types?
   # draw responses from posterior predictive distribution
-  y.star.A <- rstanarm::posterior_predict(outcome.model, newdata = data.trtA)
-  y.star.C <- rstanarm::posterior_predict(outcome.model, newdata = data.trtC)
+  y.star.comp <- rstanarm::posterior_predict(outcome.model, newdata = data_comp)
+  y.star.ref <- rstanarm::posterior_predict(outcome.model, newdata = data_ref)
   
   # posterior means for each treatment group
   list(
-    mean_A = rowMeans(y.star.A),
-    mean_C = rowMeans(y.star.C))
+    mean_A = rowMeans(y.star.comp),
+    mean_C = rowMeans(y.star.ref))
 }
 
 
@@ -87,39 +92,44 @@ calc_gcomp_stan <- function(strategy,
 #'     \item{family}{A `family` object specifying the distribution and link function (e.g., `binomial`).}
 #'     \item{N}{Synthetic sample size for g-computation.}
 #'   }
-#' @param ipd Individual patient data.
-#' @param ald Aggregate-level data.
-#'
+#' @param analysis_params List of analysis parameters
 #' @return A list containing:
 #' \describe{
-#'   \item{mean_A}{Bootstrap estimates for treatment group A.}
-#'   \item{mean_C}{Bootstrap estimates for treatment group C.}
+#'   \item{mean_A}{Bootstrap estimates for comparator treatment group "A".}
+#'   \item{mean_C}{Bootstrap estimates for reference treatment group "C".}
 #' }
 #' @importFrom boot boot
 #' @examples
 #' \dontrun{
 #' strategy <- list(
 #'   R = 1000,
-#'   formula = outcome ~ treatment + age,
+#'   formula = y ~ trt + age,
 #'   family = binomial(),
+#'   trt_var = "treatment",
 #'   N = 1000
 #' )
-#' ipd <- data.frame(treatment = c(0, 1), outcome = c(1, 0), age = c(30, 40))
+#' ipd <- data.frame(trt = c("A", "C"),
+#'                   y = c(1, 0),
+#'                   age = c(30, 40))
 #' ald <- data.frame()
 #' calc_gcomp_ml(strategy, ipd, ald)
 #' }
 #' @export
 #'
 calc_gcomp_ml <- function(strategy,
-                          ipd, ald) {
+                          analysis_params) {
+  
   args_list <- 
     list(R = strategy$R,
          formula = strategy$formula,
          family = strategy$family,
+         trt_var = strategy$trt_var,
+         ref_trt = analysis_params$ref_trt,
+         comp_trt = analysis_params$ipd_comp,
          rho = strategy$rho,
          N = strategy$N,
-         data = ipd,
-         ald = ald)
+         data = analysis_params$ipd,
+         ald = analysis_params$ald)
   
   gcomp_boot <- do.call(boot::boot, c(statistic = gcomp_ml.boot, args_list))
   

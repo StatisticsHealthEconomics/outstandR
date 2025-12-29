@@ -6,7 +6,12 @@
 #' 
 #' @param x Objects of the class "outstandR"
 #' @param ... Additional arguments passed to other methods
+#' @importFrom pillar style_subtle style_bold 
+#' @importFrom cli cli_text col_green col_red
+#' @importFrom tibble tibble
 #' @seealso [outstandR()]
+#' @import pillar
+#' @importFrom tibble tibble
 #' @export
 #' 
 print.outstandR <- function(x, ...) {
@@ -14,10 +19,12 @@ print.outstandR <- function(x, ...) {
     stop("Please install the 'tibble' and 'pillar' packages for colored tibble output.")
   }
   
+  ref_trt <- attr(x, "ref_trt")
+  
   cat(pillar::style_bold("Object of class 'outstandR'"), "\n")
   cat("Model:", pillar::style_subtle(attr(x, "model")), "\n")
   cat("Scale:", pillar::style_subtle(attr(x, "scale")), "\n")
-  cat("Common treatment:", pillar::style_subtle("C"), "\n")
+  cat("Common treatment:", pillar::style_subtle(ref_trt), "\n")
   # cat(pillar::style_subtle("Common treatment:"), attr(x, "reference"), "\n")  ##TODO:
   cat("Individual patient data study:", pillar::style_subtle("AC"), "\n")
   cat("Aggregate level data study:", pillar::style_subtle("BC"), "\n")
@@ -26,8 +33,8 @@ print.outstandR <- function(x, ...) {
   # Function to color CI values
   color_ci <- function(value) {
     if (is.na(value)) pillar::style_subtle("NA")
-    else if (value > 0) pillar::style_success(sprintf("%.3f", value))
-    else if (value < 0) pillar::style_warning(sprintf("%.3f", value))
+    else if (value > 0) cli_text(col_green(sprintf("%.3f", value)))
+    else if (value < 0) cli_text(col_red(sprintf("%.3f", value)))
     else sprintf("%.3f", value)
   }
   
@@ -46,8 +53,8 @@ print.outstandR <- function(x, ...) {
     Treatments = names(absolute$means),
     Estimate = unlist(absolute$means),
     Std.Error = unlist(absolute$variances),
-    lower.0.95 = sapply(absolute$CI, \(x) x[1]),
-    upper.0.95 = sapply(absolute$CI, \(x) x[2])
+    lower.0.95 = c(NA,NA),  #sapply(absolute$CI, \(x) x[1]),  ##TODO:
+    upper.0.95 = c(NA,NA)   #sapply(absolute$CI, \(x) x[2])
   )
   
   cat("Contrasts:\n\n")

@@ -16,14 +16,7 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/Binary_data_example.html">Binary data example</a></li>
-    <li><a class="dropdown-item" href="../articles/Binary_data_Remiro-Azocar.html">Binary data example usind data from Remiro-Azocar et al. (2020)</a></li>
-    <li><a class="dropdown-item" href="../articles/comparison-with-other-packages.html">Comparison with other packages</a></li>
-    <li><a class="dropdown-item" href="../articles/Continuous_data_example.html">Continuous data example</a></li>
-    <li><a class="dropdown-item" href="../articles/Count_data_example.html">Count data example</a></li>
-  </ul></li>
+<li class="nav-item"><a class="nav-link" href="../articles/index.html">Articles</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -58,7 +51,7 @@
         <dd>Calculate the difference between treatments using all evidence</dd>
       </dl><dl><dt>
 
-          <code><a href="strategy.html">strategy_maic()</a></code> <code><a href="strategy.html">strategy_stc()</a></code> <code><a href="strategy.html">strategy_gcomp_ml()</a></code> <code><a href="strategy.html">strategy_gcomp_stan()</a></code> <code><a href="strategy.html">strategy_mim()</a></code> <code><a href="strategy.html">new_strategy()</a></code>
+          <code><a href="strategy.html">strategy_maic()</a></code> <code><a href="strategy.html">strategy_stc()</a></code> <code><a href="strategy.html">strategy_gcomp_ml()</a></code> <code><a href="strategy.html">strategy_gcomp_bayes()</a></code> <code><a href="strategy.html">strategy_mim()</a></code> <code><a href="strategy.html">new_strategy()</a></code>
 
         </dt>
         <dd>New strategy objects</dd>
@@ -75,13 +68,13 @@
 
       <dl><dt>
 
-          <code><a href="ALD_stats.html">ALD_stats()</a></code>
+          <code><a href="calc_ALD_stats.html">calc_ALD_stats()</a></code>
 
         </dt>
         <dd>Aggregate-level data mean and variance statistics</dd>
       </dl><dl><dt>
 
-          <code><a href="IPD_stats.html">IPD_stats()</a></code>
+          <code><a href="calc_IPD_stats.html">calc_IPD_stats()</a></code>
 
         </dt>
         <dd>Calculate individual-level patient data statistics</dd>
@@ -111,13 +104,19 @@
         <dd>Calculate Average Treatment Effect</dd>
       </dl><dl><dt>
 
+          <code><a href="estimate_var_sandwich.html">estimate_var_sandwich()</a></code>
+
+        </dt>
+        <dd>Estimate Variance Sandwich Estimator</dd>
+      </dl><dl><dt>
+
           <code><a href="calc_gcomp_ml.html">calc_gcomp_ml()</a></code>
 
         </dt>
         <dd>G-computation Maximum Likelihood Bootstrap</dd>
       </dl><dl><dt>
 
-          <code><a href="calc_gcomp_stan.html">calc_gcomp_stan()</a></code>
+          <code><a href="calc_gcomp_bayes.html">calc_gcomp_bayes()</a></code>
 
         </dt>
         <dd>G-computation using Stan</dd>
@@ -144,7 +143,25 @@
           <code><a href="IPD_stat_factory.html">IPD_stat_factory()</a></code>
 
         </dt>
-        <dd>Factory function for creating IPD_stats methods</dd>
+        <dd>Factory function for creating calc_IPD_stats methods</dd>
+      </dl><dl><dt>
+
+          <code><a href="BC_ALD_long.html">BC_ALD_long</a></code>
+
+        </dt>
+        <dd>Data set for aggregate level patient data in long format</dd>
+      </dl><dl><dt>
+
+          <code><a href="get_ref_trt.html">get_ref_trt()</a></code>
+
+        </dt>
+        <dd>Get reference treatment</dd>
+      </dl><dl><dt>
+
+          <code><a href="validate_outstandr.html">validate_outstandr()</a></code>
+
+        </dt>
+        <dd>Input data validator</dd>
       </dl></div><div class="section level2">
       <h2 id="miscellaneous">Miscellaneous<a class="anchor" aria-label="anchor" href="#miscellaneous"></a></h2>
 
@@ -162,6 +179,18 @@
 
         </dt>
         <dd>Print a Summary of a outstandR Object</dd>
+      </dl><dl><dt>
+
+          <code><a href="reshape_ald_to_long.html">reshape_ald_to_long()</a></code>
+
+        </dt>
+        <dd>Convert from wide to long format</dd>
+      </dl><dl><dt>
+
+          <code><a href="reshape_ald_to_wide.html">reshape_ald_to_wide()</a></code>
+
+        </dt>
+        <dd>Convert from long to wide format</dd>
       </dl></div><div class="section level2">
       <h2 id="data">Data<a class="anchor" aria-label="anchor" href="#data"></a></h2>
 
@@ -184,18 +213,18 @@
           <code><a href="BC_ALD.html">BC_ALD</a></code>
 
         </dt>
-        <dd>Data set for aggregate level patient data</dd>
+        <dd>Data set for aggregate level patient data in wide format</dd>
       </dl></div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Nathan Green, Antonio Remiro-Azocar.</p>
+  <p>Developed by Nathan Green, Chengyang Gao, Antonio Remiro-Azocar.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer></div>

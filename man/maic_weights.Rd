@@ -7,7 +7,7 @@
 maic_weights(X_EM)
 }
 \arguments{
-\item{X_EM}{Centred \eqn{S=1} effect modifiers; matrix or data frame}
+\item{X_EM}{Centred \eqn{S=1} effect modifiers IPD covariates; matrix or data frame}
 }
 \value{
 Estimated weights for each individual; vector

@@ -4,34 +4,50 @@
 \alias{strategy_maic}
 \alias{strategy_stc}
 \alias{strategy_gcomp_ml}
-\alias{strategy_gcomp_stan}
+\alias{strategy_gcomp_bayes}
 \alias{strategy_mim}
 \alias{strategy}
 \alias{new_strategy}
 \title{New strategy objects}
 \usage{
-strategy_maic(formula = NULL, family = gaussian(link = "identity"), R = 1000L)
+strategy_maic(
+  formula = NULL,
+  family = gaussian(link = "identity"),
+  trt_var = NULL,
+  R = 1000L
+)
 
-strategy_stc(formula = NULL, family = gaussian(link = "identity"))
+strategy_stc(
+  formula = NULL,
+  family = gaussian(link = "identity"),
+  trt_var = NULL
+)
 
 strategy_gcomp_ml(
   formula = NULL,
   family = gaussian(link = "identity"),
+  trt_var = NULL,
   rho = NA,
+  marginal_distns = NA,
+  marginal_params = NA,
   R = 1000L,
   N = 1000L
 )
 
-strategy_gcomp_stan(
+strategy_gcomp_bayes(
   formula = NULL,
   family = gaussian(link = "identity"),
+  trt_var = NULL,
   rho = NA,
+  marginal_distns = NA,
+  marginal_params = NA,
   N = 1000L
 )
 
 strategy_mim(
   formula = NULL,
   family = gaussian(link = "identity"),
+  trt_var = NULL,
   rho = NA,
   N = 1000L
 )
@@ -39,17 +55,26 @@ strategy_mim(
 new_strategy(strategy, ...)
 }
 \arguments{
-\item{formula}{Linear regression \code{formula} object}
+\item{formula}{Linear regression \code{formula} object. Prognostic factors (PF) are main effects and effect modifiers (EM) are
+interactions with the treatment variable, e.g., y ~ X1 + trt + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
 
-\item{family}{\code{family} object from the \code{stats} library}
+\item{family}{A 'family' object specifying the distribution and link function (e.g., 'binomial').
+See stats::family() for more details.}
 
-\item{R}{The number of resamples used for the non-parametric bootstrap}
+\item{trt_var}{Treatment variable name; string}
 
-\item{rho}{A named square matrix of covariate correlations; default NA.}
+\item{R}{The number of resamples used for the non-parametric bootstrap; integer}
+
+\item{rho}{A named square matrix of covariate correlations; default NA}
+
+\item{marginal_distns}{Marginal distributions names; vector default NA.
+Available distributions are given in stats::Distributions. See \code{\link[copula:Mvdc]{copula::Mvdc()}} for details}
+
+\item{marginal_params}{Marginal distributions parameters; list of lists, default NA. See \code{\link[copula:Mvdc]{copula::Mvdc()}} for details}
 
 \item{N}{Synthetic sample size for g-computation}
 
-\item{strategy}{Class name from \code{strategy_maic}, \code{strategy_stc}, \code{strategy_gcomp_ml}, \code{strategy_gcomp_stan}}
+\item{strategy}{Class name from \code{strategy_maic}, \code{strategy_stc}, \code{strategy_gcomp_ml}, \code{strategy_gcomp_bayes}}
 
 \item{...}{Additional arguments}
 }
@@ -60,7 +85,7 @@ new_strategy(strategy, ...)
 
 \code{gcomp_ml} class object
 
-\code{gcomp_stan} class object
+\code{gcomp_bayes} class object
 
 \code{mim} class object
 }
@@ -68,7 +93,6 @@ new_strategy(strategy, ...)
 Create a type of strategy class for each modelling approach.
 }
 \section{Matching-adjusted indirect comparison (MAIC)}{
-
 
 MAIC is a form of non-parametric likelihood reweighting method
 which allows the propensity score logistic
@@ -91,7 +115,7 @@ where the weight \eqn{w_{it}} assigned to the \eqn{i}-th individual receiving tr
 
 Outcome regression-based method which targets a conditional treatment effect.
 STC is a modification of the covariate adjustment method.
-An outcome model is fitted using IPD in the \emph{AB} trial
+An outcome model is fitted using IPD in the \emph{AB} trial. For example,
 
 \deqn{
 g(\mu_{t(AB)}(X)) = \beta_0 + \beta_1^T X + (\beta_B + \beta_2^T X^{EM}) I(t=B)
@@ -107,15 +131,15 @@ chosen linear predictor scale with link function \eqn{g(\cdot)}.
 
 \section{G-computation maximum likelihood}{
 
-
 G-computation marginalizes the conditional estimates by separating the regression modelling
 from the estimation of the marginal treatment effect for \emph{A} versus \emph{C}.
-First, a regression model of the observed outcome \eqn{y} on the covariates \eqn{x} and treatment \eqn{z} is fitted to the \emph{AC} IPD:
+For example, a regression model of the observed outcome \eqn{y} on the covariates \eqn{x} and
+treatment \eqn{z} is fitted to the \emph{AC} IPD:
 
 \deqn{
 g(\mu_n) = \beta_0 + \boldsymbol{x}_n \boldsymbol{\beta_1} + (\beta_z + \boldsymbol{x_n^{EM}} \boldsymbol{\beta_2}) \mbox{I}(z_n=1)
 }
-In the context of G-computation, this regression model is often called the “Q-model.”
+In the context of G-computation, this regression model is called the “Q-model".
 Having fitted the Q-model, the regression coefficients are treated as nuisance parameters.
 The parameters are applied to the simulated covariates \eqn{x*} to predict hypothetical outcomes
 for each subject under both possible treatments. Namely, a pair of predicted outcomes,
@@ -167,5 +191,11 @@ estimation via Markov chain Monte Carlo (MCMC) sampling.
 
 \section{Multiple imputation marginalization (MIM)}{
 
+TODO
 }
 
+\seealso{
+\code{\link[=strategy_gcomp_bayes]{strategy_gcomp_bayes()}}
+
+\code{\link[=strategy_gcomp_ml]{strategy_gcomp_ml()}},\code{\link[copula:Mvdc]{copula::Mvdc()}}
+}

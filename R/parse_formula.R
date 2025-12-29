@@ -1,111 +1,105 @@
 
-#' Get treatment name
-#'
-#' @param formula Linear regression formula string
-#'
+#' Guess treatment name
+#' 
+#' Does a variable appear more than once in interactions?
+#' If not then pick first LHS interaction term.
+#' Finally, if there are no interactions then pick last main effect term.
+#' 
+#' @eval reg_args(include_formula = TRUE, include_family = FALSE)
 #' @return Treatment name
+#' 
+#' @importFrom crayon yellow
 #' @keywords internal
 #'
-get_treatment_name <- function(formula) {
+guess_treatment_name <- function(formula) {
   
   formula <- as.formula(formula)
   term.labels <- attr(terms(formula), "term.labels")
   
-  # find interaction terms (assuming only for treatment)
-  treat_nm <- term.labels[grepl(":", term.labels)]
-  treat_nm <- gsub(":.+", "", treat_nm[1])
+  interaction_terms <- term.labels[grepl(":", term.labels)]
   
-  if (is.na(treat_nm))
-    warning("Treatment name missing from formula.")
+  # Split each interaction term by ":" and flatten
+  vars <- unlist(strsplit(interaction_terms, ":"))
+  
+  # Find the first duplicated variable (assumed to be treatment)
+  treat_nm <- vars[duplicated(vars)][1]
+  
+  # no duplicate
+  if (is.na(treat_nm) || length(treat_nm) == 0) {
+    if (length(interaction_terms) > 0) {
+      # take the first term
+      treat_nm <- strsplit(interaction_terms[1], ":")[[1]][1]
+    } else {
+      # Identify main effect terms (i.e., no colon)
+      main_effect_terms <- term.labels[!grepl(":", term.labels)]
+
+      # Pick the last main effect term
+      treat_nm <- tail(main_effect_terms, 1)
+      
+      if (length(treat_nm) == 0) {
+        stop("Treatment term 'trt' is missing in the formula")
+      }
+      
+      message("Treatment is guessed as: ", crayon::yellow(treat_nm))
+    }
+  }
   
   treat_nm
 }
 
-#' Get mean names
-#'
-#' @template args-ald
-#' @param keep_nms Variable names character vector
-#'
-#' @return Mean names vector
-#' @keywords internal
-#'
-get_mean_names <- function(ald, keep_nms) {
+#
+get_treatment_name <- function(formula, trt_var = NULL) {
+  if (!is.null(trt_var) && is.character(trt_var)) {
+    return(trt_var)
+  }
   
-  dat_names <- names(ald)
-  # is_sd_name <- grepl(pattern = "\\.mean", dat_names)
-  is_mean_name <- grepl(pattern = "mean\\.", dat_names)
-  is_var_name <- grepl(pattern = paste(keep_nms, collapse = "|"), dat_names)
-  keep_mean_nm <- is_mean_name & is_var_name
-  
-  if (all(!keep_mean_nm))
-    warning("No matching mean names found.")
-  
-  mean_nms <- dat_names[keep_mean_nm]
-   
-  covariate_nms <- sub(".*mean\\.", "", mean_nms)
-  
-  setNames(mean_nms, covariate_nms)
-}
-
-#' Get standard deviation names
-#'
-#' @template args-ald
-#' @param keep_nms Variable names character vector
-#'
-#' @return Standard deviation names vector
-#' @keywords internal
-#'
-get_sd_names <- function(ald, keep_nms) {
-  
-  dat_names <- names(ald)
-  # is_sd_name <- grepl(pattern = "\\.sd", dat_names)
-  is_sd_name <- grepl(pattern = "sd\\.", dat_names)
-  is_var_name <- grepl(pattern = paste(keep_nms, collapse = "|"), dat_names)
-  keep_sd_nm <- is_sd_name & is_var_name
-  
-  if (all(!keep_sd_nm))
-    warning("No matching sd names found.")
-  
-  sd_nms <- dat_names[keep_sd_nm]
-  
-  covariate_nms <- sub(".*sd\\.", "", sd_nms)
-  
-  setNames(sd_nms, covariate_nms)
+  guess_treatment_name(formula)
 }
 
 #' Get covariate names
 #'
-#' @param formula Linear regression formula object
-#'
+#' @eval reg_args(include_formula = TRUE, include_family = FALSE)
+#' 
 #' @return covariate names vector
 #' @keywords internal
 #'
 get_covariate_names <- function(formula) {
   
-  if (!inherits(formula, "formula"))
+  if (!inherits(formula, "formula")) {
     stop("formula argument must be of formula class.")
+  }
   
   all.vars(formula)[-1]
 }
 
 #' Get effect modifiers
 #'
-#' @param formula Linear regression formula string
-#'
+#' @param trt_var Treatment variable name; Default 'trt'.
+#' @eval reg_args(include_formula = TRUE, include_family = FALSE)
+#' 
 #' @return Effect modifiers names
 #' @keywords internal
 #'
-get_eff_mod_names <- function(formula) {
+get_eff_mod_names <- function(formula, trt_var = "trt") {
   
   formula <- as.formula(formula)
   
-  # assume format trt:cov
-  treat_var <- get_treatment_name(formula)
+  all_terms <- attr(terms(formula), "term.labels")
   
-  term.labels <- attr(terms(formula), "term.labels")
+  effect_modifiers <- character()
   
-  # effect modifier terms only
-  eff_mod_terms <- term.labels[grepl(":", term.labels)]
+  for (term in all_terms) {
+    is_interaction <- grepl(":", term)
+    
+    if (is_interaction) {
+      components <- strsplit(term, ":")[[1]]
+      
+      if (trt_var %in% components) {
+        other_components <- components[components != trt_var]
+        effect_modifiers <- c(effect_modifiers, other_components)
+      }
+    }
+  }
   
-  gsub(paste0("^", treat_var, ":"), "", eff_mod_terms)
+  unique(effect_modifiers)
 }

@@ -19,7 +19,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/Binary_data_example.html">Binary data example</a></li>
-    <li><a class="dropdown-item" href="../articles/Binary_data_Remiro-Azocar.html">Binary data example usind data from Remiro-Azocar et al. (2020)</a></li>
+    <li><a class="dropdown-item" href="../articles/Binary_data_Remiro-Azocar.html">Binary data example using data from Remiro-Azocar et al. (2020)</a></li>
     <li><a class="dropdown-item" href="../articles/comparison-with-other-packages.html">Comparison with other packages</a></li>
     <li><a class="dropdown-item" href="../articles/Continuous_data_example.html">Continuous data example</a></li>
     <li><a class="dropdown-item" href="../articles/Count_data_example.html">Count data example</a></li>
@@ -55,7 +55,9 @@
 
 
 <dl><dt id="arg-ald">ald<a class="anchor" aria-label="anchor" href="#arg-ald"></a></dt>
-<dd><p>Aggregate-level data</p></dd>
+<dd><p>Aggregate-level data. Single row matrix with summary statistics for each covariate and treatment outcomes.
+The format is 'mean.<em>' and 'sd.</em>' for covariates and 'y.<em>.sum', 'y.</em>.bar', 'y.*.sd' for treatments B and C.
+We assume a common distribution for each treatment arm.</p></dd>
 
 
 <dt id="arg-keep-nms">keep_nms<a class="anchor" aria-label="anchor" href="#arg-keep-nms"></a></dt>

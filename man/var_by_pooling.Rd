@@ -14,7 +14,6 @@ var_by_pooling(M, bar.v, b)
 \item{b}{"between" variance (sample variance of point estimates)}
 }
 \description{
-Use combining rules to estimate
-2003
+Use combining rules to estimate.
 }
 \keyword{internal}

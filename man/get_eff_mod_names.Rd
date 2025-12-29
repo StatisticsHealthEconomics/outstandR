@@ -4,10 +4,13 @@
 \alias{get_eff_mod_names}
 \title{Get effect modifiers}
 \usage{
-get_eff_mod_names(formula)
+get_eff_mod_names(formula, trt_var = "trt")
 }
 \arguments{
-\item{formula}{Linear regression formula string}
+\item{formula}{Linear regression \code{formula} object. Prognostic factors (PF) are main effects and effect modifiers (EM) are
+interactions with the treatment variable, e.g., y ~ X1 + trt + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
+
+\item{trt_var}{Treatment variable name; Default 'trt'.}
 }
 \value{
 Effect modifiers names

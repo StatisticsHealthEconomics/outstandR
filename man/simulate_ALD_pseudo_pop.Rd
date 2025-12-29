@@ -4,18 +4,35 @@
 \alias{simulate_ALD_pseudo_pop}
 \title{Simulate Aggregate-Level Data Pseudo-Population}
 \usage{
-simulate_ALD_pseudo_pop(formula, ipd, ald, rho = NA, N = 1000)
+simulate_ALD_pseudo_pop(
+  formula,
+  ipd = NULL,
+  ald = NULL,
+  trt_var,
+  rho = NA,
+  N = 1000,
+  marginal_distns = NA,
+  marginal_params = NA
+)
 }
 \arguments{
-\item{formula}{Linear regression \code{formula} object}
+\item{formula}{Linear regression \code{formula} object. Prognostic factors (PF) are main effects and effect modifiers (EM) are
+interactions with the treatment variable, e.g., y ~ X1 + trt + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
 
-\item{ipd}{Individual-level data}
+\item{ipd}{Individual-level patient data. Dataframe with one row per patient with outcome, treatment and covariate columns.}
 
-\item{ald}{Aggregate-level data}
+\item{ald}{Aggregate-level data. Long format summary statistics for each covariate and treatment outcomes.
+We assume a common distribution for each treatment arm.}
 
-\item{rho}{A named square matrix of covariate correlations; default NA.}
+\item{rho}{A named square matrix of covariate correlations or single value; default NA takes from IPD.}
 
 \item{N}{Sample size for the synthetic cohort. Default is 1000.}
+
+\item{marginal_distns}{Marginal distributions names; vector default NA.
+Available distributions are given in stats::Distributions. See \code{\link[copula:Mvdc]{copula::Mvdc()}} for details}
+
+\item{marginal_params}{Marginal distributions parameters;
+named list of lists, default NA. See \code{\link[copula:Mvdc]{copula::Mvdc()}} for details}
 }
 \value{
 A data frame representing the synthetic pseudo-population.
@@ -25,10 +42,10 @@ Generates a synthetic cohort using a normal copula based on aggregate-level data
 }
 \examples{
 \dontrun{
-formula <- outcome ~ treatment + age
-ipd <- data.frame(treatment = c(0, 1), outcome = c(1, 0), age = c(30, 40))
+formula <- y ~ trt + age
+ipd <- data.frame(tr = c("A", "C"), y = c(1, 0), age = c(30, 40))
 ald <- data.frame()
-simulate_ALD_pseudo_pop(formula, ipd, ald, N = 1000)
+simulate_ALD_pseudo_pop(formula, ipd, ald, trt_var = "trt", N = 1000)
 }
 }
 \keyword{internal}

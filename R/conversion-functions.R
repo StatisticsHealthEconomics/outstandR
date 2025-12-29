@@ -22,7 +22,8 @@ convert_rr_to_or <- function(rr, P0) rr * ((1 - P0) / (1 - P0 * rr))
 convert_rr_to_rd <- function(rr, P0) P0 * (rr - 1)
 convert_rd_to_rr <- function(rd, P0) 1 + (rd / P0)
 
-#
+#' Conversion Map
+#' 
 conversion_map <- function() {
   list(
     log_odds =
@@ -37,11 +38,16 @@ conversion_map <- function() {
     risk_difference =
       list(relative_risk = convert_rd_to_rr),
     delta_z = 
-      list(odds_ratio = convert_delta_z_to_or),
+      list(odds_ratio = NULL),
+      # list(odds_ratio = convert_delta_z_to_or), ##TODO
   )
 }
 
-#' recursive function to find conversion path
+#' Recursive function to find conversion path
+#'
+#' @param from From scale
+#' @param to To scale
+#' @param visited Path
 #'
 #' @examples
 #' find_conversion_path("log_odds", "relative_risk")
@@ -72,8 +78,14 @@ find_conversion_path <- function(from, to, visited = c()) {
   return(NULL)  # no valid path found
 }
 
-# apply conversions along the found path
-#
+#' Apply conversions along the found path
+#'
+#' @param value Value
+#' @param link Link
+#' @param to To
+#' @param P0 P0
+#' @return Effect
+#' 
 convert_effect <- function(value, link, to, P0) {
   
   from <- get_treatment_effect(link)  # scale
@@ -87,8 +99,8 @@ convert_effect <- function(value, link, to, P0) {
   
   for (i in seq_along(path)[-1]) {
     prev <- path[i - 1]
-    next <- path[i]
-    result <- conv_map[[prev]][[next]](result, P0)
+    nxt <- path[i]
+    result <- conv_map[[prev]][[nxt]](result, P0)
   }
   
   result
