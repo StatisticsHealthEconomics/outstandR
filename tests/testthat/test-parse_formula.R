@@ -75,7 +75,7 @@ test_that("prep_ald differenf formula formats", {
   
   prep_ald(form, data)
   
-  form <- as.formula("y ~ X3 + X4 + trt:(X1 + X2)")
+  form <- as.formula("y ~ X3 + X4 + trt + trt:(X1 + X2)")
   
   prep_ald(form, data)
   
@@ -83,7 +83,7 @@ test_that("prep_ald differenf formula formats", {
   
   prep_ald(form, data)
   
-  form <- as.formula("y ~ X3 + X4 + trt + trt:X1 + trt:X2")
+  form <- as.formula("y ~ X3 + X4 + trt + trt:X1 + trt:X2")  # correct version
   
   prep_ald(form, data)
 
