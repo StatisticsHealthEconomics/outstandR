@@ -17,6 +17,16 @@ check_formula <- function(formula, trt_var = NULL) {
     if (!(trt_var %in% terms_labels))
       stop(sprintf("Treatment term '%s' is missing in the formula", trt_var), call. = FALSE)
   }
+
+  ##TODO: not yet implemented
+  response <- formula[[2]]
+  
+  if (inherits(response, "Surv")) {
+    stop(paste(
+      "Survival data (Surv objects) are not yet supported in outstandR v1.0.0.",
+      "This feature is scheduled for the v1.1.0."
+    ))
+  }
   
   invisible()
 }

@@ -265,6 +265,10 @@ strategy_mim <- function(formula = NULL,
 #' @description
 #' Create a type of strategy class for each modelling approach.
 #'
+#' @note While current implementations focus on binary, continuous, and count outcomes, 
+#' support for survival data (using the \code{survival} package) is under active 
+#' development and scheduled for version 1.1.0.
+#' 
 #' @param strategy Class name from `strategy_maic`, `strategy_stc`, `strategy_gcomp_ml`, `strategy_gcomp_bayes`, `strategy_mim`
 #' @eval reg_args(include_formula = TRUE, include_family = TRUE)
 #' @param ... Additional arguments
