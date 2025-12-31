@@ -106,7 +106,8 @@ calc_IPD_stats.mim <- function(strategy,
     absolute = list(
       mean = NA,  #p_est,  ##TODO:
       var = NA),  #p_var)
-    model = c(nu = nu, 
+    model = c(method_name = "MIM",
+              nu = nu, 
               mis_res$model)
   )
 } 

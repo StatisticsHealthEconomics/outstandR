@@ -173,6 +173,15 @@ outstandR_mim <- outstandR(
 )
 ```
 
+The results across all adjustment strategies for the binary outcome are summarized in Figure~fig:summary-forest-plot by calling the following. 
+
+```{r summary-forest-plot, warning=FALSE, message=FALSE}
+plot(outstandR_maic, outstandR_stc, outstandR_gcomp_ml, 
+     outstandR_gcomp_bayes, outstandR_mim)
+```
+
+By passing the result objects from `strategy_maic()`, `strategy_stc()`, `strategy_gcomp_ml()`, and `strategy_mim()` into a single `plot()` call, we can visually assess the stability of the treatment effect estimates. For example, the relative AB contrast is consistently estimated across all methods excluding STC, with overlapping 95\% confidence intervals, providing confidence in the robustness of the indirect comparison despite the different underlying statistical mechanics of weighting versus regression standardization.
+
 ------------------------------------------------------------------------
 
 ### Continuous outcome data
@@ -236,7 +245,7 @@ outstandR_maic <- outstandR(
 )
 ```
 
-If we interrogate the output we see the same list format. Differences to the first example are the model and scale attributes correspond to the input data used.
+If we interrogate the output we see the same list format. Differences to the first example are the model and scale components correspond to the continuous input data used.
 
 ```{r}
 str(outstandR_maic, max.level = 1)
@@ -445,8 +454,6 @@ print(outstandR_maic$model$ESS)
 hist(outstandR_maic$model$weights, xlab = "Weights")
 ```
 
-<!-- save plot -->
-
 Similarly, for G-computation, users can extract the fitted model to check residuals or, in the Bayesian case, inspect MCMC convergence using for example the bayesplot package.
 
 ```{r gcomp-diagnostics}
@@ -461,5 +468,3 @@ stan_obj <- outstandR_gcomp_bayes$model$fit
 library(bayesplot)
 mcmc_trace(stan_obj)
 ```
-
-<!-- save plot -->
