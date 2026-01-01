@@ -99,13 +99,16 @@ calc_IPD_stats.mim <- function(strategy,
   var_est <- var_by_pooling(M, bar.v, b)
   nu <- wald_type_interval(M, bar.v, b)
 
+  p_est <- sapply(mis_res$means, mean, na.rm = TRUE)
+  p_var <- sapply(mis_res$means, var, na.rm = TRUE)
+  
   list(
     contrasts = list(
       mean = coef_est,
-      var = var_est),
+      var  = var_est),
     absolute = list(
-      mean = NA,  #p_est,  ##TODO:
-      var = NA),  #p_var)
+      mean = p_est,
+      var  = p_var),
     model = c(method_name = "MIM",
               nu = nu, 
               mis_res$model)
@@ -164,10 +167,10 @@ IPD_stat_factory <- function(ipd_fun) {
     list(
       contrasts = list(
         mean = coef_est,
-        var = var_est),
+        var  = var_est),
       absolute = list(
         mean = p_est,
-        var = p_var),
+        var  = p_var),
       method_name = method_name,
       model = out$model
     )
