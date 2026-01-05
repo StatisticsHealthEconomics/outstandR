@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.39">
+<meta name="generator" content="quarto-1.6.11">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -63,12 +63,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="jss-section_files/libs/quarto-html/tippy.umd.min.js"></script>
 <script src="jss-section_files/libs/quarto-html/anchor.min.js"></script>
 <link href="jss-section_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="jss-section_files/libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="jss-section_files/libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="jss-section_files/libs/quarto-html/quarto-syntax-highlighting-79bb3942e891885f9f7af119cd221462.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="jss-section_files/libs/quarto-html/quarto-syntax-highlighting-dark-37bb72f48501692975d9c066fdeb097b.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="jss-section_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="jss-section_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="jss-section_files/libs/bootstrap/bootstrap-a1ff8711b79ae3724c050874b28d9907.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="jss-section_files/libs/bootstrap/bootstrap-dark-d7a88a546168d8387e6a3516c26f5597.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="jss-section_files/libs/bootstrap/bootstrap-7e0c3a6c5aa2b55f6b8d59329e33f8ab.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="jss-section_files/libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -258,8 +258,8 @@ Contrasts:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-1 AB            0.633     0.242     -0.331     1.60  
-2 AC           -0.811     0.140     -1.54     -0.0791
+1 AB            0.621     0.248     -0.355     1.60  
+2 AC           -0.823     0.146     -1.57     -0.0731
 3 BC           -1.44      0.102     -2.07     -0.817 
 
 Absolute:
@@ -267,9 +267,9 @@ Absolute:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-1 A             0.243   0.00202      0.155      0.331
-2 B            -1.03    0.107       -1.67      -0.385
-3 C             0.417   0.00519      0.276      0.558</code></pre>
+1 A             0.244   0.00201      0.156      0.332
+2 B            -1.02    0.108       -1.67      -0.378
+3 C             0.422   0.00574      0.273      0.570</code></pre>
 </div>
 </div>
 <p>Similarly, the STC, G-computation and MIM analyses are performed as follows.</p>
@@ -321,9 +321,6 @@ Absolute:
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(outstandR_maic, outstandR_stc, outstandR_gcomp_ml, </span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>     outstandR_gcomp_bayes, outstandR_mim)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>`height` was translated to `width`.</code></pre>
-</div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -341,9 +338,9 @@ Absolute:
 <p>Analogous to the first example with binary outcomes and continuous covariates, we now extend this for the case of continuous outcomes and a mixture of binary and continuous covariates. The same steps are followed.</p>
 <p>First, read in the data.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># individual-level data</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(AC_IPD_contY_mixedX)</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(AC_IPD_contY_mixedX)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># individual-level data</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(AC_IPD_contY_mixedX)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(AC_IPD_contY_mixedX)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  id        X1 X2        X3 X4 trt          y   true_eta
 1  1 0.3066158  0 1.0794085  0   A -2.3321553 -0.9789591
@@ -353,9 +350,9 @@ Absolute:
 5  5 0.5672248  0 0.5305725  0   A -3.3441703 -1.3985394
 6  6 0.4897103  1 0.1289250  1   A -1.2286456 -0.3974177</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># aggregate-level data</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(BC_ALD_contY_mixedX)</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(BC_ALD_contY_mixedX)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># aggregate-level data</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(BC_ALD_contY_mixedX)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(BC_ALD_contY_mixedX)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 14 × 4
    variable statistic   value trt  
@@ -383,7 +380,7 @@ y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_3 X_3 + (\beta_{trt} + \alpha_1 
 \]</span></p>
 <p>This corresponds to the R formula given by:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>lin_form_mixedX <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="st">"y ~ X1 + X2 + X3 + trt + trt:(X1 + X2 + X4)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>lin_form_mixedX <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="st">"y ~ X1 + X2 + X3 + trt + trt:(X1 + X2 + X4)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="relative-treatment-effect" class="level4">
 <h4 class="anchored" data-anchor-id="relative-treatment-effect">Relative treatment effect</h4>
@@ -401,18 +398,18 @@ y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_3 X_3 + (\beta_{trt} + \alpha_1 
 <h4 class="anchored" data-anchor-id="running-outstandr-1">Running outstandR()</h4>
 <p>A difference from the previous binary outcome data example is the <code>family = gaussian(link = "identity")</code> argument indicating a Normal linear regression. The full call to <code>outstandR()</code> is:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>outstandR_maic <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_contY_mixedX, </span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_contY_mixedX,</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_maic</span>(</span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form_mixedX,</span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">gaussian</span>(<span class="at">link =</span> <span class="st">"identity"</span>)</span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>outstandR_maic <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_contY_mixedX, </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_contY_mixedX,</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_maic</span>(</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form_mixedX,</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">gaussian</span>(<span class="at">link =</span> <span class="st">"identity"</span>)</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>If we interrogate the output we see the same list format. Differences to the first example are the model and scale components correspond to the continuous input data used.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(outstandR_maic, <span class="at">max.level =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(outstandR_maic, <span class="at">max.level =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>List of 11
  $ results   :List of 2
@@ -429,7 +426,7 @@ y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_3 X_3 + (\beta_{trt} + \alpha_1 
  $ model     :List of 3
  - attr(*, "class")= chr [1:2] "outstandR" "list"</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(outstandR_maic)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(outstandR_maic)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Object of class 'outstandR' 
 ITC algorithm: MAIC 
@@ -445,8 +442,8 @@ Contrasts:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-1 AB           -0.181    0.136      -0.905      0.543
-2 AC           -1.11     0.105      -1.74      -0.471
+1 AB           -0.169    0.129      -0.874      0.536
+2 AC           -1.10     0.0984     -1.71      -0.481
 3 BC           -0.926    0.0311     -1.27      -0.581
 
 Absolute:
@@ -454,9 +451,9 @@ Absolute:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-1 A            -0.576    0.0307    -0.920      -0.233
-2 B            -0.395    0.0957    -1.00        0.211
-3 C             0.531    0.0646     0.0330      1.03 </code></pre>
+1 A            -0.569    0.0326    -0.922      -0.215
+2 B            -0.400    0.0905    -0.989       0.190
+3 C             0.527    0.0594     0.0490      1.00 </code></pre>
 </div>
 </div>
 <hr>
@@ -466,9 +463,9 @@ Absolute:
 <h3 class="anchored" data-anchor-id="count-outcome-data">Count outcome data</h3>
 <p>First, read in and view the two data sets.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># individual-level data</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(AC_IPD_countY_contX)</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(AC_IPD_countY_contX)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># individual-level data</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(AC_IPD_countY_contX)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(AC_IPD_countY_contX)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  id   PF_cont_1 PF_cont_2 EM_cont_1   EM_cont_2 trt y    true_eta
 1  1 -0.03120828 0.2000877 0.7946610  0.59843299   A 0 -1.69699568
@@ -478,9 +475,9 @@ Absolute:
 5  5  0.49349123 0.9075975 0.6009318 -0.02910612   A 1 -1.17179280
 6  6  0.48906050 0.2393630 0.4741692  0.45545576   C 1 -0.09509531</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># aggregate-level data</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(BC_ALD_countY_contX)</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(BC_ALD_countY_contX)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># aggregate-level data</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(BC_ALD_countY_contX)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(BC_ALD_countY_contX)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 16 × 4
    variable  statistic   value trt  
@@ -523,16 +520,16 @@ Absolute:
 <h4 class="anchored" data-anchor-id="running-outstandr-2">Running outstandR()</h4>
 <p>A difference from the previous outcome data examples is the <code>family = poisson(link = "log")</code> argument indicating a log linear regression. The full call to <code>outstandR()</code> is:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>outstandR_maic <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_countY_contX,</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_countY_contX,</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_maic</span>(</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form_contX,</span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">poisson</span>(<span class="at">link =</span> <span class="st">"log"</span>)</span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(outstandR_maic)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>outstandR_maic <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_countY_contX,</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_countY_contX,</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_maic</span>(</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form_contX,</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">poisson</span>(<span class="at">link =</span> <span class="st">"log"</span>)</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(outstandR_maic)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Object of class 'outstandR' 
 ITC algorithm: MAIC 
@@ -548,8 +545,8 @@ Contrasts:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-1 AB           0.0875    0.0694     -0.429      0.604
-2 AC          -1.17      0.0438     -1.58      -0.761
+1 AB           0.0831    0.0712     -0.440      0.606
+2 AC          -1.18      0.0456     -1.59      -0.757
 3 BC          -1.26      0.0256     -1.57      -0.945
 
 Absolute:
@@ -557,9 +554,9 @@ Absolute:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-1 A            0.402    0.00357      0.284      0.519
-2 B            0.0354   0.0602      -0.446      0.516
-3 C            1.29     0.0347       0.929      1.66 </code></pre>
+1 A            0.401    0.00401      0.277      0.525
+2 B            0.0376   0.0585      -0.436      0.512
+3 C            1.30     0.0329       0.940      1.65 </code></pre>
 </div>
 </div>
 </section>
@@ -643,17 +640,17 @@ Absolute:
 </table>
 <p>The <code>scale</code> argument in <code>outstandR()</code> allows users to request these alternative summary statistics directly. For example, to obtain a risk difference instead of the default log-odds ratio for the binary outcome analysis (previously shown in Section 4), we specify <code>scale = "risk_difference"</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>outstandR_maic_rd <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_binY_contX, </span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_maic</span>(</span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form_contX,</span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>)</span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">scale =</span> <span class="st">"risk_difference"</span>  <span class="co"># instead of default log-odds ratio</span></span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(outstandR_maic_rd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>outstandR_maic_rd <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_binY_contX, </span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_maic</span>(</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form_contX,</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>)</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">scale =</span> <span class="st">"risk_difference"</span>  <span class="co"># instead of default log-odds ratio</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(outstandR_maic_rd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Object of class 'outstandR' 
 ITC algorithm: MAIC 
@@ -669,8 +666,8 @@ Contrasts:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-1 AB            0.162   0.443       -1.14      1.47  
-2 AC           -0.179   0.00711     -0.345    -0.0140
+1 AB            0.167   0.442       -1.14      1.47  
+2 AC           -0.174   0.00666     -0.334    -0.0141
 3 BC           -0.341   0.436       -1.63      0.952 
 
 Absolute:
@@ -678,9 +675,9 @@ Absolute:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-1 A            0.245    0.00210      0.155      0.335
-2 B            0.0831   0.441       -1.22       1.38 
-3 C            0.424    0.00532      0.281      0.567</code></pre>
+1 A            0.245    0.00215      0.154      0.336
+2 B            0.0776   0.441       -1.22       1.38 
+3 C            0.419    0.00542      0.275      0.563</code></pre>
 </div>
 </div>
 <p>The package determines the validity of a conversion path based on the underlying data distribution; for instance, requesting a “mean difference” for a binary outcome model will raise a validation error.</p>
@@ -690,31 +687,31 @@ Absolute:
 <p>Standard errors in population-adjusted analyses can be sensitive to model misspecification. Users can request robust (sandwich) standard errors by setting the <code>var_method</code> argument to <code>"sandwich"</code>. <!-- TODO: include this? --> This is particularly useful for methods like STC and G-computation (ML) where the outcome model parameters directly drive the effect estimate.</p>
 <p>The following example demonstrates how to compare the naive model-based standard error with the robust sandwich estimate for an STC analysis:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># standard STC analysis</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>stc_naive <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_binY_contX,</span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_stc</span>(</span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form_contX,</span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>()),</span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">var_method =</span> <span class="st">"sample"</span>) <span class="co"># Default</span></span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a><span class="co"># STC with robust variance (sandwich estimator)</span></span>
-<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>stc_robust <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
-<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_binY_contX,</span>
-<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
-<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_stc</span>(</span>
-<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form_contX,</span>
-<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>()),</span>
-<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">var_method =</span> <span class="st">"sandwich"</span>)</span>
-<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a><span class="co"># compare standard errors</span></span>
-<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a><span class="fu">unlist</span>(stc_naive<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>var)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># standard STC analysis</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>stc_naive <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_binY_contX,</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_stc</span>(</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form_contX,</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>()),</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">var_method =</span> <span class="st">"sample"</span>) <span class="co"># Default</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a><span class="co"># STC with robust variance (sandwich estimator)</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>stc_robust <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_binY_contX,</span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_stc</span>(</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> lin_form_contX,</span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>()),</span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">var_method =</span> <span class="st">"sandwich"</span>)</span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a><span class="co"># compare standard errors</span></span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a><span class="fu">unlist</span>(stc_naive<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>var)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       AB        AC        BC 
-0.2734492 0.1712181 0.1022311 </code></pre>
+0.2665519 0.1643208 0.1022311 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unlist</span>(stc_robust<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>var)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unlist</span>(stc_robust<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>var)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       AB        AC        BC 
 0.2266784 0.1244473 0.1022311 </code></pre>
@@ -728,20 +725,20 @@ Absolute:
 <p>The package automatically parameterizes these distributions using the summary statistics available in the ALD (e.g., converting mean/sd to Gamma shape/rate).</p>
 <p>First, define the target distributions. We specify a Gamma distribution with “gamma” for <code>X1</code> and a Binomial with “binom” for <code>X2</code>. The other covariates not listed (<code>X3</code>, <code>X4</code>) default to a Normal distribution i.e.&nbsp;“norm”.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define distributions</span></span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>new_distns <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">X1 =</span> <span class="st">"gamma"</span>, <span class="at">X2 =</span> <span class="st">"binom"</span>)</span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="co"># run G-computation ML</span></span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>outstandR_sens <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
-<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>   <span class="at">ipd_trial =</span> AC_IPD_contY_mixedX,</span>
-<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>   <span class="at">ald_trial =</span> BC_ALD_contY_mixedX,</span>
-<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>   <span class="at">strategy =</span> <span class="fu">strategy_gcomp_ml</span>(</span>
-<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">formula =</span> lin_form_mixedX,</span>
-<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">family =</span> <span class="fu">gaussian</span>(<span class="at">link =</span> <span class="st">"identity"</span>),</span>
-<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>     <span class="at">marginal_distns =</span> new_distns,</span>
-<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>     <span class="at">N =</span> <span class="dv">1000</span>))</span>
-<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>outstandR_sens</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define distributions</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>new_distns <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">X1 =</span> <span class="st">"gamma"</span>, <span class="at">X2 =</span> <span class="st">"binom"</span>)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co"># run G-computation ML</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>outstandR_sens <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>   <span class="at">ipd_trial =</span> AC_IPD_contY_mixedX,</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>   <span class="at">ald_trial =</span> BC_ALD_contY_mixedX,</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>   <span class="at">strategy =</span> <span class="fu">strategy_gcomp_ml</span>(</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">formula =</span> lin_form_mixedX,</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">family =</span> <span class="fu">gaussian</span>(<span class="at">link =</span> <span class="st">"identity"</span>),</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>     <span class="at">marginal_distns =</span> new_distns,</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>     <span class="at">N =</span> <span class="dv">1000</span>))</span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>outstandR_sens</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Object of class 'outstandR' 
 ITC algorithm: GCOMP_ML 
@@ -757,8 +754,8 @@ Contrasts:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-1 AB           -0.279    0.0914     -0.872      0.313
-2 AC           -1.21     0.0603     -1.69      -0.725
+1 AB           -0.282    0.0879     -0.863      0.299
+2 AC           -1.21     0.0568     -1.68      -0.741
 3 BC           -0.926    0.0311     -1.27      -0.581
 
 Absolute:
@@ -766,9 +763,9 @@ Absolute:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-1 A            -0.502    0.0175     -0.761     -0.242
-2 B            -0.222    0.0789     -0.773      0.328
-3 C             0.704    0.0478      0.276      1.13 </code></pre>
+1 A            -0.501    0.0181     -0.765     -0.238
+2 B            -0.220    0.0774     -0.765      0.326
+3 C             0.707    0.0463      0.285      1.13 </code></pre>
 </div>
 </div>
 <section id="manual-parameter-specification" class="level4">
@@ -776,28 +773,28 @@ Absolute:
 <p>There are scenarios where manual specification via the <code>marginal_params</code> argument is also necessary. One use case is as a sensitivity analysis, where a researcher wishes to assess the robustness of the relative treatment effect estimates to deviations in the target population’s characteristics of the IPD trial.</p>
 <p>The following code illustrates how to manually override the ALD statistics to simulate an older population.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># manually specify parameters for 'age' (mean=70, sd=10.5)</span></span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="co"># convert mean=70/sd=10.5 to shape/rate manually </span></span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="co"># or pass them if we already know the specific shape/rate</span></span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>target_mean <span class="ot">&lt;-</span> <span class="dv">70</span></span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>target_sd <span class="ot">&lt;-</span> <span class="fl">10.5</span></span>
-<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>new_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">X1 =</span> <span class="fu">list</span>(<span class="at">shape =</span> (target_mean<span class="sc">/</span>target_sd)<span class="sc">^</span><span class="dv">2</span>, </span>
-<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">rate =</span> target_mean<span class="sc">/</span>(target_sd<span class="sc">^</span><span class="dv">2</span>)))</span>
-<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a><span class="co"># run G-computation with manual override</span></span>
-<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>outstandR_sens <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
-<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>   <span class="at">ipd_trial =</span> AC_IPD_contY_mixedX,</span>
-<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>   <span class="at">ald_trial =</span> BC_ALD_contY_mixedX,</span>
-<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>   <span class="at">strategy =</span> <span class="fu">strategy_gcomp_ml</span>(</span>
-<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a>     <span class="at">formula =</span> lin_form_mixedX,</span>
-<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a>     <span class="at">family =</span> <span class="fu">gaussian</span>(<span class="at">link =</span> <span class="st">"identity"</span>),</span>
-<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a>     <span class="at">marginal_distns =</span> new_distns,</span>
-<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a>     <span class="at">marginal_params =</span> new_params, <span class="co"># overrides ALD for X1</span></span>
-<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a>     <span class="at">N =</span> <span class="dv">1000</span>))</span>
-<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a>outstandR_sens</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># manually specify parameters for 'age' (mean=70, sd=10.5)</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="co"># convert mean=70/sd=10.5 to shape/rate manually </span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="co"># or pass them if we already know the specific shape/rate</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>target_mean <span class="ot">&lt;-</span> <span class="dv">70</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>target_sd <span class="ot">&lt;-</span> <span class="fl">10.5</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>new_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">X1 =</span> <span class="fu">list</span>(<span class="at">shape =</span> (target_mean<span class="sc">/</span>target_sd)<span class="sc">^</span><span class="dv">2</span>, </span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">rate =</span> target_mean<span class="sc">/</span>(target_sd<span class="sc">^</span><span class="dv">2</span>)))</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a><span class="co"># run G-computation with manual override</span></span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>outstandR_sens <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>   <span class="at">ipd_trial =</span> AC_IPD_contY_mixedX,</span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>   <span class="at">ald_trial =</span> BC_ALD_contY_mixedX,</span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>   <span class="at">strategy =</span> <span class="fu">strategy_gcomp_ml</span>(</span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>     <span class="at">formula =</span> lin_form_mixedX,</span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>     <span class="at">family =</span> <span class="fu">gaussian</span>(<span class="at">link =</span> <span class="st">"identity"</span>),</span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>     <span class="at">marginal_distns =</span> new_distns,</span>
+<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a>     <span class="at">marginal_params =</span> new_params, <span class="co"># overrides ALD for X1</span></span>
+<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a>     <span class="at">N =</span> <span class="dv">1000</span>))</span>
+<span id="cb38-21"><a href="#cb38-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-22"><a href="#cb38-22" aria-hidden="true" tabindex="-1"></a>outstandR_sens</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Object of class 'outstandR' 
 ITC algorithm: GCOMP_ML 
@@ -813,8 +810,8 @@ Contrasts:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-1 AB          -22.0   1170.         -89.1      45.0  
-2 AC          -23.0   1170.         -90.0      44.1  
+1 AB          -22.0   1065.         -85.9      42.0  
+2 AC          -22.9   1065.         -86.8      41.1  
 3 BC           -0.926    0.0311      -1.27     -0.581
 
 Absolute:
@@ -822,9 +819,9 @@ Absolute:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-1 A              62.5      279.       29.7       95.2
-2 B              84.5      895.       25.9      143. 
-3 C              85.4      895.       26.8      144. </code></pre>
+1 A              62.0      283.       29.1       95.0
+2 B              84.0      769.       29.6      138. 
+3 C              84.9      769.       30.6      139. </code></pre>
 </div>
 </div>
 </section>
@@ -834,14 +831,14 @@ Absolute:
 <p>While <code>outstandR()</code> focuses on estimation, assessing model fit is crucial. The returned S3 object exposes the underlying statistical artifacts in the analysis_data slot, allowing users to leverage external diagnostic tools.</p>
 <p>For example, for an MAIC analysis, we can inspect the distribution of weights to check for outliers or near-zero effective sample sizes.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check Effective Sample Size</span></span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(outstandR_maic<span class="sc">$</span>model<span class="sc">$</span>ESS)   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check Effective Sample Size</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(outstandR_maic<span class="sc">$</span>model<span class="sc">$</span>ESS)   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    ESS 
 151.053 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># histogram of MAIC weights</span></span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(outstandR_maic<span class="sc">$</span>model<span class="sc">$</span>weights, <span class="at">xlab =</span> <span class="st">"Weights"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># histogram of MAIC weights</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(outstandR_maic<span class="sc">$</span>model<span class="sc">$</span>weights, <span class="at">xlab =</span> <span class="st">"Weights"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -852,12 +849,12 @@ Absolute:
 </div>
 <p>Similarly, for G-computation, users can extract the fitted model to check residuals or, in the Bayesian case, inspect MCMC convergence using for example the bayesplot package.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extract stanfit object</span></span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>stan_obj <span class="ot">&lt;-</span> outstandR_gcomp_bayes<span class="sc">$</span>model<span class="sc">$</span>fit </span>
-<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="co"># use external package for diagnostics</span></span>
-<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bayesplot)</span>
-<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="fu">mcmc_trace</span>(stan_obj)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extract stanfit object</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>stan_obj <span class="ot">&lt;-</span> outstandR_gcomp_bayes<span class="sc">$</span>model<span class="sc">$</span>fit </span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="co"># use external package for diagnostics</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bayesplot)</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="fu">mcmc_trace</span>(stan_obj)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1096,6 +1093,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
   clipboard.on('success', onCopySuccess);
   if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
     const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
       text: getTextToCopy,
       container: window.document.getElementById('quarto-embedded-source-code-modal')
@@ -1206,6 +1205,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
+      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {

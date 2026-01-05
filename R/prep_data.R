@@ -105,7 +105,8 @@ prepare_covariate_distns <- function(formula,
   
   # 2. Initialize empty containers if the user provided nothing (NA)
   if (length(marginal_distns) == 1 && is.na(marginal_distns)) {
-    marginal_distns <- setNames(rep(NA_character_, length(covariate_names)), covariate_names)
+    marginal_distns <- 
+      setNames(rep(NA_character_, length(covariate_names)), covariate_names)
   }
   
   if (length(marginal_params) == 1 && is.na(marginal_params)) {
@@ -189,5 +190,6 @@ prepare_covariate_distns <- function(formula,
     }
   }
   
-  list(distns = marginal_distns, params = marginal_params)
+  list(distns = marginal_distns, 
+       params = marginal_params)
 }

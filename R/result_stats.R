@@ -51,15 +51,15 @@ result_stats <- function(ipd_stats,
   # absolute values ---
   
   absolute <- list(
-    A = AC_absolute$mean[1],
-    B = AC_absolute$mean[2] + ald_stats$mean,
-    C = AC_absolute$mean[2]
+    A = unname(AC_absolute$mean[1]),
+    B = unname(AC_absolute$mean[2] + ald_stats$mean),
+    C = unname(AC_absolute$mean[2])
   )
   
   absolute_var <- list(
-    A = AC_absolute$var[1],
-    B = AC_absolute$var[2] + ald_stats$var,
-    C = AC_absolute$var[2]
+    A = unname(AC_absolute$var[1]),
+    B = unname(AC_absolute$var[2] + ald_stats$var),
+    C = unname(AC_absolute$var[2])
   )
   
   absolute_ci <- list(
