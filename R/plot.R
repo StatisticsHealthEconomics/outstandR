@@ -57,9 +57,9 @@ plot.outstandR <- function(x, ...,
   
   # combined forest plot
   ggplot(
-    plot_df, aes(x = Estimate, y = Treatments, color = Model)) +
+    plot_df, aes(x = .data$Estimate, y = .data$Treatments, color = .data$Model)) +
     geom_point(position = position_dodge(width = 0.5), size = 3) +
-    geom_errorbarh(aes(xmin = lower.0.95, xmax = upper.0.95), 
+    geom_errorbarh(aes(xmin = .data$lower.0.95, xmax = .data$upper.0.95), 
                    position = position_dodge(width = 0.5), height = 0.2) +
     facet_wrap(~Type, scales = "free") +
     geom_vline(data = filter(plot_df, Type == "Relative Contrasts"), 
