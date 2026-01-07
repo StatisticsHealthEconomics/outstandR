@@ -13,7 +13,7 @@
 The \code{strategy} class is a virtual class that defines the statistical approach
 for population adjustment in indirect treatment comparisons
 These objects are constructors that validate hyperparameters and encapsulate
-modeling settings before execution by \code{\link[=outstandR]{outstandR()}}
+modelling settings before execution by \code{\link[=outstandR]{outstandR()}}
 }
 \details{
 Objects of class \code{strategy} have a common structure but carry

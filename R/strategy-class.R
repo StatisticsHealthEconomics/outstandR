@@ -3,7 +3,7 @@
 #' The `strategy` class is a virtual class that defines the statistical approach 
 #' for population adjustment in indirect treatment comparisons
 #' These objects are constructors that validate hyperparameters and encapsulate 
-#' modeling settings before execution by [outstandR()]
+#' modelling settings before execution by [outstandR()]
 #' 
 #' @rdname strategy-class
 #' @name strategy-class
