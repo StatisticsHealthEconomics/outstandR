@@ -22,7 +22,7 @@
 #'   Choose from "log-odds", "log_relative_risk", "risk_difference", "delta_z", "mean_difference", "rate_difference" depending on the data type.
 #' @param ... Additional arguments. Currently, can pass named arguments to `rstanarm::stan_glm()` via `strategy_gcomp_bayes()`.
 #' 
-#' @return List of length 3 of statistics as a `outstandR` class object.
+#' @return List of length 11 of statistics as a `outstandR` class object.
 #'   Containing statistics between each pair of treatments.
 #'   These are the mean, variances and confidence intervals,
 #'   for contrasts and absolute values.

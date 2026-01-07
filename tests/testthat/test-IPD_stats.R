@@ -1,5 +1,8 @@
+# IPD_stat tests
 
 library(tibble)
+
+# simple strategy objects
 
 strategy_maic <- list(
   R = 1000,
@@ -38,6 +41,7 @@ strategy_mim <- list(
 ) |> 
   `attr<-`(which = "class", value = "mim")
 
+# aggregate-level outcome data
 ald <- tribble(
   ~variable, ~trt, ~statistic, ~value,
   "y",       "B",  "sum",     30,
@@ -51,12 +55,13 @@ ipd <- data.frame(
   trt = c(rep("A", 20), rep("C", 20))
 )
 
+# internal object
 analysis_params <- 
   list(ipd = ipd,
        ald = ald,
        scale = "log_odds")
 
-## test for no covariates
+## test when no covariates
 
 test_that("calc_IPD_stats() works for MAIC", {
 
@@ -97,6 +102,7 @@ test_that("calc_IPD_stats() works for STC", {
 })
 
 test_that("calc_IPD_stats() works for G-computation (ML)", {
+  ##TODO: error
   expect_error(
     object = calc_IPD_stats(strategy_gcomp_ml, analysis_params),
     regexp = "No covariates found to simulate.")

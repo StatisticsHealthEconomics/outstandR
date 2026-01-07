@@ -1,6 +1,6 @@
 # This test suite checks three key scenarios:
 #   
-# * Auto- calculation: Providing just the distribution name (e.g., "gamma") and
+# * Auto-calculation: Providing just the distribution name (e.g., "gamma") and
 #                     verifying that outstandR correctly converts the ALD's Mean/SD into the correct Shape/Rate.
 #
 # * Manual override: Providing both distribution and parameters to ensure the user can still force specific values.

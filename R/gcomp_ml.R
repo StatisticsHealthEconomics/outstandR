@@ -149,7 +149,7 @@ simulate_ALD_pseudo_pop <- function(formula,
   # --- Standard Simulation Logic ---
   
   # don't require copula for single covariate
-  if (n_covariates <= 1) {
+  if (n_covariates == 1) {
     # dynamically call appropriate random number generator
     rng_fun <- get(paste0("r", marginal_distns[1]))
     sim_vals <- do.call(rng_fun, c(list(n=N), marginal_params[[1]]))

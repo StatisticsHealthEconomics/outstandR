@@ -41,7 +41,7 @@ Choose from "log-odds", "log_relative_risk", "risk_difference", "delta_z", "mean
 \item{...}{Additional arguments. Currently, can pass named arguments to \code{rstanarm::stan_glm()} via \code{strategy_gcomp_bayes()}.}
 }
 \value{
-List of length 3 of statistics as a \code{outstandR} class object.
+List of length 11 of statistics as a \code{outstandR} class object.
 Containing statistics between each pair of treatments.
 These are the mean, variances and confidence intervals,
 for contrasts and absolute values.

@@ -508,7 +508,8 @@ calc_log_relative_risk <- function(mean_comp, mean_ref) {
 #' @keywords internal
 #' 
 continuity_correction <- function(ald,
-                                  correction = 0.5) {
+                                  correction = 0.5,
+                                  verbatim = FALSE) {
   # missing value
   needs_correction <- any(ald$variable == "y" & ald$statistic == "sum") 
   

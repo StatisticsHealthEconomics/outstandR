@@ -4,7 +4,7 @@
 \alias{continuity_correction}
 \title{Continuity Correction}
 \usage{
-continuity_correction(ald, correction = 0.5)
+continuity_correction(ald, correction = 0.5, verbatim = FALSE)
 }
 \arguments{
 \item{ald}{Aggregate level data. Data frame in long format.}
