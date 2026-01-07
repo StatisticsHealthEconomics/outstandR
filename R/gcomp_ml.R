@@ -148,6 +148,11 @@ simulate_ALD_pseudo_pop <- function(formula,
   
   # --- Standard Simulation Logic ---
   
+  # handle no covariates (intercept-only or treatment-only models)
+  if (n_covariates == 0) {
+    return(data.frame(row.names = seq_len(length.out = N)))
+  }
+  
   # don't require copula for single covariate
   if (n_covariates == 1) {
     # dynamically call appropriate random number generator

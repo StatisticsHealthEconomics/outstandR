@@ -21,6 +21,7 @@ strategy_stc <- list(
 
 strategy_gcomp_ml <- list(
   R = 1000,
+  N = 1000L,
   formula = y ~ trt,
   trt_var = "trt",
   family = binomial()
@@ -59,6 +60,8 @@ ipd <- data.frame(
 analysis_params <- 
   list(ipd = ipd,
        ald = ald,
+       ref_trt = "C",
+       ipd_comp = "B",
        scale = "log_odds")
 
 ## test when no covariates
