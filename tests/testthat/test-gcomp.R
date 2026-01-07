@@ -1,4 +1,4 @@
-# G-computation
+# G-computation unit tests
 
 library(dplyr)
 library(stdReg2)
@@ -24,7 +24,7 @@ test_that("different combinations of covariates in formula", {
   
   res <- outstandR(ipd_trial = AC_IPD, ald_trial = BC_ALD, strategy = strat_1234)
   
-  expect_length(res, 7)
+  expect_length(res, 11)
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_31))
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_13))
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_1))
@@ -44,7 +44,7 @@ test_that("different combinations of covariates in formula", {
   
   res <- outstandR(ipd_trial = AC_IPD, ald_trial = BC_ALD, strategy = strat_1234)
   
-  expect_length(res, 7)
+  expect_length(res, 11)
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_31))
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_13))
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_1))

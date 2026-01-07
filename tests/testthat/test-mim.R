@@ -18,7 +18,7 @@ test_that("different combinations of covariates in formula", {
   
   out_1234 <- outstandR(AC_IPD, BC_ALD, strategy = strat_1234)
   
-  expect_length(out_1234, 7)
+  expect_length(out_1234, 11)
   expect_named(out_1234, expected = c("results", "CI", "ref_trt", "scale", "var_method", "family", "model"))
 })
 

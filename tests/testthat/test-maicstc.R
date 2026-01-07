@@ -23,7 +23,7 @@ test_that("different combinations of covariates in formula", {
   strat_1 <- strategy_maic(formula = as.formula("y ~ trt*X1"))
   
   res <- outstandR(AC_IPD, BC_ALD, strategy = strat_1234)
-  expect_length(res, 7)
+  expect_length(res, 11)
   
   res <- outstandR(AC_IPD, BC_ALD, strategy = strat_123)
   
