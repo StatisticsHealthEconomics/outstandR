@@ -31,6 +31,7 @@ strategy_gcomp_ml <- list(
 strategy_gcomp_bayes <- list(
   formula = y ~ trt,
   trt_var = "trt",
+  N = 1000L,
   family = binomial()
 ) |> 
   `attr<-`(which = "class", value = "gcomp_bayes")
@@ -38,6 +39,7 @@ strategy_gcomp_bayes <- list(
 strategy_mim <- list(
   formula = y ~ trt,
   trt_var = "trt",
+  N = 1000L,
   family = binomial()
 ) |> 
   `attr<-`(which = "class", value = "mim")
@@ -61,7 +63,7 @@ analysis_params <-
   list(ipd = ipd,
        ald = ald,
        ref_trt = "C",
-       ipd_comp = "B",
+       ipd_comp = "A",
        scale = "log_odds")
 
 ## test when no covariates
@@ -105,22 +107,18 @@ test_that("calc_IPD_stats() works for STC", {
 })
 
 test_that("calc_IPD_stats() works for G-computation (ML)", {
-  ##TODO: error
-  expect_error(
-    object = calc_IPD_stats(strategy_gcomp_ml, analysis_params),
-    regexp = "No covariates found to simulate.")
+  res_gcomp_ml_null <- calc_IPD_stats(strategy_gcomp_ml, analysis_params)
+  expect_length(res_gcomp_ml_null, 4)
 })
 
 test_that("calc_IPD_stats() works for G-computation (Stan)", {
-  expect_error(
-    object = calc_IPD_stats(strategy_gcomp_bayes, analysis_params),
-    regexp = "No covariates found to simulate.")
+    res_gcomp_bayes_null <- calc_IPD_stats(strategy_gcomp_bayes, analysis_params)
+    expect_length(res_gcomp_bayes_null, 4)
 })
 
 test_that("calc_IPD_stats() works for Multiple Imputation Marginalisation", {
-  expect_error(
-    object = calc_IPD_stats(strategy_mim, analysis_params),
-    regexp = "No covariates found to simulate.")
+  res_mim_null <- calc_IPD_stats(strategy_mim, analysis_params)
+  expect_length(res_mim_null, 3)
 })
 
 ## edge cases
