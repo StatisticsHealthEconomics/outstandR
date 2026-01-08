@@ -127,7 +127,7 @@ $$
 and similarly for $\Delta_{BC(BC)}$. If we assume that there is no difference in effect modifiers between trials, then the estimator of the relative treatment effect $d_{AB(BC)}$ is
 
 $$
-\Delta_{AB(BC)} = \Delta_{BC(BC)} - \Delta_{AC(AC)}.
+\Delta_{AB(BC)} = \Delta_{BC(BC)} - \Delta_{AC(BC)}.
 $$
 
 However, when distributions of the effect modifiers are different between trial populations, the relative treatment effect estimated from each trial cannot simply be combined as above. The purpose of population-adjustment in ITC is to include an estimate for $\Delta_{AC(BC)}$.
