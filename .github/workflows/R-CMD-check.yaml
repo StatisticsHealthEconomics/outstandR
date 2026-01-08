@@ -39,16 +39,24 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
-      # - uses: r-lib/actions/setup-r-dependencies@v2
-      #   with:
-      #     extra-packages: any::rcmdcheck
-      #     needs: check
-      
-      - name: Install dependencies (Classic)
+      - name: Install system dependencies (Linux)
+        if: runner.os == 'Linux'
         run: |
-          install.packages(c("remotes", "rcmdcheck"))
-          remotes::install_deps(dependencies = TRUE)
-        shell: Rscript {0}
+          sudo apt-get update
+          sudo apt-get install -y libgsl-dev
+          
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: |
+            any::rcmdcheck
+            any::httpuv
+          needs: check
+      
+      #- name: Install dependencies (Classic)
+      #  run: |
+      #    install.packages(c("remotes", "rcmdcheck"))
+      #    remotes::install_deps(dependencies = TRUE)
+      #  shell: Rscript {0}
 
       - uses: r-lib/actions/check-r-package@v2
         with:
