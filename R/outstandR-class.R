@@ -5,7 +5,6 @@
 #' 
 #' @rdname outstandR-class
 #' @name outstandR-class
-#' @aliases outstandR
 #' 
 #' @details Objects of class `outstandR` have the following
 #' 

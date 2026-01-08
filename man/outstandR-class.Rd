@@ -2,7 +2,6 @@
 % Please edit documentation in R/outstandR-class.R
 \name{outstandR-class}
 \alias{outstandR-class}
-\alias{outstandR}
 \title{outstandR class}
 \description{
 The \code{outstandR} class contains the results from running a

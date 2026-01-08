@@ -95,7 +95,7 @@ estimate_var_sandwich.maic <- function(strategy, analysis_params, ...) {
     # Ideally, calc_maic should pass the weights, but we are refitting.
     # We will compute weights via the internal helper if available
     w <- tryCatch({
-      outstandR:::maic_weights(X_EM)
+      maic_weights(X_EM)
     }, error = function(e) rep(1, nrow(ipd)))
     
   } else {
@@ -138,7 +138,7 @@ estimate_var_sandwich.gcomp_ml <- function(strategy, analysis_params, ...) {
   
   # 2. Generate Pseudo-Population (fixed for variance calc)
   # We treat the pseudo-population as a constant integration grid
-  x_star <- outstandR:::simulate_ALD_pseudo_pop(
+  x_star <- simulate_ALD_pseudo_pop(
     formula = strategy$formula,
     ipd = ipd, ald = analysis_params$ald,
     trt_var = strategy$trt_var,

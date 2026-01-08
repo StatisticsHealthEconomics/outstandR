@@ -2,12 +2,6 @@
 % Please edit documentation in R/strategy-class.R
 \name{strategy-class}
 \alias{strategy-class}
-\alias{strategy}
-\alias{maic}
-\alias{stc}
-\alias{gcomp_ml}
-\alias{gcomp_bayes}
-\alias{mim}
 \title{Strategy class and subclasses}
 \description{
 The \code{strategy} class is a virtual class that defines the statistical approach

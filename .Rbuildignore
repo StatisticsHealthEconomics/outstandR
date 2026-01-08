@@ -10,13 +10,14 @@
 ^inst/jss_code\.Rmd
 ^inst/jss-section\.qmd
 ^inst/jss-section\.html
-^inst/jss-section_files/
+^inst/jss-section_files
 ^scripts$
 ^raw-data$
 ^docs$
 ^_pkgdown\.yml
 scripts/create_package_data\.R
 ^joss_paper/
+^vignettes$
 ^vignettes/.*\.html$
 ^_.*
 ^inst/doc/_comparison-with-other-packages\.Rmd
@@ -26,3 +27,5 @@ scripts/create_package_data\.R
 ^man-roxygen$
 ^R/conversion-functions\.R$
 ^cran-comments\.md$
+^.*\.qmd$
+^.*\.Rmd$

@@ -43,6 +43,8 @@ strategy <- list(
   family = binomial(),
   rho = NA,
   N = 1000L,
+  marginal_distns = NA,
+  marginal_params = NA,
   trt_var = "trt",
   iter = 2000,
   warmup = 500,

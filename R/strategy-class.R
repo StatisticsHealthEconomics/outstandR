@@ -7,7 +7,6 @@
 #' 
 #' @rdname strategy-class
 #' @name strategy-class
-#' @aliases strategy maic stc gcomp_ml gcomp_bayes mim
 #' 
 #' @details Objects of class `strategy` have a common structure but carry 
 #' different subclasses to trigger specific S3 method dispatch
