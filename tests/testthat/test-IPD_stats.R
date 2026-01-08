@@ -2,7 +2,7 @@
 
 library(tibble)
 
-# simple strategy objects
+# mock strategy objects ---
 
 strategy_maic <- list(
   R = 1000,
@@ -118,7 +118,7 @@ test_that("calc_IPD_stats() works for G-computation (Stan)", {
 
 test_that("calc_IPD_stats() works for Multiple Imputation Marginalisation", {
   res_mim_null <- calc_IPD_stats(strategy_mim, analysis_params)
-  expect_length(res_mim_null, 3)
+  expect_length(res_mim_null, 4)
 })
 
 ## edge cases

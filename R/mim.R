@@ -24,10 +24,9 @@
 #' @keywords internal
 #' 
 calc_mim <- function(strategy,
-                     ipd, ald, 
-                     ref_trt,
-                     comp_trt, ...) {
-  
+                     analysis_params,
+                     ...) {
+
   default_stan_args <- list(
     algorithm = "sampling",
     chains = 2,
@@ -37,6 +36,10 @@ calc_mim <- function(strategy,
   
   stan_args <- modifyList(default_stan_args, list(...))
   
+  ipd <- analysis_params$ipd
+  ald <- analysis_params$ald 
+  ref_trt <- analysis_params$ref_trt
+  comp_trt <- analysis_params$ipd_comp
   formula <- strategy$formula
   family <- strategy$family
   rho <- strategy$rho

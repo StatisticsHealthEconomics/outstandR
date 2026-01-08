@@ -4,12 +4,14 @@
 \alias{calc_mim}
 \title{Multiple imputation marginalization (MIM)}
 \usage{
-calc_mim(strategy, ipd, ald, ref_trt, comp_trt, ...)
+calc_mim(strategy, analysis_params, ...)
 }
 \arguments{
 \item{strategy}{An object of class \code{strategy} created by functions such as
 \code{\link[=strategy_maic]{strategy_maic()}}, \code{\link[=strategy_stc]{strategy_stc()}}, or \code{\link[=strategy_mim]{strategy_mim()}}.
 Contains modelling details like the formula and family.}
+
+\item{...}{Additional argument to pass to Stan model}
 
 \item{ipd}{Individual-level patient data. Dataframe with one row per patient with outcome, treatment and covariate columns.}
 
@@ -19,8 +21,6 @@ We assume a common distribution for each treatment arm.}
 \item{ref_trt}{Reference treatment. String.}
 
 \item{comp_trt}{Comparator treatment. String.}
-
-\item{...}{Additional argument to pass to Stan model}
 }
 \value{
 A list containing:

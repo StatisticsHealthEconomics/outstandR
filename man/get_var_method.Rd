@@ -12,7 +12,7 @@ get_var_method(strategy, user_method = NULL)
 \item{user_method}{User supplied method (string) or NULL}
 }
 \value{
-String name of variance method
+String name of variance method to use
 }
 \description{
 Determine and validate variance method for a strategy
