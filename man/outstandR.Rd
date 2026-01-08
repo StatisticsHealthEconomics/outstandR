@@ -71,7 +71,7 @@ outstandR_stc <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
 # G-computation with maximum likelihood
 outstandR_gcomp_ml <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
                                 strategy = strategy_gcomp_ml(lin_form))
-
+\donttest{
 # G-computation with Bayesian inference
 outstandR_gcomp_bayes <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
                                   strategy = strategy_gcomp_bayes(lin_form))
@@ -79,7 +79,7 @@ outstandR_gcomp_bayes <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
 # Multiple imputation marginalization
 outstandR_mim <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
                            strategy = strategy_mim(lin_form))
-
+}
 }
 \references{
 \insertRef{RemiroAzocar2022}{outstandR}
