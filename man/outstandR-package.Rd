@@ -5,6 +5,8 @@
 \alias{outstandR-package}
 \title{outstandR: Model-Based Standardisation for Indirect Treatment Comparison with Limited Subject-Level Data}
 \description{
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+
 For the problem of indirect treatment comparison with limited subject-level data, this package provides tools for model-based standardisation with several different computation approaches. See Remiro‐Azócar A, Heath A, Baio G (2022. Parametric G‐computation for compatible indirect treatment comparisons with limited individual patient data, Res. Synth. Methods, 1–31. ISSN 1759-2879, \doi{10.1002/jrsm.1565}.)
 }
 \seealso{

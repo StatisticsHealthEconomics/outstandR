@@ -54,7 +54,6 @@ Methods taken from
 \insertCite{RemiroAzocar2022}{outstandR}.
 }
 \examples{
-\dontrun{
 data(AC_IPD_binY_contX)  # AC patient-level data
 data(BC_ALD_binY_contX)  # BC aggregate-level data
 
@@ -80,7 +79,7 @@ outstandR_gcomp_bayes <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
 # Multiple imputation marginalization
 outstandR_mim <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
                            strategy = strategy_mim(lin_form))
-} 
+
 }
 \references{
 \insertRef{RemiroAzocar2022}{outstandR}
