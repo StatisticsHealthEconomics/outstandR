@@ -10,9 +10,15 @@
 \method{print}{summary.outstandR}(x, digits = 3, ...)
 }
 \arguments{
-\item{object}{\code{\link[=outstandR]{outstandR()}} output object}
+\item{object}{\code{\link[=outstandR]{outstandR()}} output object.}
 
-\item{...}{Additional arguments}
+\item{CI}{Confidence interval level.}
+
+\item{...}{Additional arguments.}
+
+\item{x}{An object used to select a method.}
+
+\item{digits}{Minimal number of significant digits, see \code{print.default}.}
 }
 \value{
 List of class \code{summary.outstandR}

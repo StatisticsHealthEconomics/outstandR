@@ -53,7 +53,7 @@ plot.outstandR <- function(x, ...,
     bind_rows(out_list) %>% mutate(Model = m_name)
   })
   
-  plot_df <- plot_df %>% filter(!is.na(Estimate))
+  plot_df <- plot_df %>% filter(!is.na(.data$Estimate))
   
   # combined forest plot
   ggplot(
@@ -61,7 +61,7 @@ plot.outstandR <- function(x, ...,
     geom_point(position = position_dodge(width = 0.5), size = 3) +
     geom_errorbarh(aes(xmin = .data$lower.0.95, xmax = .data$upper.0.95), 
                    position = position_dodge(width = 0.5), height = 0.2) +
-    facet_wrap(~Type, scales = "free") +
+    facet_wrap(~.data$Type, scales = "free") +
     geom_vline(data = filter(plot_df, Type == "Relative Contrasts"), 
                aes(xintercept = 0), linetype = "dashed", color = "gray50") +
     labs(title = "Population-Adjusted Indirect Comparison Results",

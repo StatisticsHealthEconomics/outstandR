@@ -20,6 +20,7 @@
 #' @param CI Confidence interval; between 0,1
 #' @param scale Relative treatment effect scale. If `NULL`, the scale is automatically determined from the model.
 #'   Choose from "log-odds", "log_relative_risk", "risk_difference", "delta_z", "mean_difference", "rate_difference" depending on the data type.
+#' @param var_method Variance estimation method.
 #' @param ... Additional arguments. Currently, can pass named arguments to `rstanarm::stan_glm()` via `strategy_gcomp_bayes()`.
 #' 
 #' @return List of length 11 of statistics as a `outstandR` class object.
@@ -65,7 +66,7 @@ outstandR <- function(ipd_trial, ald_trial, strategy,
                       ref_trt = NA,
                       CI = 0.95, 
                       scale = NULL, 
-                      var_method = "sample",
+                      var_method = NULL,
                       ...) {
   cl <- match.call()
   

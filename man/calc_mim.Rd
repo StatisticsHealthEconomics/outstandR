@@ -12,15 +12,6 @@ calc_mim(strategy, analysis_params, ...)
 Contains modelling details like the formula and family.}
 
 \item{...}{Additional argument to pass to Stan model}
-
-\item{ipd}{Individual-level patient data. Dataframe with one row per patient with outcome, treatment and covariate columns.}
-
-\item{ald}{Aggregate-level data. Long format summary statistics for each covariate and treatment outcomes.
-We assume a common distribution for each treatment arm.}
-
-\item{ref_trt}{Reference treatment. String.}
-
-\item{comp_trt}{Comparator treatment. String.}
 }
 \value{
 A list containing:
