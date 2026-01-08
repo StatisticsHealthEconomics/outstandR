@@ -16,6 +16,7 @@ Description:
     Res. Synth. Methods, 1–31. ISSN 1759-2879, <doi:10.1002/jrsm.1565>.)
 License: GPL (>= 3)
 Encoding: UTF-8
+Language: en-GB
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Depends: R (>= 4.1.0)
