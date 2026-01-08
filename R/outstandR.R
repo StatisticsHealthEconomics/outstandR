@@ -53,7 +53,7 @@
 #' # G-computation with maximum likelihood
 #' outstandR_gcomp_ml <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
 #'                                 strategy = strategy_gcomp_ml(lin_form))
-#' 
+#' \donttest{
 #' # G-computation with Bayesian inference
 #' outstandR_gcomp_bayes <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
 #'                                   strategy = strategy_gcomp_bayes(lin_form))
@@ -61,7 +61,7 @@
 #' # Multiple imputation marginalization
 #' outstandR_mim <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
 #'                            strategy = strategy_mim(lin_form))
-#'
+#' }
 outstandR <- function(ipd_trial, ald_trial, strategy,
                       ref_trt = NA,
                       CI = 0.95, 
