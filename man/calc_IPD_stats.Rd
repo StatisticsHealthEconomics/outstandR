@@ -3,31 +3,38 @@
 \name{calc_IPD_stats}
 \alias{calc_IPD_stats}
 \alias{calc_IPD_stats.default}
-\alias{calc_IPD_stats.mim}
 \alias{calc_IPD_stats.stc}
 \alias{calc_IPD_stats.maic}
 \alias{calc_IPD_stats.gcomp_ml}
 \alias{calc_IPD_stats.gcomp_bayes}
+\alias{calc_IPD_stats.mim}
 \title{Calculate individual-level patient data statistics}
 \usage{
 calc_IPD_stats(strategy, analysis_params, ...)
 
 \method{calc_IPD_stats}{default}(...)
 
-\method{calc_IPD_stats}{mim}(strategy, analysis_params, ...)
+\method{calc_IPD_stats}{stc}(strategy, analysis_params, var_method = NULL, ...)
 
-\method{calc_IPD_stats}{stc}(strategy, analysis_params, var_method = "sample", ...)
+\method{calc_IPD_stats}{maic}(strategy, analysis_params, var_method = NULL, ...)
 
-\method{calc_IPD_stats}{maic}(strategy, analysis_params, var_method = "sample", ...)
+\method{calc_IPD_stats}{gcomp_ml}(strategy, analysis_params, var_method = NULL, ...)
 
-\method{calc_IPD_stats}{gcomp_ml}(strategy, analysis_params, var_method = "sample", ...)
+\method{calc_IPD_stats}{gcomp_bayes}(strategy, analysis_params, var_method = NULL, ...)
 
-\method{calc_IPD_stats}{gcomp_bayes}(strategy, analysis_params, var_method = "sample", ...)
+\method{calc_IPD_stats}{mim}(strategy, analysis_params, var_method = NULL, ...)
 }
 \arguments{
-\item{strategy}{Strategy}
+\item{strategy}{A list corresponding to different modelling approaches}
 
-\item{analysis_params}{Analysis parameters}
+\item{analysis_params}{A list containing:
+\itemize{
+\item \code{ipd}: Individual-level patient data (data frame)
+\item \code{ald}: Aggregate-level trial data (data frame)
+\item \code{ref_trt}: Treatment label for the reference arm (common; e.g., "C")
+\item \code{ipd_comp}: Treatment label for the comparator arm in the IPD (e.g., "A")
+\item \code{scale}: Scaling parameter ("log_odds", "risk_difference", "log_relative_risk")
+}}
 
 \item{...}{Additional arguments}
 
@@ -36,9 +43,9 @@ either "sample" (default) or "sandwich".}
 }
 \value{
 A list containing:
-\describe{
-\item{mean}{Estimated mean treatment effect.}
-\item{var}{Estimated variance of the treatment effect.}
+\itemize{
+\item \code{contrasts}: A list with elements \code{mean} and \code{var}.
+\item \code{absolute}: A list with elements \code{mean} and \code{var}.
 }
 }
 \description{
@@ -46,14 +53,6 @@ Computes mean and variance statistics for individual-level patient data using va
 including Matching-Adjusted Indirect Comparison (MAIC), Simulated Treatment Comparison (STC),
 and G-computation via Maximum Likelihood Estimation (MLE) or Bayesian inference.
 }
-\section{Multiple imputation marginalisation}{
-
-Using Stan, compute marginal relative treatment effect for IPD
-comparator "A" vs reference "C" arms for each MCMC sample
-by transforming from probability to linear predictor scale. Approximate by
-using imputation and combining estimates using Rubin's rules.
-}
-
 \section{Simulated treatment comparison statistics}{
 
 IPD for reference "C" and comparator "A" trial arms are used to fit a regression model describing the
@@ -78,16 +77,26 @@ Using Stan, compute marginal relative effects for IPD comparator "A" vs referenc
 by transforming from probability to linear predictor scale.
 }
 
+\section{Multiple imputation marginalisation}{
+
+Using Stan, compute marginal relative treatment effect for IPD
+comparator "A" vs reference "C" arms for each MCMC sample
+by transforming from probability to linear predictor scale. Approximate by
+using imputation and combining estimates using Rubin's rules.
+}
+
 \examples{
-\dontrun{
-strategy <- strategy_maic()
-ipd <- data.frame(trt = sample(c("A", "C"), 100, replace = TRUE),
+strategy <- strategy_maic(formula = as.formula(y~trt:X1), family = binomial())
+ipd <- data.frame(trt = sample(c("A", "C"), size = 100, replace = TRUE),
                   X1 = rnorm(100, 1, 1),
-                  y = rnorm(100, 10, 2))
+                  y = sample(c(1,0), size = 100, prob = c(0.7,0.3), replace = TRUE))
+
 ald <- data.frame(trt = c(NA, "B", "C", "B", "C"),
                   variable = c("X1", "y", "y", NA, NA),
                   statistic = c("mean", "sum", "sum", "N", "N"),
                   value = c(0.5, 10, 12, 20, 25))
-calc_IPD_stats(strategy, ipd, ald, scale = "log_odds")
-}
+
+calc_IPD_stats(strategy,
+  analysis_params = list(ipd = ipd, ald = ald, scale = "log_odds"))
+  
 }

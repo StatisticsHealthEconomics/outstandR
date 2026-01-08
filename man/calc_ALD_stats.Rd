@@ -13,7 +13,7 @@ calc_ALD_stats(strategy, analysis_params)
 \itemize{
 \item \code{ald} Aggregate-level trial data
 \item \code{ref_trt} Treatment labels reference (common; e.g. placebo)
-\item \code{comp_trt} Treatment labels comparator
+\item \code{ald_comp} Treatment labels comparator
 \item \code{scale} A scaling parameter for the calculation. From "log_odds", "risk_difference", "log_relative_risk".
 }}
 }
@@ -28,19 +28,18 @@ A list containing:
 Computes the mean and variance of marginal treatment effects for aggregate-level trial data.
 }
 \examples{
-\dontrun{
 strategy <- list(family = list(family = "binomial"))  # basic version
+
 ald <- data.frame(trt = c("B","C","B","C"),
                   variable = c(NA, NA, "y", "y"),
                   statistic = c("N", "N", "sum", "sum"),
-                  value = c(100, 100, 50, 60) 
+                  value = c(100, 100, 50, 60))
 
 calc_ALD_stats(strategy = strategy,
                list(ald = ald,
                     ref_trt = "C",
-                    comp_trt = "B",
-                    scale = "log"))
-}
+                    ald_comp = "B",
+                    scale = "log_odds"))
 
 }
 \seealso{

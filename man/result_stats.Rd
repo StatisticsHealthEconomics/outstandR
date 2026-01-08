@@ -2,17 +2,31 @@
 % Please edit documentation in R/result_stats.R
 \name{result_stats}
 \alias{result_stats}
-\title{Result Statistics}
+\title{Calculate and arrange result statistics}
 \usage{
 result_stats(ipd_stats, ald_stats, CI = 0.95)
 }
 \arguments{
 \item{ipd_stats, ald_stats}{}
 
-\item{CI}{Confidence interval 1-alpha; dafault 0.95}
+\item{CI}{Confidence interval level, i.e. 1-alpha; default 0.95}
 }
 \value{
-List
+List of ITC output:
+\itemize{
+\item \code{contrasts}: A list for relative effects containing:
+\itemize{
+\item \code{means}
+\item \code{variances}
+\item \code{CI}
+}
+\item \code{absolute}: A list for absolute effects containing:
+\itemize{
+\item \code{means}
+\item \code{variances}
+\item \code{CI}
+}
+}
 }
 \description{
 Combining output from aggregate level data studies BC and

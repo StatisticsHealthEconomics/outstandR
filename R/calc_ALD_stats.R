@@ -7,10 +7,10 @@
 #' @param analysis_params A list containing: 
 #'   - `ald` Aggregate-level trial data
 #'   - `ref_trt` Treatment labels reference (common; e.g. placebo)
-#'   - `comp_trt` Treatment labels comparator
+#'   - `ald_comp` Treatment labels comparator
 #'   - `scale` A scaling parameter for the calculation. From "log_odds", "risk_difference", "log_relative_risk".
 #'
-#' @return A list containing:
+#' @returns A list containing:
 #' \describe{
 #'   \item{`mean`}{The marginal treatment effect mean.}
 #'   \item{`var`}{The marginal treatment effect variance.}
@@ -18,19 +18,18 @@
 #' @seealso [marginal_treatment_effect()], [marginal_variance()]
 #' @export
 #' @examples
-#' \dontrun{
 #' strategy <- list(family = list(family = "binomial"))  # basic version
+#' 
 #' ald <- data.frame(trt = c("B","C","B","C"),
 #'                   variable = c(NA, NA, "y", "y"),
 #'                   statistic = c("N", "N", "sum", "sum"),
-#'                   value = c(100, 100, 50, 60) 
+#'                   value = c(100, 100, 50, 60))
 #'
 #' calc_ALD_stats(strategy = strategy,
 #'                list(ald = ald,
 #'                     ref_trt = "C",
-#'                     comp_trt = "B",
-#'                     scale = "log"))
-#' }
+#'                     ald_comp = "B",
+#'                     scale = "log_odds"))
 #'
 calc_ALD_stats <- function(strategy, analysis_params) {
   
@@ -61,17 +60,15 @@ calc_ALD_stats <- function(strategy, analysis_params) {
 #' @param scale A scaling parameter for the calculation.
 #' @param family A character string specifying the family distribution (e.g., "binomial").
 #' 
-#' @return The total variance of marginal treatment effects.
+#' @returns Numeric total variance of marginal treatment effects.
 #' @examples
-#' \dontrun{
 #' ald <- data.frame(trt = c("B","C","B","C"),
 #'                   variable = c(NA, NA, "y", "y"),
 #'                   statistic = c("N", "N", "sum", "sum"),
-#'                   value = c(100, 100, 50, 60)
+#'                   value = c(100, 100, 50, 60))
 #'                   
 #' marginal_variance(ald, ref_trt = "C", comp_trt = "B",
-#'                   scale = "log", family = "binomial")
-#' }
+#'                   scale = "log_odds", family = "binomial")
 #' @export
 #' 
 marginal_variance <- function(ald,
@@ -97,17 +94,15 @@ marginal_variance <- function(ald,
 #' @param scale A scaling parameter for the calculation.
 #' @param family A character string specifying the family distribution (e.g., "binomial").
 #' 
-#' @return The relative treatment effect.
+#' @returns Numeric relative treatment effect.
 #' @examples
-#' \dontrun{
 #' ald <- data.frame(trt = c("B","C","B","C"),
 #'                   variable = c(NA, NA, "y", "y"),
 #'                   statistic = c("N", "N", "sum", "sum"),
-#'                   value = c(100, 100, 50, 60)
+#'                   value = c(100, 100, 50, 60))
 #'                   
 #' marginal_treatment_effect(ald, ref_trt = "C", comp_trt = "B",
-#'                           scale = "log", family = "binomial")
-#' }
+#'                           scale = "log_odds", family = "binomial")
 #' @export
 #' 
 marginal_treatment_effect <- function(ald,

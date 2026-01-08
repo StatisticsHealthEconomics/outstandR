@@ -1,5 +1,15 @@
 
 #' Input data validator
+#' 
+#' @param ipd_trial Individual patient data
+#' @param ald_trial Aggregate level data
+#' @param strategy An object of class `strategy` created by functions such as 
+#'   [strategy_maic()], [strategy_stc()], or [strategy_mim()]. 
+#'   Contains modelling details like the formula and family.
+#' @param CI Confidence interval
+#' @param scale Outcome scale
+#' @returns No return value, called for side effects
+#'
 #' @keywords internal
 #' 
 validate_outstandr <- function(ipd_trial, ald_trial,
@@ -10,8 +20,11 @@ validate_outstandr <- function(ipd_trial, ald_trial,
     stop("CI argument must be between 0 and 1.")
   }
   
-  if (!is.null(scale) && !any(scale %in% c("log_odds", "log_relative_risk", "risk_difference",
-                                           "mean_difference"))) {
+  ##TODO: link this to actual functions
+  available_scales <-
+    c("log_odds", "log_relative_risk", "risk_difference", "mean_difference")
+  
+  if (!is.null(scale) && !any(scale %in% available_scales)) {
     stop("scale not in available list.")
   }
   

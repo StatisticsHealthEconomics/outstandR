@@ -7,13 +7,29 @@
 calc_maic(strategy, analysis_params)
 }
 \arguments{
-\item{strategy}{Strategy}
+\item{strategy}{An object of class \code{strategy} created by functions such as
+\code{\link[=strategy_maic]{strategy_maic()}}, \code{\link[=strategy_stc]{strategy_stc()}}, or \code{\link[=strategy_mim]{strategy_mim()}}.
+Contains modelling details like the formula and family.}
 
-\item{analysis_params}{Analysis parameters; list}
+\item{analysis_params}{List of analysis parameters. Must contain \code{ipd}
+(individual patient data) and \code{ald} (aggregated lead data).}
 }
 \value{
-Treatment means
+A list containing:
+\itemize{
+\item \code{means}: A list containing:
+\itemize{
+\item \code{A}: Bootstrap estimates for comparator treatment group "A".
+\item \code{C}: Bootstrap estimates for reference treatment group "C".
+}
+\item \code{model}: A list containing model diagnostics derived from the original data:
+\itemize{
+\item \code{weights}: Vector of calculated weights for the patients in \code{ipd}.
+\item \code{ESS}: The Effective Sample Size.
+}
+}
 }
 \description{
 Calculate MAIC
 }
+\keyword{internal}

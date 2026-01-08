@@ -11,7 +11,7 @@ get_covariate_names(formula)
 interactions with the treatment variable, e.g., y ~ X1 + trt + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
 }
 \value{
-covariate names vector
+Covariate names character vector
 }
 \description{
 Get covariate names

@@ -8,30 +8,34 @@
 #' and G-computation via Maximum Likelihood Estimation (MLE) or Bayesian inference.
 #' 
 #' @param strategy A list corresponding to different modelling approaches
-#' @param analysis_params A list containing: 
-#'   - `ald` Aggregate-level trial data
-#'   - `ref_trt` Treatment labels reference (common; e.g. placebo)
-#'   - `comp_trt` Treatment labels comparator
-#'   - `scale` A scaling parameter for the calculation. From "log_odds", "risk_difference", "log_relative_risk".
+#' @param analysis_params A list containing:
+#'   - `ipd`: Individual-level patient data (data frame)
+#'   - `ald`: Aggregate-level trial data (data frame)
+#'   - `ref_trt`: Treatment label for the reference arm (common; e.g., "C")
+#'   - `ipd_comp`: Treatment label for the comparator arm in the IPD (e.g., "A")
+#'   - `scale`: Scaling parameter ("log_odds", "risk_difference", "log_relative_risk")
 #' @param ... Additional arguments
 #' 
 #' @return A list containing:
-#' \describe{
-#'   \item{mean}{Estimated mean treatment effect.}
-#'   \item{var}{Estimated variance of the treatment effect.}
+#' \itemize{
+#'   \item \code{contrasts}: A list with elements \code{mean} and \code{var}.
+#'   \item \code{absolute}: A list with elements \code{mean} and \code{var}.
 #' }
 #' @examples
-#' \dontrun{
-#' strategy <- strategy_maic()
-#' ipd <- data.frame(trt = sample(c("A", "C"), 100, replace = TRUE),
+#' strategy <- strategy_maic(formula = as.formula(y~trt:X1), family = binomial())
+# 
+#' ipd <- data.frame(trt = sample(c("A", "C"), size = 100, replace = TRUE),
 #'                   X1 = rnorm(100, 1, 1),
-#'                   y = rnorm(100, 10, 2))
+#'                   y = sample(c(1,0), size = 100, prob = c(0.7,0.3), replace = TRUE))
+#' 
 #' ald <- data.frame(trt = c(NA, "B", "C", "B", "C"),
 #'                   variable = c("X1", "y", "y", NA, NA),
 #'                   statistic = c("mean", "sum", "sum", "N", "N"),
 #'                   value = c(0.5, 10, 12, 20, 25))
-#' calc_IPD_stats(strategy, ipd, ald, scale = "log_odds")
-#' }
+#' 
+#' calc_IPD_stats(strategy,
+#'   analysis_params = list(ipd = ipd, ald = ald, scale = "log_odds"))
+#'   
 #' @export
 #' 
 calc_IPD_stats <- function(strategy, analysis_params, ...)
@@ -44,67 +48,9 @@ calc_IPD_stats <- function(strategy, analysis_params, ...)
 calc_IPD_stats.default <- function(...) {
   strategy_classes <- sub("calc_IPD_stats\\.", "", methods(calc_IPD_stats)[-1])
   avail_strategies <- paste0("strategy_", strategy_classes, "()", collapse = ", ")
-  stop(paste0("strategy not available. Select from ", avail_strategies))
+  stop(paste0("strategy not available. Select from ", avail_strategies), call. = FALSE)
 }
 
-
-#' @param strategy Strategy
-#' @param analysis_params Analysis parameters
-#' @param ... Additional arguments
-#'
-#' @rdname calc_IPD_stats
-#' 
-#' @section Multiple imputation marginalisation:
-#' Using Stan, compute marginal relative treatment effect for IPD
-#' comparator "A" vs reference "C" arms for each MCMC sample
-#' by transforming from probability to linear predictor scale. Approximate by 
-#' using imputation and combining estimates using Rubin's rules.
-#' 
-#' @importFrom stats qt var
-#' @export
-#'
-calc_IPD_stats.mim <- function(strategy,
-                               analysis_params, ...) {
-  
-  ipd <- analysis_params$ipd
-  ald <- analysis_params$ald
-  scale <- analysis_params$scale
-  ref_trt <- analysis_params$ref_trt
-  comp_trt <- analysis_params$ipd_comp
-  
-  mis_res <-
-    calc_mim(strategy,
-             ipd, ald, 
-             ref_trt, comp_trt, 
-             ...)
-  
-  hat.delta.AC <-
-    calculate_ate(mis_res$mean_comp, mis_res$mean_ref,
-                  effect = scale)
-  
-  M <- mis_res$M
-  
-  # quantities originally defined by Rubin (1987) for multiple imputation
-  coef_est <- mean(hat.delta.AC)   # average of treatment effect point estimates
-  bar.v <- mean(mis_res$hats.v)    # "within" variance (average of variance point estimates)
-  b <- var(hat.delta.AC)           # "between" variance (sample variance of point estimates)
-  
-  var_est <- var_by_pooling(M, bar.v, b)
-  nu <- wald_type_interval(M, bar.v, b)
-  
-  ##TODO: how are these used?
-  lci.Delta <- coef_est + qt(0.025, df = nu) * sqrt(var_est)
-  uci.Delta <- coef_est + qt(0.975, df = nu) * sqrt(var_est)
-  
-  list(
-    contrasts = list(
-      mean = coef_est,
-      var = var_est),
-    absolute = list(
-      mean = NA,  #p_est,  ##TODO:
-      var = NA)   #p_var)
-  )
-} 
 
 #' Factory function for creating calc_IPD_stats methods
 #'
@@ -116,38 +62,67 @@ calc_IPD_stats.mim <- function(strategy,
 #'
 IPD_stat_factory <- function(ipd_fun) {
   
+  # capture name of the function passed in
+  method_raw <- deparse(substitute(ipd_fun))
+  method_name <- method_raw |> 
+    gsub(pattern = ".*[:]", replacement = "") |> 
+    gsub(pattern = "calc_", replacement = "") |> 
+    toupper()
+  
   function(strategy, analysis_params,
-           var_method = "sample", ...) {
+           var_method = NULL, ...) {
     
     ipd <- analysis_params$ipd
     ald <- analysis_params$ald
     scale <- analysis_params$scale
     
+    var_method <- get_var_method(strategy, var_method)
+    
     out <- ipd_fun(strategy, analysis_params, ...)
     
+    mean_comp <- out$means$A
+    mean_ref <- out$means$C
+    
     # relative treatment effect
-    hat.delta.AC <- calculate_ate(out$mean_A, out$mean_C,
+    hat.delta.AC <- calculate_ate(mean_comp, mean_ref,
                                   effect = scale)
     
     coef_est <- mean(hat.delta.AC, na.rm = TRUE)
     
     if (var_method == "sandwich") {
-      ##TODO:
-      var_est <- estimate_var_sandwich(strategy, ipd, ...)
+      var_est <- estimate_var_sandwich(strategy, analysis_params, ...)
     } else if (var_method == "sample") {
       var_est <- var(hat.delta.AC, na.rm = TRUE)
+    } else if (var_method == "rubin") {
+      
+      if (is.null(out$model$hats.v) || is.null(out$model$M)) {
+        stop("Rubin's rules require 'hats.v' and 'M' in the model output.", call. = FALSE)
+      }
+      
+      M <- out$model$M
+      bar.v <- mean(out$model$hats.v)
+      b <- var(hat.delta.AC, na.rm = TRUE)
+      
+      var_est <- var_by_pooling(M, bar.v, b)
+      out$model$nu <- wald_type_interval(M, bar.v, b)
+      
+    } else {
+      # This should be caught by get_var_method, but serves as a failsafe
+      stop(paste("Variance method", var_method, "not known."), call. = FALSE)
     }
     
-    p_est <- sapply(out, mean, na.rm = TRUE)
-    p_var <- sapply(out, var, na.rm = TRUE)
+    p_est <- sapply(out$means, mean, na.rm = TRUE)
+    p_var <- sapply(out$means, var, na.rm = TRUE)
     
     list(
       contrasts = list(
         mean = coef_est,
-        var = var_est),
+        var  = var_est),
       absolute = list(
         mean = p_est,
-        var = p_var)
+        var  = p_var),
+      method_name = method_name,
+      model = out$model
     )
   }
 }
@@ -192,6 +167,16 @@ calc_IPD_stats.gcomp_ml <- IPD_stat_factory(outstandR:::calc_gcomp_ml)
 #'
 calc_IPD_stats.gcomp_bayes <- IPD_stat_factory(outstandR:::calc_gcomp_bayes)
 
-# #' @export
-#' calc_IPD_stats.mim <- IPD_stat_factory(outstandR:::calc_mim)
+#' @rdname calc_IPD_stats
+#' @section Multiple imputation marginalisation:
+#' Using Stan, compute marginal relative treatment effect for IPD
+#' comparator "A" vs reference "C" arms for each MCMC sample
+#' by transforming from probability to linear predictor scale. Approximate by 
+#' using imputation and combining estimates using Rubin's rules.
+#' 
+#' @importFrom stats qt var
+#' @export
+#'
+calc_IPD_stats.mim <- IPD_stat_factory(outstandR:::calc_mim)
+
 

@@ -11,6 +11,9 @@ Q(beta, X)
 
 \item{X}{Covariate value matrix, centred}
 }
+\value{
+Numeric value
+}
 \description{
 Objective function to minimize for standard method of moments MAIC
 }

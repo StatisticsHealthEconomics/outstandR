@@ -20,12 +20,14 @@
 #' @param CI Confidence interval; between 0,1
 #' @param scale Relative treatment effect scale. If `NULL`, the scale is automatically determined from the model.
 #'   Choose from "log-odds", "log_relative_risk", "risk_difference", "delta_z", "mean_difference", "rate_difference" depending on the data type.
+#' @param var_method Variance estimation method.
 #' @param ... Additional arguments. Currently, can pass named arguments to `rstanarm::stan_glm()` via `strategy_gcomp_bayes()`.
 #' 
-#' @return List of length 3 of statistics as a `outstandR` class object.
+#' @return List of length 11 of statistics as a `outstandR` class object.
 #'   Containing statistics between each pair of treatments.
 #'   These are the mean, variances and confidence intervals,
 #'   for contrasts and absolute values.
+#'   
 #' @importFrom Rdpack reprompt
 #' @seealso [strategy_maic()] [strategy_stc()] [strategy_gcomp_ml()] [strategy_gcomp_bayes()]
 #' 
@@ -59,10 +61,14 @@
 #' # Multiple imputation marginalization
 #' outstandR_mim <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
 #'                            strategy = strategy_mim(lin_form))
-#' 
+#'
 outstandR <- function(ipd_trial, ald_trial, strategy,
                       ref_trt = NA,
-                      CI = 0.95, scale = NULL, ...) {
+                      CI = 0.95, 
+                      scale = NULL, 
+                      var_method = NULL,
+                      ...) {
+  cl <- match.call()
   
   validate_outstandr(ipd_trial, ald_trial, strategy, CI, scale)
 
@@ -86,7 +92,8 @@ outstandR <- function(ipd_trial, ald_trial, strategy,
     trt_var = trt_var,
     ref_trt = ref_trt,
     ipd_comp = ipd_comp,
-    ald_comp = ald_comp
+    ald_comp = ald_comp,
+    var_method = var_method
   )
   
   ipd_stats <- calc_IPD_stats(strategy, analysis_params, ...) 
@@ -95,10 +102,18 @@ outstandR <- function(ipd_trial, ald_trial, strategy,
   stats <- result_stats(ipd_stats, ald_stats, CI)
   
   structure(
-    stats,
-    CI = CI,
-    ref_trt = ref_trt,
-    scale = scale,
-    model = strategy$family$family,
+    .Data = list(
+      results = stats,
+      call = cl,
+      formula = strategy$formula,
+      CI = CI,
+      ref_trt = ref_trt,
+      ipd_comp = ipd_comp,
+      ald_comp = ald_comp,
+      scale = scale,
+      var_method = var_method,
+      family = strategy$family$family,
+      model = c(method_name = ipd_stats$method_name,
+                ipd_stats$model)),
     class = c("outstandR", class(stats)))
 }

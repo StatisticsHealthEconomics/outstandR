@@ -12,7 +12,9 @@ simulate_ALD_pseudo_pop(
   rho = NA,
   N = 1000,
   marginal_distns = NA,
-  marginal_params = NA
+  marginal_params = NA,
+  seed = NULL,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -33,19 +35,15 @@ Available distributions are given in stats::Distributions. See \code{\link[copul
 
 \item{marginal_params}{Marginal distributions parameters;
 named list of lists, default NA. See \code{\link[copula:Mvdc]{copula::Mvdc()}} for details}
+
+\item{seed}{Random seed}
+
+\item{verbose}{Default \code{FALSE}}
 }
 \value{
 A data frame representing the synthetic pseudo-population.
 }
 \description{
 Generates a synthetic cohort using a normal copula based on aggregate-level data.
-}
-\examples{
-\dontrun{
-formula <- y ~ trt + age
-ipd <- data.frame(tr = c("A", "C"), y = c(1, 0), age = c(30, 40))
-ald <- data.frame()
-simulate_ALD_pseudo_pop(formula, ipd, ald, trt_var = "trt", N = 1000)
-}
 }
 \keyword{internal}

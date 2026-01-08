@@ -13,6 +13,9 @@ wald_type_interval(M, bar.v, b)
 
 \item{b}{"between" variance (sample variance of point estimates)}
 }
+\value{
+Numeric value of Wald-type interval estimates.
+}
 \description{
 Constructed using t-distribution with nu degrees of freedom.
 }

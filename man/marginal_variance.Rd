@@ -18,19 +18,17 @@ marginal_variance(ald, ref_trt = NA, comp_trt = NA, scale, family)
 \item{family}{A character string specifying the family distribution (e.g., "binomial").}
 }
 \value{
-The total variance of marginal treatment effects.
+Numeric total variance of marginal treatment effects.
 }
 \description{
 Computes the total variance of marginal treatment effects using the delta method.
 }
 \examples{
-\dontrun{
 ald <- data.frame(trt = c("B","C","B","C"),
                   variable = c(NA, NA, "y", "y"),
                   statistic = c("N", "N", "sum", "sum"),
-                  value = c(100, 100, 50, 60)
+                  value = c(100, 100, 50, 60))
                   
 marginal_variance(ald, ref_trt = "C", comp_trt = "B",
-                  scale = "log", family = "binomial")
-}
+                  scale = "log_odds", family = "binomial")
 }

@@ -1,5 +1,7 @@
-# outstandR (development version) 0.009
+# outstandR (development version) 1.0.1
 
+
+# outstandR Release 1.0.0
 
 * Original aggregate data format from Remiro-Azocar study changed to a long format
 

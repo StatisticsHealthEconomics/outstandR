@@ -47,6 +47,7 @@ maic_weights <- function(X_EM) {
 #'
 #' @param beta Beta coefficient to find
 #' @param X Covariate value matrix, centred
+#' @return Numeric value
 #' @keywords internal
 #' 
 Q <- function(beta, X) {
@@ -81,7 +82,7 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
   # ensure bootstrap sample contains more than one treatment level
   if (n_trts < 2) {
     warning("Bootstrap sample contains less than two treatment levels. Returning NA.")
-    return(c(pC = NA, pA = NA))
+    return(c(pC = NA, pA = NA, rep(NA, n_ipd), ESS = NA))
   }
   
   effect_modifier_names <- get_eff_mod_names(formula, trt_var)
@@ -121,7 +122,7 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
         # assumes binary variables are coded 0/1 in IPD
         X_EM_prepared[, em_name] <- ipd_col - ald_prop_val
       } else {
-        stop(paste("Neither 'mean' nor 'prop' found in ALD for covariate:", em_name))
+        stop(paste("Neither 'mean' nor 'prop' found in ALD for covariate:", em_name), call. = FALSE)
       }
     }
     
@@ -133,6 +134,9 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
     # if no covariates, all weights are 1 (unadjusted comparison)
     hat_w <- rep(1, n_ipd)
   }
+  
+  # Calculate Effective Sample Size (ESS)
+  ESS <- sum(hat_w)^2 / sum(hat_w^2)
   
   formula_treat <- glue::glue("{formula[[2]]} ~ {trt_var}")
   
@@ -156,16 +160,30 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
   pC <- unname(linkinv(coef_fit[1]))                # probability for control group
   pA <- unname(linkinv(coef_fit[1] + coef_fit[2]))  # probability for treatment group
   
-  c(pC = pC, pA = pA)
+  c(pC = pC, 
+    pA = pA, 
+    weights = unname(hat_w), 
+    ESS = ESS)
 }
 
 
 #' Calculate MAIC
 #' 
-#' @param strategy Strategy
-#' @param analysis_params Analysis parameters; list
-#' @return Treatment means
-#' @export
+#' @param strategy An object of class `strategy` created by functions such as 
+#'   [strategy_maic()], [strategy_stc()], or [strategy_mim()]. 
+#'   Contains modelling details like the formula and family.
+#' @param analysis_params List of analysis parameters. Must contain `ipd`
+#'   (individual patient data) and `ald` (aggregated lead data).
+#'
+#' @return A list containing:
+#' * `means`: A list containing:
+#'     * `A`: Bootstrap estimates for comparator treatment group "A".
+#'     * `C`: Bootstrap estimates for reference treatment group "C".
+#' * `model`: A list containing model diagnostics derived from the original data:
+#'     * `weights`: Vector of calculated weights for the patients in `ipd`.
+#'     * `ESS`: The Effective Sample Size.
+#'
+#' @keywords internal
 #' @importFrom boot boot
 #' 
 calc_maic <- function(strategy,
@@ -180,6 +198,32 @@ calc_maic <- function(strategy,
   
   maic_boot <- do.call(boot::boot, c(statistic = maic.boot, args_list))
   
-  list(mean_A = maic_boot$t[, 2],
-       mean_C = maic_boot$t[, 1])  
+  # boot return vector is: [pC (1), pA (2), weights (3 to N+2), ESS (N+3)]
+  N_ipd <- nrow(analysis_params$ipd)
+  
+  idx_pC <- 1
+  idx_pA <- 2
+  idx_weights_start <- 3
+  idx_weights_end <- 2 + N_ipd
+  idx_ESS <- 2 + N_ipd + 1
+  
+  # 3. Extract Results
+  # For MEANS: Use 't' (bootstrap replicates) to estimate uncertainty
+  means_A_boot <- maic_boot$t[, idx_pA]
+  means_C_boot <- maic_boot$t[, idx_pC]
+  
+  # For MODEL DIAGNOSTICS (Weights & ESS): Use original data
+  # This gives the weights for the actual patients in the IPD
+  # not shuffled bootstrap rows
+  weights_orig <- maic_boot$t0[idx_weights_start:idx_weights_end]
+  ESS_orig     <- maic_boot$t0[idx_ESS]
+  
+  list(
+    means = list(
+      A = means_A_boot,
+      C = means_C_boot),
+    model = list(
+      weights = weights_orig,
+      ESS = ESS_orig)
+  )
 }

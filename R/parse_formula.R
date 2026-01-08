@@ -6,7 +6,7 @@
 #' Finally, if there are no interactions then pick last main effect term.
 #' 
 #' @eval reg_args(include_formula = TRUE, include_family = FALSE)
-#' @return Treatment name
+#' @return Treatment name string.
 #' 
 #' @importFrom crayon yellow
 #' @keywords internal
@@ -47,7 +47,13 @@ guess_treatment_name <- function(formula) {
   treat_nm
 }
 
-#
+#' Get treatment name
+#'
+#' @param formula Formula
+#' @param trt_var Treatment variable
+#' @return Treatment name string.
+#' @keywords internal
+#' 
 get_treatment_name <- function(formula, trt_var = NULL) {
   if (!is.null(trt_var) && is.character(trt_var)) {
     return(trt_var)
@@ -60,13 +66,13 @@ get_treatment_name <- function(formula, trt_var = NULL) {
 #'
 #' @eval reg_args(include_formula = TRUE, include_family = FALSE)
 #' 
-#' @return covariate names vector
+#' @return Covariate names character vector
 #' @keywords internal
 #'
 get_covariate_names <- function(formula) {
   
   if (!inherits(formula, "formula")) {
-    stop("formula argument must be of formula class.")
+    stop("formula argument must be of formula class.", call. = FALSE)
   }
   
   all.vars(formula)[-1]
@@ -77,7 +83,7 @@ get_covariate_names <- function(formula) {
 #' @param trt_var Treatment variable name; Default 'trt'.
 #' @eval reg_args(include_formula = TRUE, include_family = FALSE)
 #' 
-#' @return Effect modifiers names
+#' @return Effect modifiers strings names
 #' @keywords internal
 #'
 get_eff_mod_names <- function(formula, trt_var = "trt") {

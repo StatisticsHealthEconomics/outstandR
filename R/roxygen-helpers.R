@@ -1,5 +1,5 @@
 
-#
+#' @keywords internal
 reg_args <- function(include_formula = TRUE,
                      include_family = TRUE) {
   out <- character()
@@ -17,7 +17,7 @@ reg_args <- function(include_formula = TRUE,
   out
 }
 
-#
+#' @keywords internal
 study_data_args <- function(include_ipd = TRUE,
                             include_ald = TRUE) {
   out <- character()

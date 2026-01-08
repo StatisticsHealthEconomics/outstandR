@@ -4,19 +4,31 @@
 \alias{calc_mim}
 \title{Multiple imputation marginalization (MIM)}
 \usage{
-calc_mim(strategy, ipd, ald, ref_trt, comp_trt, ...)
+calc_mim(strategy, analysis_params, ...)
 }
 \arguments{
-\item{strategy}{Strategy object}
+\item{strategy}{An object of class \code{strategy} created by functions such as
+\code{\link[=strategy_maic]{strategy_maic()}}, \code{\link[=strategy_stc]{strategy_stc()}}, or \code{\link[=strategy_mim]{strategy_mim()}}.
+Contains modelling details like the formula and family.}
 
-\item{ipd}{Individual-level patient data. Dataframe with one row per patient with outcome, treatment and covariate columns.}
-
-\item{ald}{Aggregate-level data. Long format summary statistics for each covariate and treatment outcomes.
-We assume a common distribution for each treatment arm.}
-
-\item{ref_trt, comp_trt}{Reference and comparison treatment names}
-
-\item{...}{Argument to pass to Stan model}
+\item{...}{Additional argument to pass to Stan model}
+}
+\value{
+A list containing:
+\itemize{
+\item \code{means}: A list containing vectors of posterior means (one per synthesis \code{M}):
+\itemize{
+\item \code{A}: Comparator means.
+\item \code{C}: Reference means.
+}
+\item \code{model}: A list containing:
+\itemize{
+\item \code{fit}: The first-stage \code{\link[rstanarm:stan_glm]{rstanarm::stan_glm()}} object.
+\item \code{hats.v}: Vector of variance point estimates for each synthesis.
+\item \code{M}: Number of posterior prediction draws (syntheses).
+\item \code{rho}, \code{N}, \code{stan_args}: Strategy and model parameters.
+}
+}
 }
 \description{
 Multiple imputation marginalization (MIM)

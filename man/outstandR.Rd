@@ -11,6 +11,7 @@ outstandR(
   ref_trt = NA,
   CI = 0.95,
   scale = NULL,
+  var_method = NULL,
   ...
 )
 }
@@ -37,10 +38,12 @@ The labels in the treatment are used internally so there must be a common treatm
 \item{scale}{Relative treatment effect scale. If \code{NULL}, the scale is automatically determined from the model.
 Choose from "log-odds", "log_relative_risk", "risk_difference", "delta_z", "mean_difference", "rate_difference" depending on the data type.}
 
+\item{var_method}{Variance estimation method.}
+
 \item{...}{Additional arguments. Currently, can pass named arguments to \code{rstanarm::stan_glm()} via \code{strategy_gcomp_bayes()}.}
 }
 \value{
-List of length 3 of statistics as a \code{outstandR} class object.
+List of length 11 of statistics as a \code{outstandR} class object.
 Containing statistics between each pair of treatments.
 These are the mean, variances and confidence intervals,
 for contrasts and absolute values.

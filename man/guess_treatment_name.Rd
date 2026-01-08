@@ -11,7 +11,7 @@ guess_treatment_name(formula)
 interactions with the treatment variable, e.g., y ~ X1 + trt + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
 }
 \value{
-Treatment name
+Treatment name string.
 }
 \description{
 Does a variable appear more than once in interactions?

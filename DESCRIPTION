@@ -1,11 +1,10 @@
 Package: outstandR
-Title: Model-based Standardisation for indirect treatment comparison with limited subject-level data
+Title: Model-Based Standardisation for Indirect Treatment Comparison with Limited Subject-Level Data
 Version: 1.0.0
 Authors@R: c(
-    person("Nathan", "Green", , "n.green@ucl.ac.uk", role = c("aut", "cre"),
+    person("Nathan", "Green", , "n.green@ucl.ac.uk", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0003-2745-1736", ROR = "02jx3x895")),
-    person("Chengyang", "Gao", , "chengyang.gao.15@ucl.ac.uk", role = "aut",
-           comment = c(ORCID = "0000-0003-2745-1736")),
+    person("Chengyang", "Gao", , "chengyang.gao.15@ucl.ac.uk", role = "aut"),
     person("Antonio", "Remiro-Azocar", , "antonio.remiro-azocar@bayer.com", role = "aut",
            comment = c(ORCID = "0000-0002-7263-4251"))
   )
@@ -14,9 +13,10 @@ Description:
     package provides tools for model-based standardisation with several different computation approaches.
     See Remiro‐Azócar A, Heath A, Baio G (2022. Parametric G‐computation for compatible
     indirect treatment comparisons with limited individual patient data, 
-    Res. Synth. Methods, 1–31. ISSN 1759-2879, <doi:10.1002/jrsm.1565, 2108.12208>.)
+    Res. Synth. Methods, 1–31. ISSN 1759-2879, <doi:10.1002/jrsm.1565>.)
 License: GPL (>= 3)
 Encoding: UTF-8
+Language: en-GB
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Depends: R (>= 4.1.0)
@@ -26,8 +26,10 @@ Imports:
     copula,
     crayon,
     dplyr,
+    ggplot2,
     glue,
     pillar,
+    purrr,
     rlang,
     rstanarm,
     stats,
@@ -39,7 +41,6 @@ Imports:
 Suggests:
     causaldata,
     doSNOW,
-    ggplot2,
     gridExtra,
     here,
     knitr,
@@ -47,17 +48,12 @@ Suggests:
     marginaleffects,
     MASS,
     parallel,
-    purrr,
     reshape2,
     rmarkdown,
-    simcovariates,
     stdReg2,
     testthat (>= 3.0.0)
-Remotes: 
-    n8thangreen/simcovariates
-VignetteBuilder: knitr
 Config/testthat/edition: 3
 RdMacros: Rdpack
-URL: https://StatisticsHealthEconomics.github.io/outstandR
+URL: https://StatisticsHealthEconomics.github.io/outstandR/
 BugReports: https://github.com/StatisticsHealthEconomics/outstandR/issues/
 LazyData: false

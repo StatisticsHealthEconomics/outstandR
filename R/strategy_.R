@@ -1,5 +1,4 @@
-
-# create S3 class for each approach
+# create S3 class for each approach ---
 
 #' @rdname strategy
 #' 
@@ -33,11 +32,11 @@ strategy_maic <- function(formula = NULL,
                           R = 1000L) {
   check_formula(formula, trt_var)
   check_family(family)
-   
+  
   if (R <= 0 || R %% 1 != 0) {
     stop("R not positive whole number.")
   }
-
+  
   args <- list(formula = formula,
                family = family,
                trt_var = get_treatment_name(formula, trt_var),
@@ -137,6 +136,7 @@ strategy_gcomp_ml <- function(formula = NULL,
   check_formula(formula, trt_var)
   check_family(family)
   check_distns(formula, marginal_distns, marginal_params)
+  check_rho(rho)
   
   if (R <= 0 || R %% 1 != 0) {
     stop("R not positive whole number.")
@@ -156,6 +156,7 @@ strategy_gcomp_ml <- function(formula = NULL,
   
   do.call(new_strategy, c(strategy = "gcomp_ml", args))
 }
+
 
 #' @rdname strategy
 #' 
@@ -199,15 +200,16 @@ strategy_gcomp_ml <- function(formula = NULL,
 #' @export
 #'
 strategy_gcomp_bayes <- function(formula = NULL,
-                                family = gaussian(link = "identity"),
-                                trt_var = NULL,
-                                rho = NA,
-                                marginal_distns = NA,
-                                marginal_params = NA,
-                                N = 1000L) {
+                                 family = gaussian(link = "identity"),
+                                 trt_var = NULL,
+                                 rho = NA,
+                                 marginal_distns = NA,
+                                 marginal_params = NA,
+                                 N = 1000L) {
   check_formula(formula, trt_var)
   check_family(family)
   check_distns(formula, marginal_distns, marginal_params)
+  check_rho(rho)
   
   if (N <= 0 || N %% 1 != 0) {
     stop("N not positive whole number.")
@@ -242,6 +244,7 @@ strategy_mim <- function(formula = NULL,
                          N = 1000L) {
   check_formula(formula, trt_var)
   check_family(family)
+  check_rho(rho)
   
   if (N <= 0 || N %% 1 != 0) {
     stop("N not positive whole number.")
@@ -262,9 +265,14 @@ strategy_mim <- function(formula = NULL,
 #' @description
 #' Create a type of strategy class for each modelling approach.
 #'
-#' @param strategy Class name from `strategy_maic`, `strategy_stc`, `strategy_gcomp_ml`, `strategy_gcomp_bayes`
+#' @note While current implementations focus on binary, continuous, and count outcomes, 
+#' support for survival data (using the \code{survival} package) is under active 
+#' development and scheduled for version 1.1.0.
+#' 
+#' @param strategy Class name from `strategy_maic`, `strategy_stc`, `strategy_gcomp_ml`, `strategy_gcomp_bayes`, `strategy_mim`
 #' @eval reg_args(include_formula = TRUE, include_family = TRUE)
 #' @param ... Additional arguments
+#' @returns Strategy list object
 #'
 #' @export
 #'
@@ -272,17 +280,35 @@ new_strategy <- function(strategy, ...) {
   structure(list(...), class = c(strategy, "strategy", "list"))
 }
 
-#
+#' @keywords internal
 is_family <- function(obj) inherits(obj, "family")
 
-#
+#' @keywords internal
 check_family <- function(obj) {
   if (!is_family(obj)) {
-    stop("family must be a family object")
+    stop("family must be a family object", call. = FALSE)
   }
 }
 
-#
+#' @keywords internal
+check_rho <- function(mat) {
+  if (is.na(mat)) return()
+  
+  rn <- rownames(mat)
+  cn <- colnames(mat)
+  
+  # names actually exist
+  if (is.null(rn) || is.null(cn)) {
+    stop("Validation Failed: Matrix must have both row and column names.", call. = FALSE)
+  }
+  
+  # names are identical
+  if (!identical(rn, cn)) {
+    stop("Validation Failed: Row names and column names do not match.", call. = FALSE)
+  }
+}
+
+#' @keywords internal
 check_distns <- function(formula,
                          marginal_distns,
                          marginal_params) {
@@ -295,14 +321,16 @@ check_distns <- function(formula,
   covariate_names <- get_covariate_names(formula)
   n_covariates <- length(covariate_names) - 1  # remove treatment
   
-  if (length(marginal_distns) != n_covariates) {
-    stop("Number of marginal distributions must match
-           the number of covariates in the formula.")
+  if (length(marginal_distns) > n_covariates) {
+    stop("Number of marginal distributions cannot be larger than
+           the number of covariates in the formula.", call. = FALSE)
   }
   
-  if (length(marginal_params) != n_covariates) {
-    stop("Number of marginal parameter lists must match
-           the number of covariates in the formula.")
+  if (!all(is.na(marginal_params))) {
+    if (length(marginal_params) > n_covariates) {
+      stop("Number of marginal parameter lists cannot be larger than
+           the number of covariates in the formula.", call. = FALSE)
+    }
   }
 }
 

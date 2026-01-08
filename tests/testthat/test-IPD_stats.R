@@ -1,5 +1,8 @@
+# IPD_stat tests
 
 library(tibble)
+
+# mock strategy objects ---
 
 strategy_maic <- list(
   R = 1000,
@@ -18,6 +21,7 @@ strategy_stc <- list(
 
 strategy_gcomp_ml <- list(
   R = 1000,
+  N = 1000L,
   formula = y ~ trt,
   trt_var = "trt",
   family = binomial()
@@ -27,6 +31,7 @@ strategy_gcomp_ml <- list(
 strategy_gcomp_bayes <- list(
   formula = y ~ trt,
   trt_var = "trt",
+  N = 1000L,
   family = binomial()
 ) |> 
   `attr<-`(which = "class", value = "gcomp_bayes")
@@ -34,10 +39,12 @@ strategy_gcomp_bayes <- list(
 strategy_mim <- list(
   formula = y ~ trt,
   trt_var = "trt",
+  N = 1000L,
   family = binomial()
 ) |> 
   `attr<-`(which = "class", value = "mim")
 
+# aggregate-level outcome data
 ald <- tribble(
   ~variable, ~trt, ~statistic, ~value,
   "y",       "B",  "sum",     30,
@@ -51,12 +58,15 @@ ipd <- data.frame(
   trt = c(rep("A", 20), rep("C", 20))
 )
 
+# internal object
 analysis_params <- 
   list(ipd = ipd,
        ald = ald,
+       ref_trt = "C",
+       ipd_comp = "A",
        scale = "log_odds")
 
-## test for no covariates
+## test when no covariates
 
 test_that("calc_IPD_stats() works for MAIC", {
 
@@ -97,21 +107,18 @@ test_that("calc_IPD_stats() works for STC", {
 })
 
 test_that("calc_IPD_stats() works for G-computation (ML)", {
-  expect_error(
-    object = calc_IPD_stats(strategy_gcomp_ml, analysis_params),
-    regexp = "No covariates found to simulate.")
+  res_gcomp_ml_null <- calc_IPD_stats(strategy_gcomp_ml, analysis_params)
+  expect_length(res_gcomp_ml_null, 4)
 })
 
 test_that("calc_IPD_stats() works for G-computation (Stan)", {
-  expect_error(
-    object = calc_IPD_stats(strategy_gcomp_bayes, analysis_params),
-    regexp = "No covariates found to simulate.")
+    res_gcomp_bayes_null <- calc_IPD_stats(strategy_gcomp_bayes, analysis_params)
+    expect_length(res_gcomp_bayes_null, 4)
 })
 
 test_that("calc_IPD_stats() works for Multiple Imputation Marginalisation", {
-  expect_error(
-    object = calc_IPD_stats(strategy_mim, analysis_params),
-    regexp = "No covariates found to simulate.")
+  res_mim_null <- calc_IPD_stats(strategy_mim, analysis_params)
+  expect_length(res_mim_null, 4)
 })
 
 ## edge cases
