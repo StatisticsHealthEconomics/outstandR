@@ -3,33 +3,38 @@
 \name{calc_IPD_stats}
 \alias{calc_IPD_stats}
 \alias{calc_IPD_stats.default}
-\alias{calc_IPD_stats.mim}
 \alias{calc_IPD_stats.stc}
 \alias{calc_IPD_stats.maic}
 \alias{calc_IPD_stats.gcomp_ml}
 \alias{calc_IPD_stats.gcomp_bayes}
+\alias{calc_IPD_stats.mim}
 \title{Calculate individual-level patient data statistics}
 \usage{
 calc_IPD_stats(strategy, analysis_params, ...)
 
 \method{calc_IPD_stats}{default}(...)
 
-\method{calc_IPD_stats}{mim}(strategy, analysis_params, ...)
+\method{calc_IPD_stats}{stc}(strategy, analysis_params, var_method = NULL, ...)
 
-\method{calc_IPD_stats}{stc}(strategy, analysis_params, var_method = "sample", ...)
+\method{calc_IPD_stats}{maic}(strategy, analysis_params, var_method = NULL, ...)
 
-\method{calc_IPD_stats}{maic}(strategy, analysis_params, var_method = "sample", ...)
+\method{calc_IPD_stats}{gcomp_ml}(strategy, analysis_params, var_method = NULL, ...)
 
-\method{calc_IPD_stats}{gcomp_ml}(strategy, analysis_params, var_method = "sample", ...)
+\method{calc_IPD_stats}{gcomp_bayes}(strategy, analysis_params, var_method = NULL, ...)
 
-\method{calc_IPD_stats}{gcomp_bayes}(strategy, analysis_params, var_method = "sample", ...)
+\method{calc_IPD_stats}{mim}(strategy, analysis_params, var_method = NULL, ...)
 }
 \arguments{
-\item{strategy}{An object of class \code{strategy} created by functions such as
-\code{\link[=strategy_maic]{strategy_maic()}}, \code{\link[=strategy_stc]{strategy_stc()}}, or \code{\link[=strategy_mim]{strategy_mim()}}.
-Contains modelling details like the formula and family.}
+\item{strategy}{A list corresponding to different modelling approaches}
 
-\item{analysis_params}{Analysis parameters}
+\item{analysis_params}{A list containing:
+\itemize{
+\item \code{ipd}: Individual-level patient data (data frame)
+\item \code{ald}: Aggregate-level trial data (data frame)
+\item \code{ref_trt}: Treatment label for the reference arm (common; e.g., "C")
+\item \code{ipd_comp}: Treatment label for the comparator arm in the IPD (e.g., "A")
+\item \code{scale}: Scaling parameter ("log_odds", "risk_difference", "log_relative_risk")
+}}
 
 \item{...}{Additional arguments}
 
@@ -48,14 +53,6 @@ Computes mean and variance statistics for individual-level patient data using va
 including Matching-Adjusted Indirect Comparison (MAIC), Simulated Treatment Comparison (STC),
 and G-computation via Maximum Likelihood Estimation (MLE) or Bayesian inference.
 }
-\section{Multiple imputation marginalisation}{
-
-Using Stan, compute marginal relative treatment effect for IPD
-comparator "A" vs reference "C" arms for each MCMC sample
-by transforming from probability to linear predictor scale. Approximate by
-using imputation and combining estimates using Rubin's rules.
-}
-
 \section{Simulated treatment comparison statistics}{
 
 IPD for reference "C" and comparator "A" trial arms are used to fit a regression model describing the
@@ -78,6 +75,14 @@ Compute a non-parametric bootstrap with default \eqn{R=1000} resamples.
 
 Using Stan, compute marginal relative effects for IPD comparator "A" vs reference "C" treatment arms for each MCMC sample
 by transforming from probability to linear predictor scale.
+}
+
+\section{Multiple imputation marginalisation}{
+
+Using Stan, compute marginal relative treatment effect for IPD
+comparator "A" vs reference "C" arms for each MCMC sample
+by transforming from probability to linear predictor scale. Approximate by
+using imputation and combining estimates using Rubin's rules.
 }
 
 \examples{
