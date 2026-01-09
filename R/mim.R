@@ -7,13 +7,13 @@
 #' @param ... Additional argument to pass to Stan model
 #' 
 #' @return A list containing:
-#' * `means`: A list containing vectors of posterior means (one per synthesis `M`):
+#' * `means`: A list containing vectors of posterior means (one per synthesis `n_imp`):
 #'     * `A`: Comparator means.
 #'     * `C`: Reference means.
 #' * `model`: A list containing:
 #'     * `fit`: The first-stage [rstanarm::stan_glm()] object.
 #'     * `hats.v`: Vector of variance point estimates for each synthesis.
-#'     * `M`: Number of posterior prediction draws (syntheses).
+#'     * `n_imp`: Number of posterior prediction draws (syntheses).
 #'     * `rho`, `N`, `stan_args`: Strategy and model parameters.
 #'
 #' @importFrom rstanarm posterior_predict stan_glm
@@ -72,10 +72,10 @@ calc_mim <- function(strategy,
   
   # ANALYSIS STAGE ---
   
-  M <- nrow(y_star)
+  n_imp <- nrow(y_star)
   
   # fit second-stage regression to each synthesis using maximum-likelihood estimation
-  reg2.fits <- lapply(1:M, function(m) {
+  reg2.fits <- lapply(1:n_imp, function(m) {
     data_m <- aug.target
     data_m$y <- y_star[m, ]
     glm(as.formula(paste("y ~", trt_var)), data = data_m, family = family)
@@ -103,7 +103,7 @@ calc_mim <- function(strategy,
     model = list(
       fit = outcome_model,
       hats.v = hats.v,
-      M = M,
+      n_imp = n_imp,
       rho = rho,
       N = N,
       stan_args = stan_args)
@@ -114,27 +114,27 @@ calc_mim <- function(strategy,
 #' 
 #' Constructed using t-distribution with nu degrees of freedom.
 #'
-#' @param M Number of syntheses used in analysis stage (high for low Monte Carlo error)
+#' @param n_imp Number of syntheses used in analysis stage (high for low Monte Carlo error)
 #' @param bar.v "within" variance (average of variance point estimates)
 #' @param b "between" variance (sample variance of point estimates)
 #' @return Numeric value of Wald-type interval estimates.
 #' @keywords internal
 #' 
-wald_type_interval <- function(M, bar.v, b) {
-  (M - 1) * (1 + bar.v / ((1 + 1 / M) * b)) ^ 2
+wald_type_interval <- function(n_imp, bar.v, b) {
+  (n_imp - 1) * (1 + bar.v / ((1 + 1 / n_imp) * b)) ^ 2
 }
 
 #' Variance estimate by pooling
 #' 
 #' Use combining rules to estimate.
 #' 
-#' @param M Number of syntheses used in analysis stage (high for low Monte Carlo error)
+#' @param n_imp Number of syntheses used in analysis stage (high for low Monte Carlo error)
 #' @param bar.v "within" variance (average of variance point estimates)
 #' @param b "between" variance (sample variance of point estimates)
 #' @return Numeric value of variance estimate using pooling.
 #' @keywords internal
 #' 
-var_by_pooling <- function(M, bar.v, b) {
-  (1 + (1 / M)) * b - bar.v
+var_by_pooling <- function(n_imp, bar.v, b) {
+  (1 + (1 / n_imp)) * b - bar.v
 }
 

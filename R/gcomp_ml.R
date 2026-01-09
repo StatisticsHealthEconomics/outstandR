@@ -23,7 +23,8 @@
 #' @keywords internal
 #' 
 gcomp_ml.boot <- function(data, indices,
-                          R, formula = NULL,
+                          R, 
+                          formula = NULL,
                           family, trt_var,
                           ref_trt = NA,
                           comp_trt = NA,

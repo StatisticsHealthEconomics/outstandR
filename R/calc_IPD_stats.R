@@ -95,16 +95,16 @@ IPD_stat_factory <- function(ipd_fun) {
       var_est <- var(hat.delta.AC, na.rm = TRUE)
     } else if (var_method == "rubin") {
       
-      if (is.null(out$model$hats.v) || is.null(out$model$M)) {
-        stop("Rubin's rules require 'hats.v' and 'M' in the model output.", call. = FALSE)
+      if (is.null(out$model$hats.v) || is.null(out$model$n_imp)) {
+        stop("Rubin's rules require 'hats.v' and 'n_imp' in the model output.", call. = FALSE)
       }
       
-      M <- out$model$M
+      n_imp <- out$model$n_imp
       bar.v <- mean(out$model$hats.v)
       b <- var(hat.delta.AC, na.rm = TRUE)
       
-      var_est <- var_by_pooling(M, bar.v, b)
-      out$model$nu <- wald_type_interval(M, bar.v, b)
+      var_est <- var_by_pooling(n_imp, bar.v, b)
+      out$model$nu <- wald_type_interval(n_imp, bar.v, b)
       
     } else {
       # This should be caught by get_var_method, but serves as a failsafe

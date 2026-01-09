@@ -189,7 +189,7 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
 calc_maic <- function(strategy,
                       analysis_params) {
   args_list <- 
-    list(R = strategy$R,
+    list(R = strategy$n_boot,
          formula = strategy$formula,
          family = strategy$family,
          trt_var = strategy$trt_var,

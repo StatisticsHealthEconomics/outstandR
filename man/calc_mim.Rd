@@ -16,7 +16,7 @@ Contains modelling details like the formula and family.}
 \value{
 A list containing:
 \itemize{
-\item \code{means}: A list containing vectors of posterior means (one per synthesis \code{M}):
+\item \code{means}: A list containing vectors of posterior means (one per synthesis \code{n_imp}):
 \itemize{
 \item \code{A}: Comparator means.
 \item \code{C}: Reference means.
@@ -25,7 +25,7 @@ A list containing:
 \itemize{
 \item \code{fit}: The first-stage \code{\link[rstanarm:stan_glm]{rstanarm::stan_glm()}} object.
 \item \code{hats.v}: Vector of variance point estimates for each synthesis.
-\item \code{M}: Number of posterior prediction draws (syntheses).
+\item \code{n_imp}: Number of posterior prediction draws (syntheses).
 \item \code{rho}, \code{N}, \code{stan_args}: Strategy and model parameters.
 }
 }

@@ -10,14 +10,14 @@
 #'   In a long format and must contain a treatment column and outcome column consistent with the formula object.
 #'   The labels in the treatment are used internally so there must be a common treatment with the aggregate-level data trial.
 #' @param ald_trial Aggregate-level data. For example, suppose between studies _B_ and _C_. The column names are
-#'  - `variable`: Covariate name. In the case of treatment arm sample size this is `NA`
-#'  - `statistic`: Summary statistic name from "mean", standard deviation "sd", probability "prop", or "sum"
-#'  - `value`: Numerical value of summary statistic
-#'  - `trt`: Treatment label. Because we assume a common covariate distribution between treatment arms this is `NA`
+#'  - `variable`: Covariate name. In the case of treatment arm sample size this is `NA`,
+#'  - `statistic`: Summary statistic name from "mean", standard deviation "sd", probability "prop", or "sum",
+#'  - `value`: Numerical value of summary statistic,
+#'  - `trt`: Treatment label. Because we assume a common covariate distribution between treatment arms this is `NA`.
 #' @param strategy Computation strategy function. These can be
 #'    `strategy_maic()`, `strategy_stc()`, `strategy_gcomp_ml()` and `strategy_gcomp_bayes()`.
 #' @param ref_trt Reference / common / anchoring treatment name.
-#' @param CI Confidence interval; between 0,1
+#' @param CI Confidence interval level; between 0,1 with default 0.95.
 #' @param scale Relative treatment effect scale. If `NULL`, the scale is automatically determined from the model.
 #'   Choose from "log-odds", "log_relative_risk", "risk_difference", "delta_z", "mean_difference", "rate_difference" depending on the data type.
 #' @param var_method Variance estimation method.
@@ -36,32 +36,45 @@
 #' 
 #' @export
 #' @examples
-#' data(AC_IPD_binY_contX)  # AC patient-level data
-#' data(BC_ALD_binY_contX)  # BC aggregate-level data
+#' data(AC_IPD_binY_contX)  # A vs C individual patient-level data
+#' data(BC_ALD_binY_contX)  # B vs C aggregate-level data
 #' 
 #' # linear formula
 #' lin_form <- as.formula("y ~ PF_cont_1 + PF_cont_2 + trt*EM_cont_1 + trt*EM_cont_2")
+#'                                 
+#' # sampling values of additional arguments picked for speed
+#' # select appropriate to specific analysis
 #' 
 #' # matching-adjusted indirect comparison
-#' outstandR_maic <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
-#'                             strategy = strategy_maic(formula = lin_form))
+#' outstandR_maic <- outstandR(
+#'   AC_IPD_binY_contX, BC_ALD_binY_contX,
+#'   strategy = strategy_maic(formula = lin_form, n_boot = 100))
 #' 
 #' # simulated treatment comparison
-#' outstandR_stc <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
-#'                            strategy = strategy_stc(lin_form))
+#' outstandR_stc <- outstandR(
+#'   AC_IPD_binY_contX, BC_ALD_binY_contX,
+#'   strategy = strategy_stc(lin_form))
 #' 
-#' # G-computation with maximum likelihood
-#' outstandR_gcomp_ml <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
-#'                                 strategy = strategy_gcomp_ml(lin_form))
 #' \donttest{
+#' # G-computation with maximum likelihood
+#' outstandR_gcomp_ml <- outstandR(
+#'   AC_IPD_binY_contX, BC_ALD_binY_contX,
+#'   strategy = strategy_gcomp_ml(lin_form, n_boot = 100, N =100))
+#' 
 #' # G-computation with Bayesian inference
-#' outstandR_gcomp_bayes <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
-#'                                   strategy = strategy_gcomp_bayes(lin_form))
+#' outstandR_gcomp_bayes <- outstandR(
+#'   AC_IPD_binY_contX, BC_ALD_binY_contX,
+#'   strategy = strategy_gcomp_bayes(lin_form),
+#'   chains = 1, iter = 1000, warmup = 20)
 #' 
 #' # Multiple imputation marginalization
-#' outstandR_mim <- outstandR(AC_IPD_binY_contX, BC_ALD_binY_contX,
-#'                            strategy = strategy_mim(lin_form))
+#' outstandR_mim <- outstandR(
+#'   AC_IPD_binY_contX, BC_ALD_binY_contX,
+#'   strategy = strategy_mim(lin_form,
+#'                           N = 100), # size of pseudo-population
+#'   chains = 1, iter = 1000, warmup = 20)
 #' }
+#' 
 outstandR <- function(ipd_trial, ald_trial, strategy,
                       ref_trt = NA,
                       CI = 0.95, 

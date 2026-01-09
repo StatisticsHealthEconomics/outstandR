@@ -20,7 +20,7 @@
 #' \eqn{t} is equal to the odds of being enrolled in the _AC_ trial vs the _AB_ trial.
 #' 
 #' @param trt_var Treatment variable name
-#' @param R The number of resamples used for the non-parametric bootstrap
+#' @param n_boot The number of resamples used for the non-parametric bootstrap
 #' @return `maic` class object
 #' 
 #' @importFrom utils modifyList
@@ -29,18 +29,18 @@
 strategy_maic <- function(formula = NULL,
                           family = gaussian(link = "identity"),
                           trt_var = NULL,
-                          R = 1000L) {
+                          n_boot = 1000L) {
   check_formula(formula, trt_var)
   check_family(family)
   
-  if (R <= 0 || R %% 1 != 0) {
-    stop("R not positive whole number.")
+  if (n_boot <= 0 || n_boot %% 1 != 0) {
+    stop("n_boot not positive whole number.")
   }
   
   args <- list(formula = formula,
                family = family,
                trt_var = get_treatment_name(formula, trt_var),
-               R = R)
+               n_boot = n_boot)
   
   do.call(new_strategy, c(strategy = "maic", args))
 }
@@ -117,7 +117,7 @@ strategy_stc <- function(formula = NULL,
 #' @param rho A named square matrix of covariate correlations; default NA
 #' @param marginal_distns Marginal distributions names; vector default NA
 #' @param marginal_params Marginal distributions parameters; list of lists, default NA
-#' @param R The number of resamples used for the non-parametric bootstrap; integer
+#' @param n_boot The number of resamples used for the non-parametric bootstrap; integer
 #' @param N Synthetic sample size for g-computation; integer; integer
 #' 
 #' @return `gcomp_ml` class object
@@ -131,15 +131,15 @@ strategy_gcomp_ml <- function(formula = NULL,
                               rho = NA,
                               marginal_distns = NA,
                               marginal_params = NA,
-                              R = 1000L,
+                              n_boot = 1000L,
                               N = 1000L) {
   check_formula(formula, trt_var)
   check_family(family)
   check_distns(formula, marginal_distns, marginal_params)
   check_rho(rho)
   
-  if (R <= 0 || R %% 1 != 0) {
-    stop("R not positive whole number.")
+  if (n_boot <= 0 || n_boot %% 1 != 0) {
+    stop("n_boot not positive whole number.")
   }
   if (N <= 0 || N %% 1 != 0) {
     stop("N not positive whole number.")
@@ -151,7 +151,7 @@ strategy_gcomp_ml <- function(formula = NULL,
                trt_var = get_treatment_name(formula, trt_var),
                marginal_distns = marginal_distns,
                marginal_params = marginal_params,
-               R = R,
+               n_boot = n_boot,
                N = N)
   
   do.call(new_strategy, c(strategy = "gcomp_ml", args))
