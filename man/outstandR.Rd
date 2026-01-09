@@ -12,6 +12,7 @@ outstandR(
   CI = 0.95,
   scale = NULL,
   var_method = NULL,
+  seed = NULL,
   ...
 )
 }
@@ -39,6 +40,8 @@ The labels in the treatment are used internally so there must be a common treatm
 Choose from "log-odds", "log_relative_risk", "risk_difference", "delta_z", "mean_difference", "rate_difference" depending on the data type.}
 
 \item{var_method}{Variance estimation method.}
+
+\item{seed}{Random seed.}
 
 \item{...}{Additional arguments. Currently, can pass named arguments to \code{rstanarm::stan_glm()} via \code{strategy_gcomp_bayes()}.}
 }

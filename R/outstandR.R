@@ -21,6 +21,7 @@
 #' @param scale Relative treatment effect scale. If `NULL`, the scale is automatically determined from the model.
 #'   Choose from "log-odds", "log_relative_risk", "risk_difference", "delta_z", "mean_difference", "rate_difference" depending on the data type.
 #' @param var_method Variance estimation method.
+#' @param seed Random seed.
 #' @param ... Additional arguments. Currently, can pass named arguments to `rstanarm::stan_glm()` via `strategy_gcomp_bayes()`.
 #' 
 #' @return List of length 11 of statistics as a `outstandR` class object.
@@ -80,7 +81,12 @@ outstandR <- function(ipd_trial, ald_trial, strategy,
                       CI = 0.95, 
                       scale = NULL, 
                       var_method = NULL,
+                      seed = NULL,
                       ...) {
+  if (!is.null(seed)) {
+    set.seed(seed) 
+  }
+  
   cl <- match.call()
   
   validate_outstandr(ipd_trial, ald_trial, strategy, CI, scale)
@@ -109,6 +115,8 @@ outstandR <- function(ipd_trial, ald_trial, strategy,
     var_method = var_method
   )
   
+  analysis_params <- add_seed(strategy, analysis_params, seed)
+  
   ipd_stats <- calc_IPD_stats(strategy, analysis_params, ...) 
   ald_stats <- calc_ALD_stats(strategy, analysis_params) 
   
@@ -129,4 +137,23 @@ outstandR <- function(ipd_trial, ald_trial, strategy,
       model = c(method_name = ipd_stats$method_name,
                 ipd_stats$model)),
     class = c("outstandR", class(stats)))
+}
+
+# only pass random seed to specific strategies ---
+
+add_seed <- function(strategy, fn_args, seed) {
+  UseMethod("add_seed")
+}
+
+#' @export
+add_seed.default <- function(strategy, fn_args, seed) {
+  return(fn_args)
+}
+
+#' @export
+add_seed.gcomp_bayes <- function(strategy, fn_args, seed) {
+  if (!is.null(seed)) {
+    fn_args$seed <- seed
+  }
+  return(fn_args)
 }

@@ -59,11 +59,19 @@
 calc_gcomp_bayes <- function(strategy,
                              analysis_params, ...) {
   
+  # extract seed, or default to a random integer if missing/NULL
+  bayes_seed <- analysis_params$seed
+  
+  if (is.null(bayes_seed)) {
+    bayes_seed <- sample.int(.Machine$integer.max, 1)
+  }
+  
   default_stan_args <- list(
     algorithm = "sampling",
     chains = 2,
     iter = 2000,
-    refresh = 0  # quiet
+    refresh = 0,  # quiet
+    seed = bayes_seed
   )
   
   # merge with user-provided dots
