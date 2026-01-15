@@ -6,8 +6,9 @@
 #' @param labels Optional character vector of names for the models.
 #' @import dplyr ggplot2 purrr
 #' @export
-#' 
-plot.outstandR <- function(x, ..., 
+#' @return A [ggplot2::ggplot()] object representing the forest plot of the results.
+#'
+plot.outstandR <- function(x, ...,
                            type = c("both", "contrasts", "absolute"),
                            labels = NULL) {
   type <- match.arg(type)
@@ -66,6 +67,6 @@ plot.outstandR <- function(x, ...,
                aes(xintercept = 0), linetype = "dashed", color = "gray50") +
     labs(title = "Population-Adjusted Indirect Comparison Results",
          x = "Estimate (95% CI)", y = NULL) +
-    theme_minimal() +
+    theme_bw() +
     theme(legend.position = "bottom")
 }
