@@ -59,11 +59,19 @@
 calc_gcomp_bayes <- function(strategy,
                              analysis_params, ...) {
   
+  # extract seed, or default to a random integer if missing/NULL
+  bayes_seed <- analysis_params$seed
+  
+  if (is.null(bayes_seed)) {
+    bayes_seed <- sample.int(.Machine$integer.max, 1)
+  }
+  
   default_stan_args <- list(
     algorithm = "sampling",
     chains = 2,
     iter = 2000,
-    refresh = 0  # quiet
+    refresh = 0,  # quiet
+    seed = bayes_seed
   )
   
   # merge with user-provided dots
@@ -144,7 +152,7 @@ calc_gcomp_bayes <- function(strategy,
 #'   family = binomial(),
 #'   rho = NA,
 #'   N = 1000L,
-#'   R = 100L,
+#'   n_boot = 100L,
 #'   marginal_distns = NA,
 #'   marginal_params = NA,
 #'   trt_var = "trt")
@@ -188,7 +196,7 @@ calc_gcomp_ml <- function(strategy,
   args_boot <- c(
     common_args, list(
       data = analysis_params$ipd, 
-      R = strategy$R))
+      R = strategy$n_boot))
   
   gcomp_boot <- do.call(boot::boot, c(statistic = gcomp_ml.boot, args_boot))
   

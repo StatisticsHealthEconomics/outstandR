@@ -4,10 +4,10 @@
 \alias{wald_type_interval}
 \title{Wald-type interval estimates}
 \usage{
-wald_type_interval(M, bar.v, b)
+wald_type_interval(n_imp, bar.v, b)
 }
 \arguments{
-\item{M}{Number of syntheses used in analysis stage (high for low Monte Carlo error)}
+\item{n_imp}{Number of syntheses used in analysis stage (high for low Monte Carlo error)}
 
 \item{bar.v}{"within" variance (average of variance point estimates)}
 

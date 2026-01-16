@@ -4,10 +4,10 @@
 \alias{var_by_pooling}
 \title{Variance estimate by pooling}
 \usage{
-var_by_pooling(M, bar.v, b)
+var_by_pooling(n_imp, bar.v, b)
 }
 \arguments{
-\item{M}{Number of syntheses used in analysis stage (high for low Monte Carlo error)}
+\item{n_imp}{Number of syntheses used in analysis stage (high for low Monte Carlo error)}
 
 \item{bar.v}{"within" variance (average of variance point estimates)}
 

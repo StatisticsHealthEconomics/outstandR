@@ -25,7 +25,7 @@ print.strategy <- function(x, ...) {
 print.maic <- function(x, ...) {
   NextMethod()
   cat(pillar::style_subtle("  Parameters:"), "\n")
-  cat("    Bootstrap Resamples (R):", x$R, "\n")
+  cat("    Bootstrap Resamples (n_boot):", x$n_boot, "\n")
   cat("    Treatment Variable:     ", x$trt_var, "\n")
   invisible(x)
 }
@@ -45,7 +45,7 @@ print.gcomp_ml <- function(x, ...) {
   NextMethod()
   cat(pillar::style_subtle("  Parameters:"), "\n")
   cat("    Synthetic Sample Size (N):", x$N, "\n")
-  cat("    Bootstrap Resamples (R):  ", x$R, "\n")
+  cat("    Bootstrap Resamples (n_boot):  ", x$n_boot, "\n")
   if (!all(is.na(x$marginal_distns))) {
     cat("    Marginal Distns:          ", paste(x$marginal_distns, collapse = ", "), "\n")
   }

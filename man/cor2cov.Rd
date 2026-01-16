@@ -4,10 +4,10 @@
 \alias{cor2cov}
 \title{Compute covariance matrix}
 \usage{
-cor2cov(R, S)
+cor2cov(cormat, S)
 }
 \arguments{
-\item{R}{correlation matrix}
+\item{cormat}{correlation matrix}
 
 \item{S}{vector of standard deviations covariance matrix}
 }

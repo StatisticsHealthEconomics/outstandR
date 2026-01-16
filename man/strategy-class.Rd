@@ -23,7 +23,7 @@ different subclasses to trigger specific S3 method dispatch
 }
 \item{maic subclass}{Additional fields for Matching-Adjusted Indirect Comparison:
 \itemize{
-\item \code{R}: Number of bootstrap resamples for variance estimation.
+\item \code{n_boot}: Number of bootstrap resamples for variance estimation.
 }
 }
 \item{stc subclass}{Additional fields for Simulated Treatment Comparison:
@@ -37,7 +37,7 @@ different subclasses to trigger specific S3 method dispatch
 \item \code{marginal_distns}: Names of the marginal distributions for covariates.
 \item \code{marginal_params}: Parameters for the marginal distributions.
 \item \code{N}: Synthetic sample size for the pseudo-population.
-\item \code{R}: Number of bootstrap resamples.
+\item \code{n_boot}: Number of bootstrap resamples.
 }
 }
 \item{gcomp_bayes subclass}{Additional fields for Bayesian G-computation:

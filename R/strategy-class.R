@@ -21,7 +21,7 @@
 #'   }
 #'   \item{maic subclass}{Additional fields for Matching-Adjusted Indirect Comparison:
 #'     \itemize{
-#'       \item `R`: Number of bootstrap resamples for variance estimation.
+#'       \item `n_boot`: Number of bootstrap resamples for variance estimation.
 #'     }
 #'   }
 #'   \item{stc subclass}{Additional fields for Simulated Treatment Comparison:
@@ -35,7 +35,7 @@
 #'       \item `marginal_distns`: Names of the marginal distributions for covariates.
 #'       \item `marginal_params`: Parameters for the marginal distributions.
 #'       \item `N`: Synthetic sample size for the pseudo-population.
-#'       \item `R`: Number of bootstrap resamples.
+#'       \item `n_boot`: Number of bootstrap resamples.
 #'     }
 #'   }
 #'   \item{gcomp_bayes subclass}{Additional fields for Bayesian G-computation:

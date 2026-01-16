@@ -1,12 +1,12 @@
 
 #' Compute covariance matrix
 #'
-#' @param R correlation matrix
+#' @param cormat correlation matrix
 #' @param S vector of standard deviations covariance matrix
 #' @return Required input for \code{mvrnorm}.
 #' @keywords internal
 #'
-cor2cov <- function(R, S) {
-  # R * S %*% t(S)  # alternative
-  sweep(sweep(R, 1, S, "*"), 2, S, "*")
+cor2cov <- function(cormat, S) {
+  # cormat * S %*% t(S)  # alternative
+  sweep(sweep(cormat, 1, S, "*"), 2, S, "*")
 }

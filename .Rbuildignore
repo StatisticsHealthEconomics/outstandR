@@ -29,3 +29,4 @@ scripts/create_package_data\.R
 ^cran-comments\.md$
 ^.*\.qmd$
 ^.*\.Rmd$
+^check_results$

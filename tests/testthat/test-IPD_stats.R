@@ -5,7 +5,7 @@ library(tibble)
 # mock strategy objects ---
 
 strategy_maic <- list(
-  R = 1000,
+  n_boot = 1000,
   formula = y ~ trt,
   trt_var = "trt",
   family = binomial()
@@ -20,7 +20,7 @@ strategy_stc <- list(
   `attr<-`(which = "class", value = "stc")
 
 strategy_gcomp_ml <- list(
-  R = 1000,
+  n_boot = 1000,
   N = 1000L,
   formula = y ~ trt,
   trt_var = "trt",
@@ -87,7 +87,7 @@ test_that("calc_IPD_stats() works for MAIC", {
     scale = "log_odds")
   
   strategy_maic_single_sample <- list(
-    R = 1,   # results in TWO samples, including original
+    n_boot = 1,   # results in TWO samples, including original
     formula = y ~ trt,
     trt_var = "trt",
     family = binomial()
