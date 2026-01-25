@@ -5,13 +5,11 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/StatisticsHealthEconomics/outstandR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/StatisticsHealthEconomics/outstandR/actions/workflows/R-CMD-check.yaml)
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![License: GPL
 v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![outstandR status
 badge](https://statisticshealtheconomics.r-universe.dev/outstandR/badges/version)](https://statisticshealtheconomics.r-universe.dev/outstandR)
-
+[![CRAN status](https://www.r-pkg.org/badges/version/outstandR)](https://CRAN.R-project.org/package=outstandR)
 <!-- badges: end -->
 
 > Indirect treatment comparison with limited subject-level data
@@ -37,15 +35,26 @@ model-based standardization with two additional steps:
 
 ## Installation
 
-Install the [development version from
+Install the released version from CRAN:
+
+```r
+install.packages("outstandR")
+```
+
+Or install the [development version from
 GitHub](https://github.com/StatisticsHealthEconomics/) using R-universe:
 
 ``` r
-install.packages("outstandR", repos = c("https://statisticshealtheconomics.r-universe.dev", "https://cloud.r-project.org"))
+install.packages("outstandR", 
+  repos = c("https://statisticshealtheconomics.r-universe.dev", 
+            "https://cloud.r-project.org"))
 ```
 
 Alternatively, you may wish to download directly from the repo with
-`remotes::install_github("StatisticsHealthEconomics/outstandR")`.
+
+```r
+remotes::install_github("StatisticsHealthEconomics/outstandR")
+```
 
 ## Background
 
