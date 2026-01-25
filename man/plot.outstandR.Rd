@@ -15,6 +15,9 @@
 
 \item{labels}{Optional character vector of names for the models.}
 }
+\value{
+A \code{\link[ggplot2:ggplot]{ggplot2::ggplot()}} object representing the forest plot of the results.
+}
 \description{
 Default Plot Method for outstandR Objects
 }

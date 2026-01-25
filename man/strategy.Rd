@@ -14,7 +14,7 @@ strategy_maic(
   formula = NULL,
   family = gaussian(link = "identity"),
   trt_var = NULL,
-  R = 1000L
+  n_boot = 1000L
 )
 
 strategy_stc(
@@ -30,7 +30,7 @@ strategy_gcomp_ml(
   rho = NA,
   marginal_distns = NA,
   marginal_params = NA,
-  R = 1000L,
+  n_boot = 1000L,
   N = 1000L
 )
 
@@ -63,7 +63,7 @@ See stats::family() for more details.}
 
 \item{trt_var}{Treatment variable name; string}
 
-\item{R}{The number of resamples used for the non-parametric bootstrap; integer}
+\item{n_boot}{The number of resamples used for the non-parametric bootstrap; integer}
 
 \item{rho}{A named square matrix of covariate correlations; default NA}
 
