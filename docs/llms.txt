@@ -1,0 +1,288 @@
+# outstandR: *Out*come regression *stand*ardisation
+
+# 
+
+> Indirect treatment comparison with limited subject-level data
+
+## Overview
+
+[outstandR](https://StatisticsHealthEconomics.github.io/outstandR/) is
+an R package designed to facilitate **outcome regression
+standardisation** using model-based approaches, particularly focusing on
+G-estimation. The package provides tools to apply standardisation
+techniques for indirect treatment comparisons, especially in scenarios
+with limited individual patient data.
+
+## Who is this package for?
+
+The target audience of
+[outstandR](https://StatisticsHealthEconomics.github.io/outstandR/) is
+those who want to perform model-based standardization in the specific
+context of two-study indirect treatment comparisons with limited
+subject-level data. This is model-based standardization with two
+additional steps:
+
+1.  Covariate simulation (to overcome limited subject-level data for one
+    of the studies).
+2.  Indirect comparison across studies.
+
+## Installation
+
+Install the released version from CRAN:
+
+``` r
+install.packages("outstandR")
+```
+
+Or install the [development version from
+GitHub](https://github.com/StatisticsHealthEconomics/) using R-universe:
+
+``` r
+install.packages("outstandR", 
+  repos = c("https://statisticshealtheconomics.r-universe.dev", 
+            "https://cloud.r-project.org"))
+```
+
+Alternatively, you may wish to download directly from the repo with
+
+``` r
+remotes::install_github("StatisticsHealthEconomics/outstandR")
+```
+
+## Background
+
+Population adjustment methods are increasingly used to compare marginal
+treatment effects when there are cross-trial differences in effect
+modifiers and limited patient-level data.
+
+The [outstandR](https://StatisticsHealthEconomics.github.io/outstandR/)
+package allows the implementation of a range of methods for this
+situation including the following:
+
+- *Matching-Adjusted Indirect Comparison (MAIC)* is based on propensity
+  score weighting, which is sensitive to poor covariate overlap and
+  cannot extrapolate beyond the observed covariate space. It reweights
+  the individual patient-level data (IPD) to match the aggregate
+  characteristics of the comparator trial, thereby aligning the
+  populations.
+
+- *Simulated Treatment Comparison (STC)* relies on outcome regression
+  models fitted to IPD, conditioning on covariates to estimate the
+  effect of treatment. These estimates are then applied to the
+  aggregate-level comparator population. Like MAIC, STC is limited by
+  its conditional nature and can produce biased marginal estimates if
+  not properly marginalized.
+
+- *Parametric G-computation with maximum likelihood*: This method fits
+  an outcome model to the IPD using maximum likelihood estimation, then
+  uses that model to predict outcomes in the comparator population. It
+  allows extrapolation beyond the observed covariate space but requires
+  correct specification of the outcome model to avoid bias.
+
+- *Parametric G-computation with Bayesian inference*: Similar to the
+  maximum likelihood version, this approach fits an outcome model but
+  within a Bayesian framework. It allows coherent propagation of
+  uncertainty through prior distributions and posterior inference,
+  enabling probabilistic sensitivity analysis and full uncertainty
+  quantification.
+
+- *Multiple imputation marginalization method based on parametric
+  G-computation*: Current outcome regression-based alternatives can
+  extrapolate but target a conditional treatment effect that is
+  incompatible in the indirect comparison. When adjusting for
+  covariates, one must integrate or average the conditional estimate
+  over the relevant population to recover a compatible marginal
+  treatment effect. This can be easily applied where the outcome
+  regression is a generalized linear model or a Cox model. The approach
+  views the covariate adjustment regression as a nuisance model and
+  separates its estimation from the evaluation of the marginal treatment
+  effect of interest. The method can accommodate a Bayesian statistical
+  framework, which naturally integrates the analysis into a
+  probabilistic framework.
+
+## General problem
+
+Consider one trial, for which the company has IPD, comparing treatments
+*A* and *C*, from herein call the *AC* trial. Also, consider a second
+trial comparing treatments *B* and *C*, similarly called the *BC* trial.
+For this trial only published aggregate data are available. We wish to
+estimate a comparison of the effects of treatments *A* and *B* on an
+appropriate scale in some target population *P*, denoted by the
+parameter $`d_{AB(P)}`$. We make use of bracketed subscripts to denote a
+specific population. Within the *BC* population there are parameters
+$`\mu_{B(BC)}`$ and $`\mu_{C(BC)}`$ representing the expected outcome on
+each treatment (including parameters for treatments not studied in the
+*BC* trial, e.g. treatment *A*). The *BC* trial provides estimators
+$`\bar Y_{B(BC)}`$ and $`\bar Y_{C(BC)}`$ of $`\mu_{B(BC)}`$,
+$`\mu_{C(BC)}`$, respectively, which are the summary outcomes. It is the
+same situation for the *AC* trial.
+
+For a suitable scale, for example a log-odds ratio, or risk difference,
+we form estimators $`\Delta_{BC(BC)}`$ and $`\Delta_{AC(AC)}`$ of the
+trial level (or marginal) relative treatment effects. We shall assume
+that this is always represented as a difference so, for example, for the
+risk ratio this is on the log scale.
+
+``` math
+
+\Delta_{AC{(AC)}} = g(\bar{Y}_{C{(AC)}}) - g(\bar{Y}_{A{(AC)}})
+```
+
+and similarly for $`\Delta_{BC(BC)}`$. If we assume that there is no
+difference in effect modifiers between trials, then the estimator of the
+relative treatment effect $`d_{AB(BC)}`$ is
+
+``` math
+
+\Delta_{AB(BC)} = \Delta_{BC(BC)} - \Delta_{AC(BC)}.
+```
+
+However, when distributions of the effect modifiers are different
+between trial populations, the relative treatment effect estimated from
+each trial cannot simply be combined as above. The purpose of
+population-adjustment in ITC is to include an estimate for
+$`\Delta_{AC(BC)}`$.
+
+## References
+
+This R package contains code originally written for the papers:
+
+> Remiro-Azócar, A., Heath, A. & Baio, G. (2022) *Parametric
+> G-computation for Compatible Indirect Treatment Comparisons with
+> Limited Individual Patient Data.* Res Synth Methods;1–31.
+
+and
+
+> Remiro-Azócar, A., Heath, A., & Baio, G. (2023) *Model-based
+> standardization using multiple imputation. BMC Medical Research
+> Methodology*, 1–15. <https://doi.org/10.1186/s12874-024-02157-x>
+
+## Contributing
+
+We welcome contributions! Please submit contributions through
+`Pull Requests`, following the [contributing
+guidelines](https://github.com/n8thangreen/BCEA/blob/dev/CONTRIBUTING.md).
+To report issues and/or seek support, please file a new ticket in the
+[issue](https://github.com/StatisticsHealthEconomics/outstandR/issues)
+tracker.
+
+Please note that this project is released with a [Contributor Code of
+Conduct](https://github.com/n8thangreen/BCEA/blob/dev/CONDUCT.md). By
+participating in this project you agree to abide by its terms.
+
+> \[!NOTE\] This package is licensed under the GPLv3. For more
+> information, see [LICENSE](https://www.gnu.org/licenses/gpl-3.0).
+
+# Package index
+
+## Main
+
+Main analysis functions.
+
+- [`outstandR-class`](https://StatisticsHealthEconomics.github.io/outstandR/reference/outstandR-class.md)
+  : outstandR class
+- [`outstandR()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/outstandR.md)
+  : Calculate the difference between treatments using all evidence
+- [`strategy_maic()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md)
+  [`strategy_stc()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md)
+  [`strategy_gcomp_ml()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md)
+  [`strategy_gcomp_bayes()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md)
+  [`strategy_mim()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md)
+  [`new_strategy()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md)
+  : New strategy objects
+
+## Constituent statistics
+
+Helper functions used by the main functions.
+
+- [`marginal_treatment_effect()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/marginal_treatment_effect.md)
+  : Marginal treatment effect from reported event counts
+- [`marginal_variance()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/marginal_variance.md)
+  : Marginal effect variance using the delta method
+- [`calculate_trial_variance()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/calculate_trial_variance.md)
+  : Calculate trial variance
+- [`calculate_ate()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/calculate_ate.md)
+  : Calculate Average Treatment Effect
+- [`calculate_trial_mean()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/calculate_trial_mean.md)
+  : Calculate Trial Mean Wrapper
+- [`calculate_trial_mean_binary()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/calculate_trial_mean_binary.md)
+  : Calculate Trial Mean Binary Data
+- [`calculate_trial_mean_continuous()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/calculate_trial_mean_continuous.md)
+  : Calculate Trial Mean Continuous Data
+- [`calculate_trial_mean_count()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/calculate_trial_mean_count.md)
+  : Calculate Trial Mean Count Data
+- [`calculate_trial_variance_binary()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/calculate_trial_variance_binary.md)
+  : Calculate trial variance binary
+- [`calculate_trial_variance_continuous()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/calculate_trial_variance_continuous.md)
+  : Calculate trial variance continuous
+- [`calculate_trial_variance_count()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/calculate_trial_variance_count.md)
+  : Calculate trial variance count
+- [`estimate_var_sandwich()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/estimate_var_sandwich.md)
+  : Estimate Variance Sandwich Estimator
+- [`calc_ALD_stats()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_ALD_stats.md)
+  : Aggregate-level data mean and variance statistics
+- [`calc_gcomp_bayes()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_gcomp_bayes.md)
+  : Bayesian G-computation using Stan
+- [`calc_gcomp_ml()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_gcomp_ml.md)
+  : G-computation Maximum Likelihood Bootstrap
+- [`calc_IPD_stats()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_IPD_stats.md)
+  : Calculate individual-level patient data statistics
+- [`get_treatment_effect()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/get_treatment_effect.md)
+  : Get treatment effect scale corresponding to a link function
+
+## Miscellaneous
+
+- [`print(`*`<outstandR>`*`)`](https://StatisticsHealthEconomics.github.io/outstandR/reference/print.outstandR.md)
+  : Print a Summary of a outstandR Object
+- [`plot(`*`<outstandR>`*`)`](https://StatisticsHealthEconomics.github.io/outstandR/reference/plot.outstandR.md)
+  : Default Plot Method for outstandR Objects
+- [`summary(`*`<outstandR>`*`)`](https://StatisticsHealthEconomics.github.io/outstandR/reference/summary.outstandR.md)
+  [`print(`*`<summary.outstandR>`*`)`](https://StatisticsHealthEconomics.github.io/outstandR/reference/summary.outstandR.md)
+  : Summary method for outstandR
+- [`reshape_ald_to_long()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/reshape_ald_to_long.md)
+  : Convert aggregate data from wide to long format
+- [`reshape_ald_to_wide()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/reshape_ald_to_wide.md)
+  : Convert aggregate data from long to wide format
+
+## Data
+
+- [`AC_IPD_binY_contX`](https://StatisticsHealthEconomics.github.io/outstandR/reference/AC_IPD_binY_contX.md)
+  : Individual-level patient data for binary outcome, continuous
+  covariates
+- [`BC_ALD_binY_contX`](https://StatisticsHealthEconomics.github.io/outstandR/reference/BC_ALD_binY_contX.md)
+  : Aggregate level patient data for binary outcome, continuous
+  covariates
+- [`AC_IPD_contY_mixedX`](https://StatisticsHealthEconomics.github.io/outstandR/reference/AC_IPD_contY_mixedX.md)
+  : Individual-level patient data for continuous outcome, mixed
+  covariates
+- [`AC_IPD_countY_contX`](https://StatisticsHealthEconomics.github.io/outstandR/reference/AC_IPD_countY_contX.md)
+  : Individual-level patient data for count outcome, continuous
+  covariates
+- [`BC_ALD_contY_mixedX`](https://StatisticsHealthEconomics.github.io/outstandR/reference/BC_ALD_contY_mixedX.md)
+  : Aggregate level patient data for continuous outcome, mixed
+  covariates
+- [`BC_ALD_countY_contX`](https://StatisticsHealthEconomics.github.io/outstandR/reference/BC_ALD_countY_contX.md)
+  : Aggregate level patient data for count outcome, continuous
+  covariates
+
+## Classes
+
+- [`strategy-class`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy-class.md)
+  : Strategy class and subclasses
+
+# Articles
+
+### Binary outcome data example
+
+- [Binary data
+  example](https://StatisticsHealthEconomics.github.io/outstandR/articles/Binary_outcome_example.md):
+
+### Continuous outcome data example
+
+- [Continuous data
+  example](https://StatisticsHealthEconomics.github.io/outstandR/articles/Continuous_outcome_example.md):
+
+### Count outcome data example
+
+- [Count data
+  example](https://StatisticsHealthEconomics.github.io/outstandR/articles/Count_outcome_example.md):

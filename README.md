@@ -32,8 +32,8 @@ indirect treatment comparisons with limited subject-level data. This is
 model-based standardization with two additional steps:
 
 1.  Covariate simulation (to overcome limited subject-level data for one
-    of the studies)
-2.  Indirect comparison across studies
+    of the studies).
+2.  Indirect comparison across studies.
 
 ## Installation
 
