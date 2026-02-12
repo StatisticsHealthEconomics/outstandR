@@ -31,7 +31,7 @@ strategy_maic <- function(formula = NULL,
                           trt_var = NULL,
                           n_boot = 1000L) {
   
-  trt_var <- get_treatment_name(outcome_model, trt_var)
+  trt_var <- get_treatment_name(formula$outcome_model, trt_var)
   
   # back-compatibility
   if (!is.list(formula)) {
