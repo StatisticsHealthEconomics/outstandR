@@ -27,8 +27,6 @@
 #' @export
 #'
 strategy_maic <- function(formula = NULL,
-                          balance_model = NULL,
-                          outcome_model = NULL,
                           family = gaussian(link = "identity"),
                           trt_var = NULL,
                           n_boot = 1000L) {
@@ -36,7 +34,7 @@ strategy_maic <- function(formula = NULL,
   trt_var <- get_treatment_name(outcome_model, trt_var)
   
   # back-compatibility
-  if (!is.null(formula)) {
+  if (!is.list(formula)) {
     message("Note: Using legacy 'formula' argument.")
     message(paste("--> Analysis Model:", deparse(formula)))
     
@@ -51,6 +49,9 @@ strategy_maic <- function(formula = NULL,
     # C. Print the inferred assumption
     message(paste("--> Inferred Balance Model: ~", paste(balance_vars, collapse = " + ")))
     message("    (Balancing on means of these covariates by default)")
+  } else {
+    outcome_model <- formula$outcome_model
+    balance_model <- formula$balance_model
   }
   
   if (is.null(outcome_model)) {
@@ -104,12 +105,13 @@ strategy_maic <- function(formula = NULL,
 #' @export
 # 
 strategy_stc <- function(formula = NULL,
-                         outcome_model = NULL,
                          family = gaussian(link = "identity"),
                          trt_var = NULL) {
   # back-compatibility
-  if (!is.null(formula)) {
+  if (!is.list(formula)) {
     outcome_model <- formula
+  } else {
+    outcome_model <- formula$outcome_model
   }
   
   check_formula(outcome_model, trt_var)
@@ -166,7 +168,6 @@ strategy_stc <- function(formula = NULL,
 #' @export
 #'
 strategy_gcomp_ml <- function(formula = NULL,
-                              outcome_model = NULL,
                               family = gaussian(link = "identity"),
                               trt_var = NULL,
                               rho = NA,
@@ -175,8 +176,10 @@ strategy_gcomp_ml <- function(formula = NULL,
                               n_boot = 1000L,
                               N = 1000L) {
   # back-compatibility
-  if (!is.null(formula)) {
+  if (!is.list(formula)) {
     outcome_model <- formula
+  } else {
+    outcome_model <- formula$outcome_model
   }
   
   check_formula(outcome_model, trt_var)
@@ -246,7 +249,6 @@ strategy_gcomp_ml <- function(formula = NULL,
 #' @export
 #'
 strategy_gcomp_bayes <- function(formula = NULL,
-                                 outcome_model = NULL,
                                  family = gaussian(link = "identity"),
                                  trt_var = NULL,
                                  rho = NA,
@@ -254,8 +256,10 @@ strategy_gcomp_bayes <- function(formula = NULL,
                                  marginal_params = NA,
                                  N = 1000L) {
   # back-compatibility
-  if (!is.null(formula)) {
+  if (!is.list(formula)) {
     outcome_model <- formula
+  } else {
+    outcome_model <- formula$outcome_model
   }
   
   check_formula(outcome_model, trt_var)
@@ -290,14 +294,15 @@ strategy_gcomp_bayes <- function(formula = NULL,
 #' @export
 # 
 strategy_mim <- function(formula = NULL,
-                         outcome_model = NULL,
                          family = gaussian(link = "identity"),
                          trt_var= NULL,
                          rho = NA,
                          N = 1000L) {
   # back-compatibility
-  if (!is.null(formula)) {
+  if (!is.list(formula)) {
     outcome_model <- formula
+  } else {
+    outcome_model <- formula$outcome_model
   }
   
   check_formula(outcome_model, trt_var)
