@@ -53,7 +53,10 @@ strategy_maic <- function(formula = NULL,
     message("    (Balancing on means of these covariates by default)")
   }
   
-  if (!is.null(outcome_model)) {
+  if (is.null(outcome_model)) {
+    ##TODO: where to get the outcome and trt from if we don't have the outcome model?
+    outcome_model <- glue::glue("{formula[[2]]} ~ {trt_var}")
+  } else {
     check_formula(outcome_model, trt_var)
   }
   
