@@ -4,7 +4,7 @@ library(dplyr)
 library(glue)
 
 
-test_that("different combinations of covariates in formula", {
+test_that("different combinations of covariates in formula MAIC", {
   
   load(test_path("testdata/BC_ALD.RData"))
   load(test_path("testdata/AC_IPD.RData"))
@@ -30,8 +30,10 @@ test_that("different combinations of covariates in formula", {
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_31))
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_13))
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_1))
+})
 
-  # stc
+test_that("different combinations of covariates in formula STC", {
+
   expect_error(strategy_stc(formula = as.formula("y ~ 1")),
                regexp = "Treatment term 'trt' is missing in the formula")
   
@@ -198,4 +200,16 @@ test_that("mismatch between covariates in ald and ipd / formula", {
   # transformed covariates in formula
   # I(X1^2)
 })
+
+#
+test_that("balance on second moment in MAIC", {
+  ##TODO:
+})
+
+#
+test_that("provide only balance model in MAIC", {
+  ##TODO:
+})
+
+
 
