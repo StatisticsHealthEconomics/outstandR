@@ -71,7 +71,8 @@ Q <- function(beta, X) {
 #' @keywords internal
 #' 
 maic.boot <- function(ipd, indices = 1:nrow(ipd),
-                      formula, family, ald,
+                      outcome_model, balance_model,
+                      family, ald,
                       trt_var,
                       hat_w = NULL) {
   
@@ -85,7 +86,7 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
     return(c(pC = NA, pA = NA, rep(NA, n_ipd), ESS = NA))
   }
   
-  effect_modifier_names <- get_eff_mod_names(formula, trt_var)
+  effect_modifier_names <- get_eff_mod_names(balance_model, trt_var)
   
   if (length(effect_modifier_names) > 0) {
 
@@ -138,27 +139,38 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
   # Calculate Effective Sample Size (ESS)
   ESS <- sum(hat_w)^2 / sum(hat_w^2)
   
-  formula_treat <- glue::glue("{formula[[2]]} ~ {trt_var}")
-  
   # so can use non-integer weights
   if (family$family == "binomial") {
     family <- quasibinomial()
   }
   
   # fit weighted regression model
-  fit <- glm(formula = formula_treat,
+  fit <- glm(formula = outcome_model,
              family = family,
              weights = hat_w / mean(hat_w),
              data = cbind(dat, hat_w = hat_w))
   
-  # extract model coefficients
-  coef_fit <- coef(fit)
-  
   # probabilities using inverse link
   linkinv <- family$linkinv
   
-  pC <- unname(linkinv(coef_fit[1]))                # probability for control group
-  pA <- unname(linkinv(coef_fit[1] + coef_fit[2]))  # probability for treatment group
+  # extract model coefficients
+  coef_fit <- coef(fit)
+  
+  # index of the treatment variable
+  trt_coef_name <- grep(trt_var, names(coef_fit), value = TRUE)
+  
+  # Handle potential failure to find exact match (e.g. factors)
+  if (length(trt_coef_name) == 0) {
+    stop("Could not find treatment coefficient in fitted model.", call. = FALSE)
+  }
+  
+  # extract specific coefficients
+  intercept <- coef_fit["(Intercept)"]
+  trt_effect <- coef_fit[trt_coef_name]
+  
+  # calculate probabilities (assuming linear additivity on link scale)
+  pC <- unname(linkinv(intercept))
+  pA <- unname(linkinv(intercept + trt_effect))
   
   c(pC = pC, 
     pA = pA, 
@@ -190,7 +202,8 @@ calc_maic <- function(strategy,
                       analysis_params) {
   args_list <- 
     list(R = strategy$n_boot,
-         formula = strategy$formula,
+         balance_model = strategy$balance_model,
+         outcome_model = strategy$outcome_model,
          family = strategy$family,
          trt_var = strategy$trt_var,
          data = analysis_params$ipd,

@@ -37,7 +37,7 @@ calc_mim <- function(strategy,
   ald <- analysis_params$ald 
   ref_trt <- analysis_params$ref_trt
   comp_trt <- analysis_params$ipd_comp
-  formula <- strategy$formula
+  formula <- strategy$outcome_model
   family <- strategy$family
   rho <- strategy$rho
   N <- strategy$N

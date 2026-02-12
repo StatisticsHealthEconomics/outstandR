@@ -15,7 +15,7 @@
 #'   \item{`mean`}{The marginal treatment effect mean.}
 #'   \item{`var`}{The marginal treatment effect variance.}
 #' }
-#' @seealso [marginal_treatment_effect()], [marginal_variance()]
+#' @seealso [marginal_treatment_effect()] [marginal_variance()]
 #' @export
 #' @examples
 #' strategy <- list(family = list(family = "binomial"))  # basic version

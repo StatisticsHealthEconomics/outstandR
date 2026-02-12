@@ -219,6 +219,4 @@ TODO
 
 ## See also
 
-`strategy_gcomp_bayes()`
-
-`strategy_gcomp_ml()`,[`copula::Mvdc()`](https://rdrr.io/pkg/copula/man/Mvdc.html)
+[`strategy_gcomp_bayes()`] [`strategy_gcomp_ml()`] [`copula::Mvdc()`](https://rdrr.io/pkg/copula/man/Mvdc.html)

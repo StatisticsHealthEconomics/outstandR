@@ -78,7 +78,7 @@ calc_gcomp_bayes <- function(strategy,
   user_args <- list(...)
   stan_args <- modifyList(default_stan_args, user_args)
   
-  formula <- strategy$formula
+  formula <- strategy$outcome_model
   family <- strategy$family
   rho <- strategy$rho
   N <- strategy$N

@@ -54,12 +54,12 @@ gcomp_ml.boot <- function(data, indices,
 #'   * `stats`: Named vector of marginal mean probabilities
 #'   * `model`: The fitted glm object
 #'   
-#' @seealso [strategy_gcomp_ml()], [gcomp_ml.boot()]
+#' @seealso [strategy_gcomp_ml()] [gcomp_ml.boot()]
 #' @importFrom copula normalCopula mvdc rMvdc
 #' @importFrom stats predict glm
 #' @keywords internal
 #'
-gcomp_ml_means <- function(formula,
+gcomp_ml_means <- function(outcome_model,
                            family,
                            ipd, ald,
                            trt_var,
@@ -70,7 +70,7 @@ gcomp_ml_means <- function(formula,
                            marginal_distns = NA,
                            marginal_params = NA) {
   
-  x_star <- simulate_ALD_pseudo_pop(formula = formula,
+  x_star <- simulate_ALD_pseudo_pop(formula = outcome_model,
                                     ipd = ipd, ald = ald,
                                     trt_var = trt_var, 
                                     rho = rho, N = N,
@@ -78,7 +78,7 @@ gcomp_ml_means <- function(formula,
                                     marginal_params = marginal_params)
   
   # outcome logistic regression fitted to IPD using maximum likelihood
-  fit <- glm(formula = formula,
+  fit <- glm(formula = outcome_model,
              family = family,
              data = ipd)
   

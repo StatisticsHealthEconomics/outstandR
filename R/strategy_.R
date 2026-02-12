@@ -27,19 +27,50 @@
 #' @export
 #'
 strategy_maic <- function(formula = NULL,
+                          balance_model = NULL,
+                          outcome_model = NULL,
                           family = gaussian(link = "identity"),
                           trt_var = NULL,
                           n_boot = 1000L) {
-  check_formula(formula, trt_var)
+  
+  trt_var <- get_treatment_name(outcome_model, trt_var)
+  
+  # back-compatibility
+  if (!is.null(formula)) {
+    message("Note: Using legacy 'formula' argument.")
+    message(paste("--> Analysis Model:", deparse(formula)))
+    
+    # internally convert to the balance model
+    # stripping 'y' and 'trt')
+    rhs_vars <- all.vars(delete.response(terms(formula)))
+    balance_vars <- setdiff(rhs_vars, trt_var)
+    
+    balance_model <- as.formula(paste("~", paste(balance_vars, collapse = " + ")))
+    outcome_model <- formula
+    
+    # C. Print the inferred assumption
+    message(paste("--> Inferred Balance Model: ~", paste(balance_vars, collapse = " + ")))
+    message("    (Balancing on means of these covariates by default)")
+  }
+  
+  if (!is.null(outcome_model)) {
+    check_formula(outcome_model, trt_var)
+  }
+  
+  if (!is.null(balance_model)) {
+    check_balance_formula(balance_model, trt_var) 
+  }
+  
   check_family(family)
   
   if (n_boot <= 0 || n_boot %% 1 != 0) {
     stop("n_boot not positive whole number.")
   }
   
-  args <- list(formula = formula,
+  args <- list(balance_model = balance_model,
+               outcome_model = outcome_model,
                family = family,
-               trt_var = get_treatment_name(formula, trt_var),
+               trt_var = ,
                n_boot = n_boot)
   
   do.call(new_strategy, c(strategy = "maic", args))
@@ -70,14 +101,20 @@ strategy_maic <- function(formula = NULL,
 #' @export
 # 
 strategy_stc <- function(formula = NULL,
+                         outcome_model = NULL,
                          family = gaussian(link = "identity"),
                          trt_var = NULL) {
-  check_formula(formula, trt_var)
+  # back-compatibility
+  if (!is.null(formula)) {
+    outcome_model <- formula
+  }
+  
+  check_formula(outcome_model, trt_var)
   check_family(family)
   
-  args <- list(formula = formula,
+  args <- list(outcome_model = outcome_model,
                family = family,
-               trt_var = get_treatment_name(formula, trt_var))
+               trt_var = get_treatment_name(outcome_model, trt_var))
   
   do.call(new_strategy, c(strategy = "stc", args))
 }
@@ -126,6 +163,7 @@ strategy_stc <- function(formula = NULL,
 #' @export
 #'
 strategy_gcomp_ml <- function(formula = NULL,
+                              outcome_model = NULL,
                               family = gaussian(link = "identity"),
                               trt_var = NULL,
                               rho = NA,
@@ -133,9 +171,14 @@ strategy_gcomp_ml <- function(formula = NULL,
                               marginal_params = NA,
                               n_boot = 1000L,
                               N = 1000L) {
-  check_formula(formula, trt_var)
+  # back-compatibility
+  if (!is.null(formula)) {
+    outcome_model <- formula
+  }
+  
+  check_formula(outcome_model, trt_var)
   check_family(family)
-  check_distns(formula, marginal_distns, marginal_params)
+  check_distns(outcome_model, marginal_distns, marginal_params)
   check_rho(rho)
   
   if (n_boot <= 0 || n_boot %% 1 != 0) {
@@ -145,10 +188,10 @@ strategy_gcomp_ml <- function(formula = NULL,
     stop("N not positive whole number.")
   }
   
-  args <- list(formula = formula,
+  args <- list(outcome_model = outcome_model,
                family = family,
                rho = rho,
-               trt_var = get_treatment_name(formula, trt_var),
+               trt_var = get_treatment_name(outcome_model, trt_var),
                marginal_distns = marginal_distns,
                marginal_params = marginal_params,
                n_boot = n_boot,
@@ -196,28 +239,34 @@ strategy_gcomp_ml <- function(formula = NULL,
 #' 
 #' @return `gcomp_bayes` class object
 #' @importFrom utils modifyList
-#' @seealso [strategy_gcomp_ml()],[copula::Mvdc()]
+#' @seealso [strategy_gcomp_ml()] [copula::Mvdc()]
 #' @export
 #'
 strategy_gcomp_bayes <- function(formula = NULL,
+                                 outcome_model = NULL,
                                  family = gaussian(link = "identity"),
                                  trt_var = NULL,
                                  rho = NA,
                                  marginal_distns = NA,
                                  marginal_params = NA,
                                  N = 1000L) {
-  check_formula(formula, trt_var)
+  # back-compatibility
+  if (!is.null(formula)) {
+    outcome_model <- formula
+  }
+  
+  check_formula(outcome_model, trt_var)
   check_family(family)
-  check_distns(formula, marginal_distns, marginal_params)
+  check_distns(outcome_model, marginal_distns, marginal_params)
   check_rho(rho)
   
   if (N <= 0 || N %% 1 != 0) {
     stop("N not positive whole number.")
   }
   
-  args <- list(formula = formula,
+  args <- list(outcome_model = outcome_model,
                family = family,
-               trt_var = get_treatment_name(formula, trt_var),
+               trt_var = get_treatment_name(outcome_model, trt_var),
                rho = rho,
                marginal_distns = marginal_distns,
                marginal_params = marginal_params,
@@ -238,11 +287,17 @@ strategy_gcomp_bayes <- function(formula = NULL,
 #' @export
 # 
 strategy_mim <- function(formula = NULL,
+                         outcome_model = NULL,
                          family = gaussian(link = "identity"),
                          trt_var= NULL,
                          rho = NA,
                          N = 1000L) {
-  check_formula(formula, trt_var)
+  # back-compatibility
+  if (!is.null(formula)) {
+    outcome_model <- formula
+  }
+  
+  check_formula(outcome_model, trt_var)
   check_family(family)
   check_rho(rho)
   
@@ -250,9 +305,9 @@ strategy_mim <- function(formula = NULL,
     stop("N not positive whole number.")
   }
   
-  args <- list(formula = formula,
+  args <- list(outcome_model = outcome_model,
                family = family,
-               trt_var = get_treatment_name(formula, trt_var),
+               trt_var = get_treatment_name(outcome_model, trt_var),
                rho = rho,
                N = N)
   
@@ -335,10 +390,23 @@ check_distns <- function(formula,
 }
 
 
+##TODO:
+# # draft for doubly robust PAIC
+# strategy_dr(
+#   # weighting Model
+#   # "Make the populations look the same"
+#   balance_model = ~ age + sex + severity,
+#   
+#   # outcome Model (STC)
+#   # "Predict the outcome if the populations were the same"
+#   outcome_model = y ~ trt + age + sex
+# )
+
+##TODO:
 ## generic construction 
 ## could be useful if number of method gets big
 #
-# strategy_gcomp_bayes <- function(formula = NULL,
+# strategy_template <- function(formula = NULL,
 #                                 family = gaussian(link = "identity"),
 #                                 rho = NA,
 #                                 N = 1000L) {

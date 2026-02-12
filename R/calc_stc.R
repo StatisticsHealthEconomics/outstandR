@@ -24,10 +24,10 @@ calc_stc <- function(strategy, analysis_params, ...) {
   # single fit
   run_stc_once <- function(data) {
     # centre covariates within this specific bootstrap sample
-    centre_vars <- get_eff_mod_names(strategy$formula)
+    centre_vars <- get_eff_mod_names(strategy$outcome_model)
     data[, centre_vars] <- scale(data[, centre_vars], scale = FALSE)
     
-    fit <- glm(formula = strategy$formula,
+    fit <- glm(formula = strategy$outcome_model,
                family = strategy$family,
                data = data)
     
