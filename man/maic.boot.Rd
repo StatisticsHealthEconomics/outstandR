@@ -7,7 +7,8 @@
 maic.boot(
   ipd,
   indices = 1:nrow(ipd),
-  formula,
+  outcome_model,
+  balance_model,
   family,
   ald,
   trt_var,
@@ -20,9 +21,6 @@ maic.boot(
 \item{indices}{Vector of indices, same length as original,
 which define the bootstrap sample}
 
-\item{formula}{Linear regression \code{formula} object. Prognostic factors (PF) are main effects and effect modifiers (EM) are
-interactions with the treatment variable, e.g., y ~ X1 + trt + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
-
 \item{family}{A 'family' object specifying the distribution and link function (e.g., 'binomial').
 See stats::family() for more details.}
 
@@ -30,6 +28,9 @@ See stats::family() for more details.}
 We assume a common distribution for each treatment arm.}
 
 \item{hat_w}{MAIC weights; default \code{NULL} which calls \code{\link[=maic_weights]{maic_weights()}}}
+
+\item{formula}{Linear regression \code{formula} object. Prognostic factors (PF) are main effects and effect modifiers (EM) are
+interactions with the treatment variable, e.g., y ~ X1 + trt + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
 }
 \value{
 Vector of fitted probabilities for treatments \emph{A} and \emph{C}

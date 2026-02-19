@@ -22,6 +22,7 @@
 #'   Choose from "log-odds", "log_relative_risk", "risk_difference", "delta_z", "mean_difference", "rate_difference" depending on the data type.
 #' @param var_method Variance estimation method.
 #' @param seed Random seed.
+#' @param verbose Logical. If `TRUE`, prints progress messages and warnings.
 #' @param ... Additional arguments. Currently, can pass named arguments to `rstanarm::stan_glm()` via `strategy_gcomp_bayes()`.
 #' 
 #' @return List of length 11 of statistics as a `outstandR` class object.
@@ -82,6 +83,7 @@ outstandR <- function(ipd_trial, ald_trial, strategy,
                       scale = NULL, 
                       var_method = NULL,
                       seed = NULL,
+                      verbose = TRUE,
                       ...) {
   if (!is.null(seed)) {
     set.seed(seed) 
@@ -91,6 +93,11 @@ outstandR <- function(ipd_trial, ald_trial, strategy,
   
   validate_outstandr(ipd_trial, ald_trial, strategy, CI, scale)
 
+  if (verbose) {
+    cli::cli_h1("Starting outstandR Analysis")
+    cli::cli_alert_info("Strategy: {.strong {class(strategy)[1]}}")
+  }
+  
   trt_var <- strategy$trt_var
   
   ipd <- prep_ipd(strategy$formula, ipd_trial)
@@ -112,7 +119,8 @@ outstandR <- function(ipd_trial, ald_trial, strategy,
     ref_trt = ref_trt,
     ipd_comp = ipd_comp,
     ald_comp = ald_comp,
-    var_method = var_method
+    var_method = var_method,
+    verbose = verbose
   )
   
   analysis_params <- add_seed(strategy, analysis_params, seed)

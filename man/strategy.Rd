@@ -120,6 +120,12 @@ where the weight \eqn{w_{it}} assigned to the \eqn{i}-th individual receiving tr
 
 \section{Simulated treatment comparison (STC)}{
 
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+\code{strategy_stc()} was deprecated in outstandR version 1.X.X.
+We recommend using G-computation (\code{strategy_gcomp_ml()}) as a more robust
+alternative for this type of analysis.
+
 Outcome regression-based method which targets a conditional treatment effect.
 STC is a modification of the covariate adjustment method.
 An outcome model is fitted using IPD in the \emph{AB} trial. For example,
@@ -204,5 +210,5 @@ TODO
 \seealso{
 \code{\link[=strategy_gcomp_bayes]{strategy_gcomp_bayes()}}
 
-\code{\link[=strategy_gcomp_ml]{strategy_gcomp_ml()}},\code{\link[copula:Mvdc]{copula::Mvdc()}}
+\code{\link[=strategy_gcomp_ml]{strategy_gcomp_ml()}} \code{\link[copula:Mvdc]{copula::Mvdc()}}
 }

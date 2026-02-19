@@ -200,6 +200,14 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
 #' 
 calc_maic <- function(strategy,
                       analysis_params) {
+  
+  verbose <- isTRUE(analysis_params$verbose)
+  
+  if (verbose) {
+    cli::cli_h2("MAIC Execution")
+    cli::cli_alert_info("Calculating weights using method of moments...")
+  }
+  
   args_list <- 
     list(R = strategy$n_boot,
          balance_model = strategy$balance_model,
@@ -208,6 +216,13 @@ calc_maic <- function(strategy,
          trt_var = strategy$trt_var,
          data = analysis_params$ipd,
          ald = analysis_params$ald)
+  
+  if (verbose) {
+    cli::cli_alert_info("Starting Bootstrap with {.val {strategy$n_boot}} replicates.")
+    if (strategy$n_boot > 1000) {
+      cli::cli_alert_warning("High iteration count detected. This may take some time.")
+    }
+  }
   
   maic_boot <- do.call(boot::boot, c(statistic = maic.boot, args_list))
   

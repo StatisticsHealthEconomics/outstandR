@@ -83,6 +83,12 @@ strategy_maic <- function(formula = NULL,
 #' @rdname strategy
 #' 
 #' @section Simulated treatment comparison (STC):
+#' `r lifecycle::badge("deprecated")`
+#' 
+#' `strategy_stc()` was deprecated in outstandR version 1.X.X. 
+#' We recommend using G-computation (`strategy_gcomp_ml()`) as a more robust 
+#' alternative for this type of analysis.
+#' 
 #' Outcome regression-based method which targets a conditional treatment effect.
 #' STC is a modification of the covariate adjustment method.
 #' An outcome model is fitted using IPD in the _AB_ trial. For example,
@@ -107,6 +113,12 @@ strategy_maic <- function(formula = NULL,
 strategy_stc <- function(formula = NULL,
                          family = gaussian(link = "identity"),
                          trt_var = NULL) {
+  lifecycle::deprecate_warn(
+    when = "1.X.X",                           # version it is deprecated in
+    what = "outstandR::strategy_stc()",       # function being deprecated
+    with = "outstandR::strategy_gcomp_ml()"   # suggested alternative (optional)
+  )
+  
   # back-compatibility
   if (!is.list(formula)) {
     outcome_model <- formula

@@ -59,6 +59,8 @@
 calc_gcomp_bayes <- function(strategy,
                              analysis_params, ...) {
   
+  verbose <- isTRUE(analysis_params$verbose)
+  
   # extract seed, or default to a random integer if missing/NULL
   bayes_seed <- analysis_params$seed
   
@@ -66,13 +68,21 @@ calc_gcomp_bayes <- function(strategy,
     bayes_seed <- sample.int(.Machine$integer.max, 1)
   }
   
+  # If verbose is TRUE, let Stan print every 500 iters. If FALSE, silence it (0).
+  stan_refresh <- if (verbose) 500 else 0
+  
   default_stan_args <- list(
     algorithm = "sampling",
     chains = 2,
     iter = 2000,
-    refresh = 0,  # quiet
+    refresh = stan_refresh,
     seed = bayes_seed
   )
+  
+  if (verbose) {
+    cli::cli_h2("G-Computation (Bayesian) Execution")
+    cli::cli_alert_info("Compiling/Sampling Stan model...")
+  }
   
   # merge with user-provided dots
   user_args <- list(...)
@@ -177,6 +187,14 @@ calc_gcomp_bayes <- function(strategy,
 #'
 calc_gcomp_ml <- function(strategy,
                           analysis_params) {
+  
+  verbose <- isTRUE(analysis_params$verbose)
+  
+  if (verbose) {
+    cli::cli_h2("G-Computation (ML) Execution")
+    cli::cli_alert_info("Fitting initial model...")
+  }
+  
   common_args <- list(
     formula = strategy$formula,
     family = strategy$family,
@@ -197,6 +215,16 @@ calc_gcomp_ml <- function(strategy,
     common_args, list(
       data = analysis_params$ipd, 
       R = strategy$n_boot))
+  
+  if (verbose) {
+    cli::cli_alert_info("Starting Bootstrap: {.val {strategy$n_boot}} replicates.")
+    cli::cli_alert_info("Simulating pseudo-pop (N={strategy$N}) per replicate.")
+    
+    total_ops <- strategy$n_boot * strategy$N
+    if (total_ops > 5e5) {
+      cli::cli_alert_warning("Large computation detected ({.val {total_ops}} simulations). Grab a coffee.")
+    }
+  }
   
   gcomp_boot <- do.call(boot::boot, c(statistic = gcomp_ml.boot, args_boot))
   
