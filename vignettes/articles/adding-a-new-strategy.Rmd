@@ -203,3 +203,79 @@ scaffold_strategy("gcomp_rf")
 ```
 
 This will instantly set up your workspace, leaving you to focus solely on the statistical implementation rather than package wiring!
+
+Here is a section you can add to your Markdown document (perhaps at the end, right before or after the scaffolding script) that outlines best practices for writing a robust, user-friendly strategy in `outstandR`.
+
+---
+
+## Best Practices for Writing a Good Strategy
+
+When contributing a new statistical approach to `outstandR`, following these guidelines ensures your method is robust, user-friendly, and maintainable.
+
+### 1. Fail Fast and Validate Early
+
+Catch user errors in the constructor function (`strategy_custom_method()`) before any heavy computation begins.
+
+* Use the package's built-in `check_formula()` and `check_family()` helpers.
+* If your method requires specific types of data (e.g., only binary outcomes), enforce it immediately:
+```r
+if (family$family != "binomial") {
+  cli::cli_abort("Custom Method currently only supports binary outcomes (`family = binomial()`).")
+}
+
+```
+
+
+
+### 2. Return a Rich `model` Object
+
+The core calculation function must return a list with `means` and `model`. While `means` is strictly structured, the `model` element is a free-form list. Use this to give the user as much diagnostic power as possible.
+
+* **Good things to include:** The raw fitted model objects (e.g., `glm` or `stanfit`), calculated weights, convergence status flags, and effective sample sizes (ESS).
+* This allows users to extract the `model` from the final `outstandR` object and check diagnostics themselves.
+
+### 3. Handle Convergence Issues Gracefully
+
+Many population adjustment methods rely on optimization or iterative fitting (like GLMs or MAIC). If an internal model fails to converge, your function shouldn't crash the entire R session—especially during a bootstrap loop.
+
+* Wrap volatile model fitting in `tryCatch()`.
+* If a fit fails, return `NA` for the means and pass a warning to the user.
+```r
+fit <- tryCatch({
+  glm(formula, data = ipd, family = family)
+}, warning = function(w) {
+  # Handle warnings (e.g., probabilities numerically 0 or 1)
+  glm(formula, data = ipd, family = family)
+}, error = function(e) {
+  NULL # Return NULL on hard failure
+})
+
+if (is.null(fit)) return(list(means = list(A = NA, C = NA), model = list(converged = FALSE)))
+
+```
+
+
+
+### 4. Respect the `verbose` Flag
+
+`outstandR` provides a global `verbose` argument so users can silence console output during heavy simulations.
+
+* Extract `verbose <- isTRUE(analysis_params$verbose)` at the top of your calculation function.
+* Use the `cli` package to print progress updates or warn users about computationally expensive steps, but *only* if `verbose` is true.
+```r
+if (verbose) {
+  cli::cli_h2("Custom Method Execution")
+  cli::cli_alert_info("Optimizing weights. This may take a moment...")
+}
+
+```
+
+
+
+### 5. Write Unit Tests for Your Method
+
+Whenever you add a new strategy, add a corresponding test file in `tests/testthat/` (e.g., `test-custom_method.R`).
+
+* Test that the strategy constructor throws errors on bad inputs.
+* Use the package's built-in dummy data (`AC_IPD_binY_contX`, etc.) to run a fast, low-iteration version of your method to ensure the output list matches the required `list(means = ..., model = ...)` structure.
+
