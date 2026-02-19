@@ -58,3 +58,4 @@ RdMacros: Rdpack
 URL: https://StatisticsHealthEconomics.github.io/outstandR/
 BugReports: https://github.com/StatisticsHealthEconomics/outstandR/issues/
 LazyData: false
+Config/Needs/website: rmarkdown

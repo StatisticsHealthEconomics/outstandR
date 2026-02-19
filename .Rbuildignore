@@ -30,3 +30,4 @@ scripts/create_package_data\.R
 ^.*\.qmd$
 ^.*\.Rmd$
 ^check_results$
+^vignettes/articles$
