@@ -21,6 +21,9 @@ calc_stc <- function(strategy, analysis_params, ...) {
   
   n_boot <- if (!is.null(args$N)) args$N else 1000
   
+  ref_trt <- analysis_params$ref_trt
+  comp_trt <- analysis_params$ipd_comp
+  
   # single fit
   run_stc_once <- function(data) {
     # centre covariates within this specific bootstrap sample
@@ -32,15 +35,15 @@ calc_stc <- function(strategy, analysis_params, ...) {
                data = data)
     
     # extract means
-    coef_fit <- coef(fit)
+    coef_fit <- stats::coef(fit)
     treat_coef_name <- grep(pattern = paste0("^", strategy$trt_var, "[^:]*$"),
                             names(coef_fit), value = TRUE)
     
     linkinv <- strategy$family$linkinv
     
     list(
-      A = as.numeric(linkinv(coef_fit[1] + coef_fit[treat_coef_name])),
-      C = as.numeric(linkinv(coef_fit[1])),
+      comp = as.numeric(linkinv(coef_fit[1] + coef_fit[treat_coef_name])),
+      ref = as.numeric(linkinv(coef_fit[1])),
       fit = fit
     )
   }
@@ -56,18 +59,24 @@ calc_stc <- function(strategy, analysis_params, ...) {
   })
   
   # collate bootstrap samples into vectors
-  boot_A <- sapply(boot_results, function(x) x$A)
-  boot_C <- sapply(boot_results, function(x) x$C)
+  boot_comp <- sapply(boot_results, function(x) x$comp)
+  boot_ref <- sapply(boot_results, function(x) x$ref)
   
+  # Dynamically assign names 
+  means_list <- stats::setNames(
+    list(boot_comp, boot_ref), 
+    c(comp_trt, ref_trt))
+  
+  point_est_list <- stats::setNames(
+    list(main_res$comp, main_res$ref), 
+    c(comp_trt, ref_trt))
+  
+  # Harmonized return structure
   list(
-    means = list(
-      A = boot_A,
-      C = boot_C),
-    point_estimates = list(
-      A = main_res$A, 
-      C = main_res$C),  ##TODO: should we use these instead of `means`?
+    means = means_list,
+    point_estimates = point_est_list,
     model = list(
       fit = main_res$fit,
-      N = n_boot)
+      N = n_boot) # Represents number of STC bootstrap replications here
   )
 }

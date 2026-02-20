@@ -135,6 +135,15 @@ simulate_ALD_pseudo_pop <- function(formula,
     set.seed(seed)
   }
   
+  if (verbose) {
+    cli::cli_alert_warning(c(
+      "Gaussian copula methods may not properly capture the joint distribution ",
+      "for certain marginal combinations (e.g., highly skewed variables, ",
+      "extreme proportions, or strict bounds). It is highly recommended to ",
+      "check the summary statistics of the simulated pseudo-population."
+    ))
+  }
+  
   resolved <- 
     prepare_covariate_distns(
       formula, ald, trt_var, 
@@ -198,6 +207,8 @@ simulate_ALD_pseudo_pop <- function(formula,
   # simulate data
   x_star <- as.data.frame(copula::rMvdc(n = N, mvd))
   colnames(x_star) <- covariate_names
+  
+  ##TOOD: calculate mean and sd of x_star and compare with target ALD means
   
   return(x_star)
 }
