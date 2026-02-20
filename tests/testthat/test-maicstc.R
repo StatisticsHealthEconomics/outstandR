@@ -9,18 +9,30 @@ test_that("different combinations of covariates in formula MAIC", {
   load(test_path("testdata/BC_ALD.RData"))
   load(test_path("testdata/AC_IPD.RData"))
   
-  # maic
-  expect_error(strategy_maic(formula = as.formula("y ~ 1")),
-               regexp = "Treatment term 'trt' is missing in the formula")
-
-  expect_message(strategy_maic(formula = as.formula("y ~ X3 + X4")),
-                 regexp = "Treatment is guessed as:")
+  # maic ---
   
-  strat_1234 <- strategy_maic(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"))
-  strat_123 <- strategy_maic(formula = as.formula("y ~ X1 + X2 + trt + trt:X2 + trt:X3"))
-  strat_31 <- strategy_maic(formula = as.formula("y ~ X3 + trt*X1"))
-  strat_13 <- strategy_maic(formula = as.formula("y ~ trt*X1 + X3"))
-  strat_1 <- strategy_maic(formula = as.formula("y ~ trt*X1"))
+  expect_error(strategy_maic(
+    formula = list(balance_model = as.formula("~ 1"))),
+    regexp = "Treatment term 'trt' is missing in the formula")
+  
+  expect_message(strategy_maic(
+    formula = list(balance_model = as.formula("~ X3 + X4"))),
+    regexp = "Treatment is guessed as:")
+  
+  strat_1234 <- strategy_maic(
+    formula = list(balance_model = as.formula("~ X3 + X4 + X1 + X2")))
+
+  strat_123 <- strategy_maic(
+    formula = list(balance_model = as.formula("~ X1 + X2 + X3")))
+
+  strat_31 <- strategy_maic(
+    formula = list(balance_model = as.formula("~ X3 + X1")))
+
+  strat_13 <- strategy_maic(
+    formula = list(balance_model = as.formula("~ X1 + X3")))
+
+  strat_1 <- strategy_maic(
+    formula = list(balance_model = as.formula("~ X1")))
   
   res <- outstandR(AC_IPD, BC_ALD, strategy = strat_1234)
   expect_length(res, 11)
@@ -34,16 +46,25 @@ test_that("different combinations of covariates in formula MAIC", {
 
 test_that("different combinations of covariates in formula STC", {
 
-  expect_error(strategy_stc(formula = as.formula("y ~ 1")),
-               regexp = "Treatment term 'trt' is missing in the formula")
+  expect_error(strategy_stc(
+    formula = list(outcome_model = as.formula("y ~ 1"))),
+    regexp = "Treatment term 'trt' is missing in the formula")
   
-  expect_message(strategy_stc(formula = as.formula("y ~ X3 + X4")),
-                 regexp = "Treatment is guessed as:")
+  expect_message(strategy_stc(
+    formula = list(outcome_model = as.formula("y ~ X3 + X4"))),
+    regexp = "Treatment is guessed as:")
   
-  strat_1234 <- strategy_stc(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"))
-  strat_31 <- strategy_stc(formula = as.formula("y ~ X3 + trt*X1"))
-  strat_13 <- strategy_stc(formula = as.formula("y ~ trt*X1 + X3"))
-  strat_1 <- strategy_stc(formula = as.formula("y ~ trt*X1"))
+  strat_1234 <- strategy_stc(
+    formula = list(outcome_model = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")))
+  
+  strat_31 <- strategy_stc(
+    formula = list(outcome_model = as.formula("y ~ X3 + trt*X1")))
+  
+  strat_13 <- strategy_stc(
+    formula = list(outcome_model = as.formula("y ~ trt*X1 + X3")))
+  
+  strat_1 <- strategy_stc(
+    list(outcome_model = formula = as.formula("y ~ trt*X1")))
 
   expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_1234)$results$contrasts$means$AC,
                expected = -0.27, tolerance = 0.1)

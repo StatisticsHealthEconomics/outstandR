@@ -6,14 +6,14 @@ library(tibble)
 
 strategy_maic <- list(
   n_boot = 1000,
-  formula = y ~ trt,
+  formula = list(balance_model = ~ .),
   trt_var = "trt",
   family = binomial()
 ) |> 
   `attr<-`(which = "class", value = "maic")
 
 strategy_stc <- list(
-  formula = y ~ trt,
+  formula = list(outcome_model = y ~ trt),
   trt_var = "trt",
   family = binomial()
 ) |> 
@@ -22,14 +22,14 @@ strategy_stc <- list(
 strategy_gcomp_ml <- list(
   n_boot = 1000,
   N = 1000L,
-  formula = y ~ trt,
+  formula = list(outcome_model = y ~ trt),
   trt_var = "trt",
   family = binomial()
 ) |> 
   `attr<-`(which = "class", value = "gcomp_ml")
 
 strategy_gcomp_bayes <- list(
-  formula = y ~ trt,
+  formula = list(outcome_model = y ~ trt),
   trt_var = "trt",
   N = 1000L,
   family = binomial()
@@ -37,7 +37,7 @@ strategy_gcomp_bayes <- list(
   `attr<-`(which = "class", value = "gcomp_bayes")
 
 strategy_mim <- list(
-  formula = y ~ trt,
+  formula = list(outcome_model = y ~ trt),
   trt_var = "trt",
   N = 1000L,
   family = binomial()

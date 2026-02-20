@@ -461,7 +461,7 @@ test_that("simulate_ALD_pseudo_pop continuous via outstandR", {
     ipd_trial = ipd_trial_cont,
     ald_trial = ald_trial_cont,
     strategy = strategy_gcomp_ml(
-      formula = form,
+      formula = list(outcome_model = form),
       marginal_distns = marginals_orig$marginal_dists,
       marginal_params = marginals_orig$marginal_params))
   
@@ -891,11 +891,14 @@ test_that("simulate directly with binary data with marginals", {
   
   # via outstandR()
   
+  form_maic <- ~ PF_bin_1 + PF_bin_2 + EM_bin_1 + EM_bin_2
+  
   expect_error(
     outstandR(
       ipd_trial = ipd_trial_bin,
       ald_trial = ald_trial_bin,
-      strategy = strategy_maic(formula = form),  # doesnt use pseudo data
+      strategy = strategy_maic(
+        formula = list(balance_model = form_maic)),  # doesnt use pseudo data
       marginal_distns = marginals_orig$marginal_dists,
       marginal_params = marginals_orig$marginal_params),
     regexp = "unused arguments")
