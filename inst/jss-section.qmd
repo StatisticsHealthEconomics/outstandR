@@ -114,7 +114,8 @@ outstandR_maic <- outstandR(
   ipd_trial = AC_IPD_binY_contX,
   ald_trial = BC_ALD_binY_contX,
   strategy = strategy_maic(
-    formula = lin_form_contX,
+    formula = list(outcome_model = y ~ trt,
+                   balance_model = bal_form_contX),
     family = binomial(link = "logit")
   )
 )
@@ -134,7 +135,7 @@ outstandR_stc <- outstandR(
   ipd_trial = AC_IPD_binY_contX,
   ald_trial = BC_ALD_binY_contX,
   strategy = strategy_stc(
-    formula = lin_form_contX,
+    formula = list(outcome_model = lin_form_contX),
     family = binomial(link = "logit")
   )
 )
@@ -144,7 +145,7 @@ outstandR_gcomp_ml <- outstandR(
   ipd_trial = AC_IPD_binY_contX,
   ald_trial = BC_ALD_binY_contX,
   strategy = strategy_gcomp_ml(
-    formula = lin_form_contX,
+    formula = list(outcome_model = lin_form_contX),
     family = binomial(link = "logit")
   )
 )
@@ -156,7 +157,7 @@ outstandR_gcomp_bayes <- outstandR(
   ald_trial = BC_ALD_binY_contX,
   refresh = 0, 
   strategy = strategy_gcomp_bayes(
-    formula = lin_form_contX,
+    formula = list(outcome_model = lin_form_contX),
     family = binomial(link = "logit")
   )
 )
@@ -167,7 +168,7 @@ outstandR_mim <- outstandR(
   ald_trial = BC_ALD_binY_contX,
   refresh = 0,
   strategy = strategy_mim(
-    formula = lin_form_contX,
+    formula = list(outcome_model = lin_form_contX),
     family = binomial(link = "logit")
   )
 )
@@ -239,7 +240,8 @@ outstandR_maic <- outstandR(
   ipd_trial = AC_IPD_contY_mixedX, 
   ald_trial = BC_ALD_contY_mixedX,
   strategy = strategy_maic(
-    formula = lin_form_mixedX,
+    formula = list(outcome_model = y ~ trt,
+                   balance_model = bal_form_mixedX),
     family = gaussian(link = "identity")
   )
 )
@@ -300,7 +302,8 @@ outstandR_maic <- outstandR(
   ipd_trial = AC_IPD_countY_contX,
   ald_trial = BC_ALD_countY_contX,
   strategy = strategy_maic(
-    formula = lin_form_contX,
+    formula = list(outcome_model = y ~ trt,
+                   balance_model = bal_form_contX),
     family = poisson(link = "log")
   )
 )
@@ -335,7 +338,8 @@ outstandR_maic_rd <- outstandR(
   ipd_trial = AC_IPD_binY_contX, 
   ald_trial = BC_ALD_binY_contX,
   strategy = strategy_maic(
-    formula = lin_form_contX,
+    formula = list(outcome_model = y ~ trt,
+                   balance_model = bal_form_contX),
     family = binomial(link = "logit")
   ),
   scale = "risk_difference"  # instead of default log-odds ratio
@@ -355,21 +359,21 @@ This is particularly useful for methods like STC and G-computation (ML) where th
 The following example demonstrates how to compare the naive model-based standard error with the robust sandwich estimate for an STC analysis:
 
 ```{r robust-variance}
-# standard STC analysis
+# standard G-computation ML analysis
 stc_naive <- outstandR(
   ipd_trial = AC_IPD_binY_contX,
   ald_trial = BC_ALD_binY_contX,
-  strategy = strategy_stc(
-    formula = lin_form_contX,
+  strategy = strategy_gcomp_ml(
+    formula = list(outcome_model = lin_form_contX),
     family = binomial()),
   var_method = "sample") # Default
 
-# STC with robust variance (sandwich estimator)
+# G-computation ML with robust variance (sandwich estimator)
 stc_robust <- outstandR(
   ipd_trial = AC_IPD_binY_contX,
   ald_trial = BC_ALD_binY_contX,
-  strategy = strategy_stc(
-    formula = lin_form_contX,
+  strategy = strategy_gcomp_ml(
+    formula = list(outcome_model = lin_form_contX),
     family = binomial()),
   var_method = "sandwich")
 
@@ -399,7 +403,7 @@ outstandR_sens <- outstandR(
    ipd_trial = AC_IPD_contY_mixedX,
    ald_trial = BC_ALD_contY_mixedX,
    strategy = strategy_gcomp_ml(
-     formula = lin_form_mixedX,
+     formula = list(outcome_model = lin_form_mixedX),
      family = gaussian(link = "identity"),
      marginal_distns = new_distns,
      N = 1000))
@@ -431,7 +435,7 @@ outstandR_sens <- outstandR(
    ipd_trial = AC_IPD_contY_mixedX,
    ald_trial = BC_ALD_contY_mixedX,
    strategy = strategy_gcomp_ml(
-     formula = lin_form_mixedX,
+     formula = list(outcome_model = lin_form_mixedX),
      family = gaussian(link = "identity"),
      marginal_distns = new_distns,
      marginal_params = new_params, # overrides ALD for X1
