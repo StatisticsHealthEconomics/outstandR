@@ -100,61 +100,46 @@ calc_gcomp_bayes <- function(strategy,
   marginal_distns <- strategy$marginal_distns
   marginal_params <- strategy$marginal_params
   
-  # number of ALD simulations to perform
-  n_sims <- if (!is.null(strategy$n_sims)) strategy$n_sims else 100
-  
   # outcome logistic regression fitted to IPD using MCMC (Stan)
   outcome_model <- do.call(rstanarm::stan_glm, c(
     list(formula = formula, data = ipd, family = family),
     stan_args
   ))
   
-  comp_draws_list <- vector("list", n_sims)
-  ref_draws_list <- vector("list", n_sims)
+  # simulate ALD pseudo-population ONCE (N handles Monte Carlo Integration)
+  x_star <- simulate_ALD_pseudo_pop(formula, ipd, ald, trt_var, rho, N,
+                                    marginal_distns = marginal_distns,
+                                    marginal_params = marginal_params)
+  # counterfactual datasets
+  data_comp <- data_ref <- x_star
   
-  # Loop over multiple ALD simulated pseudo-populations
-  for (i in seq_len(n_sims)) {
-    
-    x_star <- simulate_ALD_pseudo_pop(formula, ipd, ald, trt_var, rho, N,
-                                      marginal_distns = marginal_distns,
-                                      marginal_params = marginal_params)
-    # counterfactual datasets
-    data_comp <- data_ref <- x_star
-    
-    # Intervene safely, maintaining factor levels
-    if (is.factor(ipd[[trt_var]])) {
-      data_comp[[trt_var]] <- factor(comp_trt, levels = levels(ipd[[trt_var]]))
-      data_ref[[trt_var]]  <- factor(ref_trt, levels = levels(ipd[[trt_var]]))
-    } else {
-      data_comp[[trt_var]] <- comp_trt  
-      data_ref[[trt_var]]  <- ref_trt   
-    }
-    
-    # # draw responses from posterior predictive distribution
-    # y.star.comp <- rstanarm::posterior_predict(outcome_model, newdata = data_comp)
-    # y.star.ref  <- rstanarm::posterior_predict(outcome_model, newdata = data_ref)
-    
-    # Draw EXPECTED responses (posterior_epred)
-    y.star.comp <- rstanarm::posterior_epred(outcome_model, newdata = data_comp)
-    y.star.ref  <- rstanarm::posterior_epred(outcome_model, newdata = data_ref)
-    
-    # Marginalize over the pseudo-population for each MCMC iteration
-    comp_draws_list[[i]] <- rowMeans(y.star.comp)
-    ref_draws_list[[i]]  <- rowMeans(y.star.ref)
+  # Intervene safely, maintaining factor levels
+  if (is.factor(ipd[[trt_var]])) {
+    data_comp[[trt_var]] <- factor(comp_trt, levels = levels(ipd[[trt_var]]))
+    data_ref[[trt_var]]  <- factor(ref_trt, levels = levels(ipd[[trt_var]]))
+  } else {
+    data_comp[[trt_var]] <- comp_trt  
+    data_ref[[trt_var]]  <- ref_trt   
   }
   
-  # Pool draws across all simulated pseudo-populations
-  pooled_comp <- unlist(comp_draws_list)
-  pooled_ref  <- unlist(ref_draws_list)
+  # # draw responses from posterior predictive distribution
+  # y.star.comp <- rstanarm::posterior_predict(outcome_model, newdata = data_comp)
+  # y.star.ref  <- rstanarm::posterior_predict(outcome_model, newdata = data_ref)
   
-  # Dynamically assign names and calculate point estimates
-  means_list <- stats::setNames(
-    list(pooled_comp, pooled_ref),
-    c(comp_trt, ref_trt))
+  # Draw EXPECTED responses (posterior_epred) over the fixed x_star grid
+  y.star.comp <- rstanarm::posterior_epred(outcome_model, newdata = data_comp)
+  y.star.ref  <- rstanarm::posterior_epred(outcome_model, newdata = data_ref)
   
-  point_est_list <- stats::setNames(
-    list(mean(pooled_comp), mean(pooled_ref)),
-    c(comp_trt, ref_trt))
+  comp_draws <- rowMeans(y.star.comp)
+  ref_draws  <- rowMeans(y.star.ref)
+  
+  # harmonized return structure with dynamic naming
+  means_list <- 
+    stats::setNames(list(comp_draws, ref_draws), 
+                    c(comp_trt, ref_trt))
+  point_est_list <- 
+    stats::setNames(list(mean(comp_draws), mean(ref_draws)), 
+                    c(comp_trt, ref_trt))
   
   list(
     means = means_list,
@@ -163,7 +148,6 @@ calc_gcomp_bayes <- function(strategy,
       fit = outcome_model,
       rho = rho,
       N = N,
-      n_sims = n_sims,
       stan_args = stan_args)
   )
 }

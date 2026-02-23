@@ -57,39 +57,40 @@ calc_mim <- function(strategy,
     stan_args
   ))
   
+  # Resample ALD pseudo-population to capture covariate uncertainty
+  x_star <- simulate_ALD_pseudo_pop(formula, ipd, ald, trt_var, rho, N,
+                                    marginal_distns = marginal_distns,
+                                    marginal_params = marginal_params)
+  
+  # create augmented target dataset
+  target.comp <- target.ref <- x_star
+  
+  # Intervene safely, maintaining factor levels
+  if (is.factor(ipd[[trt_var]])) {
+    target.comp[[trt_var]] <- factor(comp_trt, levels = levels(ipd[[trt_var]]))
+    target.ref[[trt_var]]  <- factor(ref_trt, levels = levels(ipd[[trt_var]]))
+  } else {
+    target.comp[[trt_var]] <- comp_trt  
+    target.ref[[trt_var]]  <- ref_trt   
+  }
+  
+  aug.target <- rbind(target.ref, target.comp)
+  
+  # set reference treatment as base level
+  aug.target[[trt_var]] <- factor(aug.target[[trt_var]],
+                                  levels = c(ref_trt, comp_trt))
+  
+  # complete syntheses by drawing binary outcomes
+  # from their posterior predictive distribution
+  y_star_m <- rstanarm::posterior_predict(outcome_model, 
+                                          newdata = aug.target,
+                                          draws = n_imp)
+  
+  # ANALYSIS STAGE ---
+  
   reg2.fits <- vector("list", n_imp)
   
   for(m in seq_len(n_imp)) {
-    # Resample ALD pseudo-population to capture covariate uncertainty
-    x_star <- simulate_ALD_pseudo_pop(formula, ipd, ald, trt_var, rho, N,
-                                      marginal_distns = marginal_distns,
-                                      marginal_params = marginal_params)
-    
-    # create augmented target dataset
-    target.comp <- target.ref <- x_star
-    
-    # Intervene safely, maintaining factor levels
-    if (is.factor(ipd[[trt_var]])) {
-      target.comp[[trt_var]] <- factor(comp_trt, levels = levels(ipd[[trt_var]]))
-      target.ref[[trt_var]]  <- factor(ref_trt, levels = levels(ipd[[trt_var]]))
-    } else {
-      target.comp[[trt_var]] <- comp_trt  
-      target.ref[[trt_var]]  <- ref_trt   
-    }
-    
-    aug.target <- rbind(target.ref, target.comp)
-    
-    # set reference treatment as base level
-    aug.target[[trt_var]] <- factor(aug.target[[trt_var]],
-                                    levels = c(ref_trt, comp_trt))
-    
-    # complete syntheses by drawing binary outcomes
-    # from their posterior predictive distribution
-    y_star_m <- rstanarm::posterior_predict(outcome_model, 
-                                            newdata = aug.target,
-                                            draws = 1)
-    
-    # ANALYSIS STAGE ---
     
     # fit second-stage regression to each synthesis using maximum-likelihood estimation
     data_m <- aug.target
@@ -111,14 +112,17 @@ calc_mim <- function(strategy,
   
   # point estimates for the variance in each synthesis
   hats.v <- unlist(lapply(reg2.fits, function(fit)
-    vcov(fit)[treat_coef_name, treat_coef_name]))
+    stats::vcov(fit)[treat_coef_name, treat_coef_name]))
   
   mean_ref <- family$linkinv(coef_fit[, 1])     # probability for reference
   mean_comp <- family$linkinv(coef_fit[, 1] + coef_fit[, treat_coef_name])  # probability for comparator
   
   # Harmonized Output Naming
-  means_list <- stats::setNames(list(mean_comp, mean_ref), c(comp_trt, ref_trt))
-  point_est_list <- stats::setNames(list(mean(mean_comp), mean(mean_ref)), c(comp_trt, ref_trt))
+  means_list <- stats::setNames(list(mean_comp, mean_ref), 
+                                c(comp_trt, ref_trt))
+  
+  point_est_list <- stats::setNames(list(mean(mean_comp), mean(mean_ref)), 
+                                    c(comp_trt, ref_trt))
   
   list(
     means = means_list,
