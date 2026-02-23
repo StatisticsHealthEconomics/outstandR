@@ -8,9 +8,9 @@
 #' @param ... Additional argument to pass to Stan model
 #' 
 #' @return A list containing:
-#' * `means`: A list containing vectors of posterior means (one per synthesis `n_imp`):
-#'     * `A`: Comparator means.
-#'     * `C`: Reference means.
+#' * `means`: A list containing named vectors of posterior means (one per synthesis `n_imp`):
+#'     * Comparator means.
+#'     * Reference means.
 #' * `model`: A list containing:
 #'     * `fit`: The first-stage [rstanarm::stan_glm()] object.
 #'     * `hats.v`: Vector of variance point estimates for each synthesis.
