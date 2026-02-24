@@ -18,10 +18,10 @@ Contains modelling details like the formula and family.}
 \value{
 A list containing:
 \itemize{
-\item \code{means}: A list containing vectors of posterior means (one per synthesis \code{n_imp}):
+\item \code{means}: A list containing named vectors of posterior means (one per synthesis \code{n_imp}):
 \itemize{
-\item \code{A}: Comparator means.
-\item \code{C}: Reference means.
+\item Comparator means.
+\item Reference means.
 }
 \item \code{model}: A list containing:
 \itemize{
