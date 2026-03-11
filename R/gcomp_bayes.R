@@ -100,61 +100,46 @@ calc_gcomp_bayes <- function(strategy,
   marginal_distns <- strategy$marginal_distns
   marginal_params <- strategy$marginal_params
   
-  # number of ALD simulations to perform
-  n_sims <- if (!is.null(strategy$n_sims)) strategy$n_sims else 100
-  
   # outcome logistic regression fitted to IPD using MCMC (Stan)
   outcome_model <- do.call(rstanarm::stan_glm, c(
     list(formula = formula, data = ipd, family = family),
     stan_args
   ))
   
-  comp_draws_list <- vector("list", n_sims)
-  ref_draws_list <- vector("list", n_sims)
+  # simulate ALD pseudo-population ONCE (N handles Monte Carlo Integration)
+  x_star <- simulate_ALD_pseudo_pop(formula, ipd, ald, trt_var, rho, N,
+                                    marginal_distns = marginal_distns,
+                                    marginal_params = marginal_params)
+  # counterfactual datasets
+  data_comp <- data_ref <- x_star
   
-  # Loop over multiple ALD simulated pseudo-populations
-  for (i in seq_len(n_sims)) {
-    
-    x_star <- simulate_ALD_pseudo_pop(formula, ipd, ald, trt_var, rho, N,
-                                      marginal_distns = marginal_distns,
-                                      marginal_params = marginal_params)
-    # counterfactual datasets
-    data_comp <- data_ref <- x_star
-    
-    # Intervene safely, maintaining factor levels
-    if (is.factor(ipd[[trt_var]])) {
-      data_comp[[trt_var]] <- factor(comp_trt, levels = levels(ipd[[trt_var]]))
-      data_ref[[trt_var]]  <- factor(ref_trt, levels = levels(ipd[[trt_var]]))
-    } else {
-      data_comp[[trt_var]] <- comp_trt  
-      data_ref[[trt_var]]  <- ref_trt   
-    }
-    
-    # # draw responses from posterior predictive distribution
-    # y.star.comp <- rstanarm::posterior_predict(outcome_model, newdata = data_comp)
-    # y.star.ref  <- rstanarm::posterior_predict(outcome_model, newdata = data_ref)
-    
-    # Draw EXPECTED responses (posterior_epred)
-    y.star.comp <- rstanarm::posterior_epred(outcome_model, newdata = data_comp)
-    y.star.ref  <- rstanarm::posterior_epred(outcome_model, newdata = data_ref)
-    
-    # Marginalize over the pseudo-population for each MCMC iteration
-    comp_draws_list[[i]] <- rowMeans(y.star.comp)
-    ref_draws_list[[i]]  <- rowMeans(y.star.ref)
+  # Intervene safely, maintaining factor levels
+  if (is.factor(ipd[[trt_var]])) {
+    data_comp[[trt_var]] <- factor(comp_trt, levels = levels(ipd[[trt_var]]))
+    data_ref[[trt_var]]  <- factor(ref_trt, levels = levels(ipd[[trt_var]]))
+  } else {
+    data_comp[[trt_var]] <- comp_trt  
+    data_ref[[trt_var]]  <- ref_trt   
   }
   
-  # Pool draws across all simulated pseudo-populations
-  pooled_comp <- unlist(comp_draws_list)
-  pooled_ref  <- unlist(ref_draws_list)
+  # # draw responses from posterior predictive distribution
+  # y.star.comp <- rstanarm::posterior_predict(outcome_model, newdata = data_comp)
+  # y.star.ref  <- rstanarm::posterior_predict(outcome_model, newdata = data_ref)
   
-  # Dynamically assign names and calculate point estimates
-  means_list <- stats::setNames(
-    list(pooled_comp, pooled_ref),
-    c(comp_trt, ref_trt))
+  # Draw EXPECTED responses (posterior_epred) over the fixed x_star grid
+  y.star.comp <- rstanarm::posterior_epred(outcome_model, newdata = data_comp)
+  y.star.ref  <- rstanarm::posterior_epred(outcome_model, newdata = data_ref)
   
-  point_est_list <- stats::setNames(
-    list(mean(pooled_comp), mean(pooled_ref)),
-    c(comp_trt, ref_trt))
+  comp_draws <- rowMeans(y.star.comp)
+  ref_draws  <- rowMeans(y.star.ref)
+  
+  # harmonized return structure with dynamic naming
+  means_list <- 
+    stats::setNames(list(comp_draws, ref_draws), 
+                    c(comp_trt, ref_trt))
+  point_est_list <- 
+    stats::setNames(list(mean(comp_draws), mean(ref_draws)), 
+                    c(comp_trt, ref_trt))
   
   list(
     means = means_list,
@@ -163,128 +148,6 @@ calc_gcomp_bayes <- function(strategy,
       fit = outcome_model,
       rho = rho,
       N = N,
-      n_sims = n_sims,
       stan_args = stan_args)
-  )
-}
-
-
-#' G-computation Maximum Likelihood Bootstrap
-#'
-#' Computes the mean difference in treatment effects using bootstrap resampling.
-#'
-#' @param strategy A list specifying the model strategy, including:
-#'   * `R`: Number of bootstrap replications.
-#'   * `outcome_model`: A linear regression `formula` object for the outcome model.
-#'   * `family`: A `family` object specifying the distribution and link function
-#'     (e.g., `binomial`).
-#'   * `N`: Synthetic sample size for g-computation.
-#' @param analysis_params List of analysis parameters.
-#'
-#' @return A list containing:
-#' * `means`: A list containing:
-#'     * `A`: Bootstrap estimates for comparator treatment group "A".
-#'     * `C`: Bootstrap estimates for reference treatment group "C".
-#' * `model`: A list containing the `fit` object, `rho`, and `N`.
-#'
-#' @importFrom boot boot
-#' @examples
-#' strategy <- list(
-#'   outcome_model = y ~ trt:X1,
-#'   family = binomial(),
-#'   rho = NA,
-#'   N = 1000L,
-#'   n_boot = 100L,
-#'   marginal_distns = NA,
-#'   marginal_params = NA,
-#'   trt_var = "trt")
-#' 
-#' ipd <- data.frame(trt = sample(c("A", "C"), size = 100, replace = TRUE),
-#'                   X1 = rnorm(100, 1, 1),
-#'                   y = sample(c(1,0), size = 100, prob = c(0.7,0.3), replace = TRUE))
-#' 
-#' ald <- data.frame(trt = c(NA, NA, "B", "C", "B", "C"),
-#'                   variable = c("X1", "X1", "y", "y", NA, NA),
-#'                   statistic = c("mean", "sd", "sum", "sum", "N", "N"),
-#'                   value = c(0.5, 0.1, 10, 12, 20, 25))
-#' 
-#' calc_gcomp_ml(
-#'   strategy,
-#'   analysis_params = 
-#'     list(ipd = ipd, ald = ald, 
-#'          ref_trt = "C", 
-#'          ipd_comp = "A"))
-#'          
-#' @export
-#'
-calc_gcomp_ml <- function(strategy,
-                          analysis_params) {
-  
-  verbose <- isTRUE(analysis_params$verbose)
-  
-  if (verbose) {
-    cli::cli_h2("G-Computation (ML) Execution")
-    cli::cli_alert_info("Fitting initial model...")
-  }
-  
-  # Extract treatment names for dynamic naming
-  ref_trt <- analysis_params$ref_trt
-  comp_trt <- analysis_params$ipd_comp
-  
-  common_args <- list(
-    outcome_model = strategy$outcome_model,
-    family = strategy$family,
-    trt_var = strategy$trt_var,
-    ref_trt = ref_trt,
-    comp_trt = comp_trt,
-    rho = strategy$rho,
-    N = strategy$N,
-    marginal_distns = strategy$marginal_distns,
-    marginal_params = strategy$marginal_params,
-    ald = analysis_params$ald)
-  
-  # single run for fit
-  args_orig <- c(common_args, list(ipd = analysis_params$ipd))
-  original_run <- do.call(gcomp_ml_means, args_orig)
-  
-  args_boot <- c(
-    common_args, list(
-      data = analysis_params$ipd, 
-      R = strategy$n_boot))
-  
-  if (verbose) {
-    cli::cli_alert_info("Starting Bootstrap: {.val {strategy$n_boot}} replicates.")
-    cli::cli_alert_info("Simulating pseudo-pop (N={strategy$N}) per replicate.")
-    
-    total_ops <- strategy$n_boot * strategy$N
-    if (total_ops > 5e5) {
-      cli::cli_alert_warning("Large computation detected ({.val {total_ops}} simulations). Grab a coffee.")
-    }
-  }
-  
-  # Run Bootstrap
-  gcomp_boot <- do.call(boot::boot, c(statistic = gcomp_ml.boot, args_boot))
-  
-  # Dynamically assign names to the bootstrap distributions
-  # (Assuming boot returns: col 1 = reference, col 2 = comparator based on original logic)
-  means_list <- stats::setNames(
-    list(gcomp_boot$t[, 2], gcomp_boot$t[, 1]), 
-    c(comp_trt, ref_trt)
-  )
-  
-  # Extract original sample point estimates from boot$t0 
-  point_est_list <- stats::setNames(
-    list(gcomp_boot$t0[2], gcomp_boot$t0[1]), 
-    c(comp_trt, ref_trt)
-  )
-  
-  list(
-    means = means_list,
-    point_estimates = point_est_list,
-    model = list(
-      fit = original_run$model,
-      rho = strategy$rho,
-      N = strategy$N,
-      n_boot = strategy$n_boot)
   )
 }

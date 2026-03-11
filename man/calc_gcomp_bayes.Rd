@@ -26,8 +26,8 @@ A list containing:
 \itemize{
 \item \code{means}: A list containing:
 \itemize{
-\item \code{A}: Posterior means for comparator treatment group "A".
-\item \code{C}: Posterior means for reference treatment group "C".
+\item Posterior means for comparator treatment group.
+\item Posterior means for reference treatment group.
 }
 \item \code{model}: A list containing the \code{fit} object (from \code{stan_glm}), \code{rho}, \code{N},
 and \code{stan_args}.
