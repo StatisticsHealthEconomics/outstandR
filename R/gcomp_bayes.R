@@ -5,7 +5,7 @@
 #' from the Bayesian G-computation method using Hamiltonian Monte Carlo.
 #'
 #' @param strategy A list specifying the model strategy, including:
-#'   * `formula`: A linear regression `formula` object.
+#'   * `outcome_model`: A linear regression `formula` object.
 #'   * `family`: A `family` object specifying the distribution and link function
 #'     (e.g., `binomial`).
 #'   * `iter`: Number of iterations for the MCMC sampling.
@@ -25,7 +25,7 @@
 #' @importFrom rstanarm stan_glm posterior_predict
 #' @examples
 #' strategy <- list(
-#'   formula = y ~ trt:X1,
+#'   outcome_model = y ~ trt:X1,
 #'   family = binomial(),
 #'   rho = NA,
 #'   N = 1000L,
@@ -175,7 +175,7 @@ calc_gcomp_bayes <- function(strategy,
 #'
 #' @param strategy A list specifying the model strategy, including:
 #'   * `R`: Number of bootstrap replications.
-#'   * `formula`: A linear regression `formula` object.
+#'   * `outcome_model`: A linear regression `formula` object for the outcome model.
 #'   * `family`: A `family` object specifying the distribution and link function
 #'     (e.g., `binomial`).
 #'   * `N`: Synthetic sample size for g-computation.
@@ -190,7 +190,7 @@ calc_gcomp_bayes <- function(strategy,
 #' @importFrom boot boot
 #' @examples
 #' strategy <- list(
-#'   formula = y ~ trt:X1,
+#'   outcome_model = y ~ trt:X1,
 #'   family = binomial(),
 #'   rho = NA,
 #'   N = 1000L,
@@ -232,7 +232,7 @@ calc_gcomp_ml <- function(strategy,
   comp_trt <- analysis_params$ipd_comp
   
   common_args <- list(
-    formula = strategy$formula,
+    outcome_model = strategy$outcome_model,
     family = strategy$family,
     trt_var = strategy$trt_var,
     ref_trt = ref_trt,

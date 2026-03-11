@@ -100,9 +100,24 @@ outstandR <- function(ipd_trial, ald_trial, strategy,
   
   trt_var <- strategy$trt_var
   
-  ipd <- prep_ipd(strategy$formula, ipd_trial)
-  ald <- prep_ald(strategy$formula, ald_trial, trt_var = trt_var)
-
+  # combine outcome_model and balance_model into a single formula
+  combined_formula <- strategy$outcome_model
+  
+  if (!is.null(strategy$balance_model)) {
+    balance_terms <- attr(terms(strategy$balance_model), "term.labels")
+    
+    if (length(balance_terms) > 0) {
+      # add balance terms to the right-hand side of outcome formula
+      combined_formula <- update(
+        combined_formula, 
+        paste(". ~ . +", paste(balance_terms, collapse = " + "))
+      )
+    }
+  }
+  
+  ipd <- prep_ipd(combined_formula, ipd_trial)
+  ald <- prep_ald(combined_formula, ald_trial, trt_var = trt_var)
+  
   ref_trt <- get_ref_trt(ref_trt, trt_var, ipd_trial, ald_trial)
   
   # treatment names for each study
@@ -134,7 +149,9 @@ outstandR <- function(ipd_trial, ald_trial, strategy,
     .Data = list(
       results = stats,
       call = cl,
-      formula = strategy$formula,
+      outcome_model = strategy$outcome_model, 
+      balance_model = strategy$balance_model,
+      formula = combined_formula,
       CI = CI,
       ref_trt = ref_trt,
       ipd_comp = ipd_comp,

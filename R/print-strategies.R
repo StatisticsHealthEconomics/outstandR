@@ -14,7 +14,15 @@ print.strategy <- function(x, ...) {
   method_title <- method_names[class(x)[1]]
   
   cat(pillar::style_bold(paste0("outstandR Strategy Specification: ", method_title)), "\n")
-  cat("  Formula: ", deparse(x$formula), "\n")
+  
+  
+  if (!is.null(x$outcome_model)) {
+    cat("  Outcome Model: ", deparse(x$outcome_model), "\n")
+  }
+  if (!is.null(x$balance_model)) {
+    cat("  Balance Model: ", deparse(x$balance_model), "\n")
+  }
+  
   cat("  Family:  ", x$family$family, paste0("(", x$family$link, " link)"), "\n")
   
   invisible(x)

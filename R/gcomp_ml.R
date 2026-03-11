@@ -1,8 +1,8 @@
 
 #' Bootstrap for G-computation via Maximum Likelihood
 #'
-#' This is a statistic function intended for use with a bootstrapping function
-#' (e.g., [boot::boot()]). On each bootstrap sample of the data, it calculates
+#' For use with a bootstrapping function (e.g., [boot::boot()]). 
+#' On each bootstrap sample of the data, it calculates
 #' a relative treatment effect (e.g., log odds ratio, log relative risk, or
 #' risk difference) using G-computation with maximum likelihood.
 #'     
@@ -24,7 +24,7 @@
 #' 
 gcomp_ml.boot <- function(data, indices,
                           R, 
-                          formula = NULL,
+                          outcome_model = NULL,
                           family, trt_var,
                           ref_trt = NA,
                           comp_trt = NA,
@@ -35,7 +35,7 @@ gcomp_ml.boot <- function(data, indices,
                           ald) {
   dat <- data[indices, ]
   
-  res <- gcomp_ml_means(formula, family, dat, ald, trt_var, rho, N,
+  res <- gcomp_ml_means(outcome_model, family, dat, ald, trt_var, rho, N,
                         ref_trt, comp_trt,
                         marginal_distns, marginal_params)
   return(res$stats)

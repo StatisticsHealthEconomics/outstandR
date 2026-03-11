@@ -16,7 +16,7 @@ test_that("different combinations of covariates in formula", {
     regexp = "Treatment term 'trt' is missing in the formula")
   
   expect_error(strategy_gcomp_ml(
-    formula = list(outcome_model = as.formula("y ~ X3 + X4"), trt_var = "trt")),
+    formula = list(outcome_model = as.formula("y ~ X3 + X4")), trt_var = "trt"),
     regexp = "Treatment term 'trt' is missing in the formula")
   
   strat_1234 <- strategy_gcomp_ml(

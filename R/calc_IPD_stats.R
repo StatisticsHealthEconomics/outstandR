@@ -22,8 +22,10 @@
 #'   \item \code{absolute}: A list with elements \code{mean} and \code{var}.
 #' }
 #' @examples
-#' strategy <- strategy_maic(formula = as.formula(y~trt:X1), family = binomial())
-# 
+#' strategy <- strategy_maic(
+#'   formula = list(outcome_model = y~trt:X1, balance_model = ~ X1),
+#'   family = binomial())
+#' 
 #' ipd <- data.frame(trt = sample(c("A", "C"), size = 100, replace = TRUE),
 #'                   X1 = rnorm(100, 1, 1),
 #'                   y = sample(c(1,0), size = 100, prob = c(0.7,0.3), replace = TRUE))
