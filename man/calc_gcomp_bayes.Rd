@@ -9,7 +9,7 @@ calc_gcomp_bayes(strategy, analysis_params, ...)
 \arguments{
 \item{strategy}{A list specifying the model strategy, including:
 \itemize{
-\item \code{formula}: A linear regression \code{formula} object.
+\item \code{outcome_model}: A linear regression \code{formula} object.
 \item \code{family}: A \code{family} object specifying the distribution and link function
 (e.g., \code{binomial}).
 \item \code{iter}: Number of iterations for the MCMC sampling.
@@ -39,7 +39,7 @@ from the Bayesian G-computation method using Hamiltonian Monte Carlo.
 }
 \examples{
 strategy <- list(
-  formula = y ~ trt:X1,
+  outcome_model = y ~ trt:X1,
   family = binomial(),
   rho = NA,
   N = 1000L,

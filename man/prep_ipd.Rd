@@ -15,6 +15,7 @@ prep_ipd(form, data)
 Model frame
 }
 \description{
-Prepare Individual Patient Data
+Cleaning and subsetting input dataset so that they only
+contain the variables actually needed for statistical models.
 }
 \keyword{internal}

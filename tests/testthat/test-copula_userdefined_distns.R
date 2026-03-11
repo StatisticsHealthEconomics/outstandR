@@ -902,6 +902,4 @@ test_that("simulate directly with binary data with marginals", {
       marginal_distns = marginals_orig$marginal_dists,
       marginal_params = marginals_orig$marginal_params),
     regexp = "unused arguments")
-  
-  # expect_equivalent(res)
 })

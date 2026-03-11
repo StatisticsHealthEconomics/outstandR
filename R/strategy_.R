@@ -25,41 +25,49 @@
 #' 
 #' @importFrom utils modifyList
 #' @export
-#'
 strategy_maic <- function(formula = NULL,
                           family = gaussian(link = "identity"),
                           trt_var = NULL,
                           n_boot = 1000L) {
   
-  trt_var <- get_treatment_name(formula$outcome_model, trt_var)
-  
-  # back-compatibility
+  # parse formula depending on whether list or legacy formula
   if (!is.list(formula)) {
     message("Note: Using legacy 'formula' argument.")
     message(paste("--> Analysis Model:", deparse(formula)))
     
-    # internally convert to the balance model
-    # stripping 'y' and 'trt')
+    # guess trt_var safely because legacy formula exists
+    trt_var <- get_treatment_name(formula, trt_var)
+    
+    # internally convert to the balance model (stripping 'y' and 'trt')
     rhs_vars <- all.vars(delete.response(terms(formula)))
     balance_vars <- setdiff(rhs_vars, trt_var)
     
     balance_model <- as.formula(paste("~", paste(balance_vars, collapse = " + ")))
     outcome_model <- formula
     
-    # C. Print the inferred assumption
     message(paste("--> Inferred Balance Model: ~", paste(balance_vars, collapse = " + ")))
     message("    (Balancing on means of these covariates by default)")
+    
   } else {
     outcome_model <- formula$outcome_model
     balance_model <- formula$balance_model
+    
+    # Handle case where outcome_model is completely omitted from list
+    if (is.null(outcome_model)) {
+      if (is.null(trt_var)) {
+        trt_var <- "trt"
+        message("Outcome model and trt_var not provided. Defaulting trt_var to '", trt_var, "'.")
+      }
+      
+      outcome_model <- as.formula(paste("y ~", trt_var))
+      message("Outcome model missing. Defaulting to: ", deparse(outcome_model))
+      
+    } else {
+      trt_var <- get_treatment_name(outcome_model, trt_var)
+    }
   }
   
-  if (is.null(outcome_model)) {
-    ##TODO: where to get the outcome and trt from if we don't have the outcome model?
-    outcome_model <- glue::glue("{formula[[2]]} ~ {trt_var}")
-  } else {
-    check_formula(outcome_model, trt_var)
-  }
+  check_formula(outcome_model, trt_var)
   
   if (!is.null(balance_model)) {
     check_balance_formula(balance_model, trt_var) 
@@ -74,7 +82,7 @@ strategy_maic <- function(formula = NULL,
   args <- list(balance_model = balance_model,
                outcome_model = outcome_model,
                family = family,
-               trt_var = ,
+               trt_var = trt_var,
                n_boot = n_boot)
   
   do.call(new_strategy, c(strategy = "maic", args))
