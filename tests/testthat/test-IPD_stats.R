@@ -1,4 +1,4 @@
-# IPD_stat tests
+# IPD_stat unit tests
 
 library(tibble)
 
@@ -6,14 +6,15 @@ library(tibble)
 
 strategy_maic <- list(
   n_boot = 1000,
-  formula = list(balance_model = ~ .),
+  outcome_model = y ~ trt,
+  balance_model = ~ 1,
   trt_var = "trt",
   family = binomial()
 ) |> 
   `attr<-`(which = "class", value = "maic")
 
 strategy_stc <- list(
-  formula = list(outcome_model = y ~ trt),
+  outcome_model = y ~ trt,
   trt_var = "trt",
   family = binomial()
 ) |> 
@@ -22,14 +23,14 @@ strategy_stc <- list(
 strategy_gcomp_ml <- list(
   n_boot = 1000,
   N = 1000L,
-  formula = list(outcome_model = y ~ trt),
+  outcome_model = y ~ trt,
   trt_var = "trt",
   family = binomial()
 ) |> 
   `attr<-`(which = "class", value = "gcomp_ml")
 
 strategy_gcomp_bayes <- list(
-  formula = list(outcome_model = y ~ trt),
+  outcome_model = y ~ trt,
   trt_var = "trt",
   N = 1000L,
   family = binomial()
@@ -37,7 +38,7 @@ strategy_gcomp_bayes <- list(
   `attr<-`(which = "class", value = "gcomp_bayes")
 
 strategy_mim <- list(
-  formula = list(outcome_model = y ~ trt),
+  outcome_model = y ~ trt,
   trt_var = "trt",
   N = 1000L,
   family = binomial()
@@ -45,6 +46,7 @@ strategy_mim <- list(
   `attr<-`(which = "class", value = "mim")
 
 # aggregate-level outcome data
+# no covariates
 ald <- tribble(
   ~variable, ~trt, ~statistic, ~value,
   "y",       "B",  "sum",     30,
@@ -88,7 +90,7 @@ test_that("calc_IPD_stats() works for MAIC", {
   
   strategy_maic_single_sample <- list(
     n_boot = 1,   # results in TWO samples, including original
-    formula = y ~ trt,
+    outcome_model = y ~ trt,
     trt_var = "trt",
     family = binomial()
   ) |> 
@@ -144,6 +146,7 @@ test_that("calc_IPD_stats() handles extreme values", {
     trt = c("A", "A", "A", "A", "C", "C", "C", "C")
   )
   
+  # no covariates
   ald_extreme <- tribble(
     ~variable, ~trt, ~statistic, ~value,
     "y",       "B",  "sum",     0,     # zero events
@@ -202,6 +205,7 @@ test_that("calc_IPD_stats() handles negative or NA values", {
     trt = c("A", "A", "C", "C")
   )
   
+  # no covariates
   ald_na <- tribble(
     ~variable, ~trt, ~statistic, ~value,
     "y",       "B",  "sum",     NA,

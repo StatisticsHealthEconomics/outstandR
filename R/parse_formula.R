@@ -37,7 +37,7 @@ guess_treatment_name <- function(formula) {
       treat_nm <- tail(main_effect_terms, 1)
       
       if (length(treat_nm) == 0) {
-        stop("Treatment term 'trt' is missing in the formula")
+        stop("Treatment term 'trt' is missing in the formula", call. = FALSE)
       }
       
       message("Treatment is guessed as: ", crayon::yellow(treat_nm))

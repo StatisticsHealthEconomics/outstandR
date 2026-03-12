@@ -65,11 +65,26 @@ strategy_maic <- function(formula = NULL,
     } else {
       trt_var <- get_treatment_name(outcome_model, trt_var)
     }
+    
+    # Handle missing balance_model with a delayed function
+    if (is.null(balance_model)) {
+      balance_model <- function(ald) {
+        # Extract all unique covariates from the ALD, dropping NAs and outcome terms
+        covars <- unique(ald$variable)
+        covars <- covars[!is.na(covars) & !(covars %in% c("y", "N"))]
+        
+        if (length(covars) == 0) return(NULL) # Failsafe if ALD has no covariates
+        
+        as.formula(paste("~", paste(covars, collapse = " + ")))
+      }
+      message("Balance model not provided. Default to a linear sum of all covariates found in the ALD.")
+    }
   }
+  
   
   check_formula(outcome_model, trt_var)
   
-  if (!is.null(balance_model)) {
+  if (!is.null(balance_model) && !is.function(balance_model)) {
     check_balance_formula(balance_model, trt_var) 
   }
   

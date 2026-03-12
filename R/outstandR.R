@@ -100,6 +100,17 @@ outstandR <- function(ipd_trial, ald_trial, strategy,
   
   trt_var <- strategy$trt_var
   
+  # evaluate the balance model if it was delayed as a function
+  if (is.function(strategy$balance_model)) {
+    strategy$balance_model <- strategy$balance_model(ald_trial)
+    
+    if (!is.null(strategy$balance_model)) {
+      # Log it for the user and run the validation we skipped earlier
+      cli::cli_alert_info("Auto-generated balance model: {.var {deparse(strategy$balance_model)}}")
+      check_balance_formula(strategy$balance_model, trt_var)
+    }
+  }
+  
   # combine outcome_model and balance_model into a single formula
   combined_formula <- strategy$outcome_model
   
