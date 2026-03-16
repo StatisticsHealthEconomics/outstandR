@@ -98,8 +98,7 @@ That is, the main effects are the prognostic factors (`PF_cont_1` and `PF_cont_2
 For the MAIC approach, we define the balancing formula as 
 ```{r}
 # linear formula for the outcome model
-bal_form_contX <- as.formula(
-  "~ PF_cont_1 + PF_cont_2 + EM_cont_1 + EM_cont_2")
+bal_form_contX <- as.formula("~ EM_cont_1 + EM_cont_2")
 ```
 
 #### Relative treatment effects
@@ -128,13 +127,14 @@ For the MAIC approach, we define the outcome and balancing formulas explicitly i
 
 ```{r}
 outstandR_maic <-
- outstandR(ipd_trial = AC_IPD_binY_contX,
-           ald_trial = BC_ALD_binY_contX,
-           strategy = strategy_maic(
-             formula = list(outcome_model = formula("y ~ trt"),
-                            balance_model =  bal_form_contX),
-             family = binomial(link = "logit")),
-           seed = 12345)
+ outstandR(
+   ipd_trial = AC_IPD_binY_contX,
+   ald_trial = BC_ALD_binY_contX,
+   strategy = strategy_maic(
+     formula = list(outcome_model = formula("y ~ trt"),
+                    balance_model =  bal_form_contX),
+     family = binomial(link = "logit")),
+   seed = 12345)
 ```
 
 As detailed in Section X, the `outstandR()` function returns a list object. To help with interpreting the results, `outstandR` includes a convenience `print` method.
@@ -148,26 +148,28 @@ The STC, G-computation and MIM analyses are performed similarly but with the \te
 
 ```{r echo=FALSE}
 # STC Analysis
-outstandR_stc <- outstandR(
-  ipd_trial = AC_IPD_binY_contX,
-  ald_trial = BC_ALD_binY_contX,
-  strategy = strategy_stc(
-    formula = list(outcome_model = lin_form_contX),
-    family = binomial(link = "logit")
-  ),
-  seed = 12345
-)
+outstandR_stc <- 
+  outstandR(
+    ipd_trial = AC_IPD_binY_contX,
+    ald_trial = BC_ALD_binY_contX,
+    strategy = strategy_stc(
+      formula = list(outcome_model = lin_form_contX),
+      family = binomial(link = "logit")
+    ),
+    seed = 12345
+  )
 
 # G-Computation (ML)
-outstandR_gcomp_ml <- outstandR(
-  ipd_trial = AC_IPD_binY_contX,
-  ald_trial = BC_ALD_binY_contX,
-  strategy = strategy_gcomp_ml(
-    formula = list(outcome_model = lin_form_contX),
-    family = binomial(link = "logit")
-  ),
-  seed = 12345
-)
+outstandR_gcomp_ml <- 
+  outstandR(
+    ipd_trial = AC_IPD_binY_contX,
+    ald_trial = BC_ALD_binY_contX,
+    strategy = strategy_gcomp_ml(
+      formula = list(outcome_model = lin_form_contX),
+      family = binomial(link = "logit")
+    ),
+    seed = 12345
+  )
 
 # G-Computation (Bayes)
 # Note: refresh = 0 turns off iteration updates
@@ -238,7 +240,7 @@ lin_form_mixedX <- as.formula("y ~ X1 + X2 + X3 + trt + trt:(X1 + X2 + X4)")
 
 The balance formula is given by
 ```{r}
-bal_form_mixedX <- as.formula("~ X1 + X2 + X3 + X4")
+bal_form_mixedX <- as.formula("~ X1 + X2 + X4")
 ```
 
 #### Relative treatment effect
@@ -285,51 +287,55 @@ The corresponding calls to `outstandR()` for the other analyses follow similarly
 
 ```{r echo=FALSE}
 # STC Analysis
-outstandR_stc <- outstandR(
-  ipd_trial = AC_IPD_contY_mixedX, 
-  ald_trial = BC_ALD_contY_mixedX,
-  strategy = strategy_stc(
-    formula = list(outcome_model = lin_form_mixedX),
-    family = gaussian(link = "identity")
-  ),
-  seed = 12345
-)
+outstandR_stc <- 
+  outstandR(
+    ipd_trial = AC_IPD_contY_mixedX, 
+    ald_trial = BC_ALD_contY_mixedX,
+    strategy = strategy_stc(
+      formula = list(outcome_model = lin_form_mixedX),
+      family = gaussian(link = "identity")
+    ),
+    seed = 12345
+  )
 
 # G-Computation (ML)
-outstandR_gcomp_ml <- outstandR(
-  ipd_trial = AC_IPD_contY_mixedX, 
-  ald_trial = BC_ALD_contY_mixedX,
-  strategy = strategy_gcomp_ml(
-    formula = list(outcome_model = lin_form_mixedX),
-    family = gaussian(link = "identity")
-  ),
-  seed = 12345
-)
+outstandR_gcomp_ml <- 
+  outstandR(
+    ipd_trial = AC_IPD_contY_mixedX, 
+    ald_trial = BC_ALD_contY_mixedX,
+    strategy = strategy_gcomp_ml(
+      formula = list(outcome_model = lin_form_mixedX),
+      family = gaussian(link = "identity")
+    ),
+    seed = 12345
+  )
 
 # G-Computation (Bayes)
 # Note: refresh = 0 turns off iteration updates
-outstandR_gcomp_bayes <- outstandR(
-  ipd_trial = AC_IPD_contY_mixedX, 
-  ald_trial = BC_ALD_contY_mixedX,
-  refresh = 0, 
-  strategy = strategy_gcomp_bayes(
-    formula = list(outcome_model = lin_form_mixedX),
-    family = gaussian(link = "identity")
-  ),
-  seed = 12345
-)
+outstandR_gcomp_bayes <- 
+  outstandR(
+    ipd_trial = AC_IPD_contY_mixedX, 
+    ald_trial = BC_ALD_contY_mixedX,
+    refresh = 0, 
+    strategy = strategy_gcomp_bayes(
+      formula = list(outcome_model = lin_form_mixedX),
+      family = gaussian(link = "identity")
+    ),
+    seed = 12345
+  )
 
 # MIM Analysis
-outstandR_mim <- outstandR(
-  ipd_trial = AC_IPD_contY_mixedX, 
-  ald_trial = BC_ALD_contY_mixedX,
-  refresh = 0,
-  strategy = strategy_mim(
-    formula = list(outcome_model = lin_form_mixedX),
-    family = gaussian(link = "identity")
-  ),
-  seed = 12345
-)
+outstandR_mim <-
+  outstandR(
+    ipd_trial = AC_IPD_contY_mixedX, 
+    ald_trial = BC_ALD_contY_mixedX,
+    refresh = 0,
+    strategy = strategy_mim(
+      formula = list(outcome_model = lin_form_mixedX),
+      family = gaussian(link = "identity")
+    ),
+    seed = 12345
+  )
 ```
 
 ```{r summary-forest-plot_cont, warning=FALSE, message=FALSE}
@@ -402,51 +408,55 @@ The corresponding calls to `outstandR()` for the other analyses follow similarly
 
 ```{r echo=FALSE}
 # STC Analysis
-outstandR_stc <- outstandR(
-  ipd_trial = AC_IPD_countY_contX,
-  ald_trial = BC_ALD_countY_contX,
-  strategy = strategy_stc(
-    formula = list(outcome_model = lin_form_contX),
-    family = poisson(link = "log")
-  ),
-  seed = 12345
-)
+outstandR_stc <- 
+  outstandR(
+    ipd_trial = AC_IPD_countY_contX,
+    ald_trial = BC_ALD_countY_contX,
+    strategy = strategy_stc(
+      formula = list(outcome_model = lin_form_contX),
+      family = poisson(link = "log")
+    ),
+    seed = 12345
+  )
 
 # G-Computation (ML)
-outstandR_gcomp_ml <- outstandR(
-  ipd_trial = AC_IPD_countY_contX,
-  ald_trial = BC_ALD_countY_contX,
-  strategy = strategy_gcomp_ml(
-    formula = list(outcome_model = lin_form_contX),
-    family = poisson(link = "log")
-  ),
-  seed = 12345
-)
+outstandR_gcomp_ml <- 
+  outstandR(
+    ipd_trial = AC_IPD_countY_contX,
+    ald_trial = BC_ALD_countY_contX,
+    strategy = strategy_gcomp_ml(
+      formula = list(outcome_model = lin_form_contX),
+      family = poisson(link = "log")
+    ),
+    seed = 12345
+  )
 
 # G-Computation (Bayes)
 # Note: refresh = 0 turns off iteration updates
-outstandR_gcomp_bayes <- outstandR(
-  ipd_trial = AC_IPD_countY_contX,
-  ald_trial = BC_ALD_countY_contX,
-  refresh = 0, 
-  strategy = strategy_gcomp_bayes(
-    formula = list(outcome_model = lin_form_contX),
-    family = poisson(link = "log")
-  ),
-  seed = 12345
-)
+outstandR_gcomp_bayes <- 
+  outstandR(
+    ipd_trial = AC_IPD_countY_contX,
+    ald_trial = BC_ALD_countY_contX,
+    refresh = 0, 
+    strategy = strategy_gcomp_bayes(
+      formula = list(outcome_model = lin_form_contX),
+      family = poisson(link = "log")
+    ),
+    seed = 12345
+  )
 
 # MIM Analysis
-outstandR_mim <- outstandR(
-  ipd_trial = AC_IPD_countY_contX,
-  ald_trial = BC_ALD_countY_contX,
-  refresh = 0,
-  strategy = strategy_mim(
-    formula = list(outcome_model = lin_form_contX),
-    family = poisson(link = "log")
-  ),
-  seed = 12345
-)
+outstandR_mim <-
+  outstandR(
+    ipd_trial = AC_IPD_countY_contX,
+    ald_trial = BC_ALD_countY_contX,
+    refresh = 0,
+    strategy = strategy_mim(
+      formula = list(outcome_model = lin_form_contX),
+      family = poisson(link = "log")
+    ),
+    seed = 12345
+  )
 ```
 
 ```{r summary-forest-plot_count, warning=FALSE, message=FALSE}
@@ -566,15 +576,16 @@ First, define the target distributions. We specify a Gamma distribution with "ga
 new_distns <- c(X1 = "gamma", X2 = "binom")
 
 # run G-computation ML
-outstandR_sens <- outstandR(
-   ipd_trial = AC_IPD_contY_mixedX,
-   ald_trial = BC_ALD_contY_mixedX,
-   strategy = strategy_gcomp_ml(
-     formula = list(outcome_model = lin_form_mixedX),
-     family = gaussian(link = "identity"),
-     marginal_distns = new_distns,
-     N = 1000),
-   seed = 12345)
+outstandR_sens <- 
+  outstandR(
+    ipd_trial = AC_IPD_contY_mixedX,
+    ald_trial = BC_ALD_contY_mixedX,
+    strategy = strategy_gcomp_ml(
+      formula = list(outcome_model = lin_form_mixedX),
+      family = gaussian(link = "identity"),
+      marginal_distns = new_distns,
+      N = 1000),
+    seed = 12345)
 
 outstandR_sens
 ```
@@ -601,16 +612,17 @@ new_params <- list(
             rate = target_mean/(target_sd^2)))
 
 # run G-computation with manual override
-outstandR_sens <- outstandR(
-   ipd_trial = AC_IPD_contY_mixedX,
-   ald_trial = BC_ALD_contY_mixedX,
-   strategy = strategy_gcomp_ml(
-     formula = list(outcome_model = lin_form_mixedX),
-     family = gaussian(link = "identity"),
-     marginal_distns = new_distns,
-     marginal_params = new_params, # overrides ALD for X1
-     N = 1000),
-   seed = 12345)
+outstandR_sens <- 
+  outstandR(
+    ipd_trial = AC_IPD_contY_mixedX,
+    ald_trial = BC_ALD_contY_mixedX,
+    strategy = strategy_gcomp_ml(
+      formula = list(outcome_model = lin_form_mixedX),
+      family = gaussian(link = "identity"),
+      marginal_distns = new_distns,
+      marginal_params = new_params, # overrides ALD for X1
+      N = 1000),
+    seed = 12345)
 
 print(outstandR_sens)
 ```

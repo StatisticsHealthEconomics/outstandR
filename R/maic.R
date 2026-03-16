@@ -86,15 +86,15 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
     return(c(pC = NA, pA = NA, rep(NA, n_ipd), ESS = NA))
   }
   
-  effect_modifier_names <- get_eff_mod_names(balance_model, trt_var)
+  balance_var_names <- all.vars(balance_model)
   
-  if (length(effect_modifier_names) > 0) {
+  if (length(balance_var_names) > 0) {
 
-    X_EM_prepared <- matrix(NA, nrow = n_ipd, ncol = length(effect_modifier_names))
-    colnames(X_EM_prepared) <- effect_modifier_names
+    X_EM_prepared <- matrix(NA, nrow = n_ipd, ncol = length(balance_var_names))
+    colnames(X_EM_prepared) <- balance_var_names
     
     # determine covariate types
-    for (em_name in effect_modifier_names) {
+    for (em_name in balance_var_names) {
       ipd_col <- dat[[em_name]]
       
       # Attempt to get 'mean' from ALD. If not found, try 'prop'

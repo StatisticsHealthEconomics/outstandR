@@ -82,9 +82,12 @@ calc_mim <- function(strategy,
   
   # complete syntheses by drawing binary outcomes
   # from their posterior predictive distribution
-  y_star_m <- rstanarm::posterior_predict(outcome_model, 
-                                          newdata = aug.target,
-                                          draws = n_imp)
+  # n_imp x iter
+  y_star <- 
+    rstanarm::posterior_predict(
+      outcome_model, 
+      newdata = aug.target,
+      draws = n_imp)
   
   # ANALYSIS STAGE ---
   
@@ -94,7 +97,8 @@ calc_mim <- function(strategy,
     
     # fit second-stage regression to each synthesis using maximum-likelihood estimation
     data_m <- aug.target
-    data_m$y <- as.numeric(y_star_m[1, ])
+    data_m$y <- y_star[m, ]
+    # data_m$y <- as.numeric(y_star_m[1, ])
     
     # 4. Fit second-stage regression to the synthesis using ML estimation
     reg2.fits[[m]] <- stats::glm(stats::as.formula(paste("y ~", trt_var)), 
