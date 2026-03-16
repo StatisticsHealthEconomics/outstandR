@@ -46,6 +46,20 @@
     MAIC, or large $N \times R$ for ML G-computation) to prevent users
     from thinking the session has hung.
 
+- MAIC weight estimation can now balance covariate variances and covariances, 
+  reducing residual confounding from mismatched distributions.
+  
+  * Added the `moments` argument to strategy definition functions and `calc_maic()`. 
+  Setting `moments = 2` automatically expands the balancing formula to include squared terms. 
+  
+  * Added the `int` argument to strategy definition functions and `calc_maic()`. 
+  Setting `int = TRUE` automatically expands the balancing formula to include all 
+  two-way interactions between covariates.
+  
+  * Automatic variance target calculation when `moments = 2`, the `maic.boot()`
+  function now automatically calculates the required aggregate target for squared 
+  terms ($E[X^2]$) internally using the base variable's `mean` and `sd` provided in the ALD.
+
 ### Minor improvements and fixes
 
 -   `guess_treatment_name()` (used under the hood by all strategies when
