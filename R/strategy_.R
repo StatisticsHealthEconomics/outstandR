@@ -28,12 +28,15 @@
 strategy_maic <- function(formula = NULL,
                           family = gaussian(link = "identity"),
                           trt_var = NULL,
-                          n_boot = 1000L) {
+                          n_boot = 1000L,
+                          verbatim = TRUE) {
   
   # parse formula depending on whether list or legacy formula
   if (!is.list(formula)) {
-    message("Note: Using legacy 'formula' argument.")
-    message(paste("--> Analysis Model:", deparse(formula)))
+    if (verbatim) {
+      message("Note: Using legacy 'formula' argument.")
+      message(paste("--> Analysis Model:", deparse(formula)))
+    }
     
     # guess trt_var safely because legacy formula exists
     trt_var <- get_treatment_name(formula, trt_var)
@@ -45,8 +48,10 @@ strategy_maic <- function(formula = NULL,
     balance_model <- as.formula(paste("~", paste(balance_vars, collapse = " + ")))
     outcome_model <- formula
     
-    message(paste("--> Inferred Balance Model: ~", paste(balance_vars, collapse = " + ")))
-    message("    (Balancing on means of these covariates by default)")
+    if (verbatim) {
+      message(paste("--> Inferred Balance Model: ~", paste(balance_vars, collapse = " + ")))
+      message("    (Balancing on means of these covariates by default)")
+    }
     
   } else {
     outcome_model <- formula$outcome_model
@@ -56,12 +61,17 @@ strategy_maic <- function(formula = NULL,
     if (is.null(outcome_model)) {
       if (is.null(trt_var)) {
         trt_var <- "trt"
-        message("Outcome model and trt_var not provided. Defaulting trt_var to '", trt_var, "'.")
+        
+        if (verbatim) {
+          message("Outcome model and trt_var not provided. Defaulting trt_var to '", trt_var, "'.")
+        }
       }
       
       outcome_model <- as.formula(paste("y ~", trt_var))
-      message("Outcome model missing. Defaulting to: ", deparse(outcome_model))
       
+      if (verbatim) {
+        message("Outcome model missing. Defaulting to: ", deparse(outcome_model))
+      }      
     } else {
       trt_var <- get_treatment_name(outcome_model, trt_var)
     }
@@ -77,10 +87,11 @@ strategy_maic <- function(formula = NULL,
         
         as.formula(paste("~", paste(covars, collapse = " + ")))
       }
-      message("Balance model not provided. Default to a linear sum of all covariates found in the ALD.")
+      if (verbatim) {
+        message("Balance model not provided. Default to a linear sum of all covariates found in the ALD.")
+      }
     }
   }
-  
   
   check_formula(outcome_model, trt_var)
   
@@ -332,6 +343,8 @@ strategy_mim <- function(formula = NULL,
                          family = gaussian(link = "identity"),
                          trt_var= NULL,
                          rho = NA,
+                         marginal_distns = NA,
+                         marginal_params = NA,
                          N = 1000L) {
   # back-compatibility
   if (!is.list(formula)) {
@@ -342,6 +355,7 @@ strategy_mim <- function(formula = NULL,
   
   check_formula(outcome_model, trt_var)
   check_family(family)
+  check_distns(outcome_model, marginal_distns, marginal_params)
   check_rho(rho)
   
   if (N <= 0 || N %% 1 != 0) {
@@ -352,6 +366,8 @@ strategy_mim <- function(formula = NULL,
                family = family,
                trt_var = get_treatment_name(outcome_model, trt_var),
                rho = rho,
+               marginal_distns = marginal_distns,
+               marginal_params = marginal_params,
                N = N)
   
   do.call(new_strategy, c(strategy = "mim", args))

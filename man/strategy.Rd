@@ -14,7 +14,8 @@ strategy_maic(
   formula = NULL,
   family = gaussian(link = "identity"),
   trt_var = NULL,
-  n_boot = 1000L
+  n_boot = 1000L,
+  verbatim = TRUE
 )
 
 strategy_stc(
@@ -49,6 +50,8 @@ strategy_mim(
   family = gaussian(link = "identity"),
   trt_var = NULL,
   rho = NA,
+  marginal_distns = NA,
+  marginal_params = NA,
   N = 1000L
 )
 

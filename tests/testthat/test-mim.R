@@ -1,3 +1,4 @@
+# test mim
 
 #
 test_that("different combinations of covariates in formula", {
@@ -27,10 +28,12 @@ test_that("different combinations of covariates in formula", {
   
   out_1234 <- outstandR(AC_IPD, BC_ALD, strategy = strat_1234)
   
-  expect_length(out_1234, 11)
+  expect_length(out_1234, 13)
   
   expect_named(out_1234, expected = 
-                 c("results", "call", "formula", "CI", "ref_trt", "ipd_comp", 
+                 c("results", "call", 
+                   "outcome_model", "balance_model", "formula", 
+                   "CI", "ref_trt", "ipd_comp", 
                    "ald_comp", "scale", "var_method", "family", "model"))
 })
 
