@@ -74,6 +74,8 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
                       outcome_model, balance_model,
                       family, ald,
                       trt_var,
+                      moments = 1,
+                      int = FALSE,
                       hat_w = NULL) {
   
   dat <- ipd[indices, ]  # bootstrap sample
@@ -86,44 +88,99 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
     return(c(pC = NA, pA = NA, rep(NA, n_ipd), ESS = NA))
   }
   
-  balance_var_names <- all.vars(balance_model)
+  base_vars <- all.vars(balance_model)
   
-  if (length(balance_var_names) > 0) {
-
+  if (length(base_vars) > 0) {
+    term_list <- base_vars
+    
+    # Add interactions if requested
+    if (isTRUE(int) && length(base_vars) > 1) {
+      term_list <- c(term_list, paste0("(", paste(base_vars, collapse = " + "), ")^2"))
+    }
+    
+    # Add squared terms if moments == 2
+    if (moments == 2) {
+      term_list <- c(term_list, paste0("I(", base_vars, "^2)"))
+    }
+    
+    # Create the expanded formula and generate the IPD matrix
+    expanded_formula <- as.formula(paste("~", paste(term_list, collapse = " + ")))
+    
+    # model.matrix computes the squares and interactions directly from the data
+    ipd_matrix <- model.matrix(expanded_formula, data = dat)[, -1, drop = FALSE]
+    balance_var_names <- colnames(ipd_matrix)
+    
     X_EM_prepared <- matrix(NA, nrow = n_ipd, ncol = length(balance_var_names))
     colnames(X_EM_prepared) <- balance_var_names
     
-    # determine covariate types
+    # determine covariate types and centre
     for (em_name in balance_var_names) {
-      ipd_col <- dat[[em_name]]
       
-      # Attempt to get 'mean' from ALD. If not found, try 'prop'
-      # This assumes ALD contains either 'mean' or 'proportion' for each effect modifier
+      ipd_col <- ipd_matrix[, em_name]
+      
+      is_second_moment <- grepl("^I\\(.*\\^2\\)$", em_name)
+      
+      # catch squared terms and calculate target using SD ---
+      
+      if (is_second_moment) {
+        
+        # Extract the original variable name (e.g., "PF_cont_1" from "I(PF_cont_1^2)")
+        base_name <- sub("^I\\((.*)\\^2\\)$", "\\1", em_name)
+        
+        # Get mean and sd of the base variable from the ALD
+        base_mean <- ald |>
+          dplyr::filter(.data$variable == base_name, .data$statistic == "mean") |>
+          dplyr::pull(.data$value)
+        
+        base_sd <- ald |>
+          dplyr::filter(.data$variable == base_name, .data$statistic == "sd") |>
+          dplyr::pull(.data$value)
+        
+        if (length(base_mean) == 0 || length(base_sd) == 0) {
+          stop(paste("Both 'mean' and 'sd' must be in the ALD to balance the variance of:", base_name), call. = FALSE)
+        }
+        
+        # Calculate the ALD target: E[X^2] = SD^2 + Mean^2
+        ald_squared_target <- (base_sd^2) + (base_mean^2)
+        
+        # Centre the IPD squared term
+        X_EM_prepared[, em_name] <- ipd_col - ald_squared_target
+        
+        # Scale to improve optimizer performance
+        col_sd <- sd(X_EM_prepared[, em_name])
+        
+        if (col_sd > 0) {
+          X_EM_prepared[, em_name] <- X_EM_prepared[, em_name] / col_sd
+        }
+        
+        next # Move to the next term in the loop
+      }
+      
+      # standard logic for base variables and interactions ---
+      
       ald_mean_val <- ald |>
-        dplyr::filter(.data$variable == em_name,
+        dplyr::filter(.data$variable == em_name, 
                       .data$statistic == "mean") |>
         dplyr::pull(.data$value)
       
       ald_prop_val <- ald |>
-        dplyr::filter(.data$variable == em_name,
+        dplyr::filter(.data$variable == em_name, 
                       .data$statistic == "prop") |>
         dplyr::pull(.data$value)
       
       if (length(ald_mean_val) > 0) {
         # continuous if 'mean' in ALD
         X_EM_prepared[, em_name] <- ipd_col - ald_mean_val
-        # scaling continuous variables by their standard deviation can improve optimizer performance
-        col_sd <- sd(X_EM_prepared[, em_name])
         
+        col_sd <- sd(X_EM_prepared[, em_name])
         if (col_sd > 0) {
           X_EM_prepared[, em_name] <- X_EM_prepared[, em_name] / col_sd
         }
       } else if (length(ald_prop_val) > 0) {
         # binary if 'prop' in ALD
-        # assumes binary variables are coded 0/1 in IPD
         X_EM_prepared[, em_name] <- ipd_col - ald_prop_val
       } else {
-        stop(paste("Neither 'mean' nor 'prop' found in ALD for covariate:", em_name), call. = FALSE)
+        stop(paste("Target statistic not found in ALD for covariate:", em_name), call. = FALSE)
       }
     }
     
@@ -132,7 +189,6 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
       hat_w <- maic_weights(X_EM = X_EM_prepared)
     }
   } else {
-    # if no covariates, all weights are 1 (unadjusted comparison)
     hat_w <- rep(1, n_ipd)
   }
   
@@ -208,6 +264,9 @@ calc_maic <- function(strategy,
     cli::cli_alert_info("Calculating weights using method of moments...")
   }
   
+  calc_moments <- if (!is.null(strategy$moments)) strategy$moments else 1
+  calc_int <- if (!is.null(strategy$int)) strategy$int else FALSE
+  
   args_list <- 
     list(R = strategy$n_boot,
          balance_model = strategy$balance_model,
@@ -215,7 +274,9 @@ calc_maic <- function(strategy,
          family = strategy$family,
          trt_var = strategy$trt_var,
          data = analysis_params$ipd,
-         ald = analysis_params$ald)
+         ald = analysis_params$ald,
+         moments = calc_moments,
+         int = calc_int)
   
   if (verbose) {
     cli::cli_alert_info("Starting Bootstrap with {.val {strategy$n_boot}} replicates.")

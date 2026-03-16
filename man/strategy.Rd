@@ -15,6 +15,8 @@ strategy_maic(
   family = gaussian(link = "identity"),
   trt_var = NULL,
   n_boot = 1000L,
+  moments = 1,
+  int = FALSE,
   verbatim = TRUE
 )
 
@@ -67,6 +69,15 @@ See stats::family() for more details.}
 \item{trt_var}{Treatment variable name; string}
 
 \item{n_boot}{The number of resamples used for the non-parametric bootstrap; integer}
+
+\item{moments}{Integer. The number of moments of the covariates to balance.
+Setting \code{moments = 2} includes both the original variables and their
+squared terms, which effectively balances both the means and the variances.
+Default to 1.}
+
+\item{int}{Logical. If \code{TRUE}, includes two-way interactions between all
+covariates in the balancing model to effectively balance their covariances.
+Default \code{FALSE}}
 
 \item{rho}{A named square matrix of covariate correlations; default NA}
 

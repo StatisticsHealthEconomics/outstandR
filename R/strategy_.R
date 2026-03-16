@@ -21,6 +21,13 @@
 #' 
 #' @param trt_var Treatment variable name
 #' @param n_boot The number of resamples used for the non-parametric bootstrap
+#' @param moments Integer. The number of moments of the covariates to balance. 
+#'   Setting \code{moments = 2} includes both the original variables and their 
+#'   squared terms, which effectively balances both the means and the variances.
+#'   Default to 1.
+#' @param int Logical. If \code{TRUE}, includes two-way interactions between all 
+#'   covariates in the balancing model to effectively balance their covariances.
+#'    Default \code{FALSE}
 #' @return `maic` class object
 #' 
 #' @importFrom utils modifyList
@@ -29,6 +36,8 @@ strategy_maic <- function(formula = NULL,
                           family = gaussian(link = "identity"),
                           trt_var = NULL,
                           n_boot = 1000L,
+                          moments = 1,
+                          int = FALSE,
                           verbatim = TRUE) {
   
   # parse formula depending on whether list or legacy formula
@@ -109,7 +118,9 @@ strategy_maic <- function(formula = NULL,
                outcome_model = outcome_model,
                family = family,
                trt_var = trt_var,
-               n_boot = n_boot)
+               n_boot = n_boot,
+               moments = moments,
+               int = int)
   
   do.call(new_strategy, c(strategy = "maic", args))
 }

@@ -12,6 +12,8 @@ maic.boot(
   family,
   ald,
   trt_var,
+  moments = 1,
+  int = FALSE,
   hat_w = NULL
 )
 }
