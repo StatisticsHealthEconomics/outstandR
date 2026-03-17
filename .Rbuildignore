@@ -31,3 +31,5 @@ scripts/create_package_data\.R
 ^.*\.Rmd$
 ^check_results$
 ^vignettes/articles$
+^_pkgdown\.yml$
+^pkgdown$

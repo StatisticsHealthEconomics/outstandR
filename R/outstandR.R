@@ -31,6 +31,7 @@
 #'   for contrasts and absolute values.
 #'   
 #' @importFrom Rdpack reprompt
+#' @importFrom stats update
 #' @seealso [strategy_maic()] [strategy_stc()] [strategy_gcomp_ml()] [strategy_gcomp_bayes()]
 #' 
 #' @references
@@ -119,7 +120,7 @@ outstandR <- function(ipd_trial, ald_trial, strategy,
     
     if (length(balance_terms) > 0) {
       # add balance terms to the right-hand side of outcome formula
-      combined_formula <- update(
+      combined_formula <- stats::update(
         combined_formula, 
         paste(". ~ . +", paste(balance_terms, collapse = " + "))
       )
