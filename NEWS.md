@@ -16,7 +16,7 @@
     # New recommended approach 
     strategy_maic(
       formula = list(
-        outcome_model = y ~ trt + age + sex, 
+        outcome_model = y ~ trt, 
         balance_model = ~ age + sex
       )
     )
