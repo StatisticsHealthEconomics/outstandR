@@ -76,6 +76,8 @@
     outcome models. It throws a clear, informative error stating that
     survival data support is officially scheduled for a later version.
 
+-    Speed-up improvement for maic method
+
 ### Deprecated and defunct
 
 -   `strategy_stc()` is now deprecated and will be removed in a future
