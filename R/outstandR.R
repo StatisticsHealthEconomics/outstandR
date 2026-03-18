@@ -32,6 +32,8 @@
 #'   
 #' @importFrom Rdpack reprompt
 #' @importFrom stats update
+#' @importFrom withr local_seed
+#' 
 #' @seealso [strategy_maic()] [strategy_stc()] [strategy_gcomp_ml()] [strategy_gcomp_bayes()]
 #' 
 #' @references
@@ -87,7 +89,7 @@ outstandR <- function(ipd_trial, ald_trial, strategy,
                       verbose = TRUE,
                       ...) {
   if (!is.null(seed)) {
-    set.seed(seed) 
+    withr::local_seed(seed)
   }
   
   cl <- match.call()
