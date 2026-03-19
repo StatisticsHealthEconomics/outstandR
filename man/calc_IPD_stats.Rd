@@ -87,7 +87,8 @@ using imputation and combining estimates using Rubin's rules.
 
 \examples{
 strategy <- strategy_maic(
-  formula = list(outcome_model = y~trt:X1, balance_model = ~ X1),
+  formula = list(outcome_model = y ~ trt,  # default 
+                 balance_model = ~ X1),
   family = binomial())
 
 ipd <- data.frame(trt = sample(c("A", "C"), size = 100, replace = TRUE),

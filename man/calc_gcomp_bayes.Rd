@@ -61,11 +61,14 @@ ald <- data.frame(
   statistic = c("mean", "sd", "sum", "sum", "N", "N"),
   value = c(0.5, 0.1, 10, 12, 20, 25))
 
-calc_gcomp_bayes(
-  strategy,
-  analysis_params = list(
-    ipd = ipd, ald = ald, 
-    ref_trt = "C",
-    ipd_comp = "A"))
+res <- 
+  calc_gcomp_bayes(
+    strategy,
+    analysis_params = list(
+      ipd = ipd, ald = ald, 
+      ref_trt = "C",
+      ipd_comp = "A"))
+
+str(res, max.level = 2, list.len = 3, vec.len = 2)
 
 }

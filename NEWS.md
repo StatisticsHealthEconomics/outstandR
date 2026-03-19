@@ -16,7 +16,7 @@
     # New recommended approach 
     strategy_maic(
       formula = list(
-        outcome_model = y ~ trt + age + sex, 
+        outcome_model = y ~ trt, 
         balance_model = ~ age + sex
       )
     )
@@ -75,6 +75,8 @@
 -   `check_formula()` now explicitly intercepts `Surv` objects in
     outcome models. It throws a clear, informative error stating that
     survival data support is officially scheduled for a later version.
+
+-    Speed-up improvement for maic method
 
 ### Deprecated and defunct
 
