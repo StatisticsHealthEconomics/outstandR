@@ -122,7 +122,10 @@ ald_trial <- rbind.data.frame(cov.X, summary.y, summary.N)
 
 
 ```{r}
-lin_form <- as.formula("y ~ X3 + X4 + trt + trt:X1 + trt:X2")
+lin_form <- list(
+  outcome_model = as.formula("y ~ X3 + X4 + trt + trt:X1 + trt:X2"),
+  balance_model = as.formula("X1 + X2")
+)
 ```
 
 
@@ -159,50 +162,50 @@ outstandR_gcomp_ml_lrr
 ### Bayesian G-computation with MCMC
 
 
-```{r outstandR_gcomp_stan, message=FALSE, eval=FALSE}
-outstandR_gcomp_stan <-
+```{r outstandR_gcomp_bayes, message=FALSE, eval=FALSE}
+outstandR_gcomp_bayes <-
   outstandR(ipd_trial, ald_trial,
-            strategy = strategy_gcomp_stan(
+            strategy = strategy_gcomp_bayes(
               formula = lin_form,
               family = binomial(link = "logit")))
 ```
 
-```{r outstandR_gcomp_stan_eval, echo=FALSE, message=FALSE}
+```{r outstandR_gcomp_bayes_eval, echo=FALSE, message=FALSE}
 xx <- capture.output(
-  outstandR_gcomp_stan <-
+  outstandR_gcomp_bayes <-
     outstandR(ipd_trial, ald_trial,
-              strategy = strategy_gcomp_stan(
+              strategy = strategy_gcomp_bayes(
                 formula = lin_form,
                 family = binomial(link = "logit"))))
 ```
 
 ```{r}
-outstandR_gcomp_stan
+outstandR_gcomp_bayes
 ```
 
 As before, we can change the outcome scale to LRR.
 
-```{r outstandR_gcomp_stan_lrr, eval=FALSE}
-outstandR_gcomp_stan_lrr <-
+```{r outstandR_gcomp_bayes_lrr, eval=FALSE}
+outstandR_gcomp_bayes_lrr <-
   outstandR(ipd_trial, ald_trial,
-            strategy = strategy_gcomp_stan(
+            strategy = strategy_gcomp_bayes(
               formula = lin_form,
               family = binomial(link = "logit")),
             scale = "log_relative_risk")
 ```
 
-```{r outstandR_gcomp_stan_lrr_eval, echo=FALSE}
+```{r outstandR_gcomp_bayes_lrr_eval, echo=FALSE}
 xx <- capture.output(
-  outstandR_gcomp_stan_lrr <-
+  outstandR_gcomp_bayes_lrr <-
     outstandR(ipd_trial, ald_trial,
-              strategy = strategy_gcomp_stan(
+              strategy = strategy_gcomp_bayes(
                 formula = lin_form,
                 family = binomial(link = "logit")),
               scale = "log_relative_risk"))
 ```
 
 ```{r}
-outstandR_gcomp_stan_lrr
+outstandR_gcomp_bayes_lrr
 ```
 
 ### Multiple imputation marginalisation

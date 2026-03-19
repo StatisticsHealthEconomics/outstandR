@@ -221,7 +221,7 @@ ald_trial
 
 In this case, we have 4 covariate mean and standard deviation values; and the total, average and sample size for each treatment *B* and *C*.
 
-In the following we will implement for MAIC, STC, and G-computation methods to obtain the *marginal variance* and the *marginal treatment effect*.
+In the following we will implement for MAIC and G-computation methods to obtain the *marginal variance* and the *marginal treatment effect*.
 
 ## Model fitting in R
 
@@ -232,7 +232,10 @@ A `strategy` argument of `outstandR` takes functions called `strategy_*()`, wher
 The formula used in this model, passed as an argument to the strategy function is
 
 ```{r lin_form}
-lin_form <- as.formula("y ~ PF_cont_1 + PF_cont_2 + trt:EM_cont_1 + trt:EM_cont_2")
+lin_form <- list(
+  outcome_model = as.formula("y ~ PF_cont_1 + PF_cont_2 + trt:EM_cont_1 + trt:EM_cont_2"),
+  balance_model = as.formula("~ PF_cont_1 + PF_cont_2 + EM_cont_1 + EM_cont_2")
+)
 ```
 
 ### MAIC
@@ -251,33 +254,6 @@ The returned object is of class `outstandR`.
 
 ```{r outstandR_maic-print}
 outstandR_maic
-```
-
-### Simulated Treatment Comparison (STC)
-
-STC is the conventional outcome regression method. It involves fitting a regression model of outcome on treatment and covariates to the IPD. Simply pass the same as formula as before with the `strategy_stc()` strategy function.
-
-```{r outstandR_stc}
-outstandR_stc <-
-  outstandR(ipd_trial, ald_trial,
-            strategy = strategy_stc(
-              formula = lin_form,
-              family = gaussian(link = "identity")))
-outstandR_stc
-```
-
-### Parametric G-computation with maximum-likelihood estimation
-
-G-computation marginalizes the conditional estimates by separating the regression modelling from the estimation of the marginal treatment effect for *A* versus *C*. Pass the `strategy_gcomp_ml()` strategy function.
-
-```{r outstandR_gcomp_ml}
-outstandR_gcomp_ml <-
-  outstandR(ipd_trial, ald_trial,
-            strategy = strategy_gcomp_ml(
-              formula = lin_form,
-              family = gaussian(link = "identity")))
-
-outstandR_gcomp_ml
 ```
 
 ### Bayesian G-computation with MCMC
@@ -342,7 +318,6 @@ res_tab <-
     # d_true = c(d_AB_true, d_AC_true, d_BC),
     # d_naive = c(d_AB_naive, d_AC_naive$d_AC, d_BC),
     `MAIC` = unlist(outstandR_maic$contrasts$means),
-    `STC` = unlist(outstandR_stc$contrasts$means),
     `Gcomp ML` = unlist(outstandR_gcomp_ml$contrasts$means),
     `Gcomp Bayes` = unlist(outstandR_gcomp_bayes$contrasts$means),
     `MIM` = unlist(outstandR_mim$contrasts$means)) |> 
@@ -353,7 +328,6 @@ res_tab_var <-
     # d_true = c(NA, NA, NA),
     # d_naive = c(var.d.AB.naive, d_AC_naive$var_AC, var.d.BC),
     `MAIC` = unlist(outstandR_maic$contrasts$variances),
-    `STC` = unlist(outstandR_stc$contrasts$variances),
     `Gcomp ML` = unlist(outstandR_gcomp_ml$contrasts$variances),
     `Gcomp Bayes` = unlist(outstandR_gcomp_bayes$contrasts$variances),
     `MIM` = unlist(outstandR_mim$contrasts$variances)) |> 

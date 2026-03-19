@@ -80,7 +80,7 @@ methods for this situation including the following:
     effect of treatment. These estimates are then applied to the
     aggregate-level comparator population. Like MAIC, STC is limited by
     its conditional nature and can produce biased marginal estimates if
-    not properly marginalized.
+    not properly marginalized. STC is now deprecated in favour of G-computation approaches.
 
 -   *Parametric G-computation with maximum likelihood*: This method fits
     an outcome model to the IPD using maximum likelihood estimation,

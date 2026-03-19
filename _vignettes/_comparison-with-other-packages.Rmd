@@ -264,7 +264,9 @@ library(outstandR)
 <!-- ##TODO: why has this got median in name here? -->
 <!-- adsl_colnames[adsl_colnames == "N_PR_THER_MEDIAN"] <- "N_PR_THER" -->
 
-<!-- lin_form <- as.formula(glue("y ~ trt * ({paste(adsl_colnames, collapse = ' + ')})")) -->
+<!-- lin_form <- list(outcome_model = as.formula(glue("y ~ trt * ({paste(adsl_colnames, collapse = ' + ')})")),
+balance_model = as.formula(glue("{paste(adsl_colnames, collapse = ' + ')}")))
+-->
 
 <!-- ipd_trial <- adsl_twt |> -->
 <!--   merge(adrs_twt) |>  -->
