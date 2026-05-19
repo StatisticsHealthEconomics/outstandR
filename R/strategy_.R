@@ -466,18 +466,6 @@ check_distns <- function(formula,
 
 
 ##TODO:
-# # draft for doubly robust PAIC
-# strategy_dr(
-#   # weighting Model
-#   # "Make the populations look the same"
-#   balance_model = ~ age + sex + severity,
-#   
-#   # outcome Model (STC)
-#   # "Predict the outcome if the populations were the same"
-#   outcome_model = y ~ trt + age + sex
-# )
-
-##TODO:
 ## generic construction 
 ## could be useful if number of method gets big
 #
