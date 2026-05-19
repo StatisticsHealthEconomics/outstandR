@@ -335,27 +335,4 @@ check_distns <- function(formula,
 }
 
 
-## generic construction 
-## could be useful if number of method gets big
-#
-# strategy_gcomp_bayes <- function(formula = NULL,
-#                                 family = gaussian(link = "identity"),
-#                                 rho = NA,
-#                                 N = 1000L) {
-#   check_formula(formula)
-#   check_family(family)
-#   
-#   if (N <= 0 || N %% 1 != 0) {
-#     stop("N not positive whole number.")
-#   }
-#   
-#   force(family)
-#   force(formula) 
-#   
-#   default_args <- formals()
-#   args <- c(formula = formula, as.list(match.call())[-c(1,2)])
-#   args <- modifyList(default_args, args)
-#   do.call(new_strategy, c(strategy = "gcomp_bayes", args))
-# }
-
 
