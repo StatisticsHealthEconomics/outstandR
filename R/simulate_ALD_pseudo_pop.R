@@ -147,7 +147,7 @@ simulate_ALD_pseudo_pop <- function(formula,
     
     x_star <- matrix(sim_vals, ncol = 1,
                      dimnames = list(NULL, covariate_names))
-    # return(as.data.frame(setNames(list(sim_vals), covariate_names)))  ##TODO
+
     return(as.data.frame(x_star))
   }
   
