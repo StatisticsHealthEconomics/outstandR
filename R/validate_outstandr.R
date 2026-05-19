@@ -20,7 +20,6 @@ validate_outstandr <- function(ipd_trial, ald_trial,
     stop("CI argument must be between 0 and 1.")
   }
   
-  ##TODO: link this to actual functions
   available_scales <-
     c("log_odds", "log_relative_risk", "risk_difference", "mean_difference")
   
