@@ -62,6 +62,14 @@
 
 ### Minor improvements and fixes
 
+-   Fixed a critical bug in `strategy_mim()` and `strategy_gcomp_bayes()` where 
+    covariate uncertainty was not being fully propagated due to incorrect 
+    looping over predicted samples.
+
+-   Significantly improved the performance of the MAIC method by refactoring 
+    `maic.boot()` to pre-calculate balance and outcome matrices, reducing 
+    redundant computations during bootstrap iterations.
+
 -   `guess_treatment_name()` (used under the hood by all strategies when
     `trt_var` is `NULL`) is now smarter. It correctly identifies the
     treatment variable by checking for duplicated variables in
@@ -76,7 +84,16 @@
     outcome models. It throws a clear, informative error stating that
     survival data support is officially scheduled for a later version.
 
--    Speed-up improvement for maic method
+-   Improved reproducibility and side-effect management by switching to 
+    `withr::local_seed()` for local random seed handling.
+
+-   Updated the `print.outstandR()` method to handle delayed balance model 
+    functions, providing clearer output for auto-generated models.
+
+-   Standardized strategy naming: `strategy_gcomp_stan()` is now 
+    `strategy_gcomp_bayes()` to more accurately reflect the underlying 
+    statistical approach.
+
 
 ### Deprecated and defunct
 

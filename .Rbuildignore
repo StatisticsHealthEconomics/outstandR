@@ -33,3 +33,5 @@ scripts/create_package_data\.R
 ^vignettes/articles$
 ^_pkgdown\.yml$
 ^pkgdown$
+^\.positai$
+^\.claude$
