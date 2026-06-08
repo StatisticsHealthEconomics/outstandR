@@ -154,7 +154,7 @@ outstandR <- function(ipd_trial, ald_trial, strategy,
   
   analysis_params <- add_seed(strategy, analysis_params, seed)
   
-  ipd_stats <- calc_IPD_stats(strategy, analysis_params, ...) 
+  ipd_stats <- calc_IPD_stats(strategy, analysis_params, var_method = var_method, ...) 
   ald_stats <- calc_ALD_stats(strategy, analysis_params) 
   
   stats <- result_stats(ipd_stats, ald_stats, CI)

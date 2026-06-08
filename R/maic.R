@@ -276,7 +276,7 @@ calc_maic <- function(strategy,
     cli::cli_alert_info("Starting Bootstrap with {.val {strategy$n_boot}} replicates.")
   }
   
-  maic_boot <- do.call(boot::boot, c(statistic = maic.boot, args_list))
+  maic_boot <- do.call(boot::boot, args_list)
   
   # boot return vector is: [pC (1), pA (2), weights (3 to N+2), ESS (N+3)]
   N_ipd <- nrow(analysis_params$ipd)

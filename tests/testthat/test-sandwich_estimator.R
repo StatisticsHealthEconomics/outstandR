@@ -74,6 +74,6 @@ test_that("Sandwich variance works via top-level outstandR() wrapper", {
     var_method = "sandwich" 
   )
   
-  # expect_false(res_naive$results$contrasts$var == res_robust$results$contrasts$var)
+  expect_false(res_naive$results$contrasts$variances$AC == res_robust$results$contrasts$variances$AC)
   expect_equal(res_robust$scale, "log_odds") # Check other attributes preserved
 })

@@ -218,7 +218,12 @@ estimation via Markov chain Monte Carlo (MCMC) sampling.
 
 \section{Multiple imputation marginalization (MIM)}{
 
-TODO
+MIM targets a marginal treatment effect by using parametric G-computation
+within a multiple imputation framework. This approach views the covariate
+adjustment regression as a nuisance model and separates its estimation from
+the evaluation of the marginal treatment effect of interest. It is
+particularly useful for ensuring compatibility in indirect comparisons
+when adjusting for effect modifiers.
 }
 
 \seealso{

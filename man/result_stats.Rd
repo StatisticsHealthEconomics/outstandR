@@ -7,8 +7,6 @@
 result_stats(ipd_stats, ald_stats, CI = 0.95)
 }
 \arguments{
-\item{ipd_stats, ald_stats}{}
-
 \item{CI}{Confidence interval level, i.e. 1-alpha; default 0.95}
 }
 \value{

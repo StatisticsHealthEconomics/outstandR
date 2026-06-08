@@ -79,6 +79,9 @@ IPD_stat_factory <- function(ipd_fun) {
     ald <- analysis_params$ald
     scale <- analysis_params$scale
     
+    if (is.null(var_method)) {
+      var_method <- analysis_params$var_method
+    }
     var_method <- get_var_method(strategy, var_method)
     
     out <- ipd_fun(strategy, analysis_params, ...)
