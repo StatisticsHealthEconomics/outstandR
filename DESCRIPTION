@@ -37,7 +37,8 @@ Imports:
     tidyr,
     tidyselect,
     Rdpack (>= 0.7),
-    lifecycle
+    lifecycle,
+    withr
 Suggests:
     causaldata,
     doSNOW,

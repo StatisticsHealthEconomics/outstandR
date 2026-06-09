@@ -70,7 +70,97 @@ Q <- function(beta, X) {
 maic.boot <- function(data, indices, 
                       balance_matrix, outcome_x_matrix, outcome_y, 
                       ald_targets, scaling_factors, 
-                      trt_var, family, hat_w = NULL) {
+                      trt_var, family, hat_w = NULL,
+                      # backwards compatibility arguments
+                      ipd = NULL, outcome_model = NULL, balance_model = NULL,
+                      ald = NULL, moments = 1, int = FALSE) {
+  
+  # Backwards compatibility check
+  is_old_signature <- !is.null(ipd) || 
+                      !is.null(outcome_model) || 
+                      !is.null(balance_model) || 
+                      !is.null(ald) || 
+                      (inherits(balance_matrix, "formula") || inherits(balance_matrix, "call"))
+  
+  if (is_old_signature) {
+    old_ipd <- if (!is.null(ipd)) ipd else if (missing(data)) NULL else data
+    old_indices <- if (missing(indices)) NULL else indices
+    if (is.null(old_indices) && !is.null(old_ipd)) {
+      old_indices <- 1:nrow(old_ipd)
+    }
+    old_outcome_model <- if (!is.null(outcome_model)) outcome_model else if (missing(balance_matrix)) NULL else balance_matrix
+    old_balance_model <- if (!is.null(balance_model)) balance_model else if (missing(outcome_x_matrix)) NULL else outcome_x_matrix
+    old_family <- if (!is.null(family)) family else if (missing(family)) {
+      if (!missing(outcome_y) && inherits(outcome_y, "family")) outcome_y else NULL
+    } else family
+    old_ald <- if (!is.null(ald)) ald else if (missing(ald_targets)) NULL else ald_targets
+    old_trt_var <- if (!is.null(trt_var)) trt_var else if (missing(trt_var)) {
+      if (!missing(scaling_factors) && is.character(scaling_factors)) scaling_factors else NULL
+    } else trt_var
+    old_moments <- if (!is.null(moments)) moments else 1
+    old_int <- if (!is.null(int)) int else FALSE
+    
+    data <- old_ipd
+    indices <- old_indices
+    family <- old_family
+    trt_var <- old_trt_var
+    
+    calc_moments <- if (!is.null(old_moments)) old_moments else 1
+    calc_int <- if (!is.null(old_int)) old_int else FALSE
+    
+    base_vars <- all.vars(old_balance_model)
+    term_list <- base_vars
+    
+    if (isTRUE(calc_int) && length(base_vars) > 1) {
+      term_list <- c(term_list, paste0("(", paste(base_vars, collapse = " + "), ")^2"))
+    }
+    if (calc_moments == 2) {
+      term_list <- c(term_list, paste0("I(", base_vars, "^2)"))
+    }
+    
+    if (length(term_list) == 0) {
+      balance_matrix <- matrix(nrow = nrow(data), ncol = 0)
+    } else {
+      expanded_formula <- as.formula(paste("~", paste(term_list, collapse = " + ")))
+      balance_matrix <- model.matrix(expanded_formula, data = data)[, -1, drop = FALSE]
+    }
+    
+    outcome_x_matrix <- model.matrix(old_outcome_model, data = data)
+    outcome_y <- data[[all.vars(old_outcome_model)[1]]]
+    
+    balance_var_names <- colnames(balance_matrix)
+    ald_targets <- setNames(numeric(length(balance_var_names)), balance_var_names)
+    scaling_factors <- setNames(rep(1, length(balance_var_names)), balance_var_names)
+    
+    for (em_name in balance_var_names) {
+      is_second_moment <- grepl("^I\\(.*\\^2\\)$", em_name)
+      if (is_second_moment) {
+        base_name <- sub("^I\\((.*)\\^2\\)$", "\\1", em_name)
+        base_mean <- old_ald$value[old_ald$variable == base_name & old_ald$statistic == "mean"]
+        base_sd   <- old_ald$value[old_ald$variable == base_name & old_ald$statistic == "sd"]
+        
+        if (length(base_mean) == 0 || length(base_sd) == 0) {
+          stop(paste("Both 'mean' and 'sd' must be in the ALD to balance the variance of:", base_name), call. = FALSE)
+        }
+        ald_targets[em_name] <- (base_sd^2) + (base_mean^2)
+        centred_col <- balance_matrix[, em_name] - ald_targets[em_name]
+        if (sd(centred_col) > 0) scaling_factors[em_name] <- sd(centred_col)
+      } else {
+        ald_mean_val <- old_ald$value[old_ald$variable == em_name & old_ald$statistic == "mean"]
+        ald_prop_val <- old_ald$value[old_ald$variable == em_name & old_ald$statistic == "prop"]
+        
+        if (length(ald_mean_val) > 0) {
+          ald_targets[em_name] <- ald_mean_val
+          centred_col <- balance_matrix[, em_name] - ald_targets[em_name]
+          if (sd(centred_col) > 0) scaling_factors[em_name] <- sd(centred_col)
+        } else if (length(ald_prop_val) > 0) {
+          ald_targets[em_name] <- ald_prop_val
+        } else {
+          stop(paste("Target statistic not found in ALD for covariate:", em_name), call. = FALSE)
+        }
+      }
+    }
+  }
   
   n_ipd <- length(indices)
   n_trts <- length(unique(data[[trt_var]][indices]))
@@ -177,6 +267,23 @@ calc_maic <- function(strategy,
   # extract parameters
   ipd <- analysis_params$ipd
   ald <- analysis_params$ald
+  
+  n_trts <- length(unique(ipd[[strategy$trt_var]]))
+  if (n_trts < 2) {
+    warning("Bootstrap sample contains less than two treatment levels. Returning NA.", call. = FALSE)
+    warning("Bootstrap sample contains less than two treatment levels. Returning NA.", call. = FALSE)
+    return(list(
+      means = list(
+        A = rep(NA, strategy$n_boot),
+        C = rep(NA, strategy$n_boot)
+      ),
+      model = list(
+        weights = rep(NA, nrow(ipd)),
+        ESS = NA
+      )
+    ))
+  }
+  
   calc_moments <- if (!is.null(strategy$moments)) strategy$moments else 1
   calc_int <- if (!is.null(strategy$int)) strategy$int else FALSE
   
@@ -196,8 +303,12 @@ calc_maic <- function(strategy,
   }
   
   # Create the expanded formula and generate the IPD matrix
-  expanded_formula <- as.formula(paste("~", paste(term_list, collapse = " + ")))
-  balance_matrix <- model.matrix(expanded_formula, data = ipd)[, -1, drop = FALSE]
+  if (length(term_list) == 0) {
+    balance_matrix <- matrix(nrow = nrow(ipd), ncol = 0)
+  } else {
+    expanded_formula <- as.formula(paste("~", paste(term_list, collapse = " + ")))
+    balance_matrix <- model.matrix(expanded_formula, data = ipd)[, -1, drop = FALSE]
+  }
   
   # --- 2. BUILD THE OUTCOME MATRICES ONCE ---
   
@@ -230,7 +341,7 @@ calc_maic <- function(strategy,
       ald_targets[em_name] <- (base_sd^2) + (base_mean^2)
       
       # Pre-calculate standard deviation for scaling based on original data
-      centred_col <- ipd_matrix[, em_name] - ald_targets[em_name]
+      centred_col <- balance_matrix[, em_name] - ald_targets[em_name]
       if (sd(centred_col) > 0) scaling_factors[em_name] <- sd(centred_col)
       
     } else {
