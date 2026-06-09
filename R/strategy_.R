@@ -28,6 +28,7 @@
 #' @param int Logical. If \code{TRUE}, includes two-way interactions between all 
 #'   covariates in the balancing model to effectively balance their covariances.
 #'    Default \code{FALSE}
+#' @param verbatim Logical. Output to console during running.
 #' @return `maic` class object
 #' 
 #' @importFrom utils modifyList

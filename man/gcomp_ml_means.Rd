@@ -32,9 +32,6 @@ We assume a common distribution for each treatment arm.}
 \item{N}{Synthetic sample size for g-computation}
 
 \item{marginal_distns, marginal_params}{Marginal distributions and parameters}
-
-\item{formula}{Linear regression \code{formula} object. Prognostic factors (PF) are main effects and effect modifiers (EM) are
-interactions with the treatment variable, e.g., y ~ X1 + trt + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
 }
 \value{
 A list containing:

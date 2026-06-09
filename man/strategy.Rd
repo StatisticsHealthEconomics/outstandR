@@ -79,6 +79,8 @@ Default to 1.}
 covariates in the balancing model to effectively balance their covariances.
 Default \code{FALSE}}
 
+\item{verbatim}{Logical. Output to console during running.}
+
 \item{rho}{A named square matrix of covariate correlations; default NA}
 
 \item{marginal_distns}{Marginal distributions names; vector default NA.

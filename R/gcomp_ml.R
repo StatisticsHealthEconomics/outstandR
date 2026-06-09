@@ -129,7 +129,7 @@ calc_gcomp_ml <- function(strategy,
 #' @param data A data frame containing the original individual participant data (IPD).
 #' @param indices A vector of indices supplied by the bootstrapping function,
 #'   used to resample `data`.
-#' @eval reg_args(include_formula = TRUE, include_family = TRUE)
+#' @eval reg_args(include_formula = FALSE, include_family = TRUE)
 #' @param rho A named square matrix specifying the correlation between covariates
 #'   for synthetic data generation. Defaults to `NA`, assuming independence.
 #' @param N Synthetic sample size for G-computation
@@ -164,7 +164,7 @@ gcomp_ml.boot <- function(data, indices,
 
 #' G-computation maximum likelihood mean outcomes by arm
 #'
-#' @eval reg_args(include_formula = TRUE, include_family = TRUE)
+#' @eval reg_args(include_formula = FALSE, include_family = TRUE)
 #' @eval study_data_args(include_ipd = TRUE, include_ald = TRUE)
 #' @param rho A named square matrix of covariate correlations; default NA.
 #' @param N Synthetic sample size for g-computation

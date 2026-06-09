@@ -37,9 +37,6 @@ for synthetic data generation. Defaults to \code{NA}, assuming independence.}
 \item{marginal_distns, marginal_params}{Marginal distributions and parameters}
 
 \item{ald}{A data frame of aggregate-level data providing covariate distributions.}
-
-\item{formula}{Linear regression \code{formula} object. Prognostic factors (PF) are main effects and effect modifiers (EM) are
-interactions with the treatment variable, e.g., y ~ X1 + trt + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
 }
 \value{
 A single numeric value representing the relative treatment effect

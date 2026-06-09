@@ -55,14 +55,27 @@ Q <- function(beta, X) {
 #' 
 #' Matching-adjusted indirect comparison bootstrap sampling.
 #' 
-#' @eval study_data_args(include_ipd = TRUE, include_ald = TRUE)
+#' @param data Individual-level patient data (data frame).
 #' @param indices Vector of indices, same length as original,
-#'   which define the bootstrap sample
-#' @eval reg_args(include_formula = TRUE, include_family = TRUE)
-#' @param hat_w MAIC weights; default `NULL` which calls [maic_weights()]
+#'   which define the bootstrap sample.
+#' @param balance_matrix Pre-computed balance matrix.
+#' @param outcome_x_matrix Pre-computed outcome design matrix.
+#' @param outcome_y Pre-computed outcome vector.
+#' @param ald_targets Vector of ALD targets.
+#' @param scaling_factors Vector of scaling factors.
+#' @param trt_var Treatment variable name.
+#' @param family A 'family' object specifying the distribution and link function.
+#' @param hat_w MAIC weights; default `NULL` which calls [maic_weights()].
+#' @param ipd Backwards compatibility IPD data (optional).
+#' @param outcome_model Backwards compatibility outcome model formula (optional).
+#' @param balance_model Backwards compatibility balance model formula (optional).
+#' @param ald Backwards compatibility ALD data (optional).
+#' @param moments Backwards compatibility moments (default 1).
+#' @param int Backwards compatibility interactions flag (default FALSE).
 #' 
 #' @return Vector of fitted probabilities for treatments _A_ and _C_
 #' @importFrom glue glue
+#' @importFrom stats glm.fit
 #' @seealso [calc_IPD_stats.maic()]
 #' 
 #' @keywords internal
@@ -199,7 +212,7 @@ maic.boot <- function(data, indices,
   }
   
   # fit weighted regression model
-  fit <- glm.fit(
+  fit <- stats::glm.fit(
     x = outcome_x_matrix[indices, , drop = FALSE], 
     y = outcome_y[indices], 
     weights = hat_w / mean(hat_w), 
