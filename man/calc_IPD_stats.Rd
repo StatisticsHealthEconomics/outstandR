@@ -82,7 +82,7 @@ by transforming from probability to linear predictor scale.
 Using Stan, compute marginal relative treatment effect for IPD
 comparator "A" vs reference "C" arms for each MCMC sample
 by transforming from probability to linear predictor scale. Approximate by
-using imputation and combining estimates using Rubin's rules.
+using imputation and combining estimates using pooling.
 }
 
 \examples{

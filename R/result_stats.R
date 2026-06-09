@@ -4,7 +4,7 @@
 #' Combining output from aggregate level data studies BC and 
 #' adjusted individual level data studies AC into a single object.
 #'
-#' @param ipd_stats,ald_stats 
+#' @param ipd_stats,ald_stats Trial data for IPD and ALD
 #' @param CI Confidence interval level, i.e. 1-alpha; default 0.95
 #'
 #' @returns List of ITC output:

@@ -1,8 +1,9 @@
-pandoc: 3.6.3
+pandoc: '0'
 pkgdown: 2.2.0
 pkgdown_sha: ~
-articles: {}
-last_built: 2026-01-25T14:10Z
+articles:
+  articles/adding-a-new-strategy: adding-a-new-strategy.html
+last_built: 2026-06-09T14:20Z
 urls:
   reference: https://StatisticsHealthEconomics.github.io/outstandR/reference
   article: https://StatisticsHealthEconomics.github.io/outstandR/articles

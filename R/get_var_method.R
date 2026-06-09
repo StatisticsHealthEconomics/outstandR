@@ -34,34 +34,41 @@ get_var_method <- function(strategy, user_method = NULL) {
 #' @param strategy Strategy object
 #' @return Character vector of allowed methods. First element is the default.
 #' @keywords internal
+#' @export
 get_allowed_var_methods <- function(strategy) UseMethod("get_allowed_var_methods", strategy)
 
 #' @keywords internal
+#' @export
 get_allowed_var_methods.default <- function(strategy) {
   c("sample", "sandwich")
 }
 
 #' @keywords internal
+#' @export
 get_allowed_var_methods.maic <- function(strategy) {
   c("sample", "sandwich")
 }
 
 #' @keywords internal
+#' @export
 get_allowed_var_methods.stc <- function(strategy) {
   c("sample", "sandwich")
 }
 
 #' @keywords internal
+#' @export
 get_allowed_var_methods.gcomp_ml <- function(strategy) {
   c("sample", "sandwich")
 }
 
 #' @keywords internal
+#' @export
 get_allowed_var_methods.gcomp_bayes <- function(strategy) {
   c("sample", "sandwich")
 }
 
 #' @keywords internal
+#' @export
 get_allowed_var_methods.mim <- function(strategy) {
-  c("rubin")
+  c("pool")
 }

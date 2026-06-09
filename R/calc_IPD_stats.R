@@ -97,10 +97,10 @@ IPD_stat_factory <- function(ipd_fun) {
       var_est <- estimate_var_sandwich(strategy, analysis_params, ...)
     } else if (var_method == "sample") {
       var_est <- var(hat.delta.AC, na.rm = TRUE)
-    } else if (var_method == "rubin") {
+    } else if (var_method == "pool") {
       
       if (is.null(out$model$hats.v) || is.null(out$model$n_imp)) {
-        stop("Rubin's rules require 'hats.v' and 'n_imp' in the model output.", call. = FALSE)
+        stop("Pooling requires 'hats.v' and 'n_imp' in the model output.", call. = FALSE)
       }
       
       n_imp <- out$model$n_imp
@@ -176,7 +176,7 @@ calc_IPD_stats.gcomp_bayes <- IPD_stat_factory(outstandR:::calc_gcomp_bayes)
 #' Using Stan, compute marginal relative treatment effect for IPD
 #' comparator "A" vs reference "C" arms for each MCMC sample
 #' by transforming from probability to linear predictor scale. Approximate by 
-#' using imputation and combining estimates using Rubin's rules.
+#' using imputation and combining estimates using pooling.
 #' 
 #' @importFrom stats qt var
 #' @export
