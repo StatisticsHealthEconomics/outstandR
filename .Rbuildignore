@@ -35,3 +35,4 @@ scripts/create_package_data\.R
 ^pkgdown$
 ^\.positai$
 ^\.claude$
+^GEMINI.md$
