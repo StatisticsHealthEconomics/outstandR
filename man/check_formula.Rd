@@ -2,12 +2,12 @@
 % Please edit documentation in R/check_formula.R
 \name{check_formula}
 \alias{check_formula}
-\title{Check formula}
+\title{Check outcome formula}
 \usage{
 check_formula(formula, trt_var = NULL)
 }
 \arguments{
-\item{formula}{Formula}
+\item{formula}{Formula for the outcome model}
 
 \item{trt_var}{Treatment variable}
 }
@@ -15,6 +15,6 @@ check_formula(formula, trt_var = NULL)
 No return value, called for side effects
 }
 \description{
-Check formula
+Check outcome formula
 }
 \keyword{internal}

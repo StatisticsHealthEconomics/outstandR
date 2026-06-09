@@ -37,6 +37,10 @@ navbar:
       href: news/index.html
 
 reference:
+- title: "Deprecated"
+    desc: "Functions that will be removed in future versions."
+    contents:
+      - strategy_stc
 - title: "Main"
   desc: "Main analysis functions."
   contents:

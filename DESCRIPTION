@@ -36,7 +36,8 @@ Imports:
     tibble,
     tidyr,
     tidyselect,
-    Rdpack (>= 0.7)
+    Rdpack (>= 0.7),
+    lifecycle
 Suggests:
     causaldata,
     doSNOW,
@@ -56,4 +57,5 @@ RdMacros: Rdpack
 URL: https://StatisticsHealthEconomics.github.io/outstandR/
 BugReports: https://github.com/StatisticsHealthEconomics/outstandR/issues/
 LazyData: false
+Config/Needs/website: rmarkdown
 Config/roxygen2/version: 8.0.0

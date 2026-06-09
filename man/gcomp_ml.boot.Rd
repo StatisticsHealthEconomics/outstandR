@@ -8,7 +8,7 @@ gcomp_ml.boot(
   data,
   indices,
   R,
-  formula = NULL,
+  outcome_model = NULL,
   family,
   trt_var,
   ref_trt = NA,
@@ -26,9 +26,6 @@ gcomp_ml.boot(
 \item{indices}{A vector of indices supplied by the bootstrapping function,
 used to resample \code{data}.}
 
-\item{formula}{Linear regression \code{formula} object. Prognostic factors (PF) are main effects and effect modifiers (EM) are
-interactions with the treatment variable, e.g., y ~ X1 + trt + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
-
 \item{family}{A 'family' object specifying the distribution and link function (e.g., 'binomial').
 See stats::family() for more details.}
 
@@ -40,13 +37,16 @@ for synthetic data generation. Defaults to \code{NA}, assuming independence.}
 \item{marginal_distns, marginal_params}{Marginal distributions and parameters}
 
 \item{ald}{A data frame of aggregate-level data providing covariate distributions.}
+
+\item{formula}{Linear regression \code{formula} object. Prognostic factors (PF) are main effects and effect modifiers (EM) are
+interactions with the treatment variable, e.g., y ~ X1 + trt + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
 }
 \value{
 A single numeric value representing the relative treatment effect
 }
 \description{
-This is a statistic function intended for use with a bootstrapping function
-(e.g., \code{\link[boot:boot]{boot::boot()}}). On each bootstrap sample of the data, it calculates
+For use with a bootstrapping function (e.g., \code{\link[boot:boot]{boot::boot()}}).
+On each bootstrap sample of the data, it calculates
 a relative treatment effect (e.g., log odds ratio, log relative risk, or
 risk difference) using G-computation with maximum likelihood.
 }

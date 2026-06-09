@@ -11,15 +11,17 @@ calc_mim(strategy, analysis_params, ...)
 \code{\link[=strategy_maic]{strategy_maic()}}, \code{\link[=strategy_stc]{strategy_stc()}}, or \code{\link[=strategy_mim]{strategy_mim()}}.
 Contains modelling details like the formula and family.}
 
+\item{analysis_params}{List of analysis parameters. Must contain \code{ipd} and \code{ald}.}
+
 \item{...}{Additional argument to pass to Stan model}
 }
 \value{
 A list containing:
 \itemize{
-\item \code{means}: A list containing vectors of posterior means (one per synthesis \code{n_imp}):
+\item \code{means}: A list containing named vectors of posterior means (one per synthesis \code{n_imp}):
 \itemize{
-\item \code{A}: Comparator means.
-\item \code{C}: Reference means.
+\item Comparator means.
+\item Reference means.
 }
 \item \code{model}: A list containing:
 \itemize{

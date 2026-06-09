@@ -25,10 +25,10 @@ estimate_var_sandwich.stc <- function(strategy, analysis_params, ...) {
   # 1. Fit Model (Standard GLM)
   # STC centers covariates (in calc_stc), so we must replicate that prep
   ipd <- analysis_params$ipd
-  centre_vars <- get_eff_mod_names(strategy$formula)
+  centre_vars <- get_eff_mod_names(strategy$outcome_model)
   ipd[, centre_vars] <- scale(ipd[, centre_vars], scale = FALSE)
   
-  fit <- glm(formula = strategy$formula, family = strategy$family, data = ipd)
+  fit <- glm(formula = strategy$outcome_model, family = strategy$family, data = ipd)
   
   # 2. Get Robust Covariance Matrix (Beta)
   vcov_robust <- get_robust_vcov(fit)
@@ -78,7 +78,7 @@ estimate_var_sandwich.maic <- function(strategy, analysis_params, ...) {
   trt_var <- strategy$trt_var
   
   # Re-calculate weights (reusing internal logic would be better, but we reconstruct here)
-  effect_modifier_names <- get_eff_mod_names(strategy$formula, trt_var)
+  effect_modifier_names <- get_eff_mod_names(strategy$outcome_model, trt_var)
   
   if (length(effect_modifier_names) > 0) {
     X_EM <- as.matrix(ipd[, effect_modifier_names, drop = FALSE])
@@ -108,7 +108,7 @@ estimate_var_sandwich.maic <- function(strategy, analysis_params, ...) {
   # Standard MAIC typically uses just `outcome ~ trt` in the weighted model.
   # We check the strategy implementation: calc_maic uses `formula_treat <- glue("{formula[[2]]} ~ {trt_var}")`
   
-  formula_maic <- as.formula(paste(all.vars(strategy$formula)[1], "~", trt_var))
+  formula_maic <- as.formula(paste(all.vars(strategy$outcome_model)[1], "~", trt_var))
   
   fit <- glm(formula = formula_maic, family = strategy$family, data = ipd, weights = w)
   
@@ -134,12 +134,12 @@ estimate_var_sandwich.maic <- function(strategy, analysis_params, ...) {
 estimate_var_sandwich.gcomp_ml <- function(strategy, analysis_params, ...) {
   # 1. Fit Model
   ipd <- analysis_params$ipd
-  fit <- glm(formula = strategy$formula, family = strategy$family, data = ipd)
+  fit <- glm(formula = strategy$outcome_model, family = strategy$family, data = ipd)
   
   # 2. Generate Pseudo-Population (fixed for variance calc)
   # We treat the pseudo-population as a constant integration grid
   x_star <- simulate_ALD_pseudo_pop(
-    formula = strategy$formula,
+    formula = strategy$outcome_model,
     ipd = ipd, ald = analysis_params$ald,
     trt_var = strategy$trt_var,
     rho = strategy$rho,

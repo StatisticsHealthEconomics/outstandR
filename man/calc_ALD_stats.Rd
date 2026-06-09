@@ -43,5 +43,5 @@ calc_ALD_stats(strategy = strategy,
 
 }
 \seealso{
-\code{\link[=marginal_treatment_effect]{marginal_treatment_effect()}}, \code{\link[=marginal_variance]{marginal_variance()}}
+\code{\link[=marginal_treatment_effect]{marginal_treatment_effect()}} \code{\link[=marginal_variance]{marginal_variance()}}
 }

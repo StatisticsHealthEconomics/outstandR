@@ -26,7 +26,7 @@ knitr::opts_chunk$set(
 This is the vignette for performing population adjustment methods with
 count data, in order to compare marginal treatment effects when there
 are cross-trial differences in effect modifiers and limited
-patient-level data. We will demonstrate how to apply MAIC, STC,
+patient-level data. We will demonstrate how to apply MAIC, 
 G-computation with ML, G-computation with Bayesian inference and
 multiple imputation marginalisation. The document structure follow the
 binary data example vignette which should be referred to for more
@@ -241,7 +241,7 @@ ald_trial
 In this case, we have 4 covariate mean and standard deviation values;
 and the total, average and sample size for each treatment *B* and *C*.
 
-In the following we will implement for MAIC, STC, and G-computation
+In the following we will implement for MAIC and G-computation
 methods to obtain the *marginal variance* and the *marginal treatment
 effect*.
 
@@ -262,7 +262,10 @@ The formula used in this model, passed as an argument to the strategy
 function is
 
 ```{r lin_form}
-lin_form <- as.formula("y ~ PF_cont_1 + PF_cont_2 + trt:EM_cont_1 + trt:EM_cont_2")
+lin_form <- list(
+  outcome_model = as.formula("y ~ PF_cont_1 + PF_cont_2 + trt:EM_cont_1 + trt:EM_cont_2"),
+  balance_model = as.formula("~ PF_cont_1 + PF_cont_2 + EM_cont_1 + EM_cont_2")
+)
 ```
 
 ### MAIC
@@ -282,22 +285,6 @@ The returned object is of class `outstandR`.
 
 ```{r outstandR_maic-print}
 outstandR_maic
-```
-
-### Simulated Treatment Comparison (STC)
-
-STC is the conventional outcome regression method. It involves fitting a
-regression model of outcome on treatment and covariates to the IPD.
-Simply pass the same as formula as before with the `strategy_stc()`
-strategy function.
-
-```{r outstandR_stc}
-outstandR_stc <-
-  outstandR(ipd_trial, ald_trial,
-            strategy = strategy_stc(
-              formula = lin_form,
-              family = poisson(link = "log")))
-outstandR_stc
 ```
 
 ### Parametric G-computation with maximum-likelihood estimation
@@ -324,27 +311,27 @@ The Bayesian approach also marginalizes, integrates or standardizes over
 the joint posterior distribution of the conditional nuisance parameters
 of the outcome regression, as well as the joint covariate distribution.
 
-Pass the `strategy_gcomp_stan()` strategy function.
+Pass the `strategy_gcomp_bayes()` strategy function.
 
-```{r outstandR_gcomp_stan, eval=FALSE, message=FALSE, warning=FALSE}
-outstandR_gcomp_stan <-
+```{r outstandR_gcomp_bayes, eval=FALSE, message=FALSE, warning=FALSE}
+outstandR_gcomp_bayes <-
   outstandR(ipd_trial, ald_trial,
-            strategy = strategy_gcomp_stan(
+            strategy = strategy_gcomp_bayes(
               formula = lin_form,
               family = poisson(link = "log")))
 ```
 
-```{r outstandR_gcomp_stan_eval, echo=FALSE, message=FALSE, warning=FALSE}
+```{r outstandR_gcomp_bayes_eval, echo=FALSE, message=FALSE, warning=FALSE}
 xx <- capture.output(
-  outstandR_gcomp_stan <-
+  outstandR_gcomp_bayes <-
     outstandR(ipd_trial, ald_trial,
-              strategy = strategy_gcomp_stan(
+              strategy = strategy_gcomp_bayes(
                 formula = lin_form,
                 family = poisson(link = "log"))))
 ```
 
 ```{r}
-outstandR_gcomp_stan
+outstandR_gcomp_bayes
 ```
 
 ### Multiple imputation marginalisation
@@ -384,9 +371,8 @@ res_tab <-
     # d_true = c(d_AB_true, d_AC_true, d_BC),
     # d_naive = c(d_AB_naive, d_AC_naive$d_AC, d_BC),
     `MAIC` = unlist(outstandR_maic$contrasts$means),
-    `STC` = unlist(outstandR_stc$contrasts$means),
     `Gcomp ML` = unlist(outstandR_gcomp_ml$contrasts$means),
-    `Gcomp Bayes` = unlist(outstandR_gcomp_stan$contrasts$means),
+    `Gcomp Bayes` = unlist(outstandR_gcomp_bayes$contrasts$means),
     `MIM` = unlist(outstandR_mim$contrasts$means)) |> 
   round(2)
 
@@ -395,9 +381,8 @@ res_tab_var <-
     # d_true = c(NA, NA, NA),
     # d_naive = c(var.d.AB.naive, d_AC_naive$var_AC, var.d.BC),
     `MAIC` = unlist(outstandR_maic$contrasts$variances),
-    `STC` = unlist(outstandR_stc$contrasts$variances),
     `Gcomp ML` = unlist(outstandR_gcomp_ml$contrasts$variances),
-    `Gcomp Bayes` = unlist(outstandR_gcomp_stan$contrasts$variances),
+    `Gcomp Bayes` = unlist(outstandR_gcomp_bayes$contrasts$variances),
     `MIM` = unlist(outstandR_mim$contrasts$variances)) |> 
   round(2)
 

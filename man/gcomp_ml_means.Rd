@@ -5,7 +5,7 @@
 \title{G-computation maximum likelihood mean outcomes by arm}
 \usage{
 gcomp_ml_means(
-  formula,
+  outcome_model,
   family,
   ipd,
   ald,
@@ -19,9 +19,6 @@ gcomp_ml_means(
 )
 }
 \arguments{
-\item{formula}{Linear regression \code{formula} object. Prognostic factors (PF) are main effects and effect modifiers (EM) are
-interactions with the treatment variable, e.g., y ~ X1 + trt + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
-
 \item{family}{A 'family' object specifying the distribution and link function (e.g., 'binomial').
 See stats::family() for more details.}
 
@@ -35,6 +32,9 @@ We assume a common distribution for each treatment arm.}
 \item{N}{Synthetic sample size for g-computation}
 
 \item{marginal_distns, marginal_params}{Marginal distributions and parameters}
+
+\item{formula}{Linear regression \code{formula} object. Prognostic factors (PF) are main effects and effect modifiers (EM) are
+interactions with the treatment variable, e.g., y ~ X1 + trt + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
 }
 \value{
 A list containing:
@@ -47,6 +47,6 @@ A list containing:
 G-computation maximum likelihood mean outcomes by arm
 }
 \seealso{
-\code{\link[=strategy_gcomp_ml]{strategy_gcomp_ml()}}, \code{\link[=gcomp_ml.boot]{gcomp_ml.boot()}}
+\code{\link[=strategy_gcomp_ml]{strategy_gcomp_ml()}} \code{\link[=gcomp_ml.boot]{gcomp_ml.boot()}}
 }
 \keyword{internal}

@@ -1,7 +1,10 @@
 # prepare data functions ---
 
 #' Prepare Individual Patient Data
-#'
+#' 
+#' Cleaning and subsetting input dataset so that they only 
+#' contain the variables actually needed for statistical models.
+#' 
 #' @param form Formula
 #' @param data Individual patient data
 #' @returns Model frame

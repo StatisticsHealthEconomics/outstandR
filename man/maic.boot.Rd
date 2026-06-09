@@ -5,31 +5,34 @@
 \title{MAIC bootstrap sample}
 \usage{
 maic.boot(
-  ipd,
-  indices = 1:nrow(ipd),
-  formula,
-  family,
-  ald,
+  data,
+  indices,
+  balance_matrix,
+  outcome_x_matrix,
+  outcome_y,
+  ald_targets,
+  scaling_factors,
   trt_var,
+  family,
   hat_w = NULL
 )
 }
 \arguments{
-\item{ipd}{Individual-level patient data. Dataframe with one row per patient with outcome, treatment and covariate columns.}
-
 \item{indices}{Vector of indices, same length as original,
 which define the bootstrap sample}
-
-\item{formula}{Linear regression \code{formula} object. Prognostic factors (PF) are main effects and effect modifiers (EM) are
-interactions with the treatment variable, e.g., y ~ X1 + trt + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
 
 \item{family}{A 'family' object specifying the distribution and link function (e.g., 'binomial').
 See stats::family() for more details.}
 
+\item{hat_w}{MAIC weights; default \code{NULL} which calls \code{\link[=maic_weights]{maic_weights()}}}
+
+\item{ipd}{Individual-level patient data. Dataframe with one row per patient with outcome, treatment and covariate columns.}
+
 \item{ald}{Aggregate-level data. Long format summary statistics for each covariate and treatment outcomes.
 We assume a common distribution for each treatment arm.}
 
-\item{hat_w}{MAIC weights; default \code{NULL} which calls \code{\link[=maic_weights]{maic_weights()}}}
+\item{formula}{Linear regression \code{formula} object. Prognostic factors (PF) are main effects and effect modifiers (EM) are
+interactions with the treatment variable, e.g., y ~ X1 + trt + trt:X2. For covariates as both PF and EM use \code{*} syntax.}
 }
 \value{
 Vector of fitted probabilities for treatments \emph{A} and \emph{C}

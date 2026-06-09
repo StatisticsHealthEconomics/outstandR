@@ -13,6 +13,7 @@ outstandR(
   scale = NULL,
   var_method = NULL,
   seed = NULL,
+  verbose = TRUE,
   ...
 )
 }
@@ -42,6 +43,8 @@ Choose from "log-odds", "log_relative_risk", "risk_difference", "delta_z", "mean
 \item{var_method}{Variance estimation method.}
 
 \item{seed}{Random seed.}
+
+\item{verbose}{Logical. If \code{TRUE}, prints progress messages and warnings.}
 
 \item{...}{Additional arguments. Currently, can pass named arguments to \code{rstanarm::stan_glm()} via \code{strategy_gcomp_bayes()}.}
 }
