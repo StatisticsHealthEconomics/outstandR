@@ -94,7 +94,7 @@ In this case, we have 4 covariate mean and standard deviation values; and the ev
 
 ### Output statistics
 
-We will implement for MAIC, STC, and G-computation methods to obtain the _marginal variance_, defined as
+We will implement for MAIC and G-computation methods to obtain the _marginal variance_, defined as
 
 $$
 \frac{1}{n_C} + \frac{1}{n_{\bar{C}}} + \frac{1}{n_B} + \frac{1}{n_{\bar{B}}}
@@ -129,7 +129,10 @@ $$
 which corresponds to the following `R` `formula` object passed as an argument to the strategy function.
 
 ```{r}
-lin_form <- as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")
+lin_form <- list(
+  outcome_model = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"),
+  balance_model = as.formula("~ X1 + X2")
+)
 ```
 
 
@@ -147,31 +150,6 @@ outstandR_maic
 
 We see that this is a list object with 3 parts, each containing statistics between each pair of treatments. These are the mean contrasts, variances and confidence intervals (CI), respectively.
 The default CI is for 95% but can be altered in `outstandR` with the `CI` argument.
-
-
-### STC
-
-STC is the conventional outcome regression method.
-It involves fitting a regression model of outcome on treatment and covariates to the IPD.
-IPD effect modifiers are centred at the mean _BC_ values.
-
-$$
-g(\mu_n) = \beta_0 + (\boldsymbol{x}_n - \boldsymbol{\theta}) \beta_1 + (\beta_z + (\boldsymbol{x_n^{EM}} - \boldsymbol{\theta^{EM}}) \boldsymbol{\beta_2}) \; \mbox{I}(z_n=1)
-$$
-where $\beta_0$ is the intercept, $\beta_1$ are the covariate coefficients, $\beta_z$ and $\beta_2$ are the effect modifier coefficients, $z_n$ are the indicator variables of effect alternative treatment.
-$g(\cdot)$ is the link function e.g. $\log$.
-
-As already mentioned, running the STC analysis is almost identical to the previous analysis but we now use the `strategy_stc()` strategy function instead and a formula with centered covariates.
-
-$$
-y = X_3 + X_4 + \beta_t(X_1 - \bar{X_1}) + \beta_t(X_2 - \bar{X_2})
-$$
-However, `outstandR()` knows how to handle this so we can simply pass the same (uncentred) formula as before.
-
-```{r outstandR_stc}
-outstandR_stc <- outstandR(AC.IPD, BC.ALD, strategy = strategy_stc(formula = lin_form))
-outstandR_stc
-```
 
 For the last two approaches, we perform G-computation firstly with a frequentist MLE approach and then a Bayesian approach.
 

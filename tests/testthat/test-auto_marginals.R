@@ -1,4 +1,4 @@
-# This test suite checks three key scenarios:
+# test suite checks three key scenarios:
 #   
 # * Auto-calculation: Providing just the distribution name (e.g., "gamma") and
 #                     verifying that outstandR correctly converts the ALD's Mean/SD into the correct Shape/Rate.
@@ -128,7 +128,7 @@ test_that("Integration: Arguments pass through outstandR() wrapper", {
   
   # custom distribution
   my_strategy <- strategy_gcomp_ml(
-    formula = y ~ X1 + X2 + trt + trt:X3 + trt:X4,
+    formula = list(outcome_model = y ~ X1 + X2 + trt + trt:X3 + trt:X4),
     family = binomial(link = "logit"),
     marginal_distns = c(X1 = "gamma", 
                         X2 = "norm", 

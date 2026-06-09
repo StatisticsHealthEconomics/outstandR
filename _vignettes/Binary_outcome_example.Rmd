@@ -352,7 +352,10 @@ appears as a linear regression. This corresponds to the following `R`
 `formula` object we will pass as an argument to the strategy function.
 
 ```{r}
-lin_form <- as.formula("y ~ PF_cont_1 + PF_cont_2 + trt + trt:EM_cont_1 + trt:EM_cont_2")
+lin_form <- list(
+  outcome_model = as.formula("y ~ PF_cont_1 + PF_cont_2 + trt:EM_cont_1 + trt:EM_cont_2"),
+  balance_model = as.formula("~ PF_cont_1 + PF_cont_2 + EM_cont_1 + EM_cont_2")
+)
 ```
 
 Note that the more succinct formula
@@ -481,46 +484,6 @@ outstandR_maic_lrr <-
 ```{r}
 outstandR_maic_lrr
 ```
-
-### Simulated treatment comparison (STC)
-
-Simulated treatment comparison (STC) is the conventional outcome
-regression method. It involves fitting a regression model of outcome on
-treatment and covariates to the IPD anad then 'plugging-in' mean covariate values from the aggregate data study.
-
-We can simply pass the same formula as before to the modified call with
-`strategy_stc()`.
-
-```{r outstandR_stc}
-outstandR_stc <-
-  outstandR(ipd_trial, ald_trial,
-            strategy = strategy_stc(
-              formula = lin_form,
-              family = binomial(link = "logit")))
-```
-
-```{r}
-outstandR_stc
-```
-
-Changing the outcome scale to LRR gives
-
-```{r outstandR_stc_lrr}
-outstandR_stc_lrr <-
-  outstandR(ipd_trial, ald_trial,
-            strategy = strategy_stc(
-              formula = lin_form,
-              family = binomial(link = "logit")),
-            scale = "log_relative_risk")
-```
-
-```{r}
-outstandR_stc_lrr
-```
-
-The following approaches follow naturally from the simple 'plug-in' version of STC.
-We will perform G-computation firstly with a
-frequentist MLE and then a Bayesian approach.
 
 ### Parametric G-computation with maximum-likelihood estimation
 
@@ -813,7 +776,6 @@ res_tab <-
     d_true = c(d_AB_true, d_AC_true, d_BC),
     d_naive = c(d_AB_naive, d_AC_naive$d_AC, d_BC),
     `MAIC` = unlist(outstandR_maic$contrasts$means),
-    `STC` = unlist(outstandR_stc$contrasts$means),
     `Gcomp ML` = unlist(outstandR_gcomp_ml$contrasts$means),
     `Gcomp Bayes` = unlist(outstandR_gcomp_bayes$contrasts$means),
     `MIM` = unlist(outstandR_mim$contrasts$means)) |> 
@@ -824,7 +786,6 @@ res_tab_var <-
     d_true = c(NA, NA, NA),
     d_naive = c(var.d.AB.naive, d_AC_naive$var_AC, var.d.BC),
     `MAIC` = unlist(outstandR_maic$contrasts$variances),
-    `STC` = unlist(outstandR_stc$contrasts$variances),
     `Gcomp ML` = unlist(outstandR_gcomp_ml$contrasts$variances),
     `Gcomp Bayes` = unlist(outstandR_gcomp_bayes$contrasts$variances),
     `MIM` = unlist(outstandR_mim$contrasts$variances)) |> 
@@ -853,7 +814,6 @@ res_tab_lrr <-
     # d_true = c(d_AB_true_lrr, d_AC_true_lrr, d_BC_lrr),
     # d_naive = c(d_AB_naive_lrr, d_AC_naive_lrr$d_AC, d_BC_lrr),
     `MAIC` = unlist(outstandR_maic_lrr$contrasts$means),
-    `STC` = unlist(outstandR_stc_lrr$contrasts$means),
     `Gcomp ML` = unlist(outstandR_gcomp_ml_lrr$contrasts$means),
     `Gcomp Bayes` = unlist(outstandR_gcomp_bayes_lrr$contrasts$means),
     `MIM` = unlist(outstandR_mim_lrr$contrasts$means)) |> 
@@ -864,7 +824,6 @@ res_tab_var_lrr <-
     # d_true = c(NA, NA, NA),
     # d_naive = c(var.d.AB.naive, d_AC_naive$var_AC, var.d.BC),
     `MAIC` = unlist(outstandR_maic_lrr$contrasts$variances),
-    `STC` = unlist(outstandR_stc_lrr$contrasts$variances),
     `Gcomp ML` = unlist(outstandR_gcomp_ml_lrr$contrasts$variances),
     `Gcomp Bayes` = unlist(outstandR_gcomp_bayes_lrr$contrasts$variances),
     `MIM` = unlist(outstandR_mim_lrr$contrasts$variances)) |> 

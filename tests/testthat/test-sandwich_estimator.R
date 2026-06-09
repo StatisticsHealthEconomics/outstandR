@@ -5,9 +5,10 @@ test_that("Sandwich variance estimator works for STC", {
   load(test_path("testdata/AC_IPD.RData"))
   
   form <- y ~ X1 + X2 + trt + trt:X3 + trt:X4
-  strat <- strategy_stc(formula = form, 
-                        family = binomial(link = "logit"), 
-                        trt_var = "trt")
+  strat <- strategy_stc(
+    formula = list(outcome_model = form), 
+    family = binomial(link = "logit"), 
+    trt_var = "trt")
   
   # Base parameters
   params <- list(ipd = AC_IPD, ald = BC_ALD, 
@@ -31,10 +32,12 @@ test_that("Sandwich variance estimator works for MAIC", {
   load(test_path("testdata/BC_ALD.RData"))
   load(test_path("testdata/AC_IPD.RData"))
   
-  form <- y ~ X1 + X2 + trt + trt:X3 + trt:X4
-  strat <- strategy_maic(formula = form, 
-                         family = binomial(link = "logit"), 
-                         trt_var = "trt")
+  form_maic <- ~ X1 + X2 + X3 + X4
+  
+  strat <- strategy_maic(
+    formula = list(balance_model = form_maic), 
+    family = binomial(link = "logit"), 
+    trt_var = "trt")
   
   # Specify method inside params
   params <- list(ipd = AC_IPD, ald = BC_ALD, 
@@ -57,17 +60,20 @@ test_that("Sandwich variance works via top-level outstandR() wrapper", {
   res_naive <- outstandR(
     ipd_trial = AC_IPD,
     ald_trial = BC_ALD,
-    strategy = strategy_stc(formula = y ~ X1 + trt, family = binomial()),
+    strategy = strategy_stc(
+      formula = list(outcome_model = y ~ X1 + trt),
+      family = binomial()),
     var_method = "sample"
   )
   
   res_robust <- outstandR(
     ipd_trial = AC_IPD,
     ald_trial = BC_ALD,
-    strategy = strategy_stc(formula = y ~ X1 + trt, family = binomial()),
+    strategy = strategy_stc(
+      formula = y ~ X1 + trt, family = binomial()),
     var_method = "sandwich" 
   )
   
-  # expect_false(res_naive$results$contrasts$var == res_robust$results$contrasts$var)
+  expect_false(res_naive$results$contrasts$variances$AC == res_robust$results$contrasts$variances$AC)
   expect_equal(res_robust$scale, "log_odds") # Check other attributes preserved
 })

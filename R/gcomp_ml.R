@@ -1,8 +1,128 @@
 
+#' G-computation Maximum Likelihood Bootstrap
+#'
+#' Computes the mean difference in treatment effects using bootstrap resampling.
+#'
+#' @param strategy A list specifying the model strategy, including:
+#'   * `R`: Number of bootstrap replications.
+#'   * `outcome_model`: A linear regression `formula` object for the outcome model.
+#'   * `family`: A `family` object specifying the distribution and link function
+#'     (e.g., `binomial`).
+#'   * `N`: Synthetic sample size for g-computation.
+#' @param analysis_params List of analysis parameters.
+#'
+#' @return A list containing:
+#' * `means`: A list containing:
+#'     * `A`: Bootstrap estimates for comparator treatment group "A".
+#'     * `C`: Bootstrap estimates for reference treatment group "C".
+#' * `model`: A list containing the `fit` object, `rho`, and `N`.
+#'
+#' @importFrom boot boot
+#' @examples
+#' strategy <- list(
+#'   outcome_model = y ~ trt:X1,
+#'   family = binomial(),
+#'   rho = NA,
+#'   N = 1000L,
+#'   n_boot = 100L,
+#'   marginal_distns = NA,
+#'   marginal_params = NA,
+#'   trt_var = "trt")
+#' 
+#' ipd <- data.frame(trt = sample(c("A", "C"), size = 100, replace = TRUE),
+#'                   X1 = rnorm(100, 1, 1),
+#'                   y = sample(c(1,0), size = 100, prob = c(0.7,0.3), replace = TRUE))
+#' 
+#' ald <- data.frame(trt = c(NA, NA, "B", "C", "B", "C"),
+#'                   variable = c("X1", "X1", "y", "y", NA, NA),
+#'                   statistic = c("mean", "sd", "sum", "sum", "N", "N"),
+#'                   value = c(0.5, 0.1, 10, 12, 20, 25))
+#' 
+#' calc_gcomp_ml(
+#'   strategy,
+#'   analysis_params = 
+#'     list(ipd = ipd, ald = ald, 
+#'          ref_trt = "C", 
+#'          ipd_comp = "A"))
+#'          
+#' @export
+#'
+calc_gcomp_ml <- function(strategy,
+                          analysis_params) {
+  
+  verbose <- isTRUE(analysis_params$verbose)
+  
+  if (verbose) {
+    cli::cli_h2("G-Computation (ML) Execution")
+    cli::cli_alert_info("Fitting initial model...")
+  }
+  
+  # Extract treatment names for dynamic naming
+  ref_trt <- analysis_params$ref_trt
+  comp_trt <- analysis_params$ipd_comp
+  
+  common_args <- list(
+    outcome_model = strategy$outcome_model,
+    family = strategy$family,
+    trt_var = strategy$trt_var,
+    ref_trt = ref_trt,
+    comp_trt = comp_trt,
+    rho = strategy$rho,
+    N = strategy$N,
+    marginal_distns = strategy$marginal_distns,
+    marginal_params = strategy$marginal_params,
+    ald = analysis_params$ald)
+  
+  # single run for fit
+  args_orig <- c(common_args, list(ipd = analysis_params$ipd))
+  original_run <- do.call(gcomp_ml_means, args_orig)
+  
+  args_boot <- c(
+    common_args, list(
+      data = analysis_params$ipd, 
+      R = strategy$n_boot))
+  
+  if (verbose) {
+    cli::cli_alert_info("Starting Bootstrap: {.val {strategy$n_boot}} replicates.")
+    cli::cli_alert_info("Simulating pseudo-pop (N={strategy$N}) per replicate.")
+    
+    total_ops <- strategy$n_boot * strategy$N
+    if (total_ops > 5e5) {
+      cli::cli_alert_warning("Large computation detected ({.val {total_ops}} simulations). Grab a coffee.")
+    }
+  }
+  
+  # Run Bootstrap
+  gcomp_boot <- do.call(boot::boot, c(statistic = gcomp_ml.boot, args_boot))
+  
+  # Dynamically assign names to the bootstrap distributions
+  # (Assuming boot returns: col 1 = reference, col 2 = comparator based on original logic)
+  means_list <- stats::setNames(
+    list(gcomp_boot$t[, 2], gcomp_boot$t[, 1]), 
+    c(comp_trt, ref_trt)
+  )
+  
+  # Extract original sample point estimates from boot$t0 
+  point_est_list <- stats::setNames(
+    list(gcomp_boot$t0[2], gcomp_boot$t0[1]), 
+    c(comp_trt, ref_trt)
+  )
+  
+  list(
+    means = means_list,
+    point_estimates = point_est_list,
+    model = list(
+      fit = original_run$model,
+      rho = strategy$rho,
+      N = strategy$N,
+      n_boot = strategy$n_boot)
+  )
+}
+
 #' Bootstrap for G-computation via Maximum Likelihood
 #'
-#' This is a statistic function intended for use with a bootstrapping function
-#' (e.g., [boot::boot()]). On each bootstrap sample of the data, it calculates
+#' For use with a bootstrapping function (e.g., [boot::boot()]). 
+#' On each bootstrap sample of the data, it calculates
 #' a relative treatment effect (e.g., log odds ratio, log relative risk, or
 #' risk difference) using G-computation with maximum likelihood.
 #'     
@@ -24,7 +144,7 @@
 #' 
 gcomp_ml.boot <- function(data, indices,
                           R, 
-                          formula = NULL,
+                          outcome_model = NULL,
                           family, trt_var,
                           ref_trt = NA,
                           comp_trt = NA,
@@ -35,7 +155,7 @@ gcomp_ml.boot <- function(data, indices,
                           ald) {
   dat <- data[indices, ]
   
-  res <- gcomp_ml_means(formula, family, dat, ald, trt_var, rho, N,
+  res <- gcomp_ml_means(outcome_model, family, dat, ald, trt_var, rho, N,
                         ref_trt, comp_trt,
                         marginal_distns, marginal_params)
   return(res$stats)
@@ -54,12 +174,12 @@ gcomp_ml.boot <- function(data, indices,
 #'   * `stats`: Named vector of marginal mean probabilities
 #'   * `model`: The fitted glm object
 #'   
-#' @seealso [strategy_gcomp_ml()], [gcomp_ml.boot()]
+#' @seealso [strategy_gcomp_ml()] [gcomp_ml.boot()]
 #' @importFrom copula normalCopula mvdc rMvdc
 #' @importFrom stats predict glm
 #' @keywords internal
 #'
-gcomp_ml_means <- function(formula,
+gcomp_ml_means <- function(outcome_model,
                            family,
                            ipd, ald,
                            trt_var,
@@ -70,7 +190,7 @@ gcomp_ml_means <- function(formula,
                            marginal_distns = NA,
                            marginal_params = NA) {
   
-  x_star <- simulate_ALD_pseudo_pop(formula = formula,
+  x_star <- simulate_ALD_pseudo_pop(formula = outcome_model,
                                     ipd = ipd, ald = ald,
                                     trt_var = trt_var, 
                                     rho = rho, N = N,
@@ -78,7 +198,7 @@ gcomp_ml_means <- function(formula,
                                     marginal_params = marginal_params)
   
   # outcome logistic regression fitted to IPD using maximum likelihood
-  fit <- glm(formula = formula,
+  fit <- glm(formula = outcome_model,
              family = family,
              data = ipd)
   
@@ -102,102 +222,3 @@ gcomp_ml_means <- function(formula,
 }
 
 
-#' Simulate Aggregate-Level Data Pseudo-Population
-#'
-#' Generates a synthetic cohort using a normal copula based on aggregate-level data.
-#'
-#' @eval reg_args(include_formula = TRUE, include_family = FALSE)
-#' @eval study_data_args(include_ipd = TRUE, include_ald = TRUE)
-#' @param rho A named square matrix of covariate correlations or single value; default NA takes from IPD.
-#' @param N Sample size for the synthetic cohort. Default is 1000.
-#' @param marginal_distns Marginal distributions names; vector default NA.
-#'    Available distributions are given in stats::Distributions. See [copula::Mvdc()] for details
-#' @param marginal_params Marginal distributions parameters;
-#'    named list of lists, default NA. See [copula::Mvdc()] for details
-#' @param seed Random seed
-#' @param verbose Default `FALSE`
-#' 
-#' @return A data frame representing the synthetic pseudo-population.
-#' @importFrom copula normalCopula mvdc
-#' 
-#' @keywords internal
-#' 
-simulate_ALD_pseudo_pop <- function(formula,
-                                    ipd = NULL, ald = NULL,
-                                    trt_var,
-                                    rho = NA,
-                                    N = 1000,
-                                    marginal_distns = NA,
-                                    marginal_params = NA,
-                                    seed = NULL,
-                                    verbose = FALSE) {
-  if (!is.null(seed)) {
-    set.seed(seed)
-  }
-  
-  resolved <- 
-    prepare_covariate_distns(
-      formula, ald, trt_var, 
-      marginal_distns, marginal_params, 
-      verbose)
-  
-  marginal_distns <- resolved$distns
-  marginal_params <- resolved$params
-  
-  covariate_names <- names(marginal_distns)
-  n_covariates <- length(covariate_names)
-  
-  # --- Standard Simulation Logic ---
-  
-  # handle no covariates (intercept-only or treatment-only models)
-  if (n_covariates == 0) {
-    return(data.frame(row.names = seq_len(length.out = N)))
-  }
-  
-  # don't require copula for single covariate
-  if (n_covariates == 1) {
-    # dynamically call appropriate random number generator
-    rng_fun <- get(paste0("r", marginal_distns[1]))
-    sim_vals <- do.call(rng_fun, c(list(n=N), marginal_params[[1]]))
-    
-    x_star <- matrix(sim_vals, ncol = 1,
-                     dimnames = list(NULL, covariate_names))
-    # return(as.data.frame(setNames(list(sim_vals), covariate_names)))  ##TODO
-    return(as.data.frame(x_star))
-  }
-  
-  # prepare correlation matrix
-  if (!is.matrix(rho)) {
-    if (is.na(rho)) {
-      
-      if (is.null(ipd)) {
-        stop("'rho' must be provided when 'ipd' is not available.", call. = FALSE)
-      }
-      
-      rho <- cor(ipd[, covariate_names], use = "pairwise.complete.obs")
-    } else {
-      rho <- matrix(rho, n_covariates, n_covariates,
-                    dimnames = list(covariate_names, covariate_names))
-      diag(rho) <- 1
-    }
-  }
-  
-  rho <- rho[covariate_names, covariate_names]
-  
-  # define Copula and Multivariate Distribution
-  cor_params <- rho[lower.tri(rho, diag = FALSE)]
-  
-  cop <- copula::normalCopula(param = cor_params,
-                              dim = n_covariates,
-                              dispstr = "un")
-  
-  mvd <- copula::mvdc(copula = cop,
-                      margins = marginal_distns,
-                      paramMargins = marginal_params)
-  
-  # simulate data
-  x_star <- as.data.frame(copula::rMvdc(n = N, mvd))
-  colnames(x_star) <- covariate_names
-  
-  return(x_star)
-}

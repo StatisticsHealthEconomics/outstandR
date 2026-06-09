@@ -67,14 +67,13 @@ Q <- function(beta, X) {
 #' 
 #' @keywords internal
 #' 
-maic.boot <- function(ipd, indices = 1:nrow(ipd),
-                      formula, family, ald,
-                      trt_var,
-                      hat_w = NULL) {
+maic.boot <- function(data, indices, 
+                      balance_matrix, outcome_x_matrix, outcome_y, 
+                      ald_targets, scaling_factors, 
+                      trt_var, family, hat_w = NULL) {
   
-  dat <- ipd[indices, ]  # bootstrap sample
   n_ipd <- length(indices)
-  n_trts <- length(unique(dat[[trt_var]]))
+  n_trts <- length(unique(data[[trt_var]][indices]))
   
   # ensure bootstrap sample contains more than one treatment level
   if (n_trts < 2) {
@@ -82,60 +81,27 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
     return(c(pC = NA, pA = NA, rep(NA, n_ipd), ESS = NA))
   }
   
-  effect_modifier_names <- get_eff_mod_names(formula, trt_var)
-  
-  if (length(effect_modifier_names) > 0) {
-
-    X_EM_prepared <- matrix(NA, nrow = n_ipd, ncol = length(effect_modifier_names))
-    colnames(X_EM_prepared) <- effect_modifier_names
+  if (ncol(balance_matrix) > 0) {
+    # 1. Subset the pre-made matrix
+    X_EM_boot <- balance_matrix[indices, , drop = FALSE]
     
-    # determine covariate types
-    for (em_name in effect_modifier_names) {
-      ipd_col <- dat[[em_name]]
-      
-      # Attempt to get 'mean' from ALD. If not found, try 'prop'
-      # This assumes ALD contains either 'mean' or 'proportion' for each effect modifier
-      ald_mean_val <- ald |>
-        dplyr::filter(.data$variable == em_name,
-                      .data$statistic == "mean") |>
-        dplyr::pull(.data$value)
-      
-      ald_prop_val <- ald |>
-        dplyr::filter(.data$variable == em_name,
-                      .data$statistic == "prop") |>
-        dplyr::pull(.data$value)
-      
-      if (length(ald_mean_val) > 0) {
-        # continuous if 'mean' in ALD
-        X_EM_prepared[, em_name] <- ipd_col - ald_mean_val
-        # scaling continuous variables by their standard deviation can improve optimizer performance
-        col_sd <- sd(X_EM_prepared[, em_name])
-        
-        if (col_sd > 0) {
-          X_EM_prepared[, em_name] <- X_EM_prepared[, em_name] / col_sd
-        }
-      } else if (length(ald_prop_val) > 0) {
-        # binary if 'prop' in ALD
-        # assumes binary variables are coded 0/1 in IPD
-        X_EM_prepared[, em_name] <- ipd_col - ald_prop_val
-      } else {
-        stop(paste("Neither 'mean' nor 'prop' found in ALD for covariate:", em_name), call. = FALSE)
-      }
-    }
+    # Centering and scaling in one step
+    X_EM_prepared <- scale(X_EM_boot, center = ald_targets, scale = scaling_factors)
     
-    # calculate MAIC weights if not provided
+    # clean matrix
+    attr(X_EM_prepared, "scaled:center") <- NULL
+    attr(X_EM_prepared, "scaled:scale") <- NULL
+    
+    # 4. Find weights
     if (is.null(hat_w)) {
       hat_w <- maic_weights(X_EM = X_EM_prepared)
     }
   } else {
-    # if no covariates, all weights are 1 (unadjusted comparison)
     hat_w <- rep(1, n_ipd)
   }
   
   # Calculate Effective Sample Size (ESS)
   ESS <- sum(hat_w)^2 / sum(hat_w^2)
-  
-  formula_treat <- glue::glue("{formula[[2]]} ~ {trt_var}")
   
   # so can use non-integer weights
   if (family$family == "binomial") {
@@ -143,19 +109,34 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
   }
   
   # fit weighted regression model
-  fit <- glm(formula = formula_treat,
-             family = family,
-             weights = hat_w / mean(hat_w),
-             data = cbind(dat, hat_w = hat_w))
+  fit <- glm.fit(
+    x = outcome_x_matrix[indices, , drop = FALSE], 
+    y = outcome_y[indices], 
+    weights = hat_w / mean(hat_w), 
+    family = family)
+  
   
   # extract model coefficients
-  coef_fit <- coef(fit)
+  coef_fit <- fit$coefficients  #coef_fit <- coef(fit)
+  
+  # index of the treatment variable
+  trt_coef_name <- grep(trt_var, names(coef_fit), value = TRUE)
+  
+  # Handle potential failure to find exact match (e.g. factors)
+  if (length(trt_coef_name) == 0) {
+    stop("Could not find treatment coefficient in fitted model.", call. = FALSE)
+  }
+  
+  # extract specific coefficients
+  intercept <- coef_fit["(Intercept)"]
+  trt_effect <- coef_fit[trt_coef_name]
   
   # probabilities using inverse link
   linkinv <- family$linkinv
   
-  pC <- unname(linkinv(coef_fit[1]))                # probability for control group
-  pA <- unname(linkinv(coef_fit[1] + coef_fit[2]))  # probability for treatment group
+  # calculate probabilities (assuming linear additivity on link scale)
+  pC <- unname(linkinv(intercept))
+  pA <- unname(linkinv(intercept + trt_effect))
   
   c(pC = pC, 
     pA = pA, 
@@ -185,19 +166,117 @@ maic.boot <- function(ipd, indices = 1:nrow(ipd),
 #' 
 calc_maic <- function(strategy,
                       analysis_params) {
-  args_list <- 
-    list(R = strategy$n_boot,
-         formula = strategy$formula,
-         family = strategy$family,
-         trt_var = strategy$trt_var,
-         data = analysis_params$ipd,
-         ald = analysis_params$ald)
   
-  maic_boot <- do.call(boot::boot, c(statistic = maic.boot, args_list))
+  verbose <- isTRUE(analysis_params$verbose)
+  
+  if (verbose) {
+    cli::cli_h2("MAIC Execution")
+    cli::cli_alert_info("Calculating weights using method of moments...")
+  }
+  
+  # extract parameters
+  ipd <- analysis_params$ipd
+  ald <- analysis_params$ald
+  calc_moments <- if (!is.null(strategy$moments)) strategy$moments else 1
+  calc_int <- if (!is.null(strategy$int)) strategy$int else FALSE
+  
+  # --- 1. BUILD THE BALANCE MATRIX ONCE ---
+  
+  base_vars <- all.vars(strategy$balance_model)
+  term_list <- base_vars
+  
+  # Add interactions if requested
+  if (isTRUE(calc_int) && length(base_vars) > 1) {
+    term_list <- c(term_list, paste0("(", paste(base_vars, collapse = " + "), ")^2"))
+  }
+  
+  # Add squared terms if moments == 2
+  if (calc_moments == 2) {
+    term_list <- c(term_list, paste0("I(", base_vars, "^2)"))
+  }
+  
+  # Create the expanded formula and generate the IPD matrix
+  expanded_formula <- as.formula(paste("~", paste(term_list, collapse = " + ")))
+  balance_matrix <- model.matrix(expanded_formula, data = ipd)[, -1, drop = FALSE]
+  
+  # --- 2. BUILD THE OUTCOME MATRICES ONCE ---
+  
+  # For glm.fit, we need the numeric X matrix and Y vector
+  outcome_x_matrix <- model.matrix(strategy$outcome_model, data = ipd)
+  # Assumes the first variable in the formula is the outcome (y)
+  outcome_y <- ipd[[all.vars(strategy$outcome_model)[1]]]
+  
+  # --- 3. PRE-CALCULATE TARGETS AND SCALES ---
+  
+  balance_var_names <- colnames(balance_matrix)
+  ald_targets <- setNames(numeric(length(balance_var_names)), balance_var_names)
+  scaling_factors <- setNames(rep(1, length(balance_var_names)), balance_var_names)
+  
+  # 3. Do the expensive dplyr/string logic ONCE
+  for (em_name in balance_var_names) {
+    
+    is_second_moment <- grepl("^I\\(.*\\^2\\)$", em_name)
+    
+    if (is_second_moment) {
+      base_name <- sub("^I\\((.*)\\^2\\)$", "\\1", em_name)
+      
+      base_mean <- ald$value[ald$variable == base_name & ald$statistic == "mean"]
+      base_sd   <- ald$value[ald$variable == base_name & ald$statistic == "sd"]
+      
+      if (length(base_mean) == 0 || length(base_sd) == 0) {
+        stop(paste("Both 'mean' and 'sd' must be in the ALD to balance the variance of:", base_name), call. = FALSE)
+      }
+      
+      ald_targets[em_name] <- (base_sd^2) + (base_mean^2)
+      
+      # Pre-calculate standard deviation for scaling based on original data
+      centred_col <- ipd_matrix[, em_name] - ald_targets[em_name]
+      if (sd(centred_col) > 0) scaling_factors[em_name] <- sd(centred_col)
+      
+    } else {
+      # Standard logic
+      ald_mean_val <- ald$value[ald$variable == em_name & ald$statistic == "mean"]
+      ald_prop_val <- ald$value[ald$variable == em_name & ald$statistic == "prop"]
+      
+      if (length(ald_mean_val) > 0) {
+        ald_targets[em_name] <- ald_mean_val
+        centred_col <- balance_matrix[, em_name] - ald_targets[em_name]
+        
+        if (sd(centred_col) > 0) scaling_factors[em_name] <- sd(centred_col)
+        
+      } else if (length(ald_prop_val) > 0) {
+        ald_targets[em_name] <- ald_prop_val
+        # Proportions usually aren't scaled, so scale stays 1
+      } else {
+        stop(paste("Target statistic not found in ALD for covariate:", em_name), call. = FALSE)
+      }
+    }
+  }
+  
+  # --- 4. RUN THE BOOTSTRAP ---
+  
+  args_list <- list(
+    data = ipd,                    # Required by boot, even if we use matrices
+    statistic = maic.boot,
+    R = strategy$n_boot,
+    # Pass our pre-computed matrices and vectors
+    balance_matrix = balance_matrix,
+    outcome_x_matrix = outcome_x_matrix,
+    outcome_y = outcome_y,
+    ald_targets = ald_targets,    
+    scaling_factors = scaling_factors,
+    family = strategy$family,
+    trt_var = strategy$trt_var
+  )
+  
+  if (verbose) {
+    cli::cli_alert_info("Starting Bootstrap with {.val {strategy$n_boot}} replicates.")
+  }
+  
+  maic_boot <- do.call(boot::boot, args_list)
   
   # boot return vector is: [pC (1), pA (2), weights (3 to N+2), ESS (N+3)]
   N_ipd <- nrow(analysis_params$ipd)
-  
   idx_pC <- 1
   idx_pA <- 2
   idx_weights_start <- 3

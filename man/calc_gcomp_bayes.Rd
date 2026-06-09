@@ -9,7 +9,7 @@ calc_gcomp_bayes(strategy, analysis_params, ...)
 \arguments{
 \item{strategy}{A list specifying the model strategy, including:
 \itemize{
-\item \code{formula}: A linear regression \code{formula} object.
+\item \code{outcome_model}: A linear regression \code{formula} object.
 \item \code{family}: A \code{family} object specifying the distribution and link function
 (e.g., \code{binomial}).
 \item \code{iter}: Number of iterations for the MCMC sampling.
@@ -26,8 +26,8 @@ A list containing:
 \itemize{
 \item \code{means}: A list containing:
 \itemize{
-\item \code{A}: Posterior means for comparator treatment group "A".
-\item \code{C}: Posterior means for reference treatment group "C".
+\item Posterior means for comparator treatment group.
+\item Posterior means for reference treatment group.
 }
 \item \code{model}: A list containing the \code{fit} object (from \code{stan_glm}), \code{rho}, \code{N},
 and \code{stan_args}.
@@ -39,7 +39,7 @@ from the Bayesian G-computation method using Hamiltonian Monte Carlo.
 }
 \examples{
 strategy <- list(
-  formula = y ~ trt:X1,
+  outcome_model = y ~ trt:X1,
   family = binomial(),
   rho = NA,
   N = 1000L,
@@ -61,11 +61,14 @@ ald <- data.frame(
   statistic = c("mean", "sd", "sum", "sum", "N", "N"),
   value = c(0.5, 0.1, 10, 12, 20, 25))
 
-calc_gcomp_bayes(
-  strategy,
-  analysis_params = list(
-    ipd = ipd, ald = ald, 
-    ref_trt = "C",
-    ipd_comp = "A"))
+res <- 
+  calc_gcomp_bayes(
+    strategy,
+    analysis_params = list(
+      ipd = ipd, ald = ald, 
+      ref_trt = "C",
+      ipd_comp = "A"))
+
+str(res, max.level = 2, list.len = 3, vec.len = 2)
 
 }

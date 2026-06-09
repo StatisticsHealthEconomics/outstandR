@@ -6,45 +6,69 @@ library(stdReg2)
 #
 test_that("different combinations of covariates in formula", {
   
-  load(test_path("testdata/BC_ALD.RData"))
-  load(test_path("testdata/AC_IPD.RData"))
+  load(testthat::test_path("testdata/BC_ALD.RData"))
+  load(testthat::test_path("testdata/AC_IPD.RData"))
   
   ### gcomp_ml
   
-  expect_error(strategy_gcomp_ml(formula = as.formula("y ~ 1")),
-               regexp = "Treatment term 'trt' is missing in the formula")
+  expect_error(strategy_gcomp_ml(
+    formula = list(outcome_model = as.formula("y ~ 1"))),
+    regexp = "Treatment term 'trt' is missing in the formula")
   
-  expect_error(strategy_gcomp_ml(formula = as.formula("y ~ X3 + X4"), trt_var = "trt"),
-               regexp = "Treatment term 'trt' is missing in the formula")
+  expect_error(strategy_gcomp_ml(
+    formula = list(outcome_model = as.formula("y ~ X3 + X4")), trt_var = "trt"),
+    regexp = "Treatment term 'trt' is missing in the outcome formula")
   
-  strat_1234 <- strategy_gcomp_ml(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"))
-  strat_31 <- strategy_gcomp_ml(formula = as.formula("y ~ X3 + trt*X1"))
-  strat_13 <- strategy_gcomp_ml(formula = as.formula("y ~ trt*X1 + X3"))
-  strat_1 <- strategy_gcomp_ml(formula = as.formula("y ~ trt*X1"))
+  strat_1234 <- strategy_gcomp_ml(
+    formula = list(outcome_model = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")))
   
-  res <- outstandR(ipd_trial = AC_IPD, ald_trial = BC_ALD, strategy = strat_1234)
+  strat_31 <- strategy_gcomp_ml(
+    formula = list(outcome_model = as.formula("y ~ X3 + trt*X1")))
   
-  expect_length(res, 11)
+  strat_13 <- strategy_gcomp_ml(
+    formula = list(outcome_model = as.formula("y ~ trt*X1 + X3")))
+  
+  strat_1 <- strategy_gcomp_ml(
+    formula = list(outcome_model = as.formula("y ~ trt*X1")))
+  
+  res <- outstandR(ipd_trial = AC_IPD,
+                   ald_trial = BC_ALD,
+                   strategy = strat_1234)
+  
+  expect_length(res, 13)
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_31))
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_13))
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_1))
   
   ### gcomp_bayes
   
-  expect_error(strategy_gcomp_bayes(formula = as.formula("y ~ 1")),
-               regexp = "Treatment term 'trt' is missing in the formula")
+  expect_error(strategy_gcomp_bayes(
+    formula = list(outcome_model = as.formula("y ~ 1"))),
+    regexp = "Treatment term 'trt' is missing in the formula")
   
-  expect_error(strategy_gcomp_bayes(formula = as.formula("y ~ X3 + X4"), trt_var = "trt"),
-               regexp = "Treatment term 'trt' is missing in the formula")
+  expect_error(strategy_gcomp_bayes(
+    formula = list(outcome_model = as.formula("y ~ X3 + X4")),
+    trt_var = "trt"),
+    regexp = "Treatment term 'trt' is missing in the outcome formula")
   
-  strat_1234 <- strategy_gcomp_bayes(formula = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2"))
-  strat_31 <- strategy_gcomp_bayes(formula = as.formula("y ~ X3 + trt*X1"))
-  strat_13 <- strategy_gcomp_bayes(formula = as.formula("y ~ trt*X1 + X3"))
-  strat_1 <- strategy_gcomp_bayes(formula = as.formula("y ~ trt*X1"))
+  strat_1234 <- strategy_gcomp_bayes(
+    formula = list(outcome_model = as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")))
   
-  res <- outstandR(ipd_trial = AC_IPD, ald_trial = BC_ALD, strategy = strat_1234)
+  strat_31 <- strategy_gcomp_bayes(
+    formula = list(outcome_model = as.formula("y ~ X3 + trt*X1")))
   
-  expect_length(res, 11)
+  strat_13 <- strategy_gcomp_bayes(
+    formula = list(outcome_model = as.formula("y ~ trt*X1 + X3")))
+  
+  strat_1 <- strategy_gcomp_bayes(
+    formula = list(outcome_model = as.formula("y ~ trt*X1")))
+  
+  res <- outstandR(ipd_trial = AC_IPD,
+                   ald_trial = BC_ALD,
+                   strategy = strat_1234)
+  
+  expect_length(res, 13)
+  
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_31))
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_13))
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_1))
@@ -113,7 +137,7 @@ test_that("compare with stdReg2 package for continuous outcome", {
     dplyr::mutate(trt = factor(trt))
   
   res_outstandr <- gcomp_ml_means(
-    formula = lin_form,
+    outcome_model = lin_form,
     family = "gaussian",
     ipd = nhefs_ipd,
     ald = nhefs_ald,
@@ -213,7 +237,7 @@ test_that("compare with stdReg2 package for binary outcome", {
   lin_form <- as.formula(y ~ trt * (sex + age))
   
   res_outstandr <- gcomp_ml_means(
-    formula = lin_form,
+    outcome_model = lin_form,
     family = "binomial",
     ipd = data,
     ald = data_ald,
@@ -311,7 +335,7 @@ test_that("compare with marginaleffects package for binary outcome", {
   data$trt <- factor(data$trt, labels = c("C", "A"))
   
   res_outstandr <- gcomp_ml_means(
-    formula = lin_form,
+    outcome_model = lin_form,
     family = "binomial",
     ipd = data,
     ald = data_ald,
@@ -387,7 +411,7 @@ test_that("compare with marginaleffects package for continuous outcome", {
     dplyr::mutate(trt = factor(trt))
   
   res_outstandr <- gcomp_ml_means(
-    formula = lin_form,
+    outcome_model = lin_form,
     family = "gaussian",
     ipd = nhefs_ipd,
     ald = nhefs_ald,
