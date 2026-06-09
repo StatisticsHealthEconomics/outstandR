@@ -41,8 +41,7 @@ conversion_map <- function() {
     risk_difference =
       list(relative_risk = convert_rd_to_rr),
     delta_z = 
-      list(odds_ratio = NULL),
-      # list(odds_ratio = convert_delta_z_to_or), ##TODO
+      list(odds_ratio = NULL)
   )
 }
 

@@ -21,9 +21,6 @@ maic_weights <- function(X_EM) {
   
   init <- rep(1, K)  # arbitrary starting point for optimizer
   
-  ##TODO: what about scaling X_EM?
-  ##      because large values return error
-  
   # find betas
   Q.min <- optim(fn = Q, X = X_EM, par = init, method = "BFGS")
   
