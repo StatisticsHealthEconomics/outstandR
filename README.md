@@ -13,6 +13,7 @@ v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/li
 [![outstandR status
 badge](https://statisticshealtheconomics.r-universe.dev/outstandR/badges/version)](https://statisticshealtheconomics.r-universe.dev/outstandR)
 [![CRAN status](https://www.r-pkg.org/badges/version/outstandR)](https://CRAN.R-project.org/package=outstandR)
+[![codecov](https://codecov.io/gh/StatisticsHealthEconomics/outstandR/graph/badge.svg?token=YOUR_CODECOV_TOKEN)](https://codecov.io/gh/StatisticsHealthEconomics/outstandR)
 <!-- badges: end -->
 
 > Indirect treatment comparison with limited subject-level data
