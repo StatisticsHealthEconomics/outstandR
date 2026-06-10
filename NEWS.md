@@ -1,4 +1,4 @@
-# outstandR (development version) 1.1.0
+# outstandR 2.0.0
 
 ### New features
 

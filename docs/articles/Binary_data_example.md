@@ -54,7 +54,6 @@ that this is always represented as a difference so, for example, for the
 risk ratio this is on the log scale.
 
 ``` math
-
 \Delta_{AB(BC)} = g(\bar{Y}_{B{(BC)}}) - g(\bar{Y}_{A{(BC)}})
 ```
 
@@ -63,6 +62,7 @@ risk ratio this is on the log scale.
 First, let us load necessary packages.
 
 ``` r
+
 library(boot)      # non-parametric bootstrap in MAIC and ML G-computation
 library(copula)    # simulating BC covariates from Gaussian copula
 library(rstanarm)  # fit outcome regression, draw outcomes in Bayesian G-computation
@@ -114,6 +114,7 @@ function available with the
 [simcovariates](https://github.com/n8thangreen/simcovariates) package.
 
 ``` r
+
 library(dplyr)
 library(MASS)
 
@@ -144,6 +145,7 @@ do this we will define the lable of the two level factor as `A` for 1
 and `C` for 0 as follows.
 
 ``` r
+
 ipd_trial$trt <- factor(ipd_trial$trt, labels = c("C", "A"))
 ```
 
@@ -153,6 +155,7 @@ and `meanX_EM_BC` but otherwise use the same parameter values as for the
 $`AC`$ case.
 
 ``` r
+
 BC.IPD <- gen_data(N, b_trt, b_X, b_EM, b_0,
                    meanX_BC, sdX, 
                    meanX_EM_BC, sdX_EM, 
@@ -201,6 +204,7 @@ trial identifier *B*, *C*.
 Our data look like the following.
 
 ``` r
+
 head(ipd_trial)
 #>           X1         X2         X3         X4 trt y
 #> 1 0.42066874  1.0957407 0.37118099  1.3291540   A 1
@@ -217,6 +221,7 @@ corresponds to new treatment *A*, and 0 is standard of care or status
 quo *C*. The ITC is ‘anchored’ via *C*, the common treatment.
 
 ``` r
+
 ald_trial
 #>    mean.X1     sd.X1  mean.X2     sd.X2   mean.X3     sd.X3  mean.X4     sd.X4
 #> 1 0.568822 0.3972807 0.623277 0.3850408 0.5787528 0.3906499 0.565223 0.3789089
@@ -233,7 +238,6 @@ and the event total, average and sample size for each treatment *B*, and
 The true logistic outcome model which we use to simulate the data is
 
 ``` math
-
 \text{logit}(p_{t}) = \beta_0 + \beta_X (X_3 + X_4) + [\beta_{t} + \beta_{EM} (X_1 + X_2)] \; \text{I}(t \neq C)
 ```
 
@@ -254,14 +258,12 @@ scale. For our current example of binary data and log-odds ratio the
 marginal treatment effect is
 
 ``` math
-
 \log\left( \frac{n_B/(N_B-n_B)}{n_C/(N_B-n_{B})} \right) = \log(n_B n_{\bar{C}}) - \log(n_C n_{\bar{B}})
 ```
 
 and marginal variance is
 
 ``` math
-
 \frac{1}{n_C} + \frac{1}{n_{\bar{C}}} + \frac{1}{n_B} + \frac{1}{n_{\bar{B}}}
 ```
 where $`n_B, n_C`$ are the number of events in each arm and $`\bar{C}`$
@@ -292,7 +294,6 @@ variables and $`Z`$ the treatment indicator then the formula used in
 this model is
 
 ``` math
-
 y = X_3 + X_4 + Z + Z X_1 + Z X_2
 ```
 
@@ -300,12 +301,14 @@ which corresponds to the following `R` `formula` object passed as an
 argument to the strategy function.
 
 ``` r
+
 lin_form <- as.formula("y ~ X3 + X4 + trt + trt:X1 + trt:X2")
 ```
 
 Note that the more succinct formula
 
 ``` r
+
 y ~ X3 + X4 + trt*(X1 + X2)
 ```
 
@@ -313,6 +316,7 @@ Would also include $`X_1, X_2`$ as prognostic factors so in not
 equivalent, but could be modified as follows.
 
 ``` r
+
 y ~ X3 + X4 + trt*(X1 + X2) - X1 - X2
 ```
 
@@ -326,6 +330,7 @@ from the `{boot}` package. We then calculate the bootstrap mean and
 variance in the wrapper function `maic_boot_stats`.
 
 ``` r
+
 outstandR_maic <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_maic(
@@ -336,6 +341,7 @@ outstandR_maic <-
 The returned object is of class `outstandR`.
 
 ``` r
+
 str(outstandR_maic)
 #> List of 2
 #>  $ contrasts:List of 3
@@ -379,6 +385,7 @@ A `print` method is available for `outstandR` objects for more
 human-readable output
 
 ``` r
+
 outstandR_maic
 #> Object of class 'outstandR' 
 #> Model: binomial 
@@ -432,12 +439,10 @@ For binary data the marginal treatment effect and variance are
 
 Treatment effect is
 ``` math
-
 \log(n_B/N_B) - \log(n_A/N_A)
 ```
 and variance
 ``` math
-
 \frac{1}{n_B} - \frac{1}{N_B} + \frac{1}{n_A} - \frac{1}{N_A}
 ```
 
@@ -445,12 +450,10 @@ and variance
 
 Treatment effect is
 ``` math
-
 \frac{n_B}{N_B} - \frac{n_A}{N_A}
 ```
 and variance
 ``` math
-
 \frac{n_B}{N_B} \left( 1 - \frac{n_B}{N_B} \right) + \frac{n_A}{N_A} \left( 1 - \frac{n_A}{N_A} \right)
 ```
 
@@ -460,6 +463,7 @@ function. For example, to change the scale to risk difference, we can
 use the following code.
 
 ``` r
+
 outstandR_maic_lrr <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_maic(formula = lin_form,
@@ -468,6 +472,7 @@ outstandR_maic_lrr <-
 ```
 
 ``` r
+
 outstandR_maic_lrr
 #> Object of class 'outstandR' 
 #> Model: binomial 
@@ -503,7 +508,6 @@ treatment and covariates to the IPD. IPD effect modifiers are centred at
 the mean *BC* values.
 
 ``` math
-
 g(\mu_n) = \beta_0 + \beta_X (\boldsymbol{x}_n - \boldsymbol{\theta}) + \boldsymbol{\beta_{EM}} (\beta_t + (\boldsymbol{x_n^{EM}} - \boldsymbol{\theta^{EM}}) ) \; \mbox{I}(t \neq C)
 ```
 
@@ -518,7 +522,6 @@ the previous analysis but we now use the
 strategy function instead and a formula with centered covariates.
 
 ``` math
-
 y = X_3 + X_4 + Z + Z (X_1 - \bar{X_1}) + Z (X_2 - \bar{X_2})
 ```
 
@@ -528,6 +531,7 @@ knows how to handle this so we can simply pass the same (uncentred)
 formula as before.
 
 ``` r
+
 outstandR_stc <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_stc(
@@ -563,6 +567,7 @@ outstandR_stc
 Change the outcome scale
 
 ``` r
+
 outstandR_stc_lrr <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_stc(
@@ -572,6 +577,7 @@ outstandR_stc_lrr <-
 ```
 
 ``` r
+
 outstandR_stc_lrr
 #> Object of class 'outstandR' 
 #> Model: binomial 
@@ -611,7 +617,6 @@ outcome $`y`$ on the covariates $`x`$ and treatment $`z`$ is fitted to
 the *AC* IPD:
 
 ``` math
-
 g(\mu_n) = \beta_0 + \boldsymbol{x}_n \boldsymbol{\beta_X} + (\beta_z + \boldsymbol{x_n^{EM}} \boldsymbol{\beta_{EM}}) \; \mbox{I}(t \neq C)
 ```
 
@@ -628,7 +633,6 @@ observation, we predict the marginal outcome mean in the hypothetical
 scenario in which all units are under treatment *C*:
 
 ``` math
-
 \hat{\mu}_0 = \int_{x^*} g^{-1} (\hat{\beta}_0 + x^* \hat{\beta}_1 ) p(x^*) \; \text{d}x^*
 ```
 
@@ -639,11 +643,11 @@ outcome scale, and calculates the difference between the average linear
 predictions:
 
 ``` math
-
 \hat{\Delta}^{(2)}_{10} = g(\hat{\mu}_1) - g(\hat{\mu}_0)
 ```
 
 ``` r
+
 outstandR_gcomp_ml <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_gcomp_ml(
@@ -680,6 +684,7 @@ outstandR_gcomp_ml
 Change the outcome scale
 
 ``` r
+
 outstandR_gcomp_ml_lrr <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_gcomp_ml(
@@ -689,6 +694,7 @@ outstandR_gcomp_ml_lrr <-
 ```
 
 ``` r
+
 outstandR_gcomp_ml_lrr
 #> Object of class 'outstandR' 
 #> Model: binomial 
@@ -734,12 +740,10 @@ predictor-outcome relationships observed in the *AC* trial IPD. This is
 given by:
 
 ``` math
-
 p(y^*_{^z*} \mid \mathcal{D}_{AC}) = \int_{x^*} p(y^* \mid z^*, x^*, \mathcal{D}_{AC}) p(x^* \mid \mathcal{D}_{AC})\; \text{d}x^*
 ```
 
 ``` math
-
 = \int_{x^*} \int_{\beta} p(y^* \mid z^*, x^*, \beta) p(x^* \mid \beta) p(\beta \mid \mathcal{D}_{AC})\; d\beta \; \text{d}x^*
 ```
 
@@ -754,6 +758,7 @@ under each set intervention $`z^*`$ from its posterior predictive
 distribution under the specific treatment.
 
 ``` r
+
 outstandR_gcomp_bayes <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_gcomp_bayes(
@@ -762,6 +767,7 @@ outstandR_gcomp_bayes <-
 ```
 
 ``` r
+
 outstandR_gcomp_bayes
 #> Object of class 'outstandR' 
 #> Model: binomial 
@@ -792,6 +798,7 @@ outstandR_gcomp_bayes
 As before, we can change the outcome scale.
 
 ``` r
+
 outstandR_gcomp_bayes_lrr <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_gcomp_bayes(
@@ -801,6 +808,7 @@ outstandR_gcomp_bayes_lrr <-
 ```
 
 ``` r
+
 outstandR_gcomp_bayes_lrr
 #> Object of class 'outstandR' 
 #> Model: binomial 
@@ -834,7 +842,6 @@ Marginalized treatment effect for aggregate level data study is obtained
 by integrating over the covariate distribution from the $`BC`$ study
 
 ``` math
-
 \Delta^{\text{marg}} = \mathbb{E}_{X \sim f_{\text{BC}}(X)} \left[ \mu_{T=1}(X) - \mu_{T=0}(X) \right]
 = \int \left[ \mu_{T=1}(X) - \mu_{T=0}(X) \right] f_{\text{BC}}(X) \; \text{d}X
 ```
@@ -842,11 +849,11 @@ by integrating over the covariate distribution from the $`BC`$ study
 The aggregate level data likelihood is
 
 ``` math
-
 \hat{\Delta}_{BC} \sim \mathcal{N}(\Delta^{\text{marg}}, SE^2)
 ```
 
 ``` r
+
 outstandR_mim <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_mim(
@@ -857,6 +864,7 @@ outstandR_mim
 ```
 
 ``` r
+
 outstandR_mim
 #> Object of class 'outstandR' 
 #> Model: binomial 
@@ -887,6 +895,7 @@ outstandR_mim
 Change the outcome scale again.
 
 ``` r
+
 outstandR_mim_lrr <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_mim(
@@ -896,6 +905,7 @@ outstandR_mim_lrr <-
 ```
 
 ``` r
+
 outstandR_mim_lrr
 #> Object of class 'outstandR' 
 #> Model: binomial 
@@ -933,6 +943,7 @@ $`\beta_t^{AC} + \beta_{EM} (\bar{X}^{AC}_1 + \bar{X}_2^{AC})`$.
 Calculated by
 
 ``` r
+
 d_AC_true <- b_trt + b_EM * (ald_trial$mean.X1 + ald_trial$mean.X2)
 ```
 
@@ -940,6 +951,7 @@ The naive approach is to just convert directly from one population to
 another, ignoring the imbalance in effect modifiers.
 
 ``` r
+
 d_AC_naive <- 
   ipd_trial |> 
   group_by(trt) |> 
@@ -964,6 +976,7 @@ The naive comparison calculating $`AB`$ effect in the $`BC`$ population
 is
 
 ``` r
+
 d_BC <-
   with(ald_trial, log(y.B.bar/(1-y.B.bar)) - log(y.C.bar/(1-y.C.bar)))
 
@@ -995,6 +1008,7 @@ Next, let us look at the results on the log relative risk scale. First,
 the true values are calculated as
 
 ``` r
+
 d_AB_true_lrr <- 0
 d_AC_true_lrr <- log(plogis(d_A_true) / plogis(d_C_true))
 d_AC_true_lrr

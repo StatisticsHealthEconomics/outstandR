@@ -1,6 +1,6 @@
-# Check formula
+# Check outcome formula
 
-Check formula
+Check outcome formula
 
 ## Usage
 
@@ -12,7 +12,7 @@ check_formula(formula, trt_var = NULL)
 
 - formula:
 
-  Formula
+  Formula for the outcome model
 
 - trt_var:
 

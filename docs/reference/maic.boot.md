@@ -6,50 +6,92 @@ Matching-adjusted indirect comparison bootstrap sampling.
 
 ``` r
 maic.boot(
-  ipd,
-  indices = 1:nrow(ipd),
-  formula,
-  family,
-  ald,
+  data,
+  indices,
+  balance_matrix,
+  outcome_x_matrix,
+  outcome_y,
+  ald_targets,
+  scaling_factors,
   trt_var,
-  hat_w = NULL
+  family,
+  hat_w = NULL,
+  ipd = NULL,
+  outcome_model = NULL,
+  balance_model = NULL,
+  ald = NULL,
+  moments = 1,
+  int = FALSE
 )
 ```
 
 ## Arguments
 
-- ipd:
+- data:
 
-  Individual-level patient data. Dataframe with one row per patient with
-  outcome, treatment and covariate columns.
+  Individual-level patient data (data frame).
 
 - indices:
 
   Vector of indices, same length as original, which define the bootstrap
-  sample
+  sample.
 
-- formula:
+- balance_matrix:
 
-  Linear regression `formula` object. Prognostic factors (PF) are main
-  effects and effect modifiers (EM) are interactions with the treatment
-  variable, e.g., y ~ X1 + trt + trt:X2. For covariates as both PF and
-  EM use `*` syntax.
+  Pre-computed balance matrix.
+
+- outcome_x_matrix:
+
+  Pre-computed outcome design matrix.
+
+- outcome_y:
+
+  Pre-computed outcome vector.
+
+- ald_targets:
+
+  Vector of ALD targets.
+
+- scaling_factors:
+
+  Vector of scaling factors.
+
+- trt_var:
+
+  Treatment variable name.
 
 - family:
 
-  A 'family' object specifying the distribution and link function (e.g.,
-  'binomial'). See stats::family() for more details.
-
-- ald:
-
-  Aggregate-level data. Long format summary statistics for each
-  covariate and treatment outcomes. We assume a common distribution for
-  each treatment arm.
+  A 'family' object specifying the distribution and link function.
 
 - hat_w:
 
   MAIC weights; default `NULL` which calls
-  [`maic_weights()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/maic_weights.md)
+  [`maic_weights()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/maic_weights.md).
+
+- ipd:
+
+  Backwards compatibility IPD data (optional).
+
+- outcome_model:
+
+  Backwards compatibility outcome model formula (optional).
+
+- balance_model:
+
+  Backwards compatibility balance model formula (optional).
+
+- ald:
+
+  Backwards compatibility ALD data (optional).
+
+- moments:
+
+  Backwards compatibility moments (default 1).
+
+- int:
+
+  Backwards compatibility interactions flag (default FALSE).
 
 ## Value
 

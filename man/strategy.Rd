@@ -113,7 +113,7 @@ Create a type of strategy class for each modelling approach.
 \note{
 While current implementations focus on binary, continuous, and count outcomes,
 support for survival data (using the \code{survival} package) is under active
-development and scheduled for version 1.1.0.
+development and scheduled for a future version.
 }
 \section{Matching-adjusted indirect comparison (MAIC)}{
 

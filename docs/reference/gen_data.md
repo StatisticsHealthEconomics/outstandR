@@ -71,6 +71,7 @@ Data frame of `X`, `trt` and `y`
 ## Examples
 
 ``` r
+
 if (FALSE) { # \dontrun{
 x <- gen_data(
  N = 100,

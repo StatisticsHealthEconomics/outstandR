@@ -5,6 +5,7 @@
 First, let us load necessary packages.
 
 ``` r
+
 library(boot)      # non-parametric bootstrap in MAIC and ML G-computation
 library(copula)    # simulating BC covariates from Gaussian copula
 library(rstanarm)  # fit outcome regression, draw outcomes in Bayesian G-computation
@@ -14,6 +15,7 @@ library(outstandR)
 ### Data
 
 ``` r
+
 set.seed(555)
 
 AC.IPD <- read.csv(here::here("raw-data", "AC_IPD.csv"))  # AC patient-level data
@@ -42,6 +44,7 @@ trial identifier *B*, *C*.
 Our data look like the following.
 
 ``` r
+
 head(AC.IPD)
 #>            X1        X2          X3          X4 trt y
 #> 1  0.43734111 0.6747901  0.93001035  0.09165363   1 0
@@ -56,6 +59,7 @@ There are 4 correlated continuous covariates generated per subject,
 simulated from a multivariate normal distribution.
 
 ``` r
+
 BC.ALD
 #>     mean.X1   mean.X2   mean.X3   mean.X4     sd.X1     sd.X2     sd.X3
 #> 1 0.5908996 0.6414179 0.5856529 0.6023671 0.3863145 0.4033615 0.4076097
@@ -72,35 +76,35 @@ BC.ALD
 The formula used in this model is
 
 ``` math
-
 y = X_3 + X_4 + \beta_t X_1 + \beta_t X_2
 ```
 which corresponds to the following `R` `formula` object passed as an
 argument to the strategy function.
 
 ``` r
+
 lin_form <- as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")
 ```
 
 ``` r
+
 outstandR_maic <- outstandR(AC.IPD, BC.ALD, strategy = strategy_maic(formula = lin_form))
 ```
 
 The returned object is of class `outstandR`.
 
 ``` r
+
 outstandR_maic
 ```
 
 ### STC
 
 ``` math
-
 g(\mu_n) = \beta_0 + (\boldsymbol{x}_n - \boldsymbol{\theta}) \beta_1 + (\beta_z + (\boldsymbol{x_n^{EM}} - \boldsymbol{\theta^{EM}}) \boldsymbol{\beta_2}) \; \mbox{I}(z_n=1)
 ```
 
 ``` math
-
 y = X_3 + X_4 + \beta_t(X_1 - \bar{X_1}) + \beta_t(X_2 - \bar{X_2})
 ```
 However,
@@ -109,6 +113,7 @@ knows how to handle this so we can simply pass the same (uncentred)
 formula as before.
 
 ``` r
+
 outstandR_stc <- outstandR(AC.IPD, BC.ALD, strategy = strategy_stc(formula = lin_form))
 outstandR_stc
 ```
@@ -116,21 +121,19 @@ outstandR_stc
 ### Parametric G-computation with maximum-likelihood estimation
 
 ``` math
-
 g(\mu_n) = \beta_0 + \boldsymbol{x}_n \boldsymbol{\beta_1} + (\beta_z + \boldsymbol{x_n^{EM}} \boldsymbol{\beta_2}) \; \mbox{I}(z_n = 1)
 ```
 
 ``` math
-
 \hat{\mu}_0 = \int_{x^*} g^{-1} (\hat{\beta}_0 + x^* \hat{\beta}_1 ) p(x^*) \; \text{d}x^*
 ```
 
 ``` math
-
 \hat{\Delta}^{(2)}_{10} = g(\hat{\mu}_1) - g(\hat{\mu}_0)
 ```
 
 ``` r
+
 outstandR_gcomp_ml <- outstandR(AC.IPD, BC.ALD, strategy = strategy_gcomp_ml(formula = lin_form))
 outstandR_gcomp_ml
 ```
@@ -138,15 +141,14 @@ outstandR_gcomp_ml
 ### Bayesian G-computation with MCMC
 
 ``` math
-
 p(y^*_{^z*} \mid \mathcal{D}_{AC}) = \int_{x^*} p(y^* \mid z^*, x^*, \mathcal{D}_{AC}) p(x^* \mid \mathcal{D}_{AC})\; \text{d}x^*
 ```
 ``` math
-
 = \int_{x^*} \int_{\beta} p(y^* \mid z^*, x^*, \beta) p(x^* \mid \beta) p(\beta \mid \mathcal{D}_{AC})\; d\beta \; \text{d}x^*
 ```
 
 ``` r
+
 outstandR_gcomp_bayes <- outstandR(AC.IPD, BC.ALD, strategy = strategy_gcomp_bayes(formula = lin_form))
 #> 
 #> SAMPLING FOR MODEL 'continuous' NOW (CHAIN 1).
@@ -204,6 +206,7 @@ outstandR_gcomp_bayes
 ### Multiple imputation marginalisation
 
 ``` r
+
 outstandR_mim <- outstandR(AC.IPD, BC.ALD, strategy = strategy_mim(formula = lin_form))
 #> 
 #> SAMPLING FOR MODEL 'continuous' NOW (CHAIN 1).
@@ -261,6 +264,7 @@ outstandR_mim
 Combine all outputs
 
 ``` r
+
 knitr::kable(
   data.frame(
   `MAIC` = unlist(outstandR_maic$contrasts),

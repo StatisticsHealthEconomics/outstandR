@@ -43,7 +43,7 @@ A list containing:
 
 ## See also
 
-[`marginal_treatment_effect()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/marginal_treatment_effect.md),
+[`marginal_treatment_effect()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/marginal_treatment_effect.md)
 [`marginal_variance()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/marginal_variance.md)
 
 ## Examples

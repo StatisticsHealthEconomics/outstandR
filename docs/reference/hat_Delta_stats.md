@@ -52,6 +52,7 @@ patient data.” *Res. Synth. Methods*, 1--31. ISSN 1759-2879,
 ## Examples
 
 ``` r
+
 data(AC_IPD)  # AC patient-level data
 data(BC_ALD)  # BC aggregate-level data
 

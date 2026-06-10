@@ -16,6 +16,7 @@ details.
 First, let us load necessary packages.
 
 ``` r
+
 # install.packages("outstandR",
 #  repos = c("https://statisticshealtheconomics.r-universe.dev", "https://cloud.r-project.org"))
 #
@@ -46,6 +47,7 @@ function is available in the
 GitHub.
 
 ``` r
+
 N <- 200
 allocation <- 2/3      # active treatment vs. placebo allocation ratio (2:1)
 b_trt <- log(0.17)     # conditional effect of active treatment vs. common comparator
@@ -122,6 +124,7 @@ the following.
 Our data look like the following.
 
 ``` r
+
 head(ipd_trial)
 #>   id   PF_cont_1   PF_cont_2  EM_cont_1   EM_cont_2 trt          y     true_eta
 #> 1  1  0.75056436  0.95597583  0.3158969  1.19430733   C  1.9634929  0.582883524
@@ -138,6 +141,7 @@ either new treatment *A* or standard of care / status quo *C*. The ITC
 is ‘anchored’ via *C*, the common treatment.
 
 ``` r
+
 ald_trial
 #> # A tibble: 16 × 4
 #>    variable  statistic    value trt  
@@ -188,6 +192,7 @@ The formula used in this model, passed as an argument to the strategy
 function is
 
 ``` r
+
 lin_form <- as.formula("y ~ PF_cont_1 + PF_cont_2 + trt:EM_cont_1 + trt:EM_cont_2")
 ```
 
@@ -200,6 +205,7 @@ function, in this case use
 [`strategy_maic()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md).
 
 ``` r
+
 outstandR_maic <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_maic(
@@ -210,6 +216,7 @@ outstandR_maic <-
 The returned object is of class `outstandR`.
 
 ``` r
+
 outstandR_maic
 #> Object of class 'outstandR' 
 #> Model: gaussian 
@@ -246,6 +253,7 @@ Simply pass the same as formula as before with the
 strategy function.
 
 ``` r
+
 outstandR_stc <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_stc(
@@ -287,6 +295,7 @@ effect for *A* versus *C*. Pass the
 strategy function.
 
 ``` r
+
 outstandR_gcomp_ml <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_gcomp_ml(
@@ -333,6 +342,7 @@ Pass the
 strategy function.
 
 ``` r
+
 outstandR_gcomp_bayes <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_gcomp_bayes(
@@ -341,6 +351,7 @@ outstandR_gcomp_bayes <-
 ```
 
 ``` r
+
 outstandR_gcomp_bayes
 #> Object of class 'outstandR' 
 #> Model: gaussian 
@@ -376,6 +387,7 @@ for multiple imputation marginalisation is
 [`strategy_mim()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md),
 
 ``` r
+
 outstandR_mim <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_mim(
@@ -384,6 +396,7 @@ outstandR_mim <-
 ```
 
 ``` r
+
 outstandR_mim
 #> Object of class 'outstandR' 
 #> Model: gaussian 

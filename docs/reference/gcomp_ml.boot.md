@@ -1,7 +1,6 @@
 # Bootstrap for G-computation via Maximum Likelihood
 
-This is a statistic function intended for use with a bootstrapping
-function (e.g.,
+For use with a bootstrapping function (e.g.,
 [`boot::boot()`](https://rdrr.io/pkg/boot/man/boot.html)). On each
 bootstrap sample of the data, it calculates a relative treatment effect
 (e.g., log odds ratio, log relative risk, or risk difference) using
@@ -14,7 +13,7 @@ gcomp_ml.boot(
   data,
   indices,
   R,
-  formula = NULL,
+  outcome_model = NULL,
   family,
   trt_var,
   ref_trt = NA,
@@ -38,13 +37,6 @@ gcomp_ml.boot(
 
   A vector of indices supplied by the bootstrapping function, used to
   resample `data`.
-
-- formula:
-
-  Linear regression `formula` object. Prognostic factors (PF) are main
-  effects and effect modifiers (EM) are interactions with the treatment
-  variable, e.g., y ~ X1 + trt + trt:X2. For covariates as both PF and
-  EM use `*` syntax.
 
 - family:
 

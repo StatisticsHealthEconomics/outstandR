@@ -76,8 +76,8 @@ check_formula_base <- function(formula,
     
     if (is_surv) {
       stop(paste(
-        "Survival data (Surv objects) are not yet supported in outstandR v1.0.0.",
-        "This feature is scheduled for v1.1.0."
+        "Survival data (Surv objects) are not yet supported in outstandR v2.0.0.",
+        "This feature is scheduled for a future version."
       ), call. = FALSE)
     }
   }

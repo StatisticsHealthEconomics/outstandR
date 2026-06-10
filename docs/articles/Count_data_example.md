@@ -7,6 +7,7 @@
 First, let us load necessary packages.
 
 ``` r
+
 library(boot)      # non-parametric bootstrap in MAIC and ML G-computation
 library(copula)    # simulating BC covariates from Gaussian copula
 library(rstanarm)  # fit outcome regression, draw outcomes in Bayesian G-computation
@@ -22,11 +23,13 @@ function available in the
 [simcovariates](https://github.com/n8thangreen/simcovariates) package.
 
 ``` r
+
 library(dplyr)
 library(MASS)
 ```
 
 ``` r
+
 N <- 200
 allocation <- 2/3      # active treatment vs. placebo allocation ratio (2:1)
 b_trt <- log(0.17)     # conditional effect of active treatment vs. common comparator
@@ -54,6 +57,7 @@ Similarly, for the aggregate data but with the additional summarise
 step.
 
 ``` r
+
 BC.IPD <- gen_data(N, b_trt, b_X, b_EM, b_0,
                    meanX_BC, sdX, 
                    meanX_EM_BC, sdX_EM, 
@@ -127,7 +131,6 @@ variance in the wrapper function `maic_boot_stats()`.
 The formula used in this model is
 
 ``` math
-
 y = X_3 + X_4 + \beta_t X_1 + \beta_t X_2
 ```
 
@@ -135,10 +138,12 @@ which corresponds to the following `R` `formula` object passed as an
 argument to the strategy function.
 
 ``` r
+
 lin_form <- as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")
 ```
 
 ``` r
+
 outstandR_maic <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_maic(
@@ -149,6 +154,7 @@ outstandR_maic <-
 The returned object is of class `outstandR`.
 
 ``` r
+
 outstandR_maic
 ```
 
@@ -165,7 +171,6 @@ regression model of outcome on treatment and covariates to the IPD. IPD
 effect modifiers are centred at the mean *BC* values.
 
 ``` math
-
 g(\mu_n) = \beta_0 + (\boldsymbol{x}_n - \boldsymbol{\theta}) \beta_1 + (\beta_z + (\boldsymbol{x_n^{EM}} - \boldsymbol{\theta^{EM}}) \boldsymbol{\beta_2}) \; \mbox{I}(z_n=1)
 ```
 
@@ -180,7 +185,6 @@ the previous analysis but we now use the
 strategy function instead and a formula with centered covariates.
 
 ``` math
-
 y = X_3 + X_4 + \beta_t(X_1 - \bar{X_1}) + \beta_t(X_2 - \bar{X_2})
 ```
 
@@ -190,6 +194,7 @@ knows how to handle this so we can simply pass the same (uncentred)
 formula as before.
 
 ``` r
+
 outstandR_stc <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_stc(
@@ -211,7 +216,6 @@ outcome $`y`$ on the covariates $`x`$ and treatment $`z`$ is fitted to
 the *AC* IPD:
 
 ``` math
-
 g(\mu_n) = \beta_0 + \boldsymbol{x}_n \boldsymbol{\beta_1} + (\beta_z + \boldsymbol{x_n^{EM}} \boldsymbol{\beta_2}) \; \mbox{I}(z_n = 1)
 ```
 
@@ -228,7 +232,6 @@ observation, we predict the marginal outcome mean in the hypothetical
 scenario in which all units are under treatment *C*:
 
 ``` math
-
 \hat{\mu}_0 = \int_{x^*} g^{-1} (\hat{\beta}_0 + x^* \hat{\beta}_1 ) p(x^*) \; \text{d}x^*
 ```
 
@@ -239,11 +242,11 @@ outcome scale, and calculates the difference between the average linear
 predictions:
 
 ``` math
-
 \hat{\Delta}^{(2)}_{10} = g(\hat{\mu}_1) - g(\hat{\mu}_0)
 ```
 
 ``` r
+
 outstandR_gcomp_ml <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_gcomp_ml(
@@ -271,12 +274,10 @@ predictor-outcome relationships observed in the *AC* trial IPD. This is
 given by:
 
 ``` math
-
 p(y^*_{^z*} \mid \mathcal{D}_{AC}) = \int_{x^*} p(y^* \mid z^*, x^*, \mathcal{D}_{AC}) p(x^* \mid \mathcal{D}_{AC})\; \text{d}x^*
 ```
 
 ``` math
-
 = \int_{x^*} \int_{\beta} p(y^* \mid z^*, x^*, \beta) p(x^* \mid \beta) p(\beta \mid \mathcal{D}_{AC})\; d\beta \; \text{d}x^*
 ```
 
@@ -291,6 +292,7 @@ under each set intervention $`z^*`$ from its posterior predictive
 distribution under the specific treatment.
 
 ``` r
+
 outstandR_gcomp_bayes <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_gcomp_bayes(
@@ -299,6 +301,7 @@ outstandR_gcomp_bayes <-
 ```
 
 ``` r
+
 outstandR_gcomp_bayes
 ```
 
@@ -307,11 +310,11 @@ outstandR_gcomp_bayes
 ref
 
 ``` math
-
 equation here
 ```
 
 ``` r
+
 outstandR_mim <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_mim(
@@ -326,6 +329,7 @@ Combine all outputs for log-odds ratio table of all contrasts and
 methods.
 
 ``` r
+
 knitr::kable(
   data.frame(
     `MAIC` = unlist(outstandR_maic$contrasts$means),

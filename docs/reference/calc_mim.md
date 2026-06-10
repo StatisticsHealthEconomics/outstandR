@@ -19,6 +19,10 @@ calc_mim(strategy, analysis_params, ...)
   [`strategy_mim()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md).
   Contains modelling details like the formula and family.
 
+- analysis_params:
+
+  List of analysis parameters. Must contain `ipd` and `ald`.
+
 - ...:
 
   Additional argument to pass to Stan model
@@ -27,12 +31,12 @@ calc_mim(strategy, analysis_params, ...)
 
 A list containing:
 
-- `means`: A list containing vectors of posterior means (one per
+- `means`: A list containing named vectors of posterior means (one per
   synthesis `n_imp`):
 
-  - `A`: Comparator means.
+  - Comparator means.
 
-  - `C`: Reference means.
+  - Reference means.
 
 - `model`: A list containing:
 

@@ -96,12 +96,17 @@ probability to linear predictor scale.
 Using Stan, compute marginal relative treatment effect for IPD
 comparator "A" vs reference "C" arms for each MCMC sample by
 transforming from probability to linear predictor scale. Approximate by
-using imputation and combining estimates using Rubin's rules.
+using imputation and combining estimates using pooling.
 
 ## Examples
 
 ``` r
-strategy <- strategy_maic(formula = as.formula(y~trt:X1), family = binomial())
+strategy <- strategy_maic(
+  formula = list(outcome_model = y ~ trt,  # default 
+                 balance_model = ~ X1),
+  family = binomial())
+#> Treatment is guessed as: trt
+
 ipd <- data.frame(trt = sample(c("A", "C"), size = 100, replace = TRUE),
                   X1 = rnorm(100, 1, 1),
                   y = sample(c(1,0), size = 100, prob = c(0.7,0.3), replace = TRUE))
@@ -115,20 +120,20 @@ calc_IPD_stats(strategy,
   analysis_params = list(ipd = ipd, ald = ald, scale = "log_odds"))
 #> $contrasts
 #> $contrasts$mean
-#> [1] 0.04072276
+#> [1] 0.0404359
 #> 
 #> $contrasts$var
-#> [1] 0.2451418
+#> [1] 0.2441335
 #> 
 #> 
 #> $absolute
 #> $absolute$mean
 #>         A         C 
-#> 0.7025638 0.6951590 
+#> 0.5667870 0.5562863 
 #> 
 #> $absolute$var
 #>           A           C 
-#> 0.005650160 0.005183217 
+#> 0.006112309 0.007795801 
 #> 
 #> 
 #> $method_name
@@ -137,39 +142,39 @@ calc_IPD_stats(strategy,
 #> $model
 #> $model$weights
 #>   weights1   weights2   weights3   weights4   weights5   weights6   weights7 
-#>  0.8644187  0.7471808  1.0941498  0.5137571  1.6671230  1.0104253  0.7662525 
+#>  0.5097557  0.9862214  0.1767722  1.0189126  0.4083001  0.3004525  0.5227465 
 #>   weights8   weights9  weights10  weights11  weights12  weights13  weights14 
-#>  1.0924254  0.7196236  0.8194893  1.1114083  0.7223890  1.2919443  0.8837867 
+#>  0.2650783  0.5314778  0.8255845  0.4200238  1.9246909  1.6187657  0.4651878 
 #>  weights15  weights16  weights17  weights18  weights19  weights20  weights21 
-#>  0.8534521  1.0946767  0.3083721  0.7779886  0.7720410  0.5818904  1.2813310 
+#>  0.4238390  0.4253863  2.4215912  2.1405183  2.2258621  1.3013718  1.3575855 
 #>  weights22  weights23  weights24  weights25  weights26  weights27  weights28 
-#>  0.4048974  0.7521981  1.2995935  1.0658084  0.8159727  1.5211228  0.5130418 
+#>  0.2828358  1.1742708  1.9678484  0.4041438  0.4765942  1.0933591  0.3810760 
 #>  weights29  weights30  weights31  weights32  weights33  weights34  weights35 
-#>  0.8678377  0.9656656  0.7451850  1.2546478  1.4252054  2.1407440  0.3410411 
+#>  0.5973394  1.4076416  0.8244193  0.3731263  0.7741472  0.9083386  0.1294497 
 #>  weights36  weights37  weights38  weights39  weights40  weights41  weights42 
-#>  0.3434997  1.0843389  1.7071231  0.3736615  1.0078974  1.2780704  0.8389136 
+#>  0.5622625  0.5166102  1.6685593  0.2084445  0.4586885  0.9201768  0.3863122 
 #>  weights43  weights44  weights45  weights46  weights47  weights48  weights49 
-#>  0.9167890  0.6745588  1.0534299  0.4039551  0.3274506  0.7164308  1.8885636 
+#>  0.5076362  0.5611625  0.4537915  0.3643097  0.3339151  0.3729876  1.1400251 
 #>  weights50  weights51  weights52  weights53  weights54  weights55  weights56 
-#>  1.2057152  1.0639350  1.5633846  0.9396529  3.0833536  0.9397011  0.4908616 
+#>  0.8037654  0.7215501  1.6619502  0.1326304  0.6915303  1.1697328  1.9035924 
 #>  weights57  weights58  weights59  weights60  weights61  weights62  weights63 
-#>  1.1619506  0.5912057  0.7738476  0.3515805  0.8976565  0.5447694  0.4509756 
+#>  1.1017251  0.3539011  1.4816379  0.5736033  1.3541201  0.7266439  1.5106265 
 #>  weights64  weights65  weights66  weights67  weights68  weights69  weights70 
-#>  0.7542419  1.0597763  0.9247797  1.8938653  0.6103745  0.8746193  0.5307043 
+#>  0.4651451  0.3815356  0.9272789  0.6387655  0.2490713  0.4498635  0.8699813 
 #>  weights71  weights72  weights73  weights74  weights75  weights76  weights77 
-#>  0.4544261  0.6079698  0.8191396  1.3460228  0.7095652  0.5928967  0.4365664 
+#>  0.4311347  0.6371576  0.5781595  1.2766576  0.8184790  1.6135860  1.6471549 
 #>  weights78  weights79  weights80  weights81  weights82  weights83  weights84 
-#>  1.4783556  0.5532154  0.2758676  0.5065433  0.3944689  1.0978242  0.3406655 
+#>  0.8892978  0.2861711  0.8390482  1.1599676  0.7896686  0.6933948  1.1559473 
 #>  weights85  weights86  weights87  weights88  weights89  weights90  weights91 
-#>  0.9603423  0.8679057  0.6058239  1.2072252  0.4784969  0.5336189  0.7415894 
+#>  0.8915050  1.0140840  1.2954799  0.6523693  0.4526894  0.7622167  1.0480156 
 #>  weights92  weights93  weights94  weights95  weights96  weights97  weights98 
-#>  0.7947574  1.2495765  0.7779616  0.7617820  0.4187021  0.3652338  1.6012872 
+#>  0.5038243  0.1916380  0.1984988  0.1956611  2.0358831  1.1200094  0.5659745 
 #>  weights99 weights100 
-#>  0.2849569  1.3295498 
+#>  0.6973233  0.8650603 
 #> 
 #> $model$ESS
-#>     ESS 
-#> 79.4969 
+#>      ESS 
+#> 71.57563 
 #> 
 #> 
   

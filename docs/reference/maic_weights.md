@@ -25,6 +25,6 @@ Signorovitch JE, Wu EQ, Yu AP, Gerrits CM, Kantor E, Bao Y, Gupta SR,
 Mulani PM (2010). “Comparative effectiveness without head-to-head
 trials: A method for matching-adjusted indirect comparisons applied to
 psoriasis treatment with adalimumab or etanercept.” *Pharmacoeconomics*,
-**28**(10), 935–945. ISSN 11707690,
+**28**(10), 935–945. ISSN 11707690.
 [doi:10.2165/11538370-000000000-00000](https://doi.org/10.2165/11538370-000000000-00000)
-, <https://pubmed.ncbi.nlm.nih.gov/20831302/>.
+. <https://pubmed.ncbi.nlm.nih.gov/20831302/>.

@@ -1,5 +1,17 @@
 # Package index
 
+## Deprecated
+
+Functions that will be removed in future versions.
+
+- [`strategy_maic()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md)
+  [`strategy_stc()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md)
+  [`strategy_gcomp_ml()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md)
+  [`strategy_gcomp_bayes()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md)
+  [`strategy_mim()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md)
+  [`new_strategy()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md)
+  : New strategy objects
+
 ## Main
 
 Main analysis functions.

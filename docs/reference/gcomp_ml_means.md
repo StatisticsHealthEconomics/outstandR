@@ -6,7 +6,7 @@ G-computation maximum likelihood mean outcomes by arm
 
 ``` r
 gcomp_ml_means(
-  formula,
+  outcome_model,
   family,
   ipd,
   ald,
@@ -21,13 +21,6 @@ gcomp_ml_means(
 ```
 
 ## Arguments
-
-- formula:
-
-  Linear regression `formula` object. Prognostic factors (PF) are main
-  effects and effect modifiers (EM) are interactions with the treatment
-  variable, e.g., y ~ X1 + trt + trt:X2. For covariates as both PF and
-  EM use `*` syntax.
 
 - family:
 
@@ -67,5 +60,5 @@ A list containing:
 
 ## See also
 
-[`strategy_gcomp_ml()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md),
+[`strategy_gcomp_ml()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md)
 [`gcomp_ml.boot()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/gcomp_ml.boot.md)

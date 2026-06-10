@@ -1,5 +1,6 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/404.html</loc></url>
+<url><loc>https://StatisticsHealthEconomics.github.io/outstandR/articles/adding-a-new-strategy.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/articles/Basic_example.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/articles/Binary_data_example.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/articles/Binary_data_Remiro-Azocar.html</loc></url>
@@ -14,6 +15,7 @@
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/articles/index.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/articles/user-defined-target-pop.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/authors.html</loc></url>
+<url><loc>https://StatisticsHealthEconomics.github.io/outstandR/GEMINI.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/index.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/LICENSE.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/news/index.html</loc></url>
@@ -47,7 +49,9 @@
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_maic.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_mim.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_stc.html</loc></url>
+<url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/check_balance_formula.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/check_formula.html</loc></url>
+<url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/check_formula_base.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/continuity_correction.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/cor2cov.html</loc></url>
 <url><loc>https://StatisticsHealthEconomics.github.io/outstandR/reference/coverage.html</loc></url>

@@ -18,13 +18,13 @@ Source:
 
 Green N, Gao C, Remiro-Azocar A (2026). *outstandR: Model-Based
 Standardisation for Indirect Treatment Comparison with Limited
-Subject-Level Data*. R package version 1.0.0.9000,
+Subject-Level Data*. R package version 2.0.0,
 <https://StatisticsHealthEconomics.github.io/outstandR/>.
 
     @Manual{,
       title = {outstandR: Model-Based Standardisation for Indirect Treatment Comparison with Limited Subject-Level Data},
       author = {Nathan Green and Chengyang Gao and Antonio Remiro-Azocar},
       year = {2026},
-      note = {R package version 1.0.0.9000},
+      note = {R package version 2.0.0},
       url = {https://StatisticsHealthEconomics.github.io/outstandR/},
     }

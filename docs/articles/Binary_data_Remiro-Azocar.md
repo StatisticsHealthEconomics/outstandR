@@ -25,7 +25,6 @@ estimators $`\Delta_{AB(AB)}`$ and $`\Delta_{AC(AC)}`$ of the trial
 level (or marginal) relative treatment effects.
 
 ``` math
-
 \Delta_{AB(AB)} = g(\bar{Y}_{B{(AB)}}) - g(\bar{Y}_{A{(AB)}})
 ```
 
@@ -34,6 +33,7 @@ level (or marginal) relative treatment effects.
 First, let us load necessary packages.
 
 ``` r
+
 library(boot)      # non-parametric bootstrap in MAIC and ML G-computation
 library(copula)    # simulating BC covariates from Gaussian copula
 library(rstanarm)  # fit outcome regression, draw outcomes in Bayesian G-computation
@@ -59,6 +59,7 @@ event table. Typically, the published study only provides aggregate
 information to the analyst.
 
 ``` r
+
 set.seed(555)
 
 ipd_trial <- read.csv(here::here("raw-data", "AC_IPD.csv"))  # AC patient-level data
@@ -87,12 +88,14 @@ trial identifier *B*, *C*.
 Let us label the treatment levels
 
 ``` r
+
 ipd_trial$trt <- factor(ipd_trial$trt, labels = c("C", "A"))
 ```
 
 Our data look like the following.
 
 ``` r
+
 head(ipd_trial)
 #>            X1        X2          X3          X4 trt y
 #> 1  0.43734111 0.6747901  0.93001035  0.09165363   A 0
@@ -107,6 +110,7 @@ There are 4 correlated continuous covariates generated per subject,
 simulated from a multivariate normal distribution.
 
 ``` r
+
 ald_trial
 #>     mean.X1   mean.X2   mean.X3   mean.X4     sd.X1     sd.X2     sd.X3
 #> 1 0.5908996 0.6414179 0.5856529 0.6023671 0.3863145 0.4033615 0.4076097
@@ -148,7 +152,6 @@ The formula used in this model has all covariates as prognostic variable
 and is
 
 ``` math
-
 y = X_1 + X_2 + X_3 + X_4 + (\beta_t + \beta_x X_1 + \beta_x X_2) t
 ```
 
@@ -156,10 +159,12 @@ which corresponds to the following `R` `formula` object passed as an
 argument to the strategy function.
 
 ``` r
+
 lin_form <- as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")
 ```
 
 ``` r
+
 outstandR_maic <- outstandR(ipd_trial, ald_trial,
                             strategy = strategy_maic(formula = lin_form,
                                                      family = binomial(link = "logit")))
@@ -168,6 +173,7 @@ outstandR_maic <- outstandR(ipd_trial, ald_trial,
 The returned object is of class `outstandR`.
 
 ``` r
+
 outstandR_maic
 #> Object of class 'outstandR' 
 #> Model: binomial 
@@ -202,6 +208,7 @@ regression model of outcome on treatment and covariates to the IPD
 plugging-in covariate mean values.
 
 ``` r
+
 outstandR_stc <- outstandR(ipd_trial, ald_trial,
                            strategy = strategy_stc(formula = lin_form,
                                                    family = binomial(link = "logit")))
@@ -242,6 +249,7 @@ regression modelling from the estimation of the marginal treatment
 effect for *A* versus *C*.
 
 ``` r
+
 outstandR_gcomp_ml <- outstandR(ipd_trial, ald_trial,
                                 strategy = strategy_gcomp_ml(formula = lin_form,
                                                              family = binomial(link = "logit")))
@@ -281,6 +289,7 @@ the joint posterior distribution of the conditional nuisance parameters
 of the outcome regression, as well as the joint covariate distribution.
 
 ``` r
+
 outstandR_gcomp_bayes <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_gcomp_bayes(formula = lin_form,
@@ -417,6 +426,7 @@ outstandR_gcomp_bayes
 Fit the model as before.
 
 ``` r
+
 outstandR_mim <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_mim(formula = lin_form,
@@ -554,6 +564,7 @@ Combine all outputs for log-odds ratio table of all contrasts and
 methods.
 
 ``` r
+
 knitr::kable(
   data.frame(
   `MAIC` = unlist(outstandR_maic$contrasts),

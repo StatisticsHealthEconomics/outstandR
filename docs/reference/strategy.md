@@ -9,7 +9,10 @@ strategy_maic(
   formula = NULL,
   family = gaussian(link = "identity"),
   trt_var = NULL,
-  n_boot = 1000L
+  n_boot = 1000L,
+  moments = 1,
+  int = FALSE,
+  verbatim = TRUE
 )
 
 strategy_stc(
@@ -44,6 +47,8 @@ strategy_mim(
   family = gaussian(link = "identity"),
   trt_var = NULL,
   rho = NA,
+  marginal_distns = NA,
+  marginal_params = NA,
   N = 1000L
 )
 
@@ -71,6 +76,23 @@ new_strategy(strategy, ...)
 - n_boot:
 
   The number of resamples used for the non-parametric bootstrap; integer
+
+- moments:
+
+  Integer. The number of moments of the covariates to balance. Setting
+  `moments = 2` includes both the original variables and their squared
+  terms, which effectively balances both the means and the variances.
+  Default to 1.
+
+- int:
+
+  Logical. If `TRUE`, includes two-way interactions between all
+  covariates in the balancing model to effectively balance their
+  covariances. Default `FALSE`
+
+- verbatim:
+
+  Logical. Output to console during running.
 
 - rho:
 
@@ -120,7 +142,7 @@ Strategy list object
 
 While current implementations focus on binary, continuous, and count
 outcomes, support for survival data (using the `survival` package) is
-under active development and scheduled for version 1.1.0.
+under active development and scheduled for a future version.
 
 ## Matching-adjusted indirect comparison (MAIC)
 
@@ -140,6 +162,12 @@ assigned to the \\i\\-th individual receiving treatment \\t\\ is equal
 to the odds of being enrolled in the *AC* trial vs the *AB* trial.
 
 ## Simulated treatment comparison (STC)
+
+**\[deprecated\]**
+
+`strategy_stc()` was deprecated in outstandR version 1.X.X. We recommend
+using G-computation (`strategy_gcomp_ml()`) as a more robust alternative
+for this type of analysis.
 
 Outcome regression-based method which targets a conditional treatment
 effect. STC is a modification of the covariate adjustment method. An
@@ -215,8 +243,16 @@ estimation via Markov chain Monte Carlo (MCMC) sampling.
 
 ## Multiple imputation marginalization (MIM)
 
-TODO
+MIM targets a marginal treatment effect by using parametric
+G-computation within a multiple imputation framework. This approach
+views the covariate adjustment regression as a nuisance model and
+separates its estimation from the evaluation of the marginal treatment
+effect of interest. It is particularly useful for ensuring compatibility
+in indirect comparisons when adjusting for effect modifiers.
 
 ## See also
 
-[`strategy_gcomp_bayes()`] [`strategy_gcomp_ml()`] [`copula::Mvdc()`](https://rdrr.io/pkg/copula/man/Mvdc.html)
+`strategy_gcomp_bayes()`
+
+`strategy_gcomp_ml()`
+[`copula::Mvdc()`](https://rdrr.io/pkg/copula/man/Mvdc.html)

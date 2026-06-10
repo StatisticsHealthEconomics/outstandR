@@ -50,7 +50,6 @@ estimators $`\Delta_{AB(AB)}`$ and $`\Delta_{AC(AC)}`$ of the trial
 level (or marginal) relative treatment effects.
 
 ``` math
-
 \Delta_{AB(AB)} = g(\bar{Y}_{B{(AB)}}) - g(\bar{Y}_{A{(AB)}})
 ```
 
@@ -59,6 +58,7 @@ level (or marginal) relative treatment effects.
 First, let us load necessary packages.
 
 ``` r
+
 library(boot)      # non-parametric bootstrap in MAIC and ML G-computation
 library(copula)    # simulating BC covariates from Gaussian copula
 library(rstanarm)  # fit outcome regression, draw outcomes in Bayesian G-computation
@@ -84,6 +84,7 @@ table. Typically, the published study only provides aggregate
 information to the analyst.
 
 ``` r
+
 set.seed(555)
 
 AC.IPD <- read.csv(here::here("raw-data", "AC_IPD.csv"))  # AC patient-level data
@@ -112,6 +113,7 @@ trial identifier *B*, *C*.
 Our data look like the following.
 
 ``` r
+
 head(AC.IPD)
 #>            X1        X2          X3          X4 trt y
 #> 1  0.43734111 0.6747901  0.93001035  0.09165363   1 0
@@ -126,6 +128,7 @@ There are 4 correlated continuous covariates generated per subject,
 simulated from a multivariate normal distribution.
 
 ``` r
+
 BC.ALD
 #>     mean.X1   mean.X2   mean.X3   mean.X4     sd.X1     sd.X2     sd.X3
 #> 1 0.5908996 0.6414179 0.5856529 0.6023671 0.3863145 0.4033615 0.4076097
@@ -143,14 +146,12 @@ We will implement for MAIC, STC, and G-computation methods to obtain the
 *marginal variance*, defined as
 
 ``` math
-
 \frac{1}{n_C} + \frac{1}{n_{\bar{C}}} + \frac{1}{n_B} + \frac{1}{n_{\bar{B}}}
 ```
 
 and the *marginal treatment effect*, defined as
 
 ``` math
-
 \log\left( \frac{n_B/(N_B-n_B)}{n_C/(N_B-n_{B})} \right) = \log(n_B n_{\bar{C}}) - \log(n_C n_{\bar{B}})
 ```
 where $`\bar{C}`$ is the compliment of $`C`$ so
@@ -185,23 +186,25 @@ variance in the wrapper function `maic_boot_stats`.
 The formula used in this model is
 
 ``` math
-
 y = X_3 + X_4 + \beta_t X_1 + \beta_t X_2
 ```
 which corresponds to the following `R` `formula` object passed as an
 argument to the strategy function.
 
 ``` r
+
 lin_form <- as.formula("y ~ X3 + X4 + trt*X1 + trt*X2")
 ```
 
 ``` r
+
 outstandR_maic <- outstandR(AC.IPD, BC.ALD, strategy = strategy_maic(formula = lin_form))
 ```
 
 The returned object is of class `outstandR`.
 
 ``` r
+
 outstandR_maic
 #> $contrasts
 #> $contrasts$AB
@@ -257,7 +260,6 @@ regression model of outcome on treatment and covariates to the IPD. IPD
 effect modifiers are centred at the mean *BC* values.
 
 ``` math
-
 g(\mu_n) = \beta_0 + (\boldsymbol{x}_n - \boldsymbol{\theta}) \beta_1 + (\beta_z + (\boldsymbol{x_n^{EM}} - \boldsymbol{\theta^{EM}}) \boldsymbol{\beta_2}) \; \mbox{I}(z_n=1)
 ```
 where $`\beta_0`$ is the intercept, $`\beta_1`$ are the covariate
@@ -271,7 +273,6 @@ the previous analysis but we now use the
 strategy function instead and a formula with centered covariates.
 
 ``` math
-
 y = X_3 + X_4 + \beta_t(X_1 - \bar{X_1}) + \beta_t(X_2 - \bar{X_2})
 ```
 However,
@@ -280,6 +281,7 @@ knows how to handle this so we can simply pass the same (uncentred)
 formula as before.
 
 ``` r
+
 outstandR_stc <- outstandR(AC.IPD, BC.ALD, strategy = strategy_stc(formula = lin_form))
 outstandR_stc
 #> $contrasts
@@ -335,7 +337,6 @@ outcome $`y`$ on the covariates $`x`$ and treatment $`z`$ is fitted to
 the *AC* IPD:
 
 ``` math
-
 g(\mu_n) = \beta_0 + \boldsymbol{x}_n \boldsymbol{\beta_1} + (\beta_z + \boldsymbol{x_n^{EM}} \boldsymbol{\beta_2}) \; \mbox{I}(z_n = 1)
 ```
 
@@ -352,7 +353,6 @@ observation, we predict the marginal outcome mean in the hypothetical
 scenario in which all units are under treatment *C*:
 
 ``` math
-
 \hat{\mu}_0 = \int_{x^*} g^{-1} (\hat{\beta}_0 + x^* \hat{\beta}_1 ) p(x^*) \; \text{d}x^*
 ```
 
@@ -363,11 +363,11 @@ outcome scale, and calculates the difference between the average linear
 predictions:
 
 ``` math
-
 \hat{\Delta}^{(2)}_{10} = g(\hat{\mu}_1) - g(\hat{\mu}_0)
 ```
 
 ``` r
+
 outstandR_gcomp_ml <- outstandR(AC.IPD, BC.ALD, strategy = strategy_gcomp_ml(formula = lin_form))
 outstandR_gcomp_ml
 #> $contrasts
@@ -429,11 +429,9 @@ predictor-outcome relationships observed in the *AC* trial IPD. This is
 given by:
 
 ``` math
-
 p(y^*_{^z*} \mid \mathcal{D}_{AC}) = \int_{x^*} p(y^* \mid z^*, x^*, \mathcal{D}_{AC}) p(x^* \mid \mathcal{D}_{AC})\; \text{d}x^*
 ```
 ``` math
-
 = \int_{x^*} \int_{\beta} p(y^* \mid z^*, x^*, \beta) p(x^* \mid \beta) p(\beta \mid \mathcal{D}_{AC})\; d\beta \; \text{d}x^*
 ```
 
@@ -448,6 +446,7 @@ under each set intervention $`z^*`$ from its posterior predictive
 distribution under the specific treatment.
 
 ``` r
+
 outstandR_gcomp_bayes <- outstandR(AC.IPD, BC.ALD, strategy = strategy_gcomp_bayes(formula = lin_form))
 #> 
 #> SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 1).
@@ -544,11 +543,11 @@ outstandR_gcomp_bayes
 ref
 
 ``` math
-
 equation here
 ```
 
 ``` r
+
 outstandR_mim <- outstandR(AC.IPD, BC.ALD, strategy = strategy_mim(formula = lin_form))
 #> 
 #> SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 1).
@@ -643,6 +642,7 @@ outstandR_mim
 Combine all outputs
 
 ``` r
+
 knitr::kable(
   data.frame(
   `MAIC` = unlist(outstandR_maic$contrasts),

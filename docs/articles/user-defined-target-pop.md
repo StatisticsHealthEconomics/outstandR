@@ -5,6 +5,7 @@
 See other vignettes for details.
 
 ``` r
+
 library(boot)      # non-parametric bootstrap in MAIC and ML G-computation
 library(copula)    # simulating BC covariates from Gaussian copula
 library(rstanarm)  # fit outcome regression, draw outcomes in Bayesian G-computation
@@ -18,6 +19,7 @@ library(simcovariates)
 ### Data
 
 ``` r
+
 
 N <- 200
 allocation <- 2/3      # active treatment vs. placebo allocation ratio (2:1)
@@ -41,10 +43,12 @@ ipd_trial <- gen_data(N, b_trt, b_X, b_EM, b_0,
 ```
 
 ``` r
+
 ipd_trial$trt <- factor(ipd_trial$trt, labels = c("C", "A"))
 ```
 
 ``` r
+
 BC.IPD <- gen_data(N, b_trt, b_X, b_EM, b_0,
                    meanX_BC, sdX, 
                    meanX_EM_BC, sdX_EM, 
@@ -98,12 +102,14 @@ ald_trial <- rbind.data.frame(cov.X, summary.y, summary.N)
 ```
 
 ``` r
+
 lin_form <- as.formula("y ~ X3 + X4 + trt + trt:X1 + trt:X2")
 ```
 
 ### Parametric G-computation with maximum-likelihood estimation
 
 ``` r
+
 outstandR_gcomp_ml <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_gcomp_ml(
@@ -112,12 +118,14 @@ outstandR_gcomp_ml <-
 ```
 
 ``` r
+
 outstandR_gcomp_ml
 ```
 
 Once again, let us change the outcome scale to LRR
 
 ``` r
+
 outstandR_gcomp_ml_lrr <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_gcomp_ml(
@@ -127,12 +135,14 @@ outstandR_gcomp_ml_lrr <-
 ```
 
 ``` r
+
 outstandR_gcomp_ml_lrr
 ```
 
 ### Bayesian G-computation with MCMC
 
 ``` r
+
 outstandR_gcomp_bayes <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_gcomp_bayes(
@@ -141,12 +151,14 @@ outstandR_gcomp_bayes <-
 ```
 
 ``` r
+
 outstandR_gcomp_bayes
 ```
 
 As before, we can change the outcome scale to LRR.
 
 ``` r
+
 outstandR_gcomp_bayes_lrr <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_gcomp_bayes(
@@ -156,12 +168,14 @@ outstandR_gcomp_bayes_lrr <-
 ```
 
 ``` r
+
 outstandR_gcomp_bayes_lrr
 ```
 
 ### Multiple imputation marginalisation
 
 ``` r
+
 outstandR_mim <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_mim(
@@ -170,12 +184,14 @@ outstandR_mim <-
 ```
 
 ``` r
+
 outstandR_mim
 ```
 
 Change the outcome scale again for LRR,
 
 ``` r
+
 outstandR_mim_lrr <-
   outstandR(ipd_trial, ald_trial,
             strategy = strategy_mim(
@@ -185,5 +201,6 @@ outstandR_mim_lrr <-
 ```
 
 ``` r
+
 outstandR_mim_lrr
 ```
