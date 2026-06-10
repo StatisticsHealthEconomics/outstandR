@@ -107,7 +107,7 @@ methods for this situation including the following:
 -    *Simulated Treatment Comparison (STC) [DEPRECATED]:* While previously common,
      standard STC can produce biased marginal estimates due to aggregation bias
      and non-collapsibility when using non-linear link functions.
-     *Note: STC is formally deprecated as of v1.0.1 in favour of the more robust G-computation approaches.*
+     *Note: STC is formally deprecated as of v2.0.0 in favour of the more robust G-computation approaches.*
 
 ## General problem
 
