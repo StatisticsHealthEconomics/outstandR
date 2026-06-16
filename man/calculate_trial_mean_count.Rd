@@ -4,17 +4,19 @@
 \alias{calculate_trial_mean_count}
 \title{Calculate Trial Mean Count Data}
 \usage{
-calculate_trial_mean_count(ald, tid, effect)
+calculate_trial_mean_count(ald, tid, effect, verbatim = FALSE)
 }
 \arguments{
-\item{ald}{A Dataframe of aggregate level data}
+\item{ald}{Aggregate level data. Data frame in long format.}
 
 \item{tid}{Treatment ID}
 
-\item{effect}{Effect}
+\item{effect}{Effect name. String.}
+
+\item{verbatim}{Print messages, logical}
 }
 \value{
-Value
+Numeric mean value.
 }
 \description{
 Calculate Trial Mean Count Data

@@ -37,6 +37,10 @@ navbar:
       href: news/index.html
 
 reference:
+- title: "Deprecated"
+  desc: "Functions that will be removed in future versions."
+  contents:
+    - strategy_stc
 - title: "Main"
   desc: "Main analysis functions."
   contents:
@@ -46,38 +50,47 @@ reference:
 - title: "Constituent statistics"
   desc: "Helper functions used by the main functions."
   contents:
-  # - calc_ALD_stats
-  # - calc_IPD_stats
   - marginal_treatment_effect
   - marginal_variance
   - calculate_trial_variance
   - calculate_ate
-  # - estimate_var_sandwich
+  - calculate_trial_mean
+  - calculate_trial_mean_binary
+  - calculate_trial_mean_continuous
+  - calculate_trial_mean_count
+  - calculate_trial_variance_binary
+  - calculate_trial_variance_continuous
+  - calculate_trial_variance_count
+  - estimate_var_sandwich
   - starts_with("calc_")
-  # - find_conversion_path
   - get_treatment_effect
-  # - IPD_stat_factory
-  - BC_ALD_long
-  # - get_ref_trt
-  # - validate_outstandr
 - title: "Miscellaneous"
   contents:
   - print.outstandR
+  - plot.outstandR
+  - summary.outstandR
   - reshape_ald_to_long
   - reshape_ald_to_wide
 - title: "Data"
   contents:
-  - AC_IPD
-  - BC_ALD
+  - AC_IPD_binY_contX
+  - BC_ALD_binY_contX
+  - AC_IPD_contY_mixedX
+  - AC_IPD_countY_contX
+  - BC_ALD_contY_mixedX
+  - BC_ALD_countY_contX
+- title: "Classes"
+  contents:
+  - strategy-class
 
-articles:
-- title: "Binary outcome data example"
-  contents:
-    - "Binary_outcome_example"
-- title: "Continuous outcome data example"
-  contents:
-    - "Continuous_outcome_example"
-- title: "Count outcome data example"
-  contents:
-    - "Count_outcome_example"
+# articles:
+# - title: "Binary outcome data example"
+#   contents:
+#     - "Binary_outcome_example"
+# - title: "Continuous outcome data example"
+#   contents:
+#     - "Continuous_outcome_example"
+# - title: "Count outcome data example"
+#   contents:
+#     - "Count_outcome_example"
     

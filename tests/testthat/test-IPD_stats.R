@@ -1,43 +1,52 @@
+# IPD_stat unit tests
 
 library(tibble)
 
+# mock strategy objects ---
+
 strategy_maic <- list(
-  R = 1000,
-  formula = y ~ trt,
+  n_boot = 1000,
+  outcome_model = y ~ trt,
+  balance_model = ~ 1,
   trt_var = "trt",
   family = binomial()
 ) |> 
   `attr<-`(which = "class", value = "maic")
 
 strategy_stc <- list(
-  formula = y ~ trt,
+  outcome_model = y ~ trt,
   trt_var = "trt",
   family = binomial()
 ) |> 
   `attr<-`(which = "class", value = "stc")
 
 strategy_gcomp_ml <- list(
-  R = 1000,
-  formula = y ~ trt,
+  n_boot = 1000,
+  N = 1000L,
+  outcome_model = y ~ trt,
   trt_var = "trt",
   family = binomial()
 ) |> 
   `attr<-`(which = "class", value = "gcomp_ml")
 
 strategy_gcomp_bayes <- list(
-  formula = y ~ trt,
+  outcome_model = y ~ trt,
   trt_var = "trt",
+  N = 1000L,
   family = binomial()
 ) |> 
   `attr<-`(which = "class", value = "gcomp_bayes")
 
 strategy_mim <- list(
-  formula = y ~ trt,
+  outcome_model = y ~ trt,
   trt_var = "trt",
+  N = 1000L,
   family = binomial()
 ) |> 
   `attr<-`(which = "class", value = "mim")
 
+# aggregate-level outcome data
+# no covariates
 ald <- tribble(
   ~variable, ~trt, ~statistic, ~value,
   "y",       "B",  "sum",     30,
@@ -51,12 +60,15 @@ ipd <- data.frame(
   trt = c(rep("A", 20), rep("C", 20))
 )
 
+# internal object
 analysis_params <- 
   list(ipd = ipd,
        ald = ald,
+       ref_trt = "C",
+       ipd_comp = "A",
        scale = "log_odds")
 
-## test for no covariates
+## test when no covariates
 
 test_that("calc_IPD_stats() works for MAIC", {
 
@@ -77,8 +89,8 @@ test_that("calc_IPD_stats() works for MAIC", {
     scale = "log_odds")
   
   strategy_maic_single_sample <- list(
-    R = 1,   # results in TWO samples, including original
-    formula = y ~ trt,
+    n_boot = 1,   # results in TWO samples, including original
+    outcome_model = y ~ trt,
     trt_var = "trt",
     family = binomial()
   ) |> 
@@ -97,21 +109,18 @@ test_that("calc_IPD_stats() works for STC", {
 })
 
 test_that("calc_IPD_stats() works for G-computation (ML)", {
-  expect_error(
-    object = calc_IPD_stats(strategy_gcomp_ml, analysis_params),
-    regexp = "No covariates found to simulate.")
+  res_gcomp_ml_null <- calc_IPD_stats(strategy_gcomp_ml, analysis_params)
+  expect_length(res_gcomp_ml_null, 4)
 })
 
 test_that("calc_IPD_stats() works for G-computation (Stan)", {
-  expect_error(
-    object = calc_IPD_stats(strategy_gcomp_bayes, analysis_params),
-    regexp = "No covariates found to simulate.")
+    res_gcomp_bayes_null <- calc_IPD_stats(strategy_gcomp_bayes, analysis_params)
+    expect_length(res_gcomp_bayes_null, 4)
 })
 
 test_that("calc_IPD_stats() works for Multiple Imputation Marginalisation", {
-  expect_error(
-    object = calc_IPD_stats(strategy_mim, analysis_params),
-    regexp = "No covariates found to simulate.")
+  res_mim_null <- calc_IPD_stats(strategy_mim, analysis_params)
+  expect_length(res_mim_null, 4)
 })
 
 ## edge cases
@@ -137,6 +146,7 @@ test_that("calc_IPD_stats() handles extreme values", {
     trt = c("A", "A", "A", "A", "C", "C", "C", "C")
   )
   
+  # no covariates
   ald_extreme <- tribble(
     ~variable, ~trt, ~statistic, ~value,
     "y",       "B",  "sum",     0,     # zero events
@@ -195,6 +205,7 @@ test_that("calc_IPD_stats() handles negative or NA values", {
     trt = c("A", "A", "C", "C")
   )
   
+  # no covariates
   ald_na <- tribble(
     ~variable, ~trt, ~statistic, ~value,
     "y",       "B",  "sum",     NA,

@@ -23,8 +23,7 @@ A character string representing the treatment effect scale.
 Maps a given link function to its corresponding treatment effect scale.
 }
 \examples{
-\dontrun{
-get_treatment_effect(link = "logit")
-get_treatment_effect(link = "identity")
-}
+ get_treatment_effect(link = "logit")
+ get_treatment_effect(link = "identity")
+ 
 }

@@ -11,6 +11,9 @@
 
 \item{...}{Additional arguments passed to other methods}
 }
+\value{
+No return value, called for side effects
+}
 \description{
 This is a method for the function \code{\link[=print]{print()}} for objects of the
 class "outstandR" created by a call to \code{\link[=outstandR]{outstandR()}}

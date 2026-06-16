@@ -1,46 +1,82 @@
 
 #' Calculate simulated treatment comparison statistics
 #'
-#' @param strategy Strategy
-#' @param analysis_params List of analysis parameters
-#' @param ... Additional arguments
+#' @param strategy An object of class `strategy` created by functions such as
+#'   [strategy_maic()], [strategy_stc()], or [strategy_mim()].
+#'   Contains modelling details like the formula and family.
+#' @param analysis_params List of analysis parameters. Must contain `ipd`
+#'   (individual patient data).
+#' @param ... Additional arguments.
 #'
-#' @return A list:
-#' \describe{
-#'   \item{`mean_A`}{Mean for comparator treatment group "A".}
-#'   \item{`mean_C`}{Mean for reference treatment group "C".}
-#' }
-#' @importFrom stats glm
-#' @export
-#' 
+#' @return A list containing:
+#' * `means`: A list containing:
+#'     * `A`: Mean for comparator treatment group "A".
+#'     * `C`: Mean for reference treatment group "C".
+#' * `model`: The fitted [stats::glm()] object.
+#'
+#' @importFrom stats glm coef
+#' @keywords internal
 calc_stc <- function(strategy, analysis_params, ...) {
+  args <- list(...)
   
-  ipd <- analysis_params$ipd
-  trt_var <- strategy$trt_var
+  n_boot <- if (!is.null(args$N)) args$N else 1000
   
-  # centre covariates
-  centre_vars <- get_eff_mod_names(strategy$formula)
+  ref_trt <- analysis_params$ref_trt
+  comp_trt <- analysis_params$ipd_comp
   
-  ipd[, centre_vars] <- scale(ipd[, centre_vars], scale = FALSE)
+  # single fit
+  run_stc_once <- function(data) {
+    # centre covariates within this specific bootstrap sample
+    centre_vars <- get_eff_mod_names(strategy$outcome_model)
+    data[, centre_vars] <- scale(data[, centre_vars], scale = FALSE)
+    
+    fit <- glm(formula = strategy$outcome_model,
+               family = strategy$family,
+               data = data)
+    
+    # extract means
+    coef_fit <- stats::coef(fit)
+    treat_coef_name <- grep(pattern = paste0("^", strategy$trt_var, "[^:]*$"),
+                            names(coef_fit), value = TRUE)
+    
+    linkinv <- strategy$family$linkinv
+    
+    list(
+      comp = as.numeric(linkinv(coef_fit[1] + coef_fit[treat_coef_name])),
+      ref = as.numeric(linkinv(coef_fit[1])),
+      fit = fit
+    )
+  }
   
-  fit <- glm(formula = strategy$formula,
-             family = strategy$family,
-             data = ipd)
+  main_res <- run_stc_once(analysis_params$ipd)
   
-  # extract model coefficients
-  coef_fit <- coef(fit)
+  boot_results <- replicate(n_boot, simplify = FALSE, {
+    # resample IPD with replacement
+    boot_idx <- sample(nrow(analysis_params$ipd), replace = TRUE)
+    boot_data <- analysis_params$ipd[boot_idx, ]
+    
+    run_stc_once(boot_data)
+  })
   
-  # safer than trt_var in case of factor level append
-  treat_coef_name <-
-    grep(pattern = paste0("^", trt_var, "[^:]*$"),
-         names(coef_fit), value = TRUE)
+  # collate bootstrap samples into vectors
+  boot_comp <- sapply(boot_results, function(x) x$comp)
+  boot_ref <- sapply(boot_results, function(x) x$ref)
   
-  # probability for control and treatment group
-  # estimating treatment effect at means because of centring
-  linkinv <- strategy$family$linkinv
-  mean_C <- linkinv(coef_fit[1])
-  mean_A <- linkinv(coef_fit[1] + coef_fit[treat_coef_name])
+  # Dynamically assign names 
+  means_list <- stats::setNames(
+    list(boot_comp, boot_ref), 
+    c(comp_trt, ref_trt))
   
-  list(mean_A = mean_A,
-       mean_C = mean_C)
+  point_est_list <- stats::setNames(
+    list(main_res$comp, main_res$ref), 
+    c(comp_trt, ref_trt))
+  
+  # Harmonized return structure
+  list(
+    means = means_list,
+    point_estimates = point_est_list,
+    model = list(
+      fit = main_res$fit,
+      N = n_boot) # Represents number of STC bootstrap replications here
+  )
 }

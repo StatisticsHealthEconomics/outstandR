@@ -14,11 +14,12 @@ strategy <- list(family = binomial(link = "logit"))
 ## calc_ALD_stats() ----
 test_that("calc_ALD_stats() returns mean and variance", {
 
-  res <- calc_ALD_stats(strategy,
-                        list(ald = ald, 
-                             ref_trt = "C", 
-                             ald_comp = "B", 
-                             scale = "log_odds"))
+  res <- calc_ALD_stats(
+    strategy,
+    list(ald = ald, 
+         ref_trt = "C", 
+         ald_comp = "B", 
+         scale = "log_odds"))
   
   expect_type(res, "list")
   expect_named(res, c("mean", "var"))
@@ -28,20 +29,22 @@ test_that("calc_ALD_stats() returns mean and variance", {
 
 ## marginal_variance() ----
 test_that("marginal_variance() calculates correct sum of variances", {
-  res <- marginal_variance(ald, ref_trt = "C", comp_trt = "B",
-                           scale = "log_odds",
-                           family = strategy$family$family)
-
+  res <- marginal_variance(
+    ald, ref_trt = "C", comp_trt = "B",
+    scale = "log_odds",
+    family = strategy$family$family)
+  
   expect_type(res, "double")
   expect_gt(res, 0)
 })
 
 ## marginal_treatment_effect() ----
 test_that("marginal_treatment_effect() calculates correct difference", {
-  res <- marginal_treatment_effect(ald, ref_trt = "C", comp_trt = "B",
-                                   scale = "log_odds",
-                                   family = strategy$family$family)
-
+  res <- marginal_treatment_effect(
+    ald, ref_trt = "C", comp_trt = "B",
+    scale = "log_odds",
+    family = strategy$family$family)
+  
   expect_type(res, "double")
 })
 
@@ -82,11 +85,12 @@ test_that("calc_ALD_stats() handles extreme values", {
       value = c(0, 100, 100, 100) # zero and all events
     )
 
-  res <- calc_ALD_stats(strategy,
-                        list(ald = ald_extreme, 
-                             ref_trt = "C", 
-                             ald_comp = "B", 
-                             scale = "log_odds"))
+  res <- calc_ALD_stats(
+    strategy,
+    list(ald = ald_extreme, 
+         ref_trt = "C", 
+         ald_comp = "B", 
+         scale = "log_odds"))
   
   expect_type(res$mean, "double")
   expect_type(res$var, "double")

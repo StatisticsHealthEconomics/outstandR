@@ -1,0 +1,669 @@
+---
+title: "Using the outstandR package"
+format: 
+  html:
+    theme:
+      light: cosmo
+      dark: darkly
+editor_options: 
+  chunk_output_type: console
+---
+
+This section gives a practical demonstration of the core functionality available in the package.
+
+## Available internal data sets
+
+To illustrate the use of `outstandR`, we show its application with synthetic datasets. These are contained in the `outstandR` package and can be loaded via the `data()` function.
+
+The naming convention that we use is:
+
+`<comparator><reference>_<level>_<outcome>Y_<covariates>X`
+
+where:
+
+-   **comparator** and **reference** are the treatment arm names.
+-   **level** is either `IPD` for individual-level patient data or `ALD` for aggregate-level data.
+-   **outcome** is `bin` (binary), `count` (count), or `cont` (continuous).
+*   **covariates** is `bin`, `cont`, or `mixed`.
+
+For example, `AC_IPD_binY_binX` is the name of the data set for treatments $A$ vs $C$, patient-level data, and both binary-valued outcome and covariates.
+
+## Installation
+
+First, install `outstandR` from CRAN: 
+
+```{r install-cran}
+#| eval: false
+install.packages("outstandR")
+```
+
+or the development version from GitHub using R-universe:
+
+```{r install-runiverse}
+#| eval: false
+install.packages("outstandR",
+                 repos = c("[https://statisticshealtheconomics.r-universe.dev](https://statisticshealtheconomics.r-universe.dev)",
+                           "[https://cloud.r-project.org](https://cloud.r-project.org)"))
+```
+
+## Illustrative examples
+
+Attach the package to the current environment.
+
+```{r}
+#| message: false
+#| warning: false
+library(outstandR)
+```
+
+### Binary outcome data
+
+In the first example, consider binary outcome data and continuous covariates only. Load the aggregate level and individual-patient data into the environment.
+
+```{r load-bin-data}
+data(AC_IPD_binY_contX) # AC individual-level patient data
+data(BC_ALD_binY_contX) # BC aggregate-level data
+```
+
+Inspecting the IPD, we can see that each row corresponds to an individual and it has four covariates: two effect modifiers only, and two prognostic factors only. These are all continuous valued and the outcome is binary valued 0, 1.
+
+```{r}
+# individual-level data
+head(AC_IPD_binY_contX)
+```
+
+Similarly, the ALD has the corresponding covariates but not as separate columns (wide format) but in a long format with all covariate names in the `variable` column. Notice that the treatment column `trt` is NA for the covariate because we assume that the covariate distribution is balanced to be the same between treatment arms.
+
+```{r}
+# aggregate-level data
+print(BC_ALD_binY_contX)
+```
+
+The next step is to define the formula, which specifies the relationship between the covariates, treatments and outcome. For this example, the outcome regression is
+
+$$
+\text{logit}(p) = \alpha + \beta_{01} X_{1} + \beta_{02}X_{2} + (\beta_{trt} + \beta_{13} X_{3} + \beta_{14} X_{4}) \mathbb{I}(trt = 1),
+$$
+
+where $\mathbb{I}()$ is the indicator function, taking value 1 when true and 0 otherwise. The corresponding `R` formula used by `outstandR` is independent of the particular type of data and so we do not include a link function at this stage, i.e, the identity link.
+
+```{r}
+# linear formula for the outcome model
+lin_form_contX <- as.formula("y ~ PF_cont_1 + PF_cont_2 + trt + trt:EM_cont_1 + trt:EM_cont_2")
+```
+
+That is, the main effects are the prognostic factors (`PF_cont_1` and `PF_cont_2`) and the treatment `trt`. The interaction terms are with the treatment defined as effect modifiers (`EM_cont_1` and `EM_cont_2`).
+
+For the MAIC approach, we define the balancing formula to include the effect modifiers as follows 
+```{r}
+# linear formula for the outcome model
+bal_form_contX <- as.formula("~ EM_cont_1 + EM_cont_2")
+```
+
+#### Relative treatment effects
+
+Let $p_C$ be the proportion of events in the comparator treatment arm and $p_B$ be the proportion of events in the reference treatment arm. For the logit link with binary data, the mean treatment effect is the log-odds ratio:
+
+$$
+\hat{\Delta}_{BC} = \text{logit}(p_B) - \text{logit}(p_C)
+$$
+
+with variance
+
+$$
+\text{Var}(\Delta_{BC}) = \frac{1}{y_B} + \frac{1}{N_B - y_B} + \frac{1}{y_C} + \frac{1}{N_C - y_C},
+$$
+
+where $y_t$ are the number of events and $N_t$ are the total number of subjects for treatment $t$.
+
+A full list including alternative treatment effects and variance components available for binary outcome data is given in Table X.
+
+#### Running outstandR()
+
+Having completed the set-up steps, we are ready to proceed with performing the indirect treatment comparison with `outstandR()`.  In each of the calls, we will explicitly set the random seed for reproducibility.
+
+For the MAIC approach, we define the outcome and balancing formulas explicitly in a list. This explicitly separates the statistical intent of weighting versus regression:
+
+```{r outstandR_maic}
+outstandR_maic <-
+ outstandR(
+   ipd_trial = AC_IPD_binY_contX,
+   ald_trial = BC_ALD_binY_contX,
+   strategy = strategy_maic(
+     formula = list(outcome_model = formula("y ~ trt"),
+                    balance_model =  bal_form_contX),
+     family = binomial(link = "logit")),
+   seed = 12345)
+```
+
+As detailed in Section X, the `outstandR()` function returns a list object. To help with interpreting the results, `outstandR` includes a convenience `print` method.
+
+```{r}
+print(outstandR_maic)
+```
+
+This contains the same information as the raw output but in a more presentable format. The first block of text provides modelling details, and the following tibbles show the contrast and absolute effects, respectively.
+The STC, G-computation and MIM analyses are performed similarly but with the `outcome_model` specified instead of the `balance_model`.
+
+```{r echo=FALSE}
+# STC Analysis
+outstandR_stc <- 
+  outstandR(
+    ipd_trial = AC_IPD_binY_contX,
+    ald_trial = BC_ALD_binY_contX,
+    strategy = strategy_stc(
+      formula = list(outcome_model = lin_form_contX),
+      family = binomial(link = "logit")
+    ),
+    seed = 12345
+  )
+
+# G-Computation (ML)
+outstandR_gcomp_ml <- 
+  outstandR(
+    ipd_trial = AC_IPD_binY_contX,
+    ald_trial = BC_ALD_binY_contX,
+    strategy = strategy_gcomp_ml(
+      formula = list(outcome_model = lin_form_contX),
+      family = binomial(link = "logit")
+    ),
+    seed = 12345
+  )
+
+# G-Computation (Bayes)
+# Note: refresh = 0 turns off iteration updates
+outstandR_gcomp_bayes <- outstandR(
+  ipd_trial = AC_IPD_binY_contX,
+  ald_trial = BC_ALD_binY_contX,
+  refresh = 0, 
+  strategy = strategy_gcomp_bayes(
+    formula = list(outcome_model = lin_form_contX),
+    family = binomial(link = "logit")
+  ),
+  seed = 12345
+)
+
+# MIM Analysis
+outstandR_mim <- outstandR(
+  ipd_trial = AC_IPD_binY_contX,
+  ald_trial = BC_ALD_binY_contX,
+  refresh = 0,
+  strategy = strategy_mim(
+    formula = list(outcome_model = lin_form_contX),
+    family = binomial(link = "logit")
+  ),
+  seed = 12345
+)
+```
+
+Forest plots of the results across all adjustment strategies for the binary outcome are given in Figure X by calling the following. 
+
+```{r summary-forest-plot, warning=FALSE, message=FALSE}
+plot(outstandR_maic, outstandR_stc, outstandR_gcomp_ml, 
+     outstandR_gcomp_bayes, outstandR_mim)
+```
+
+By passing the result objects from `strategy_maic()`, `strategy_stc()`, `strategy_gcomp_ml()`, and `strategy_mim()` into a single `plot()` call, we can visually assess the stability of the treatment effect estimates. For example, the relative AB contrast is consistently estimated across all methods excluding STC, with overlapping 95\% confidence intervals, providing confidence in the robustness of the indirect comparison.
+
+------------------------------------------------------------------------
+
+### Continuous outcome data
+
+Analogous to the first example with binary outcomes and continuous covariates, we now extend this for the case of continuous outcomes and a mixture of binary and continuous covariates. The same steps are followed.
+
+First, read in the data.
+
+```{r load-cont-data}
+# A vs C individual-level data
+data(AC_IPD_contY_mixedX)
+head(AC_IPD_contY_mixedX)
+
+# B vs C aggregate-level data
+data(BC_ALD_contY_mixedX)
+print(BC_ALD_contY_mixedX)
+```
+
+The formats are the same as the previous binary example but now in the ALD the binary-valued covariates have `statistic` entry `prop`. Covariates `X1` and `X3` are continuous and `X2` and `X4` are binary.
+
+The formula for this example is also a little more complicated. We shall assume that some of the covariate can be both prognostic factors and effect modifiers, so the regression is
+
+$$
+y = \alpha + \beta_{01} X_1 + \beta_{02} X_2 + \beta_{03} X_3 + (\beta_{trt} + \beta_{11} X_1 + \beta_{12} X_2 + \beta_{14} X_4) \mathbb{I}(trt = 1) 
+$$
+
+This corresponds to the `R` formula given by
+
+```{r}
+lin_form_mixedX <- as.formula("y ~ X1 + X2 + X3 + trt + trt:(X1 + X2 + X4)")
+```
+
+The balance formula includes the effect modifiers and is given by
+```{r}
+bal_form_mixedX <- as.formula("~ X1 + X2 + X4")
+```
+
+#### Relative treatment effect
+
+Let $\hat{\mu}_B$ be the mean in the comparator arm and $\hat{\mu}_C$ be the mean in the reference arm. Then the mean treatment difference is simply:
+
+$$
+\hat{\Delta}_{BC} = \hat{\mu}_B - \hat{\mu}_C
+$$
+For other scales on continuous data, the approach may involve transforming the means directly, although typical continuous outcome analyses focus on mean differences.
+
+The variance of the relative treatment effect is
+
+$$
+\text{Var}(\Delta_{BC}) = \frac{s_B^2}{N_B} + \frac{s_C^2}{N_C}
+$$
+
+where, for treatment $t$, $N_t$ and $s_t^2$ are the number of patients and the observed standard deviation, respectively.
+
+#### Running outstandR()
+
+A difference from the previous binary outcome data example is the `family = gaussian(link = "identity")` argument indicating a Normal linear regression. The full call to `outstandR()` is:
+
+```{r}
+outstandR_maic <- 
+  outstandR(
+    ipd_trial = AC_IPD_contY_mixedX, 
+    ald_trial = BC_ALD_contY_mixedX,
+    strategy = strategy_maic(
+      formula = list(outcome_model = formula("y ~ trt"),
+                     balance_model = bal_form_mixedX),
+      family = gaussian(link = "identity")),
+    seed = 12345
+  )
+```
+
+Again, if we interrogate the output we see the same list format. The differences from the first example are the model and scale components correspond to the continuous input data used. That is, the default output contrast is the mean difference.
+
+```{r}
+str(outstandR_maic, max.level = 1)
+print(outstandR_maic)
+```
+
+The corresponding calls to `outstandR()` for the other analyses follow similarly.
+
+```{r echo=FALSE}
+# STC Analysis
+outstandR_stc <- 
+  outstandR(
+    ipd_trial = AC_IPD_contY_mixedX, 
+    ald_trial = BC_ALD_contY_mixedX,
+    strategy = strategy_stc(
+      formula = list(outcome_model = lin_form_mixedX),
+      family = gaussian(link = "identity")
+    ),
+    seed = 12345
+  )
+
+# G-Computation (ML)
+outstandR_gcomp_ml <- 
+  outstandR(
+    ipd_trial = AC_IPD_contY_mixedX, 
+    ald_trial = BC_ALD_contY_mixedX,
+    strategy = strategy_gcomp_ml(
+      formula = list(outcome_model = lin_form_mixedX),
+      family = gaussian(link = "identity")
+    ),
+    seed = 12345
+  )
+
+# G-Computation (Bayes)
+# Note: refresh = 0 turns off iteration updates
+outstandR_gcomp_bayes <- 
+  outstandR(
+    ipd_trial = AC_IPD_contY_mixedX, 
+    ald_trial = BC_ALD_contY_mixedX,
+    refresh = 0, 
+    strategy = strategy_gcomp_bayes(
+      formula = list(outcome_model = lin_form_mixedX),
+      family = gaussian(link = "identity")
+    ),
+    seed = 12345
+  )
+
+# MIM Analysis
+outstandR_mim <-
+  outstandR(
+    ipd_trial = AC_IPD_contY_mixedX, 
+    ald_trial = BC_ALD_contY_mixedX,
+    refresh = 0,
+    strategy = strategy_mim(
+      formula = list(outcome_model = lin_form_mixedX),
+      family = gaussian(link = "identity")
+    ),
+    seed = 12345
+  )
+```
+
+```{r summary-forest-plot_cont, warning=FALSE, message=FALSE}
+plot(outstandR_maic, outstandR_stc, outstandR_gcomp_ml, 
+     outstandR_gcomp_bayes, outstandR_mim)
+```
+
+------------------------------------------------------------------------
+
+### Count outcome data
+
+First, read in and view the two data sets.
+
+```{r load-count-data}
+# A vs C individual-level data
+data(AC_IPD_countY_contX)
+head(AC_IPD_countY_contX)
+
+# B vs C aggregate-level data
+data(BC_ALD_countY_contX)
+print(BC_ALD_countY_contX)
+```
+
+The formats are the same as the binary outcome data example. Let $\lambda$ be the outcome event rate, then the equation for the outcome regression for the count data is
+
+$$
+\log(\lambda) = \alpha + \beta_{01} X_{1} + \beta_{02}X_{2} + (\beta_{trt} + \beta_{13} X_{3} + \beta_{14} X_{4}) \mathbb{I}(trt = 1).
+$$
+
+Recalling that the log link is defined separately in the `outstandR()` function call, we shall use the same linear formulae as for the binary outcome example, `lin_form_contX` and `bal_form_contX`.
+
+#### Relative treatment effects
+
+The default relative effect with the log link is the log relative risk, with mean
+
+$$
+\hat{\Delta}_{BC} = \ln(\hat{\mu}_C) - \ln(\hat{\mu}_B)
+$$
+
+and variance:
+
+$$
+\text{Var}(\Delta_{BC}) = \frac{1}{N_B \hat{\mu}_B} + \frac{1}{N_C \hat{\mu}_C}
+$$
+Table 4 gives the full list of potential relative effects for count outcome data.
+
+#### Running outstandR()
+
+A difference from the previous outcome data examples is the `family = poisson(link = "log")` argument indicating a log linear regression. The full call to `outstandR()` is
+
+```{r}
+outstandR_maic <- 
+  outstandR(
+    ipd_trial = AC_IPD_countY_contX,
+    ald_trial = BC_ALD_countY_contX,
+    strategy = strategy_maic(
+               formula = list(outcome_model = formula("y ~ trt"),
+                              balance_model = bal_form_contX),
+      family = poisson(link = "log")),
+             seed = 12345)
+```
+
+The differences from the first example are that the model and scale attributes correspond to the input data used. That is, the default output contrast is the mean difference.
+
+```{r}
+print(outstandR_maic)
+```
+
+The corresponding calls to `outstandR()` for the other analyses follow similarly.
+
+```{r echo=FALSE}
+# STC Analysis
+outstandR_stc <- 
+  outstandR(
+    ipd_trial = AC_IPD_countY_contX,
+    ald_trial = BC_ALD_countY_contX,
+    strategy = strategy_stc(
+      formula = list(outcome_model = lin_form_contX),
+      family = poisson(link = "log")
+    ),
+    seed = 12345
+  )
+
+# G-Computation (ML)
+outstandR_gcomp_ml <- 
+  outstandR(
+    ipd_trial = AC_IPD_countY_contX,
+    ald_trial = BC_ALD_countY_contX,
+    strategy = strategy_gcomp_ml(
+      formula = list(outcome_model = lin_form_contX),
+      family = poisson(link = "log")
+    ),
+    seed = 12345
+  )
+
+# G-Computation (Bayes)
+# Note: refresh = 0 turns off iteration updates
+outstandR_gcomp_bayes <- 
+  outstandR(
+    ipd_trial = AC_IPD_countY_contX,
+    ald_trial = BC_ALD_countY_contX,
+    refresh = 0, 
+    strategy = strategy_gcomp_bayes(
+      formula = list(outcome_model = lin_form_contX),
+      family = poisson(link = "log")
+    ),
+    seed = 12345
+  )
+
+# MIM Analysis
+outstandR_mim <-
+  outstandR(
+    ipd_trial = AC_IPD_countY_contX,
+    ald_trial = BC_ALD_countY_contX,
+    refresh = 0,
+    strategy = strategy_mim(
+      formula = list(outcome_model = lin_form_contX),
+      family = poisson(link = "log")
+    ),
+    seed = 12345
+  )
+```
+
+```{r summary-forest-plot_count, warning=FALSE, message=FALSE}
+plot(outstandR_maic, outstandR_stc, outstandR_gcomp_ml, 
+     outstandR_gcomp_bayes, outstandR_mim)
+```
+
+## User-specified outcome scales
+
+By default, `outstandR` reports treatment effects on the scale corresponding to the regression model's link function. For instance, a logistic regression specified with family `binomial(link = "logit")` naturally yields estimates in log-odds ratios, while a linear regression yields mean differences. However, health economic models often require parameters on specific scales, such as risk differences (RD) or relative risks (RR), to facilitate interpretation or align with decision-analytic model inputs.
+
+| Data Type | Model Metric | Mean Difference | Variance Component |
+|:-----------------|:-----------------|:-----------------|:-----------------|
+| **Binary** | Log Odds Ratio$^\dagger$ | $\text{logit}(p_B) - \text{logit}(p_C)$ | $\frac{1}{y_t} + \frac{1}{N_t - y_t}$ |
+|  | Risk Difference | $p_C - p_B$ | $\frac{p_t(1 - p_t)}{N_t}$ |
+|  | Probit Scale Difference | $\text{probit}(p_C) - \text{probit}(p_B)$ | $\frac{1}{y_t} + \frac{1}{N_t - y_t}$ |
+|  | Log RR (cloglog) | $\ln(-\ln(1 - p_C)) - \ln(-\ln(1 - p_B))$ | $\frac{1}{y_t} - \frac{1}{N_t}$ |
+|  | Log RR (Log Link) | $\ln(p_C) - \ln(p_B)$ | $\frac{1}{y_t} - \frac{1}{N_t}$ |
+| **Count** | Log Relative Risk$^\dagger$ | $\ln(\bar{y}_C) - \ln(\bar{y}_B)$ | $\frac{1}{N_t \bar{y}_t}$ |
+|  | Rate Difference | $\bar{y}_C - \bar{y}_B$ | $\frac{\bar{y}_t}{N_t}$ |
+|  | Delta $z$ (Signal-to-noise) | $\sqrt{\bar{y}_C} - \sqrt{\bar{y}_B}$ | $\frac{1}{4 N_t \bar{y}_t}$ |
+| **Continuous** | Mean Difference$^\dagger$ | $\bar{y}_B - \bar{y}_C$ | $\frac{s_t^2}{N_t}$ |
+
+: Relative treatment effect statistics for different outcome data types ($^\dagger$default).
+
+Table X gives all of the available relative effects for each outcome data type. 
+The `scale` argument in `outstandR()` allows users to request these alternative summary statistics directly. When converting between relative measures (e.g., odds ratios) and absolute measures (e.g., risk differences), the package automatically estimates the necessary baseline risk ($P_0$) from the reference treatment arm in the IPD study.
+
+For log-odds and log-relative risk on continuous data, the `R` code implies a transformation of the mean before calculating the variance. For "log_odds", it uses $\frac{\pi^2}{3 N_t}$, which is the variance of a logit-transformed mean when the underlying data are assumed to be normal and mapped to (0,1) scale, and then transformed to logit (often used for proportions derived from continuous data or for scores that can be thought of as probabilities).
+
+For example, to obtain a risk difference instead of the default log-odds ratio for the binary outcome analysis (previously shown in Section 4), we specify `scale = "risk_difference"`.
+
+```{r user-specified-scales}
+outstandR_maic_rd <- 
+  outstandR(
+    ipd_trial = AC_IPD_binY_contX, 
+    ald_trial = BC_ALD_binY_contX,
+    strategy = strategy_maic(
+      formula = list(outcome_model = formula("y ~ trt"),
+                     balance_model = bal_form_contX),
+      family = binomial(link = "logit")
+    ),
+    seed = 12345,
+    scale = "risk_difference"  # instead of default log-odds ratio
+  )
+```
+
+The output now displays the contrast estimates on the probability scale:
+
+```{r}
+print(outstandR_maic_rd)
+```
+
+The package determines the validity of a conversion path based on the underlying data distribution; for instance, requesting a "mean difference" for a binary outcome model will raise a validation error.
+
+## Robust variance estimation
+
+Standard errors in population-adjusted analyses can be sensitive to model misspecification. Users can request robust (sandwich) standard errors by setting the `var_method` argument to `"sandwich"`.
+
+The following example demonstrates how to compare the naive model-based standard error with the robust sandwich estimate for a maximum likelihood G-computation analysis:
+
+```{r robust-variance}
+# standard STC analysis
+stc_naive <- 
+  outstandR(
+    ipd_trial = AC_IPD_binY_contX,
+    ald_trial = BC_ALD_binY_contX,
+    strategy = strategy_gcomp_ml(
+      formula = list(outcome_model = lin_form_contX),
+      family = binomial()),
+    seed = 12345,
+    var_method = "sample") # Default
+
+# STC with robust variance (sandwich estimator)
+stc_robust <- 
+  outstandR(
+    ipd_trial = AC_IPD_binY_contX,
+    ald_trial = BC_ALD_binY_contX,
+    strategy = strategy_gcomp_ml(
+      formula = list(outcome_model = lin_form_contX),
+      family = binomial()),
+    seed = 12345,
+    var_method = "sandwich")
+```
+
+```{r se-compare}
+# compare standard errors
+unlist(stc_naive$results$contrasts$var)
+unlist(stc_robust$results$contrasts$var)
+```
+
+This option allows analysts to assess the stability of their conclusions without requiring manual implementation of the delta method or bootstrapping.
+
+## User-defined covariate distributions in G-computation
+
+By default, the simulation step in `outstandR` for G-computation assumes that covariates in the target population follow a multivariate normal distribution  parameterized by the means and standard deviations reported in the ALD (corresponding to $F_{k}(\cdot;\theta_{k})$ in Equation (3)). However, this assumption may be inappropriate. For example, age or costs may be skewed and strictly positive, while binary variables, such as sex, are bounded.
+
+`outstandR` allows users to specify alternative marginal distributions for specific covariates via the `marginal_distns` argument.
+
+A key feature of this implementation is that the package automatically parameterizes these distributions using the summary statistics available in the ALD. For example, if a user specifies a Gamma distribution for `age`, `outstandR` will automatically retrieve the reported mean ($\mu$) and standard deviation ($\sigma$) from the ALD data frame and convert them into the required shape ($\alpha$) and rate ($\beta$) parameters using the method of moments:
+
+$$
+\alpha = (\mu / \sigma)^2, \quad \beta = \mu / \sigma^2
+$$
+
+This is more robust and streamlines the workflow by removing the need for users to perform these statistical transformations manually.
+
+First, define the target distributions. We specify a Gamma distribution with "gamma" for `X1` and a Binomial with "binom" for `X2`. The other covariates not listed (`X3`, `X4`) default to a Normal distribution i.e. "norm".
+
+```{r}
+#| eval: true
+
+# define distributions
+custom_distns <- c(X1 = "gamma", X2 = "binom")
+
+# run G-computation ML
+outstandR_sens <- 
+  outstandR(
+    ipd_trial = AC_IPD_contY_mixedX,
+    ald_trial = BC_ALD_contY_mixedX,
+    strategy = strategy_gcomp_ml(
+      formula = list(outcome_model = lin_form_mixedX),
+      family = gaussian(link = "identity"),
+      marginal_distns = custom_distns,
+      N = 1000),
+    seed = 12345)
+
+outstandR_sens
+```
+
+This approach ensures that the synthetic cohort respects the natural constraints of the data (e.g., non-negative age) while strictly adhering to the evidence reported in the aggregate summary.
+
+#### Manual parameter specification
+
+There are scenarios where manual specification via the `marginal_params` argument is also necessary. One use case is as a sensitivity analysis, where a researcher wishes to assess the robustness of the relative treatment effect estimates to deviations in the target population's characteristics of the IPD trial. For instance, if the ALD reports a mean age of 65, a researcher might wish to simulate a target population with a mean age of 70 to test if the conclusions hold for an older cohort. Additionally, manual specification is required for distributions where the method of moments conversion is not natively supported by the package (e.g., specific parameterizations of the Weibull distribution).
+
+The following code illustrates how to manually override the ALD statistics to simulate an older population.
+
+```{r}
+#| eval: true
+
+# manually specify parameters for 'age' (mean=70, sd=10.5)
+# convert mean=70/sd=10.5 to shape/rate manually 
+# or pass them if we already know the specific shape/rate
+target_mean <- 70
+target_sd <- 10.5
+
+new_params <- list(
+  X1 = list(shape = (target_mean/target_sd)^2, 
+            rate = target_mean/(target_sd^2)))
+
+# run G-computation with manual override
+outstandR_sens <- 
+  outstandR(
+    ipd_trial = AC_IPD_contY_mixedX,
+    ald_trial = BC_ALD_contY_mixedX,
+    strategy = strategy_gcomp_ml(
+      formula = list(outcome_model = lin_form_mixedX),
+      family = gaussian(link = "identity"),
+      marginal_distns = custom_distns,
+      marginal_params = new_params, # overrides ALD for X1
+      N = 1000),
+    seed = 12345)
+
+print(outstandR_sens)
+```
+
+
+## Model diagnostics
+
+While `outstandR()` focuses on estimation, assessing model fit is crucial. The returned S3 object exposes the underlying statistical artifacts in the analysis_data slot, allowing users to leverage external diagnostic tools.
+
+For example, for an MAIC analysis, we can inspect the distribution of weights to check for outliers or near-zero effective sample sizes.
+
+Figure 2 shows the histogram of MAIC weights.
+
+```{r maic-diagnostics}
+#| eval: true
+#| message: false
+#| warning: false
+
+# check Effective Sample Size
+print(outstandR_maic$model$ESS)
+
+# histogram of MAIC weights
+library(ggplot2)
+
+data.frame(weights = outstandR_maic$model$weights) |> 
+  ggplot(aes(x = weights)) +
+  geom_histogram(binwidth = 0.1, color = "black", fill = "lightgray") +
+  labs(x = "Weights", y = "Frequency") +
+  theme_minimal()
+```
+
+Similarly, for G-computation, users can extract the fitted model to check residuals or, in the Bayesian case, inspect MCMC convergence using for example the `bayesplot` package.
+
+Figure 3 shows the MCMC trace plots.
+
+```{r gcomp-diagnostics}
+#| eval: true
+#| message: false
+#| warning: false
+
+# extract stanfit object
+stan_obj <- outstandR_gcomp_bayes$model$fit 
+
+# use external package for diagnostics
+library(bayesplot)
+mcmc_trace(stan_obj)
+```

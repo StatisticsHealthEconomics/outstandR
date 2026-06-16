@@ -14,7 +14,7 @@ calculate_trial_variance_binary(ald, tid, effect)
 \item{effect}{Effect}
 }
 \value{
-Value
+Numeric value of total variance.
 }
 \description{
 Calculate trial variance binary

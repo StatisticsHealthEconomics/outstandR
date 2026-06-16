@@ -13,7 +13,7 @@ interactions with the treatment variable, e.g., y ~ X1 + trt + trt:X2. For covar
 \item{trt_var}{Treatment variable name; Default 'trt'.}
 }
 \value{
-Effect modifiers names
+Effect modifiers strings names
 }
 \description{
 Get effect modifiers

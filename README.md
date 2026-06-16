@@ -1,53 +1,65 @@
-outstandR: *Out*come regression *stand*ardisation
+# outstandR: *Out*come regression *stand*ardisation
 <img src="man/figures/logo.png" align="right" height="138"/>
-================
+
+<br>
 
 <!-- <img align="right" src="mime.png" width="100"> -->
 
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/StatisticsHealthEconomics/outstandR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/StatisticsHealthEconomics/outstandR/actions/workflows/R-CMD-check.yaml)
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![License: GPL
 v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![outstandR status
 badge](https://statisticshealtheconomics.r-universe.dev/outstandR/badges/version)](https://statisticshealtheconomics.r-universe.dev/outstandR)
-
+[![CRAN status](https://www.r-pkg.org/badges/version/outstandR)](https://CRAN.R-project.org/package=outstandR)
+[![codecov](https://codecov.io/gh/StatisticsHealthEconomics/outstandR/graph/badge.svg?token=YOUR_CODECOV_TOKEN)](https://codecov.io/gh/StatisticsHealthEconomics/outstandR)
 <!-- badges: end -->
 
 > Indirect treatment comparison with limited subject-level data
 
 ## Overview
 
-`{outstandR}` is an R package designed to facilitate **outcome regression
-standardisation** using model-based approaches, particularly focusing on
-G-estimation. The package provides tools to apply standardisation
-techniques for indirect treatment comparisons, especially in scenarios
-with limited individual patient data.
+`{outstandR}` is an R package designed to facilitate a unified framework for
+**Population-Adjusted Indirect Comparison (PAIC)** in Health Technology Assessment (HTA). 
+It facilitates outcome regression standardisation using model-based approaches when
+head-to-head clinical trials are absent and trial populations differ in effect modifiers. 
+
+By streamlining the workflow of covariate simulation, model standardisation, and contrast estimation, 
+`{outstandR}` enables robust and compatible evidence synthesis, particularly in scenarios where
+individual patient data (IPD) is limited to only one of the trials being compared.
 
 ## Who is this package for?
 
-The target audience of `{outstandR}` is those who want to perform
-model-based standardization in the specific context of two-study
-indirect treatment comparisons with limited subject-level data. This is
-model-based standardization with two additional steps:
+The target audience of `{outstandR}` includes statisticians and health economists performing indirect 
+treatment comparisons requiring cross-trial population adjustment. It simplifies the implementation 
+of model-based standardization with two core steps:
 
-1.  Covariate simulation (to overcome limited subject-level data for one
-    of the studies)
-2.  Indirect comparison across studies
+1.  Covariate simulation (to overcome limited subject-level data for aggregate-level data studies).
+2.  Indirect comparison across studies targeting compatible marginal treatment effects.
 
 ## Installation
 
-Install the [development version from
+Install the released version from CRAN:
+
+```r
+install.packages("outstandR")
+```
+
+Or install the [development version from
 GitHub](https://github.com/StatisticsHealthEconomics/) using R-universe:
 
 ``` r
-install.packages("outstandR", repos = c("https://statisticshealtheconomics.r-universe.dev", "https://cloud.r-project.org"))
+install.packages("outstandR", 
+  repos = c("https://statisticshealtheconomics.r-universe.dev", 
+            "https://cloud.r-project.org"))
 ```
 
 Alternatively, you may wish to download directly from the repo with
-`remotes::install_github("StatisticsHealthEconomics/outstandR")`.
+
+```r
+remotes::install_github("StatisticsHealthEconomics/outstandR")
+```
 
 ## Background
 
@@ -58,19 +70,12 @@ modifiers and limited patient-level data.
 The `{outstandR}` package allows the implementation of a range of
 methods for this situation including the following:
 
--   *Matching-Adjusted Indirect Comparison (MAIC)* is based on
-    propensity score weighting, which is sensitive to poor covariate
+-   *Matching-Adjusted Indirect Comparison (MAIC)* is based on weighting,
+    which is sensitive to poor covariate
     overlap and cannot extrapolate beyond the observed covariate space.
     It reweights the individual patient-level data (IPD) to match the
     aggregate characteristics of the comparator trial, thereby aligning
     the populations.
-
--   *Simulated Treatment Comparison (STC)* relies on outcome regression
-    models fitted to IPD, conditioning on covariates to estimate the
-    effect of treatment. These estimates are then applied to the
-    aggregate-level comparator population. Like MAIC, STC is limited by
-    its conditional nature and can produce biased marginal estimates if
-    not properly marginalized.
 
 -   *Parametric G-computation with maximum likelihood*: This method fits
     an outcome model to the IPD using maximum likelihood estimation,
@@ -99,6 +104,11 @@ methods for this situation including the following:
     can accommodate a Bayesian statistical framework, which naturally
     integrates the analysis into a probabilistic framework.
 
+-    *Simulated Treatment Comparison (STC) [DEPRECATED]:* While previously common,
+     standard STC can produce biased marginal estimates due to aggregation bias
+     and non-collapsibility when using non-linear link functions.
+     *Note: STC is formally deprecated as of v2.0.0 in favour of the more robust G-computation approaches.*
+
 ## General problem
 
 Consider one trial, for which the company has IPD, comparing treatments
@@ -117,22 +127,24 @@ respectively, which are the summary outcomes. It is the same situation
 for the *AC* trial.
 
 For a suitable scale, for example a log-odds ratio, or risk difference,
-we form estimators $\Delta_{BC(BC)}$ and $\Delta_{AC(AC)}$ of the trial
+we form estimators $\hat{\Delta}{BC(BC)}$ and $\hat{\Delta}_{AC(AC)}$ of the trial
 level (or marginal) relative treatment effects. We shall assume that
 this is always represented as a difference so, for example, for the risk
 ratio this is on the log scale.
 
 $$
-\Delta_{AC{(AC)}} = g(\bar{Y}_{C{(AC)}}) - g(\bar{Y}_{A{(AC)}})
+\hat{\Delta}_{AC{(AC)}} = g(\bar{Y}_{C{(AC)}}) - g(\bar{Y}_{A{(AC)}})
 $$
 
-and similarly for $\Delta_{BC(BC)}$. If we assume that there is no difference in effect modifiers between trials, then the estimator of the relative treatment effect $d_{AB(BC)}$ is
+and similarly for $\hat{\Delta}_{BC(BC)}$. If we assume that there is no difference in effect modifiers between trials,
+then the estimator of the relative treatment effect $d_{AB(BC)}$ is
 
 $$
-\Delta_{AB(BC)} = \Delta_{BC(BC)} - \Delta_{AC(AC)}.
+\hat{\Delta}_{AB(BC)} = \hat{\Delta}_{BC(BC)} - \hat{\Delta}_{AC(BC)}.
 $$
 
-However, when distributions of the effect modifiers are different between trial populations, the relative treatment effect estimated from each trial cannot simply be combined as above. The purpose of population-adjustment in ITC is to include an estimate for $\Delta_{AC(BC)}$.
+However, when distributions of the effect modifiers are different between trial populations, the relative treatment effect estimated 
+from each trial cannot simply be combined as above. The purpose of population-adjustment in ITC is to include an estimate for $\hat{\Delta}_{AC(BC)}$.
 
 ## References
 

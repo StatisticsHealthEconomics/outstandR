@@ -14,7 +14,10 @@ strategy_maic(
   formula = NULL,
   family = gaussian(link = "identity"),
   trt_var = NULL,
-  R = 1000L
+  n_boot = 1000L,
+  moments = 1,
+  int = FALSE,
+  verbatim = TRUE
 )
 
 strategy_stc(
@@ -30,7 +33,7 @@ strategy_gcomp_ml(
   rho = NA,
   marginal_distns = NA,
   marginal_params = NA,
-  R = 1000L,
+  n_boot = 1000L,
   N = 1000L
 )
 
@@ -49,6 +52,8 @@ strategy_mim(
   family = gaussian(link = "identity"),
   trt_var = NULL,
   rho = NA,
+  marginal_distns = NA,
+  marginal_params = NA,
   N = 1000L
 )
 
@@ -63,7 +68,18 @@ See stats::family() for more details.}
 
 \item{trt_var}{Treatment variable name; string}
 
-\item{R}{The number of resamples used for the non-parametric bootstrap; integer}
+\item{n_boot}{The number of resamples used for the non-parametric bootstrap; integer}
+
+\item{moments}{Integer. The number of moments of the covariates to balance.
+Setting \code{moments = 2} includes both the original variables and their
+squared terms, which effectively balances both the means and the variances.
+Default to 1.}
+
+\item{int}{Logical. If \code{TRUE}, includes two-way interactions between all
+covariates in the balancing model to effectively balance their covariances.
+Default \code{FALSE}}
+
+\item{verbatim}{Logical. Output to console during running.}
 
 \item{rho}{A named square matrix of covariate correlations; default NA}
 
@@ -74,7 +90,7 @@ Available distributions are given in stats::Distributions. See \code{\link[copul
 
 \item{N}{Synthetic sample size for g-computation}
 
-\item{strategy}{Class name from \code{strategy_maic}, \code{strategy_stc}, \code{strategy_gcomp_ml}, \code{strategy_gcomp_bayes}}
+\item{strategy}{Class name from \code{strategy_maic}, \code{strategy_stc}, \code{strategy_gcomp_ml}, \code{strategy_gcomp_bayes}, \code{strategy_mim}}
 
 \item{...}{Additional arguments}
 }
@@ -88,9 +104,16 @@ Available distributions are given in stats::Distributions. See \code{\link[copul
 \code{gcomp_bayes} class object
 
 \code{mim} class object
+
+Strategy list object
 }
 \description{
 Create a type of strategy class for each modelling approach.
+}
+\note{
+While current implementations focus on binary, continuous, and count outcomes,
+support for survival data (using the \code{survival} package) is under active
+development and scheduled for a future version.
 }
 \section{Matching-adjusted indirect comparison (MAIC)}{
 
@@ -112,6 +135,12 @@ where the weight \eqn{w_{it}} assigned to the \eqn{i}-th individual receiving tr
 }
 
 \section{Simulated treatment comparison (STC)}{
+
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+\code{strategy_stc()} was deprecated in outstandR version 1.X.X.
+We recommend using G-computation (\code{strategy_gcomp_ml()}) as a more robust
+alternative for this type of analysis.
 
 Outcome regression-based method which targets a conditional treatment effect.
 STC is a modification of the covariate adjustment method.
@@ -191,11 +220,16 @@ estimation via Markov chain Monte Carlo (MCMC) sampling.
 
 \section{Multiple imputation marginalization (MIM)}{
 
-TODO
+MIM targets a marginal treatment effect by using parametric G-computation
+within a multiple imputation framework. This approach views the covariate
+adjustment regression as a nuisance model and separates its estimation from
+the evaluation of the marginal treatment effect of interest. It is
+particularly useful for ensuring compatibility in indirect comparisons
+when adjusting for effect modifiers.
 }
 
 \seealso{
 \code{\link[=strategy_gcomp_bayes]{strategy_gcomp_bayes()}}
 
-\code{\link[=strategy_gcomp_ml]{strategy_gcomp_ml()}},\code{\link[copula:Mvdc]{copula::Mvdc()}}
+\code{\link[=strategy_gcomp_ml]{strategy_gcomp_ml()}} \code{\link[copula:Mvdc]{copula::Mvdc()}}
 }

@@ -2,15 +2,18 @@
 % Please edit documentation in R/reshape_ald.R
 \name{reshape_ald_to_wide}
 \alias{reshape_ald_to_wide}
-\title{Convert from long to wide format}
+\title{Convert aggregate data from long to wide format}
 \usage{
 reshape_ald_to_wide(df)
 }
 \arguments{
 \item{df}{A Dataframe of ALD}
 }
+\value{
+Data frame in wide format
+}
 \description{
-Convert from long to wide format
+Convert aggregate data from long to wide format
 }
 \examples{
 df <- 

@@ -1,5 +1,4 @@
-
-# create S3 class for each approach
+# create S3 class for each approach ---
 
 #' @rdname strategy
 #' 
@@ -21,27 +20,108 @@
 #' \eqn{t} is equal to the odds of being enrolled in the _AC_ trial vs the _AB_ trial.
 #' 
 #' @param trt_var Treatment variable name
-#' @param R The number of resamples used for the non-parametric bootstrap
+#' @param n_boot The number of resamples used for the non-parametric bootstrap
+#' @param moments Integer. The number of moments of the covariates to balance. 
+#'   Setting \code{moments = 2} includes both the original variables and their 
+#'   squared terms, which effectively balances both the means and the variances.
+#'   Default to 1.
+#' @param int Logical. If \code{TRUE}, includes two-way interactions between all 
+#'   covariates in the balancing model to effectively balance their covariances.
+#'    Default \code{FALSE}
+#' @param verbatim Logical. Output to console during running.
 #' @return `maic` class object
 #' 
 #' @importFrom utils modifyList
 #' @export
-#'
 strategy_maic <- function(formula = NULL,
                           family = gaussian(link = "identity"),
                           trt_var = NULL,
-                          R = 1000L) {
-  check_formula(formula, trt_var)
-  check_family(family)
-   
-  if (R <= 0 || R %% 1 != 0) {
-    stop("R not positive whole number.")
+                          n_boot = 1000L,
+                          moments = 1,
+                          int = FALSE,
+                          verbatim = TRUE) {
+  
+  # parse formula depending on whether list or legacy formula
+  if (!is.list(formula)) {
+    if (verbatim) {
+      message("Note: Using legacy 'formula' argument.")
+      message(paste("--> Analysis Model:", deparse(formula)))
+    }
+    
+    # guess trt_var safely because legacy formula exists
+    trt_var <- get_treatment_name(formula, trt_var)
+    
+    # internally convert to the balance model (stripping 'y' and 'trt')
+    rhs_vars <- all.vars(delete.response(terms(formula)))
+    balance_vars <- setdiff(rhs_vars, trt_var)
+    
+    balance_model <- as.formula(paste("~", paste(balance_vars, collapse = " + ")))
+    outcome_model <- formula
+    
+    if (verbatim) {
+      message(paste("--> Inferred Balance Model: ~", paste(balance_vars, collapse = " + ")))
+      message("    (Balancing on means of these covariates by default)")
+    }
+    
+  } else {
+    outcome_model <- formula$outcome_model
+    balance_model <- formula$balance_model
+    
+    # Handle case where outcome_model is completely omitted from list
+    if (is.null(outcome_model)) {
+      if (is.null(trt_var)) {
+        trt_var <- "trt"
+        
+        if (verbatim) {
+          message("Outcome model and trt_var not provided. Defaulting trt_var to '", trt_var, "'.")
+        }
+      }
+      
+      outcome_model <- as.formula(paste("y ~", trt_var))
+      
+      if (verbatim) {
+        message("Outcome model missing. Defaulting to: ", deparse(outcome_model))
+      }      
+    } else {
+      trt_var <- get_treatment_name(outcome_model, trt_var)
+    }
+    
+    # Handle missing balance_model with a delayed function
+    if (is.null(balance_model)) {
+      balance_model <- function(ald) {
+        # Extract all unique covariates from the ALD, dropping NAs and outcome terms
+        covars <- unique(ald$variable)
+        covars <- covars[!is.na(covars) & !(covars %in% c("y", "N"))]
+        
+        if (length(covars) == 0) return(NULL) # Failsafe if ALD has no covariates
+        
+        as.formula(paste("~", paste(covars, collapse = " + ")))
+      }
+      if (verbatim) {
+        message("Balance model not provided. Default to a linear sum of all covariates found in the ALD.")
+      }
+    }
   }
-
-  args <- list(formula = formula,
+  
+  check_formula(outcome_model, trt_var)
+  
+  if (!is.null(balance_model) && !is.function(balance_model)) {
+    check_balance_formula(balance_model, trt_var) 
+  }
+  
+  check_family(family)
+  
+  if (n_boot <= 0 || n_boot %% 1 != 0) {
+    stop("n_boot not positive whole number.")
+  }
+  
+  args <- list(balance_model = balance_model,
+               outcome_model = outcome_model,
                family = family,
-               trt_var = get_treatment_name(formula, trt_var),
-               R = R)
+               trt_var = trt_var,
+               n_boot = n_boot,
+               moments = moments,
+               int = int)
   
   do.call(new_strategy, c(strategy = "maic", args))
 }
@@ -49,6 +129,12 @@ strategy_maic <- function(formula = NULL,
 #' @rdname strategy
 #' 
 #' @section Simulated treatment comparison (STC):
+#' `r lifecycle::badge("deprecated")`
+#' 
+#' `strategy_stc()` was deprecated in outstandR version 1.X.X. 
+#' We recommend using G-computation (`strategy_gcomp_ml()`) as a more robust 
+#' alternative for this type of analysis.
+#' 
 #' Outcome regression-based method which targets a conditional treatment effect.
 #' STC is a modification of the covariate adjustment method.
 #' An outcome model is fitted using IPD in the _AB_ trial. For example,
@@ -73,12 +159,25 @@ strategy_maic <- function(formula = NULL,
 strategy_stc <- function(formula = NULL,
                          family = gaussian(link = "identity"),
                          trt_var = NULL) {
-  check_formula(formula, trt_var)
+  lifecycle::deprecate_warn(
+    when = "1.X.X",                           # version it is deprecated in
+    what = "outstandR::strategy_stc()",       # function being deprecated
+    with = "outstandR::strategy_gcomp_ml()"   # suggested alternative (optional)
+  )
+  
+  # back-compatibility
+  if (!is.list(formula)) {
+    outcome_model <- formula
+  } else {
+    outcome_model <- formula$outcome_model
+  }
+  
+  check_formula(outcome_model, trt_var)
   check_family(family)
   
-  args <- list(formula = formula,
+  args <- list(outcome_model = outcome_model,
                family = family,
-               trt_var = get_treatment_name(formula, trt_var))
+               trt_var = get_treatment_name(outcome_model, trt_var))
   
   do.call(new_strategy, c(strategy = "stc", args))
 }
@@ -118,7 +217,7 @@ strategy_stc <- function(formula = NULL,
 #' @param rho A named square matrix of covariate correlations; default NA
 #' @param marginal_distns Marginal distributions names; vector default NA
 #' @param marginal_params Marginal distributions parameters; list of lists, default NA
-#' @param R The number of resamples used for the non-parametric bootstrap; integer
+#' @param n_boot The number of resamples used for the non-parametric bootstrap; integer
 #' @param N Synthetic sample size for g-computation; integer; integer
 #' 
 #' @return `gcomp_ml` class object
@@ -132,30 +231,39 @@ strategy_gcomp_ml <- function(formula = NULL,
                               rho = NA,
                               marginal_distns = NA,
                               marginal_params = NA,
-                              R = 1000L,
+                              n_boot = 1000L,
                               N = 1000L) {
-  check_formula(formula, trt_var)
-  check_family(family)
-  check_distns(formula, marginal_distns, marginal_params)
+  # back-compatibility
+  if (!is.list(formula)) {
+    outcome_model <- formula
+  } else {
+    outcome_model <- formula$outcome_model
+  }
   
-  if (R <= 0 || R %% 1 != 0) {
-    stop("R not positive whole number.")
+  check_formula(outcome_model, trt_var)
+  check_family(family)
+  check_distns(outcome_model, marginal_distns, marginal_params)
+  check_rho(rho)
+  
+  if (n_boot <= 0 || n_boot %% 1 != 0) {
+    stop("n_boot not positive whole number.")
   }
   if (N <= 0 || N %% 1 != 0) {
     stop("N not positive whole number.")
   }
   
-  args <- list(formula = formula,
+  args <- list(outcome_model = outcome_model,
                family = family,
                rho = rho,
-               trt_var = get_treatment_name(formula, trt_var),
+               trt_var = get_treatment_name(outcome_model, trt_var),
                marginal_distns = marginal_distns,
                marginal_params = marginal_params,
-               R = R,
+               n_boot = n_boot,
                N = N)
   
   do.call(new_strategy, c(strategy = "gcomp_ml", args))
 }
+
 
 #' @rdname strategy
 #' 
@@ -195,27 +303,35 @@ strategy_gcomp_ml <- function(formula = NULL,
 #' 
 #' @return `gcomp_bayes` class object
 #' @importFrom utils modifyList
-#' @seealso [strategy_gcomp_ml()],[copula::Mvdc()]
+#' @seealso [strategy_gcomp_ml()] [copula::Mvdc()]
 #' @export
 #'
 strategy_gcomp_bayes <- function(formula = NULL,
-                                family = gaussian(link = "identity"),
-                                trt_var = NULL,
-                                rho = NA,
-                                marginal_distns = NA,
-                                marginal_params = NA,
-                                N = 1000L) {
-  check_formula(formula, trt_var)
+                                 family = gaussian(link = "identity"),
+                                 trt_var = NULL,
+                                 rho = NA,
+                                 marginal_distns = NA,
+                                 marginal_params = NA,
+                                 N = 1000L) {
+  # back-compatibility
+  if (!is.list(formula)) {
+    outcome_model <- formula
+  } else {
+    outcome_model <- formula$outcome_model
+  }
+  
+  check_formula(outcome_model, trt_var)
   check_family(family)
-  check_distns(formula, marginal_distns, marginal_params)
+  check_distns(outcome_model, marginal_distns, marginal_params)
+  check_rho(rho)
   
   if (N <= 0 || N %% 1 != 0) {
     stop("N not positive whole number.")
   }
   
-  args <- list(formula = formula,
+  args <- list(outcome_model = outcome_model,
                family = family,
-               trt_var = get_treatment_name(formula, trt_var),
+               trt_var = get_treatment_name(outcome_model, trt_var),
                rho = rho,
                marginal_distns = marginal_distns,
                marginal_params = marginal_params,
@@ -229,7 +345,12 @@ strategy_gcomp_bayes <- function(formula = NULL,
 #' @param trt_var Treatment variable name; string
 #' 
 #' @section Multiple imputation marginalization (MIM):
-#' TODO
+#' MIM targets a marginal treatment effect by using parametric G-computation
+#' within a multiple imputation framework. This approach views the covariate
+#' adjustment regression as a nuisance model and separates its estimation from
+#' the evaluation of the marginal treatment effect of interest. It is
+#' particularly useful for ensuring compatibility in indirect comparisons
+#' when adjusting for effect modifiers.
 #' 
 #' @return `mim` class object
 #' @importFrom utils modifyList
@@ -239,18 +360,31 @@ strategy_mim <- function(formula = NULL,
                          family = gaussian(link = "identity"),
                          trt_var= NULL,
                          rho = NA,
+                         marginal_distns = NA,
+                         marginal_params = NA,
                          N = 1000L) {
-  check_formula(formula, trt_var)
+  # back-compatibility
+  if (!is.list(formula)) {
+    outcome_model <- formula
+  } else {
+    outcome_model <- formula$outcome_model
+  }
+  
+  check_formula(outcome_model, trt_var)
   check_family(family)
+  check_distns(outcome_model, marginal_distns, marginal_params)
+  check_rho(rho)
   
   if (N <= 0 || N %% 1 != 0) {
     stop("N not positive whole number.")
   }
   
-  args <- list(formula = formula,
+  args <- list(outcome_model = outcome_model,
                family = family,
-               trt_var = get_treatment_name(formula, trt_var),
+               trt_var = get_treatment_name(outcome_model, trt_var),
                rho = rho,
+               marginal_distns = marginal_distns,
+               marginal_params = marginal_params,
                N = N)
   
   do.call(new_strategy, c(strategy = "mim", args))
@@ -262,9 +396,14 @@ strategy_mim <- function(formula = NULL,
 #' @description
 #' Create a type of strategy class for each modelling approach.
 #'
-#' @param strategy Class name from `strategy_maic`, `strategy_stc`, `strategy_gcomp_ml`, `strategy_gcomp_bayes`
+#' @note While current implementations focus on binary, continuous, and count outcomes, 
+#' support for survival data (using the \code{survival} package) is under active 
+#' development and scheduled for a future version.
+#' 
+#' @param strategy Class name from `strategy_maic`, `strategy_stc`, `strategy_gcomp_ml`, `strategy_gcomp_bayes`, `strategy_mim`
 #' @eval reg_args(include_formula = TRUE, include_family = TRUE)
 #' @param ... Additional arguments
+#' @returns Strategy list object
 #'
 #' @export
 #'
@@ -272,17 +411,35 @@ new_strategy <- function(strategy, ...) {
   structure(list(...), class = c(strategy, "strategy", "list"))
 }
 
-#
+#' @keywords internal
 is_family <- function(obj) inherits(obj, "family")
 
-#
+#' @keywords internal
 check_family <- function(obj) {
   if (!is_family(obj)) {
-    stop("family must be a family object")
+    stop("family must be a family object", call. = FALSE)
   }
 }
 
-#
+#' @keywords internal
+check_rho <- function(mat) {
+  if (is.na(mat)) return()
+  
+  rn <- rownames(mat)
+  cn <- colnames(mat)
+  
+  # names actually exist
+  if (is.null(rn) || is.null(cn)) {
+    stop("Validation Failed: Matrix must have both row and column names.", call. = FALSE)
+  }
+  
+  # names are identical
+  if (!identical(rn, cn)) {
+    stop("Validation Failed: Row names and column names do not match.", call. = FALSE)
+  }
+}
+
+#' @keywords internal
 check_distns <- function(formula,
                          marginal_distns,
                          marginal_params) {
@@ -295,22 +452,25 @@ check_distns <- function(formula,
   covariate_names <- get_covariate_names(formula)
   n_covariates <- length(covariate_names) - 1  # remove treatment
   
-  if (length(marginal_distns) != n_covariates) {
-    stop("Number of marginal distributions must match
-           the number of covariates in the formula.")
+  if (length(marginal_distns) > n_covariates) {
+    stop("Number of marginal distributions cannot be larger than
+           the number of covariates in the formula.", call. = FALSE)
   }
   
-  if (length(marginal_params) != n_covariates) {
-    stop("Number of marginal parameter lists must match
-           the number of covariates in the formula.")
+  if (!all(is.na(marginal_params))) {
+    if (length(marginal_params) > n_covariates) {
+      stop("Number of marginal parameter lists cannot be larger than
+           the number of covariates in the formula.", call. = FALSE)
+    }
   }
 }
 
 
+##TODO:
 ## generic construction 
 ## could be useful if number of method gets big
 #
-# strategy_gcomp_bayes <- function(formula = NULL,
+# strategy_template <- function(formula = NULL,
 #                                 family = gaussian(link = "identity"),
 #                                 rho = NA,
 #                                 N = 1000L) {

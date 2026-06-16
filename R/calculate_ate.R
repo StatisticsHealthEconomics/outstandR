@@ -1,4 +1,5 @@
-#
+# all mean and variance functions
+# for continuous, binary and count outcomes
 
 #' Calculate Average Treatment Effect
 #'
@@ -14,12 +15,12 @@
 #'     \item{"log_relative_risk"}{Log relative risk.}
 #'   }
 #'
-#' @return The computed average treatment effect on the specified scale.
+#' @return Numeric computed average treatment effect on the specified scale.
+#' 
 #' @examples
-#' \dontrun{
 #' calculate_ate(mean_comp = 0.7, mean_ref = 0.5, effect = "log_odds")
 #' calculate_ate(mean_comp = 0.7, mean_ref = 0.5, effect = "risk_difference")
-#' }
+#' 
 #' @export
 #'
 calculate_ate <- function(mean_comp, mean_ref, effect) {
@@ -37,7 +38,7 @@ calculate_ate <- function(mean_comp, mean_ref, effect) {
   } else if (effect == "log_relative_risk") {  # Poisson log link
     ate <- log(mean_comp) - log(mean_ref)
   } else {
-    stop("Unsupported link function.")
+    stop("Unsupported link function.", call. = FALSE)
   }
   
   ate
@@ -47,20 +48,22 @@ calculate_ate <- function(mean_comp, mean_ref, effect) {
 #'
 #' Computes the variance of treatment effects for a trial based on the specified family distribution.
 #'
-#' @param ald Aggregate-level data.
+#' @param ald Aggregate-level data. Data frame.
 #' @param tid Treatment identifier used to extract relevant columns from `ald`.
 #' @param effect A character string specifying the effect scale (e.g., "log_odds", "risk_difference").
 #' @param family A character string specifying the model family (e.g., "binomial", "gaussian").
 #'
-#' @return The computed variance of treatment effects.
+#' @return Numeric computed variance of treatment effects.
+#' 
 #' @examples
-#' \dontrun{
 #' ald <- data.frame(trt = c("B","C","B","C"),
 #'                   variable = c(NA, NA, "y", "y"),
 #'                   statistic = c("N", "N", "sum", "sum"),
-#'                   value = c(100, 100, 50, 60)
-#' calculate_trial_variance(ald, tid = "B", effect = "log_odds", family = "binomial")
-#' }
+#'                   value = c(100, 100, 50, 60))
+#'                   
+#' calculate_trial_variance(
+#'   ald, tid = "B", effect = "log_odds", family = "binomial")
+#'   
 #' @export
 calculate_trial_variance <- function(ald, tid, effect, family) {
   
@@ -75,7 +78,7 @@ calculate_trial_variance <- function(ald, tid, effect, family) {
       calculate_trial_variance_count(ald, tid, effect))
   }
   
-  stop("family not recognised.")
+  stop("family not recognised.", call. = FALSE)
 }
 
 #' Calculate trial variance binary
@@ -83,10 +86,12 @@ calculate_trial_variance <- function(ald, tid, effect, family) {
 #' @param ald Aggregate level data
 #' @param tid Treatment ID
 #' @param effect Effect
-#' @return Value
+#' @return Numeric value of total variance.
 #' 
 #' @export
 calculate_trial_variance_binary <- function(ald, tid, effect) {
+  
+  tid <- as.character(tid)
   
   y <- dplyr::filter(
     ald,
@@ -122,7 +127,7 @@ calculate_trial_variance_binary <- function(ald, tid, effect) {
   if (!effect %in% names(effect_functions)) {
     stop(
       paste0("Unsupported effect function. Choose from ", 
-             paste(names(effect_functions), collapse = ", ")))
+             paste(names(effect_functions), collapse = ", ")), call. = FALSE)
   }
   
   effect_functions[[effect]]()
@@ -130,13 +135,16 @@ calculate_trial_variance_binary <- function(ald, tid, effect) {
 
 #' Calculate trial variance continuous
 #' 
-#' @param ald Aggregate level data
+#' @param ald Aggregate level data. Data frame in long format.
 #' @param tid Treatment ID
-#' @param effect Effect
-#' @return Value
+#' @param effect Effect name. String.
+#' @param verbatim Print messages, logical
+#' @return Numeric value of total variance.
 #'
 #' @export
-calculate_trial_variance_continuous <- function(ald, tid, effect) {
+calculate_trial_variance_continuous <- function(ald, tid, effect,
+                                                verbatim = FALSE) {
+  tid <- as.character(tid)
   
   ybar <- dplyr::filter(
     ald,
@@ -163,7 +171,7 @@ calculate_trial_variance_continuous <- function(ald, tid, effect) {
       pi^2/3 * (1/N)
     },
     "log_relative_risk" = function() {
-      message("log mean used\n")
+      if (verbatim) message("log mean used\n")
       log(ybar)
     },
     "mean_difference" = function() {
@@ -176,19 +184,21 @@ calculate_trial_variance_continuous <- function(ald, tid, effect) {
       paste0("Unsupported effect function. Choose from ", 
              paste(names(effect_functions), collapse = ", ")))
   }
-
+  
   effect_functions[[effect]]()
 }
 
 #' Calculate trial variance count
 #' 
-#' @param ald Aggregate level data
-#' @param tid Treatment ID
-#' @param effect Effect
-#' @return Value
+#' @param ald Aggregate level data. Data frame in long format.
+#' @param tid Treatment ID.
+#' @param effect Effect name. String.
+#' @return Numeric value of total variance.
 #'
 #' @export
 calculate_trial_variance_count <- function(ald, tid, effect) {
+  
+  tid <- as.character(tid)
   
   ybar <- dplyr::filter(
     ald,
@@ -236,11 +246,11 @@ calculate_trial_variance_count <- function(ald, tid, effect) {
 
 #' Calculate Trial Mean Wrapper
 #' 
-#' @param ald A Dataframe of aggregate level data
+#' @param ald Aggregate level data. Data frame in long format.
 #' @param tid Treatment ID
-#' @param effect Effect
+#' @param effect Effect name. String.
 #' @param family Family distribution 
-#' @return Value
+#' @return Numeric mean value.
 #'
 #' @export
 calculate_trial_mean <- function(ald, tid, effect, family) {
@@ -256,18 +266,20 @@ calculate_trial_mean <- function(ald, tid, effect, family) {
       calculate_trial_mean_count(ald, tid, effect))
   }
   
-  stop("family not recognised.")
+  stop("family not recognised.", call. = FALSE)
 }
 
 #' Calculate Trial Mean Binary Data
 #' 
-#' @param ald A Dataframe of aggregate level data
+#' @param ald Aggregate level data. Data frame in long format.
 #' @param tid Treatment ID
-#' @param effect Effect
-#' @return Value
+#' @param effect Effect name. String.
+#' @return Numeric mean value.
 #'
 #' @export
 calculate_trial_mean_binary <- function(ald, tid, effect) {
+  
+  tid <- as.character(tid)
   
   y <- dplyr::filter(
     ald,
@@ -294,7 +306,7 @@ calculate_trial_mean_binary <- function(ald, tid, effect) {
   
   if (!effect %in% names(effect_fns)) {
     stop(paste0("Unsupported link function. Choose from ",
-                names(effect_fns)))
+                paste(names(effect_fns), collapse = ", ")))
   }
   
   effect_fns[[effect]]()
@@ -302,13 +314,16 @@ calculate_trial_mean_binary <- function(ald, tid, effect) {
 
 #' Calculate Trial Mean Continuous Data
 #' 
-#' @param ald A Dataframe of aggregate level data
+#' @param ald Aggregate level data. Data frame in long format.
 #' @param tid Treatment ID
-#' @param effect Effect
-#' @return Value
+#' @param effect Effect name. String.
+#' @param verbatim Print messages, logical
+#' @return Numeric mean value.
 #'
 #' @export
-calculate_trial_mean_continuous <- function(ald, tid, effect) {
+calculate_trial_mean_continuous <- function(ald, tid, effect,
+                                            verbatim = FALSE) {
+  tid <- as.character(tid)
   
   ybar <- dplyr::filter(
     ald,
@@ -332,7 +347,7 @@ calculate_trial_mean_continuous <- function(ald, tid, effect) {
   
   effect_fns <- list(
     log_odds = function() {
-      message("log mean used\n")
+      if (verbatim) message("log mean used\n")
       log(ybar)
     },
     mean_difference = function() {
@@ -342,15 +357,16 @@ calculate_trial_mean_continuous <- function(ald, tid, effect) {
       ybar / ysd
     },
     log_relative_risk = function() {
-      message("log mean used\n")
+      if (verbatim) message("log mean used\n")
       log(ybar)
     }
     # log_relative_risk_rare_events intentionally unsupported
   )
   
   if (!effect %in% names(effect_fns)) {
-    stop(paste0("Unsupported link function. Choose from ",
-         names(effect_fns)))
+    stop(
+      paste0("Unsupported link function. Choose from ",
+             paste(names(effect_fns), collapse = ", ")))
   }
   
   effect_fns[[effect]]()
@@ -358,13 +374,16 @@ calculate_trial_mean_continuous <- function(ald, tid, effect) {
 
 #' Calculate Trial Mean Count Data
 #' 
-#' @param ald A Dataframe of aggregate level data
+#' @param ald Aggregate level data. Data frame in long format.
 #' @param tid Treatment ID
-#' @param effect Effect
-#' @return Value
+#' @param effect Effect name. String.
+#' @param verbatim Print messages, logical
+#' @return Numeric mean value.
 #'
 #' @export
-calculate_trial_mean_count <- function(ald, tid, effect) {
+calculate_trial_mean_count <- function(ald, tid, effect,
+                                       verbatim = FALSE) {
+  tid <- as.character(tid)
   
   ybar <- dplyr::filter(
     ald,
@@ -388,7 +407,7 @@ calculate_trial_mean_count <- function(ald, tid, effect) {
   
   effect_fns <- list(
     log_relative_risk = function() {
-      message("log rate used\n")
+      if (verbatim) message("log rate used\n")
       log(ybar)
     },
     rate_difference = function() {
@@ -403,7 +422,7 @@ calculate_trial_mean_count <- function(ald, tid, effect) {
   
   if (!effect %in% names(effect_fns)) {
     stop(paste0("Unsupported link function. Choose from ",
-         names(effect_fns)))
+                paste(names(effect_fns), collapse = ", ")), call. = FALSE)
   }
   
   effect_fns[[effect]]()
@@ -424,11 +443,11 @@ calculate_trial_mean_count <- function(ald, tid, effect) {
 #'   }
 #'
 #' @return A character string representing the treatment effect scale.
+#' 
 #' @examples
-#' \dontrun{
-#' get_treatment_effect(link = "logit")
-#' get_treatment_effect(link = "identity")
-#' }
+#'  get_treatment_effect(link = "logit")
+#'  get_treatment_effect(link = "identity")
+#'  
 #' @export
 get_treatment_effect <- function(link) {
   
@@ -442,46 +461,55 @@ get_treatment_effect <- function(link) {
   
   if (!link %in% names(link_map)) {
     stop(paste0("Unsupported link function. Choose from ",
-         names(link_map)))
+                paste(names(link_map), collapse = ", ")), call. = FALSE)
+    
   }
   
   link_map[[link]]
 }
 
-# individual effects
+# individual effects ---
 
+#
 calc_log_odds_ratio <- function(mean_comp, mean_ref) {
   qlogis(mean_comp) - qlogis(mean_ref)
 }
 
+#
 calc_risk_difference <- function(mean_comp, mean_ref) {
   mean_comp - mean_ref
 }
 
+#
 calc_delta_z <- function(mean_comp, mean_ref) {
   qnorm(mean_comp) - qnorm(mean_ref)
 }
 
+#
 calc_log_relative_risk_rare_events <- function(mean_comp, mean_ref) {
   log(-log(1 - mean_comp)) - log(-log(1 - mean_ref))
 }
 
+#
 calc_log_relative_risk <- function(mean_comp, mean_ref) {
   log(mean_comp) - log(mean_ref)
 }
 
 #' Continuity Correction
 #' 
-#' @param ald A dataframe of aggregate level data
+#' @param ald Aggregate level data. Data frame in long format.
 #' @param correction Continuity correction numeric size. Default to 0.5.
-#' @return Corrected aggregate level data
+#' @param verbatim Print messages, logical
+#'
+#' @return Corrected aggregate level data frame.
 #' 
 #' @importFrom dplyr filter group_by mutate pull case_when
 #' @importFrom tidyr spread pivot_wider
 #' @keywords internal
 #' 
 continuity_correction <- function(ald,
-                                  correction = 0.5) {
+                                  correction = 0.5,
+                                  verbatim = FALSE) {
   # missing value
   needs_correction <- any(ald$variable == "y" & ald$statistic == "sum") 
   
@@ -500,14 +528,15 @@ continuity_correction <- function(ald,
     mutate(
       need_contcorr = (sum == 0 | sum == .data$N)
     ) |> dplyr::pull() |> any()
-
+  
   if (!needs_correction) {
     return(ald)
   }
   
-  message(sprintf(
-    "Applying continuity correction: %.2f", correction)
-  )
+  if (verbatim) {
+    message(sprintf(
+      "Applying continuity correction: %.2f", correction))
+  } 
   
   ald_corrected <- ald |> 
     dplyr::mutate(
