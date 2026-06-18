@@ -1,0 +1,621 @@
+---
+title: "Practical: Population-Adjusted Indirect Comparisons with outstandR"
+author: "Department of Statistical Science, University College London (UCL)"
+format: 
+  html: default
+  pdf: 
+    output-file: "practical_paic.pdf"
+params:
+  eval_chunks: true
+links: 
+  - icon: slideshare
+    icon_pack: fab
+    name: "Lecture 5"
+    url: /slides/intro-paic.html
+  - name: "PDF version"
+    url: "practical_paic.pdf"
+    icon: file-pdf
+    icon_pack: fas
+  - name: "R script"
+    url: "paic_outstandR.R"
+    icon: r-project
+    icon_pack: fab
+---
+
+::: {.content-hidden when-format="pdf"}
+{{< include /_info.qmd >}}
+:::
+
+## Introduction and Applying PAIC Methods {#intro_paic}
+
+#### Background
+When head-to-head randomized controlled trials (RCTs) are unavailable, Health Technology Assessment (HTA) relies on indirect comparisons. We frequently face a scenario where we have **Individual Patient Data (IPD)** from a trial comparing our treatment A to a common comparator C (the AC trial), and **Aggregate Level Data (ALD)** from a published trial comparing treatment B to the same comparator C (the BC trial).
+
+If these trial populations differ in **effect modifiers** (patient characteristics that change the magnitude of the treatment effect), naive indirect comparisons will be biased. **Population adjustment methods** correct for these differences, simulating how treatment A would have performed if it had been tested in the BC trial's population. We will use the `{outstandR}` package to structure IPD and ALD for analysis, implement explicit two-part formulas, and apply various standardisation methods.
+
+#### Exercises
+
+1.\ First, load the necessary `R` packages and set a seed for reproducibility. Ensure `{outstandR}` is installed.
+```{r}
+#| echo: true
+#| eval: true
+
+library(outstandR)
+library(dplyr)
+library(ggplot2)
+```
+
+```{r}
+#| echo: false
+#| eval: true
+
+# 1. Read the global evaluation toggle from the YAML params
+knitr::opts_chunk$set(eval = params$eval_chunks, warning = FALSE, message = FALSE)
+
+# 2. Automatically wrap all console output in a collapsible HTML block
+local({
+  default_output_hook <- knitr::knit_hooks$get("output")
+  knitr::knit_hooks$set(output = function(x, options) {
+    out <- default_output_hook(x, options)
+    if (knitr::is_html_output()) {
+      paste0("\n<details><summary><strong>Click to expand output</strong></summary>\n", out, "\n</details>\n")
+    } else {
+      out # Fallback for PDF rendering
+    }
+  })
+})
+```
+
+2.\ Load the built-in binary outcome datasets and inspect their structure. The IPD is in standard wide format, while the ALD is in a "tidy" long format.
+
+```{r}
+#| echo: true
+data(AC_IPD_binY_contX) # IPD for treatments A vs C
+data(BC_ALD_binY_contX) # ALD for treatments B vs C
+
+head(AC_IPD_binY_contX)
+print(BC_ALD_binY_contX)
+```
+
+3.\ Define the model formulas. `{outstandR}` uses an explicit two-part list for formulas to separate the intent of regression modeling from weighting.
+
+```{r}
+#| echo: true
+# 1. Outcome Regression Model (used for G-computation)
+lin_form_bin <- as.formula(
+  "y ~ PF_cont_1 + PF_cont_2 + trt + trt:EM_cont_1 + trt:EM_cont_2")
+
+# 2. Balance Model (used for MAIC weighting)
+bal_form_bin <- as.formula("~ EM_cont_1 + EM_cont_2")
+
+formula_list_bin <- list(outcome_model = lin_form_bin, 
+                         balance_model = bal_form_bin)
+```
+
+4.\ Firstly apply Matching-Adjusted Indirect Comparison (MAIC). This utilizes a method-of-moments approach, estimating weights for the IPD patients so their aggregate baseline characteristics match the target ALD trial.
+
+The `outstandR()` function is the primary high-level wrapper in the `outstandR` package that orchestrates the entire population-adjusted indirect comparison (PAIC) standardization process. It is designed to abstract away the complex task of transporting treatment effects from the individual patient data (IPD) population to the aggregate-level data (ALD) population. By remaining agnostic to the specific adjustment method being used, it provides a unified interface where computational heavy lifting is delegated to the appropriate backend via an S3 class dispatch system.
+
+## Function Arguments
+
+The function accepts a variety of arguments to define the data, the adjustment strategy, and the desired outputs:
+
+* **`ipd_trial`**: Individual-level patient data (e.g., for treatments A and C), expected in a long format including treatment and outcome columns consistent with the formula object.
+* **`ald_trial`**: Aggregate-level data (e.g., for treatments B and C). This should contain specific columns for `variable` (covariate name), `statistic` (e.g., mean, sd, prop, sum), `value` (numerical summary statistic), and `trt` (treatment label, or NA if a common covariate distribution is assumed).
+* **`strategy`**: A computation strategy function determining the adjustment method. Options include `strategy_maic()`, `strategy_stc()`, `strategy_gcomp_ml()`, `strategy_gcomp_bayes()`, or `strategy_mim()`.
+* **`ref_trt`**: The reference, common, or anchoring treatment name (can also be referred to as the index, while the comparator is called the reference).
+* **`CI`**: The desired confidence interval level (between **0** and **1**, defaulting to **0.95**).
+* **`scale`**: The relative treatment effect scale. If `NULL`, it is automatically determined from the model. Options include `log_odds`, `log_relative_risk`, `risk_difference`, `mean_difference`, or `rate_difference`, depending on the data type.
+* **`var_method`**: The method of variance estimation. Options are `sample` (default), `sandwich`, and `pool`.
+* **`verbose`**: Logical (default `TRUE`). Controls console output and provides proactive warnings for computationally expensive operations to prevent users from assuming the session has hung.
+* **`seed`**: Random number seed (optional).
+* **`...`**: Additional arguments, allowing named arguments to be passed to functions like `rstanarm::stan_glm()` via `strategy_gcomp_bayes()`.
+
+```{r}
+#| echo: true
+out_maic <-
+ outstandR(
+   ipd_trial = AC_IPD_binY_contX,
+   ald_trial = BC_ALD_binY_contX,
+   strategy = strategy_maic(
+     formula = list(outcome_model = formula("y ~ trt"),
+                    balance_model =  bal_form_bin),
+     family = binomial(link = "logit")),
+   seed = 12345)
+
+print(out_maic)
+```
+
+Apply other models.
+
+```{r}
+#| echo: true
+
+out_gcomp_ml <- outstandR(
+  ipd_trial = AC_IPD_binY_contX, 
+  ald_trial = BC_ALD_binY_contX,
+  strategy = strategy_gcomp_ml(
+    formula = formula_list_bin,
+    family = binomial(link = "logit") 
+  ),
+  seed = 12345
+)
+
+out_gcomp_bayes <- outstandR(
+  ipd_trial = AC_IPD_binY_contX, 
+  ald_trial = BC_ALD_binY_contX,
+  strategy = strategy_gcomp_bayes(
+    formula = formula_list_bin,
+    family = binomial(link = "logit") 
+  ),
+  seed = 12345
+)
+
+out_mim <- outstandR(
+  ipd_trial = AC_IPD_binY_contX, 
+  ald_trial = BC_ALD_binY_contX,
+  strategy = strategy_mim(
+    formula = formula_list_bin,
+    family = binomial(link = "logit") 
+  ),
+  seed = 12345
+)
+
+out_stc <- outstandR(
+  ipd_trial = AC_IPD_binY_contX, 
+  ald_trial = BC_ALD_binY_contX,
+  strategy = strategy_stc(
+    formula = formula_list_bin,
+    family = binomial(link = "logit") 
+  ),
+  seed = 12345
+)
+```
+
+`outstandR` has an inbuilt plotting function to combine the different outputs into a single forest plot comparing all results.
+
+```{r}
+plot(out_stc, out_gcomp_bayes, out_gcomp_ml, out_maic, out_mim)
+```
+
+*Note: By default, a binomial model with a logit link returns contrasts on the log-odds scale.*
+
+5.\ Health economic models often require inputs on absolute scales. Run the MAIC again, changing the scale and variance estimator.
+
+::: {.callout-tip collapse="true"}
+**Task:** Output the results as a Risk Difference using `scale = "risk_difference"`, and use the fast robust sandwich estimator for variance using `var_method = "sandwich"`. The package will automatically estimate the baseline risk from the reference treatment arm to convert the log-odds back to probabilities.
+:::
+
+```{r}
+#| echo: true
+out_maic_rd <- outstandR(
+  ipd_trial = AC_IPD_binY_contX, 
+  ald_trial = BC_ALD_binY_contX,
+  strategy = strategy_maic(
+    formula = list(outcome_model = formula("y ~ trt"),
+                   balance_model =  bal_form_bin),
+    family = binomial(link = "logit")),
+  scale = "risk_difference",
+  var_method = "sandwich",
+  seed = 12345
+)
+
+print(out_maic_rd)
+```
+
+6.\ Run other methods. We will also extract this on the `risk_difference` scale so we can directly compare it to our MAIC estimate.
+
+```{r}
+#| echo: true
+
+out_gcomp_ml_rd <- outstandR(
+  ipd_trial = AC_IPD_binY_contX, 
+  ald_trial = BC_ALD_binY_contX,
+  strategy = strategy_gcomp_ml(
+    formula = formula_list_bin,
+    family = binomial(link = "logit") 
+  ),
+  scale = "risk_difference",
+  seed = 12345
+)
+
+print(out_gcomp_ml_rd)
+
+out_gcomp_bayes_rd <- outstandR(
+  ipd_trial = AC_IPD_binY_contX, 
+  ald_trial = BC_ALD_binY_contX,
+  strategy = strategy_gcomp_bayes(
+    formula = formula_list_bin,
+    family = binomial(link = "logit") 
+  ),
+  scale = "risk_difference",
+  seed = 12345
+)
+
+print(out_gcomp_bayes_rd)
+
+out_mim_rd <- outstandR(
+  ipd_trial = AC_IPD_binY_contX, 
+  ald_trial = BC_ALD_binY_contX,
+  strategy = strategy_mim(
+    formula = formula_list_bin,
+    family = binomial(link = "logit") 
+  ),
+  scale = "risk_difference",
+  seed = 12345
+)
+
+print(out_mim_rd)
+
+out_stc_rd <- outstandR(
+  ipd_trial = AC_IPD_binY_contX, 
+  ald_trial = BC_ALD_binY_contX,
+  strategy = strategy_stc(
+    formula = formula_list_bin,
+    family = binomial(link = "logit") 
+  ),
+  scale = "risk_difference",
+  seed = 12345
+)
+
+print(out_stc_rd)
+```
+
+Plot forest plot comparing all results on the new scale.
+
+```{r}
+plot(out_stc_rd, out_gcomp_bayes_rd, out_gcomp_ml_rd, out_maic_rd, out_mim_rd)
+```
+
+## Advanced Applications: Mixed Data and Custom Distributions {#advanced_mixed}
+
+#### Background
+
+In reality, patient data isn't purely continuous. We often have discrete/binary covariates (e.g., Sex, Prior Treatment Status). By default, the simulation step in G-computation assumes all covariates in the target population follow a normal distribution. For highly skewed data (like costs or age) or binary variables, this assumption is flawed. `{outstandR}` allows you to pass custom distributions so they can be appropriately parameterized using the moments available in your ALD dataset.
+
+#### Exercises
+
+1.\ Load the continuous outcome dataset that features mixed covariates (`X1`, `X3` are continuous; `X2`, `X4` are binary), and update the formulas.
+
+```{r}
+#| echo: true
+data(AC_IPD_contY_mixedX)
+data(BC_ALD_contY_mixedX)
+
+lin_form_mixed <- as.formula("y ~ X1 + X2 + X3 + trt + trt:(X1 + X2 + X4)")
+bal_form_mixed <- as.formula("~ X1 + X2 + X4")
+
+formula_list_mixed <- list(outcome_model = lin_form_mixed, balance_model = bal_form_mixed)
+```
+
+2.\ Run a ML G-computation on the continuous outcome data using custom marginal distributions.
+
+::: {.callout-tip collapse="true"}
+**Task:** Force covariate `X1` to be simulated as a `gamma` distribution, and `X2` to be simulated as a `binom` (binomial) distribution. (`X3` and `X4` will default back to normal). Pass these as a named vector to the `marginal_distns` argument.
+:::
+
+```{r}
+#| echo: true
+custom_distns <- c(X1 = "gamma", X2 = "binom")
+
+out_gcomp_custom <- outstandR(
+  ipd_trial = AC_IPD_contY_mixedX,
+  ald_trial = BC_ALD_contY_mixedX,
+  strategy = strategy_gcomp_ml(
+    formula = formula_list_mixed,
+    family = gaussian(link = "identity"),
+    marginal_distns = custom_distns,
+    N = 1000
+  ),
+  seed = 12345
+)
+
+print(out_gcomp_custom)
+```
+
+3.\ *(Optional)* Bayesian G-computation and Multiple Imputation Marginalization (MIM) provide a highly robust framework for propagating uncertainty natively without bootstrapping. Because these utilize MCMC sampling under the hood (via `rstanarm`), they take slightly longer to run.
+
+```{r}
+#| echo: true
+
+# Bayesian G-Computation
+out_gcomp_bayes <- outstandR(
+  ipd_trial = AC_IPD_contY_mixedX,
+  ald_trial = BC_ALD_contY_mixedX,
+  strategy = strategy_gcomp_bayes(
+    formula = formula_list_mixed,
+    family = gaussian(link = "identity")
+  ),
+  seed = 12345
+)
+
+# Multiple Imputation Marginalization (MIM)
+out_mim <- outstandR(
+  ipd_trial = AC_IPD_contY_mixedX,
+  ald_trial = BC_ALD_contY_mixedX,
+  strategy = strategy_mim(
+    formula = formula_list_mixed,
+    family = gaussian(link = "identity")
+  ),
+  seed = 12345
+)
+```
+
+## Model Diagnostics, Misspecification & Variable Selection {#misspecification_variance}
+
+#### Background
+
+A critical vulnerability of regression-based population adjustment is model misspecification. If our outcome model fails to capture the relationship between the covariates, treatment, and outcome (e.g., omitting the effect modifiers as interaction terms), our standardized estimates will be biased.
+
+Conversely, in weighting methods like MAIC, the temptation is often to throw every available baseline characteristic into the matching model. Balancing on variables that are purely prognostic (or adding highly correlated noise) can drastically reduce your Effective Sample Size (ESS) without necessarily reducing bias.
+
+#### Exercises
+
+1.\ Dive into the `outstandR` object to assess model fit by checking the Effective Sample Size (ESS) and plotting the distribution of weights from your MAIC analysis.
+
+```{r}
+#| echo: true
+cat("MAIC Effective Sample Size:", out_maic$model$ESS, "\n")
+
+ggplot(data.frame(weights = out_maic$model$weights), aes(x = weights)) +
+  geom_histogram(binwidth = 0.1, color = "black", fill = "lightgray") +
+  labs(title = "Distribution of MAIC Weights", x = "Weight", y = "Frequency") +
+  theme_minimal()
+```
+
+If a large percentage of your weights are near zero, your MAIC estimates may be highly unstable, suggesting poor covariate overlap between your IPD and target population.
+
+2.\ Fit a deliberately misspecified G-computation model to observe the consequences. We will purposefully drop the `trt:EM` interaction terms.
+
+```{r}
+#| echo: true
+bad_form_bin <- as.formula("y ~ PF_cont_1 + PF_cont_2 + EM_cont_1 + EM_cont_2 + trt")
+
+out_gcomp_bad <- outstandR(
+  ipd_trial = AC_IPD_binY_contX, 
+  ald_trial = BC_ALD_binY_contX,
+  strategy = strategy_gcomp_ml(
+    formula = list(outcome_model = bad_form_bin),
+    family = binomial(link = "logit"),
+    N = 1000 
+  ),
+  scale = "risk_difference",
+  seed = 12345
+)
+
+cat("Misspecified Risk Difference (A vs B):", out_gcomp_bad$results$contrasts$means$AB, "\n")
+cat("Correct ML G-comp Risk Difference (A vs B):", out_gcomp_ml_rd$results$contrasts$means$AB, "\n")
+```
+
+3.\ Next, let's explore the Bias-Variance trade-off by running a minimal, correctly specified MAIC balancing *only one* effect modifier.
+
+```{r}
+#| echo: true
+bal_form_minimal <- as.formula("~ EM_cont_1")
+
+out_maic_minimal <- outstandR(
+  ipd_trial = AC_IPD_binY_contX, 
+  ald_trial = BC_ALD_binY_contX,
+  strategy = strategy_maic(
+    formula = list(
+      outcome_model = formula("y ~ trt"),
+      balance_model = bal_form_minimal
+    ),
+    family = binomial(link = "logit") 
+  ),
+  seed = 12345
+)
+
+cat("Minimal Model ESS:", out_maic_minimal$model$ESS, "\n")
+cat("Minimal Model Std. Error (A vs B):", out_maic_minimal$results$contrasts$variances$AB, "\n")
+```
+
+4.\ Now, run a "Kitchen Sink" MAIC.
+
+::: {.callout-tip collapse="true"}
+**Task:** Create a new balance formula (`bal_form_maximal`) that includes all four continuous covariates. Run the MAIC again and observe how the inclusion of purely prognostic factors impacts the ESS and the Standard Errors.
+:::
+
+```{r}
+#| echo: true
+bal_form_maximal <- as.formula("~ PF_cont_1 + PF_cont_2 + EM_cont_1 + EM_cont_2")
+
+out_maic_maximal <- outstandR(
+  ipd_trial = AC_IPD_binY_contX, 
+  ald_trial = BC_ALD_binY_contX,
+  strategy = strategy_maic(
+    formula = list(
+      outcome_model = formula("y ~ trt"),
+      balance_model = bal_form_maximal
+    ),
+    family = binomial(link = "logit") 
+  ),
+  seed = 12345
+)
+
+cat("Maximal Model ESS:", out_maic_maximal$model$ESS, "\n")
+cat("Maximal Model Std. Error (A vs B):", out_maic_maximal$results$contrasts$variances$AB, "\n")
+```
+
+## Unanchored Comparisons and Visualization {#unanchored_viz}
+
+#### Background
+
+So far, we have performed **anchored** comparisons, relying on Treatment C as a common comparator bridge. If the AC trial was actually a single-arm trial of Treatment A, we no longer assume that unmeasured prognostic factors cancel out. Our adjustment must account for **all** prognostic factors and effect modifiers.
+
+Because `{outstandR}` is designed to compute pairwise contrasts against a reference treatment, passing a single-arm dataset directly will break the internal contrast factory. However, we can use a **"Dummy Anchor" approach**. We will leave the full AC and BC datasets intact but fit a fully specified model (all PFs and EMs). Then, we will ignore the relative contrasts and only extract the absolute marginalized estimate for Treatment A to simulate an unanchored comparison against the raw Treatment B data.
+
+#### Exercises
+
+1.\ Run the G-computation including ALL covariates. This satisfies the assumption of absolute exchangeability required for unanchored comparisons.
+
+```{r}
+#| echo: true
+full_form <- as.formula("y ~ PF_cont_1 + PF_cont_2 + EM_cont_1 + EM_cont_2 + trt")
+
+out_gcomp_unanchored <- outstandR(
+  ipd_trial = AC_IPD_binY_contX, 
+  ald_trial = BC_ALD_binY_contX,
+  strategy = strategy_gcomp_ml(
+    formula = list(outcome_model = full_form),
+    family = binomial(link = "logit"),
+    N = 1000
+  ),
+  scale = "risk_difference", # Ensures absolute effects are on the probability scale
+  seed = 12345
+)
+```
+
+2.\ Extract the adjusted absolute effect for Treatment A, and compare it directly to the raw, unadjusted data for Treatment B.
+
+::: {.callout-tip collapse="true"}
+**Task:** Extract the `results$` for Treatment A from the `absolute_effects` table inside your `out_gcomp_unanchored` object. Subtract the raw observed mean for Treatment B (from the ALD dataset) to calculate the unanchored Risk Difference.
+:::
+
+```{r}
+#| echo: true
+
+# 1. Extract the marginalized probability for A in the target population
+prob_A_unanchored <- out_gcomp_unanchored$results$absolute$means$A 
+
+# 2. Extract raw observed probability for B (from the ALD)
+prob_B_raw <- BC_ALD_binY_contX |> 
+  filter(variable == "y", statistic == "mean", trt == "B") |> 
+  pull(value)
+
+# 3. Calculate the unanchored Risk Difference
+unanchored_rd <- prob_A_unanchored - prob_B_raw
+
+cat("Unanchored Risk Difference (A vs B):", round(unanchored_rd, 3), "\n")
+```
+
+3.\ Calculate the unadjusted (naive) estimates for comparison.
+
+To see exactly how much our PAIC methods moved the needle, we will calculate the naive estimators. Let $p_A$ and $p_{C(AC)}$ be the raw probabilities of the event in the IPD trial, and let $p_B$ and $p_{C(BC)}$ be the raw probabilities in the ALD trial.
+
+* **Naive Anchored Risk Difference:** This assumes the relative effect is transportable without adjustment (the classic Bucher indirect comparison).
+
+$$\hat{\Delta}_{AB}^{\text{naive\_anchored}} = (p_A - p_{C(AC)}) - (p_B - p_{C(BC)})$$
+
+
+* **Naive Unanchored Risk Difference:** This drops the common comparator entirely and assumes absolute exchangeability between the two isolated active arms.
+
+$$\hat{\Delta}_{AB}^{\text{naive\_unanchored}} = p_A - p_B$$
+
+
+
+::: {.callout-warning}
+**A Note on Naive Risk Differences:** While mathematically intuitive, standard HTA practice warns against performing a Bucher comparison directly on probabilities. Because probabilities are bounded between 0 and 1, assuming absolute risk differences are strictly additive across different populations can lead to impossible values. Typically, indirect comparisons are performed on relative unconstrained scales (like Log-Odds) and then mapped back to absolute scales.
+:::
+
+To adhere to best practices, we will calculate the naive anchored comparison on the Log-Odds scale, and then back-transform it to the probability scale by applying it to the observed baseline odds of Treatment B.
+
+```{r}
+#| echo: true
+
+# 1. Raw probabilities from IPD (AC trial)
+prob_A_raw <- mean(AC_IPD_binY_contX$y[AC_IPD_binY_contX$trt == "A"])
+prob_C_raw_AC <- mean(AC_IPD_binY_contX$y[AC_IPD_binY_contX$trt == "C"])
+
+# Convert to Log-Odds and calculate Naive AC Log-OR
+lo_A <- log(prob_A_raw / (1 - prob_A_raw))
+lo_C_AC <- log(prob_C_raw_AC / (1 - prob_C_raw_AC))
+naive_logOR_AC <- lo_A - lo_C_AC
+
+# 2. Raw probabilities from ALD (BC trial)
+prob_B_raw <- BC_ALD_binY_contX |> 
+  filter(variable == "y", statistic == "mean", trt == "B") |> pull(value)
+prob_C_raw_BC <- BC_ALD_binY_contX |> 
+  filter(variable == "y", statistic == "mean", trt == "C") |> pull(value)
+
+# Convert to Log-Odds and calculate Naive BC Log-OR
+lo_B <- log(prob_B_raw / (1 - prob_B_raw))
+lo_C_BC <- log(prob_C_raw_BC / (1 - prob_C_raw_BC))
+naive_logOR_BC <- lo_B - lo_C_BC
+
+# 3. Naive Anchored Indirect Log-OR (A vs B)
+# Bucher method: (A vs C) - (B vs C)
+naive_anchored_logOR <- naive_logOR_AC - naive_logOR_BC
+
+# 4. Back-transform Naive Anchored Log-OR to Risk Difference
+# We apply the indirect Log-OR to the baseline odds of Treatment B
+odds_B <- exp(lo_B)
+odds_A_naive <- odds_B * exp(naive_anchored_logOR)
+prob_A_naive <- odds_A_naive / (1 + odds_A_naive)
+
+naive_anchored_rd <- prob_A_naive - prob_B_raw
+
+# 5. Naive Unanchored Risk Difference
+# A simple unadjusted direct comparison of A vs B
+naive_unanchored_rd <- prob_A_raw - prob_B_raw
+
+cat("Naive Anchored RD (Back-transformed):", round(naive_anchored_rd, 3), "\n")
+cat("Naive Unanchored RD (Direct Subtraction):", round(naive_unanchored_rd, 3), "\n")
+```
+
+4.\ Extract the previous adjusted results, bind them with the newly computed unanchored estimates, and build the final custom forest plot.
+
+::: {.callout-tip collapse="true"}
+**The "Ground Truth":** Because this is a synthetic dataset used for teaching, we actually know the "true" underlying treatment effect. In this simulation, Treatments A and B were generated using the exact same underlying parameters. Therefore, the **True Risk Difference between A and B is exactly 0.0**. We can use this to see which method successfully removes the bias caused by the mismatched populations.
+:::
+
+```{r}
+#| echo: true
+
+adjusted_results <- data.frame(
+  Estimate = c(out_maic_rd$results$contrasts$means$AB,
+               out_gcomp_ml_rd$results$contrasts$means$AB), 
+  lower.0.95 = c(out_maic_rd$results$contrasts$CI$AB[1],
+               out_gcomp_ml_rd$results$contrasts$CI$AB[1]), 
+  upper.0.95 = c(out_maic_rd$results$contrasts$CI$AB[2],
+               out_gcomp_ml_rd$results$contrasts$CI$AB[2]), 
+  Method = c("MAIC (Anchored, Adjusted)", "G-comp ML (Anchored, Adjusted)"))
+
+manual_results <- data.frame(
+  Treatments = rep("AB", 3),
+  Estimate = c(unanchored_rd, naive_anchored_rd, naive_unanchored_rd),
+  `Std. Error` = NA, 
+  lower.0.95 = NA,   
+  upper.0.95 = NA,
+  Method = c("G-comp ML (Unanchored, Adjusted)", 
+             "Naive Indirect (Anchored, Unadjusted)", 
+             "Naive Direct (Unanchored, Unadjusted)"),
+  check.names = FALSE
+)
+
+all_results_final <- bind_rows(adjusted_results, manual_results)
+
+all_results_final$Method <- factor(all_results_final$Method, levels = c(
+  "Naive Direct (Unanchored, Unadjusted)",
+  "G-comp ML (Unanchored, Adjusted)",
+  "Naive Indirect (Anchored, Unadjusted)",
+  "MAIC (Anchored, Adjusted)",
+  "G-comp ML (Anchored, Adjusted)"
+))
+
+ggplot(all_results_final, aes(x = Estimate, y = Method, color = Method)) +
+  geom_point(size = 4) +
+  geom_errorbarh(aes(xmin = lower.0.95, xmax = upper.0.95), height = 0.2, linewidth = 1, na.rm = TRUE) +
+  
+  # Highlight the True Effect (0.0) with a distinct line
+  geom_vline(aes(xintercept = 0, linetype = "True Underlying Effect"), color = "red", linewidth = 1.2) +
+  scale_linetype_manual(name = "", values = "dashed") +
+  
+  theme_minimal() +
+  labs(
+    title = "Relative Treatment Effect (A vs B)",
+    subtitle = "The Impact of Population Adjustment and Anchoring Assumptions",
+    x = "Risk Difference",
+    y = ""
+  ) +
+  theme(
+    legend.position = "bottom", # Show the legend so they see the "True Effect" label
+    axis.text.y = element_text(size = 11, face = "bold"),
+    plot.title = element_text(face = "bold", size = 14)
+  ) +
+  guides(color = "none") # Hide the redundant color legend for the methods
+```
+
+::: {.callout-note}
+Compare the **Adjusted Anchored** vs. the **Adjusted Unanchored** estimates. The difference here represents the heavy lifting the common comparator (Treatment C) was doing to balance out unmeasured prognostic factors.
+:::
