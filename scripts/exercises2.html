@@ -57,16 +57,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="exercises_files/libs/clipboard/clipboard.min.js"></script>
-<script src="exercises_files/libs/quarto-html/quarto.js"></script>
-<script src="exercises_files/libs/quarto-html/popper.min.js"></script>
-<script src="exercises_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="exercises_files/libs/quarto-html/anchor.min.js"></script>
-<link href="exercises_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="exercises_files/libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="exercises_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="exercises_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="exercises_files/libs/bootstrap/bootstrap-8a79a254b8e706d3c925cde0a310d4f0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="exercises2_files/libs/clipboard/clipboard.min.js"></script>
+<script src="exercises2_files/libs/quarto-html/quarto.js"></script>
+<script src="exercises2_files/libs/quarto-html/popper.min.js"></script>
+<script src="exercises2_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="exercises2_files/libs/quarto-html/anchor.min.js"></script>
+<link href="exercises2_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="exercises2_files/libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="exercises2_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="exercises2_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="exercises2_files/libs/bootstrap/bootstrap-8a79a254b8e706d3c925cde0a310d4f0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
 
 </head>
@@ -185,7 +185,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>formula_list_bin <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">outcome_model =</span> lin_form_bin, </span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>                         <span class="at">balance_model =</span> bal_form_bin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>4.&nbsp;Apply Matching-Adjusted Indirect Comparison (MAIC). This utilizes a method-of-moments approach, estimating weights for the IPD patients so their aggregate baseline characteristics match the target ALD trial.</p>
+<p>4.&nbsp;Firstly apply Matching-Adjusted Indirect Comparison (MAIC). This utilizes a method-of-moments approach, estimating weights for the IPD patients so their aggregate baseline characteristics match the target ALD trial.</p>
+<p>The <code>outstandR()</code> function is the primary high-level wrapper in the <code>outstandR</code> package that orchestrates the entire population-adjusted indirect comparison (PAIC) standardization process. It is designed to abstract away the complex task of transporting treatment effects from the individual patient data (IPD) population to the aggregate-level data (ALD) population. By remaining agnostic to the specific adjustment method being used, it provides a unified interface where computational heavy lifting is delegated to the appropriate backend via an S3 class dispatch system.</p>
+</section>
+</section>
+<section id="function-arguments" class="level2">
+<h2 class="anchored" data-anchor-id="function-arguments">Function Arguments</h2>
+<p>The function accepts a variety of arguments to define the data, the adjustment strategy, and the desired outputs:</p>
+<ul>
+<li><strong><code>ipd_trial</code></strong>: Individual-level patient data (e.g., for treatments A and C), expected in a long format including treatment and outcome columns consistent with the formula object.</li>
+<li><strong><code>ald_trial</code></strong>: Aggregate-level data (e.g., for treatments B and C). This should contain specific columns for <code>variable</code> (covariate name), <code>statistic</code> (e.g., mean, sd, prop, sum), <code>value</code> (numerical summary statistic), and <code>trt</code> (treatment label, or NA if a common covariate distribution is assumed).</li>
+<li><strong><code>strategy</code></strong>: A computation strategy function determining the adjustment method. Options include <code>strategy_maic()</code>, <code>strategy_stc()</code>, <code>strategy_gcomp_ml()</code>, <code>strategy_gcomp_bayes()</code>, or <code>strategy_mim()</code>.</li>
+<li><strong><code>ref_trt</code></strong>: The reference, common, or anchoring treatment name (can also be referred to as the index, while the comparator is called the reference).</li>
+<li><strong><code>CI</code></strong>: The desired confidence interval level (between <strong>0</strong> and <strong>1</strong>, defaulting to <strong>0.95</strong>).</li>
+<li><strong><code>scale</code></strong>: The relative treatment effect scale. If <code>NULL</code>, it is automatically determined from the model. Options include <code>log_odds</code>, <code>log_relative_risk</code>, <code>risk_difference</code>, <code>mean_difference</code>, or <code>rate_difference</code>, depending on the data type.</li>
+<li><strong><code>var_method</code></strong>: The method of variance estimation. Options are <code>sample</code> (default), <code>sandwich</code>, and <code>pool</code>.</li>
+<li><strong><code>verbose</code></strong>: Logical (default <code>TRUE</code>). Controls console output and provides proactive warnings for computationally expensive operations to prevent users from assuming the session has hung.</li>
+<li><strong><code>seed</code></strong>: Random number seed (optional).</li>
+<li><strong><code>...</code></strong>: Additional arguments, allowing named arguments to be passed to functions like <code>rstanarm::stan_glm()</code> via <code>strategy_gcomp_bayes()</code>.</li>
+</ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>out_maic <span class="ot">&lt;-</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">outstandR</span>(</span>
@@ -261,8 +279,8 @@ Absolute:
 <pre><code>
 SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 1).
 Chain 1: 
-Chain 1: Gradient evaluation took 0.000124 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.24 seconds.
+Chain 1: Gradient evaluation took 6.7e-05 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.67 seconds.
 Chain 1: Adjust your expectations accordingly!
 Chain 1: 
 Chain 1: 
@@ -273,9 +291,9 @@ Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
 Chain 1: Iteration: 1500 / 2000 [ 75%]  (Sampling)
 Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 1: 
-Chain 1:  Elapsed Time: 0.301 seconds (Warm-up)
-Chain 1:                0.285 seconds (Sampling)
-Chain 1:                0.586 seconds (Total)
+Chain 1:  Elapsed Time: 0.283 seconds (Warm-up)
+Chain 1:                0.26 seconds (Sampling)
+Chain 1:                0.543 seconds (Total)
 Chain 1: 
 
 SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 2).
@@ -292,9 +310,9 @@ Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
 Chain 2: Iteration: 1500 / 2000 [ 75%]  (Sampling)
 Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 2: 
-Chain 2:  Elapsed Time: 0.273 seconds (Warm-up)
-Chain 2:                0.259 seconds (Sampling)
-Chain 2:                0.532 seconds (Total)
+Chain 2:  Elapsed Time: 0.274 seconds (Warm-up)
+Chain 2:                0.26 seconds (Sampling)
+Chain 2:                0.534 seconds (Total)
 Chain 2: </code></pre>
 </div>
 </details>
@@ -333,15 +351,15 @@ Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
 Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
 Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 1: 
-Chain 1:  Elapsed Time: 0.291 seconds (Warm-up)
-Chain 1:                0.273 seconds (Sampling)
-Chain 1:                0.564 seconds (Total)
+Chain 1:  Elapsed Time: 0.294 seconds (Warm-up)
+Chain 1:                0.271 seconds (Sampling)
+Chain 1:                0.565 seconds (Total)
 Chain 1: 
 
 SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 2).
 Chain 2: 
-Chain 2: Gradient evaluation took 2.2e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.22 seconds.
+Chain 2: Gradient evaluation took 2.4e-05 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.24 seconds.
 Chain 2: Adjust your expectations accordingly!
 Chain 2: 
 Chain 2: 
@@ -358,9 +376,9 @@ Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)
 Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
 Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 2: 
-Chain 2:  Elapsed Time: 0.269 seconds (Warm-up)
-Chain 2:                0.284 seconds (Sampling)
-Chain 2:                0.553 seconds (Total)
+Chain 2:  Elapsed Time: 0.268 seconds (Warm-up)
+Chain 2:                0.277 seconds (Sampling)
+Chain 2:                0.545 seconds (Total)
 Chain 2: </code></pre>
 </div>
 </details>
@@ -380,7 +398,7 @@ Chain 2: </code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="exercises_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="exercises2_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -528,15 +546,15 @@ Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
 Chain 1: Iteration: 1500 / 2000 [ 75%]  (Sampling)
 Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 1: 
-Chain 1:  Elapsed Time: 0.281 seconds (Warm-up)
-Chain 1:                0.28 seconds (Sampling)
-Chain 1:                0.561 seconds (Total)
+Chain 1:  Elapsed Time: 0.286 seconds (Warm-up)
+Chain 1:                0.267 seconds (Sampling)
+Chain 1:                0.553 seconds (Total)
 Chain 1: 
 
 SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 2).
 Chain 2: 
-Chain 2: Gradient evaluation took 2.2e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.22 seconds.
+Chain 2: Gradient evaluation took 3.3e-05 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.33 seconds.
 Chain 2: Adjust your expectations accordingly!
 Chain 2: 
 Chain 2: 
@@ -547,9 +565,9 @@ Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
 Chain 2: Iteration: 1500 / 2000 [ 75%]  (Sampling)
 Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 2: 
-Chain 2:  Elapsed Time: 0.311 seconds (Warm-up)
-Chain 2:                0.255 seconds (Sampling)
-Chain 2:                0.566 seconds (Total)
+Chain 2:  Elapsed Time: 0.274 seconds (Warm-up)
+Chain 2:                0.264 seconds (Sampling)
+Chain 2:                0.538 seconds (Total)
 Chain 2: </code></pre>
 </div>
 </details>
@@ -605,8 +623,8 @@ Absolute:
 <pre><code>
 SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 1).
 Chain 1: 
-Chain 1: Gradient evaluation took 2.8e-05 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.28 seconds.
+Chain 1: Gradient evaluation took 3.7e-05 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.37 seconds.
 Chain 1: Adjust your expectations accordingly!
 Chain 1: 
 Chain 1: 
@@ -623,15 +641,15 @@ Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
 Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
 Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 1: 
-Chain 1:  Elapsed Time: 0.286 seconds (Warm-up)
-Chain 1:                0.263 seconds (Sampling)
-Chain 1:                0.549 seconds (Total)
+Chain 1:  Elapsed Time: 0.302 seconds (Warm-up)
+Chain 1:                0.267 seconds (Sampling)
+Chain 1:                0.569 seconds (Total)
 Chain 1: 
 
 SAMPLING FOR MODEL 'bernoulli' NOW (CHAIN 2).
 Chain 2: 
-Chain 2: Gradient evaluation took 2.2e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.22 seconds.
+Chain 2: Gradient evaluation took 4.5e-05 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.45 seconds.
 Chain 2: Adjust your expectations accordingly!
 Chain 2: 
 Chain 2: 
@@ -648,9 +666,9 @@ Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)
 Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
 Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 2: 
-Chain 2:  Elapsed Time: 0.266 seconds (Warm-up)
-Chain 2:                0.275 seconds (Sampling)
-Chain 2:                0.541 seconds (Total)
+Chain 2:  Elapsed Time: 0.268 seconds (Warm-up)
+Chain 2:                0.282 seconds (Sampling)
+Chain 2:                0.55 seconds (Total)
 Chain 2: </code></pre>
 </div>
 </details>
@@ -740,7 +758,7 @@ Absolute:
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="exercises_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="exercises2_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -781,11 +799,11 @@ Tip
 <span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Extract and bind results</span></span>
 <span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>adjusted_results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">Estimate =</span> <span class="fu">c</span>(out_maic_rd<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>means<span class="sc">$</span>AB,</span>
-<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>               out_gcomp_ml<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>means<span class="sc">$</span>AB), </span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>               out_gcomp_ml_rd<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>means<span class="sc">$</span>AB), </span>
 <span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower.0.95 =</span> <span class="fu">c</span>(out_maic_rd<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>CI<span class="sc">$</span>AB[<span class="dv">1</span>],</span>
-<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>               out_gcomp_ml<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>CI<span class="sc">$</span>AB[<span class="dv">1</span>]), </span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>               out_gcomp_ml_rd<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>CI<span class="sc">$</span>AB[<span class="dv">1</span>]), </span>
 <span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper.0.95 =</span> <span class="fu">c</span>(out_maic_rd<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>CI<span class="sc">$</span>AB[<span class="dv">2</span>],</span>
-<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a>               out_gcomp_ml<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>CI<span class="sc">$</span>AB[<span class="dv">2</span>]), </span>
+<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a>               out_gcomp_ml_rd<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>CI<span class="sc">$</span>AB[<span class="dv">2</span>]), </span>
 <span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method =</span> <span class="fu">c</span>(<span class="st">"MAIC (Anchored, Adjusted)"</span>, <span class="st">"G-comp ML (Anchored, Adjusted)"</span>))</span>
 <span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-26"><a href="#cb30-26" aria-hidden="true" tabindex="-1"></a>naive_result <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
@@ -805,7 +823,6 @@ Tip
 <span id="cb30-40"><a href="#cb30-40" aria-hidden="true" tabindex="-1"></a>  <span class="st">"G-comp ML (Anchored, Adjusted)"</span></span>
 <span id="cb30-41"><a href="#cb30-41" aria-hidden="true" tabindex="-1"></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section>
 </section>
 <section id="build-the-forest-plot" class="level1">
 <h1>5. Build the Forest Plot</h1>
@@ -829,7 +846,7 @@ Tip
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="exercises_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="exercises2_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -939,8 +956,8 @@ Absolute:
 <pre><code>
 SAMPLING FOR MODEL 'continuous' NOW (CHAIN 1).
 Chain 1: 
-Chain 1: Gradient evaluation took 0.000107 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.07 seconds.
+Chain 1: Gradient evaluation took 4.8e-05 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.48 seconds.
 Chain 1: Adjust your expectations accordingly!
 Chain 1: 
 Chain 1: 
@@ -951,15 +968,15 @@ Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
 Chain 1: Iteration: 1500 / 2000 [ 75%]  (Sampling)
 Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 1: 
-Chain 1:  Elapsed Time: 0.104 seconds (Warm-up)
-Chain 1:                0.113 seconds (Sampling)
-Chain 1:                0.217 seconds (Total)
+Chain 1:  Elapsed Time: 0.102 seconds (Warm-up)
+Chain 1:                0.108 seconds (Sampling)
+Chain 1:                0.21 seconds (Total)
 Chain 1: 
 
 SAMPLING FOR MODEL 'continuous' NOW (CHAIN 2).
 Chain 2: 
-Chain 2: Gradient evaluation took 1.2e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.12 seconds.
+Chain 2: Gradient evaluation took 1.8e-05 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.18 seconds.
 Chain 2: Adjust your expectations accordingly!
 Chain 2: 
 Chain 2: 
@@ -970,9 +987,9 @@ Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
 Chain 2: Iteration: 1500 / 2000 [ 75%]  (Sampling)
 Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 2: 
-Chain 2:  Elapsed Time: 0.1 seconds (Warm-up)
-Chain 2:                0.117 seconds (Sampling)
-Chain 2:                0.217 seconds (Total)
+Chain 2:  Elapsed Time: 0.096 seconds (Warm-up)
+Chain 2:                0.115 seconds (Sampling)
+Chain 2:                0.211 seconds (Total)
 Chain 2: </code></pre>
 </div>
 </details>
@@ -994,8 +1011,8 @@ Chain 2: </code></pre>
 <pre><code>
 SAMPLING FOR MODEL 'continuous' NOW (CHAIN 1).
 Chain 1: 
-Chain 1: Gradient evaluation took 2.1e-05 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.21 seconds.
+Chain 1: Gradient evaluation took 2e-05 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.2 seconds.
 Chain 1: Adjust your expectations accordingly!
 Chain 1: 
 Chain 1: 
@@ -1013,14 +1030,14 @@ Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
 Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 1: 
 Chain 1:  Elapsed Time: 0.107 seconds (Warm-up)
-Chain 1:                0.109 seconds (Sampling)
-Chain 1:                0.216 seconds (Total)
+Chain 1:                0.107 seconds (Sampling)
+Chain 1:                0.214 seconds (Total)
 Chain 1: 
 
 SAMPLING FOR MODEL 'continuous' NOW (CHAIN 2).
 Chain 2: 
-Chain 2: Gradient evaluation took 1.2e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.12 seconds.
+Chain 2: Gradient evaluation took 1.1e-05 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.11 seconds.
 Chain 2: Adjust your expectations accordingly!
 Chain 2: 
 Chain 2: 
@@ -1037,9 +1054,9 @@ Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)
 Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
 Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 2: 
-Chain 2:  Elapsed Time: 0.111 seconds (Warm-up)
-Chain 2:                0.131 seconds (Sampling)
-Chain 2:                0.242 seconds (Total)
+Chain 2:  Elapsed Time: 0.109 seconds (Warm-up)
+Chain 2:                0.116 seconds (Sampling)
+Chain 2:                0.225 seconds (Total)
 Chain 2: </code></pre>
 </div>
 </details>
@@ -1073,80 +1090,45 @@ Chain 2: </code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="exercises_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="exercises2_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>If a large percentage of your weights are near zero, your MAIC estimates may be highly unstable, suggesting poor covariate overlap between your IPD and target population.</p>
-<p>2.&nbsp;Fit a deliberately misspecified G-computation model to observe the consequences. We will purposefully drop the <code>trt:EM</code> interaction terms.</p>
+<p>2.&nbsp;Next, let’s explore the Bias-Variance trade-off by running a minimal, correctly specified MAIC balancing <em>only one</em> the effect modifiers.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>bad_form_bin <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="st">"y ~ PF_cont_1 + PF_cont_2 + EM_cont_1 + EM_cont_2 + trt"</span>)</span>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>bal_form_minimal <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="st">"~ EM_cont_1"</span>)</span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>out_gcomp_bad <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>out_maic_minimal <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
 <span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_binY_contX, </span>
 <span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_gcomp_ml</span>(</span>
-<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> <span class="fu">list</span>(<span class="at">outcome_model =</span> bad_form_bin),</span>
-<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>),</span>
-<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">N =</span> <span class="dv">1000</span> </span>
-<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">scale =</span> <span class="st">"risk_difference"</span>,</span>
-<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">12345</span></span>
-<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Misspecified Risk Difference (A vs B):"</span>, out_gcomp_bad<span class="sc">$</span>contrasts<span class="sc">$</span>Estimate[<span class="dv">1</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_maic</span>(</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> <span class="fu">list</span>(</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">outcome_model =</span> <span class="fu">formula</span>(<span class="st">"y ~ trt"</span>),</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">balance_model =</span> bal_form_minimal</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>) </span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">12345</span></span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Minimal Model ESS:"</span>, out_maic_minimal<span class="sc">$</span>model<span class="sc">$</span>ESS, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <details>
 <summary>
 <strong>Click to expand output</strong>
 </summary>
 <div class="cell-output cell-output-stdout">
-<pre><code>Misspecified Risk Difference (A vs B): </code></pre>
+<pre><code>Minimal Model ESS: 146.9627 </code></pre>
 </div>
 </details>
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Correct ML G-comp Risk Difference (A vs B):"</span>, out_gcomp_ml<span class="sc">$</span>contrasts<span class="sc">$</span>Estimate[<span class="dv">1</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Minimal Model Std. Error (A vs B):"</span>, out_maic_minimal<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>variances<span class="sc">$</span>AB, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <details>
 <summary>
 <strong>Click to expand output</strong>
 </summary>
 <div class="cell-output cell-output-stdout">
-<pre><code>Correct ML G-comp Risk Difference (A vs B): </code></pre>
-</div>
-</details>
-</div>
-<p>3.&nbsp;Next, let’s explore the Bias-Variance trade-off by running a minimal, correctly specified MAIC balancing <em>only</em> the effect modifiers.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>bal_form_minimal <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="st">"~ EM_cont_1 + EM_cont_2"</span>)</span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>out_maic_minimal <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
-<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_binY_contX, </span>
-<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
-<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_maic</span>(</span>
-<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> <span class="fu">list</span>(</span>
-<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">outcome_model =</span> <span class="fu">formula</span>(<span class="st">"y ~ trt"</span>),</span>
-<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">balance_model =</span> bal_form_minimal</span>
-<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>) </span>
-<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">12345</span></span>
-<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Minimal Model ESS:"</span>, out_maic_minimal<span class="sc">$</span>model<span class="sc">$</span>ESS, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<details>
-<summary>
-<strong>Click to expand output</strong>
-</summary>
-<div class="cell-output cell-output-stdout">
-<pre><code>Minimal Model ESS: 136.8594 </code></pre>
-</div>
-</details>
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Minimal Model Std. Error (A vs B):"</span>, out_maic_minimal<span class="sc">$</span>contrasts<span class="sc">$</span><span class="st">`</span><span class="at">Std. Error</span><span class="st">`</span>[<span class="dv">1</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<details>
-<summary>
-<strong>Click to expand output</strong>
-</summary>
-<div class="cell-output cell-output-stdout">
-<pre><code>Minimal Model Std. Error (A vs B): </code></pre>
+<pre><code>Minimal Model Std. Error (A vs B): 0.2497449 </code></pre>
 </div>
 </details>
 </div>
@@ -1168,22 +1150,22 @@ Tip
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>bal_form_maximal <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="st">"~ PF_cont_1 + PF_cont_2 + EM_cont_1 + EM_cont_2"</span>)</span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>out_maic_maximal <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
-<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_binY_contX, </span>
-<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
-<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_maic</span>(</span>
-<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> <span class="fu">list</span>(</span>
-<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">outcome_model =</span> <span class="fu">formula</span>(<span class="st">"y ~ trt"</span>),</span>
-<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">balance_model =</span> bal_form_maximal</span>
-<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>) </span>
-<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">12345</span></span>
-<span id="cb50-14"><a href="#cb50-14" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb50-15"><a href="#cb50-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-16"><a href="#cb50-16" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Maximal Model ESS:"</span>, out_maic_maximal<span class="sc">$</span>model<span class="sc">$</span>ESS, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>bal_form_maximal <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="st">"~ PF_cont_1 + PF_cont_2 + EM_cont_1 + EM_cont_2"</span>)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>out_maic_maximal <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_binY_contX, </span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_maic</span>(</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> <span class="fu">list</span>(</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">outcome_model =</span> <span class="fu">formula</span>(<span class="st">"y ~ trt"</span>),</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">balance_model =</span> bal_form_maximal</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>) </span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">12345</span></span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Maximal Model ESS:"</span>, out_maic_maximal<span class="sc">$</span>model<span class="sc">$</span>ESS, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <details>
 <summary>
 <strong>Click to expand output</strong>
@@ -1192,27 +1174,16 @@ Tip
 <pre><code>Maximal Model ESS: 112.1504 </code></pre>
 </div>
 </details>
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Maximal Model Std. Error (A vs B):"</span>, out_maic_maximal<span class="sc">$</span>contrasts<span class="sc">$</span><span class="st">`</span><span class="at">Std. Error</span><span class="st">`</span>[<span class="dv">1</span>], <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Maximal Model Std. Error (A vs B):"</span>, out_maic_maximal<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>variances<span class="sc">$</span>AB, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <details>
 <summary>
 <strong>Click to expand output</strong>
 </summary>
 <div class="cell-output cell-output-stdout">
-<pre><code>Maximal Model Std. Error (A vs B): </code></pre>
+<pre><code>Maximal Model Std. Error (A vs B): 0.2666855 </code></pre>
 </div>
 </details>
 </div>
-<p>Ah! If the <code>{outstandR}</code> package does not save the generated synthetic target cohort inside the final output object (which is very common in R packages to prevent objects from becoming massively bloated in memory), then the manual prediction route (Option 2) hits a dead end.</p>
-<p>Let’s switch to the <strong>“Dummy Anchor” approach (Option 1)</strong> we discussed earlier.</p>
-<p>This approach is highly robust because it uses the package’s internal simulation and integration engine perfectly, without us needing to extract any hidden datasets.</p>
-<p>Here is how we teach it to the students:</p>
-<ol type="1">
-<li>We keep the IPD and ALD data exactly as they are (including the common Treatment C).</li>
-<li>We fit a G-computation model that includes <strong>all</strong> prognostic factors and effect modifiers (the absolute exchangeability assumption).</li>
-<li>We let the package calculate everything, but we <strong>ignore the relative contrasts table</strong>.</li>
-<li>Instead, we extract the adjusted absolute marginal mean for Treatment A from the <code>$absolute_effects</code> table, and manually compare it to the raw ALD data for Treatment B.</li>
-</ol>
-<p>Here are the updated replacements for <strong>Part 6</strong> and <strong>Part 7</strong> to slot into your script:</p>
 </section>
 </section>
 <section id="unanchored_viz" class="level2">
@@ -1226,19 +1197,19 @@ Tip
 <h4 class="anchored" data-anchor-id="exercises-3">Exercises</h4>
 <p>1.&nbsp;Run the G-computation including ALL covariates. This satisfies the assumption of absolute exchangeability required for unanchored comparisons.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>full_form <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="st">"y ~ PF_cont_1 + PF_cont_2 + EM_cont_1 + EM_cont_2 + trt"</span>)</span>
-<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>out_gcomp_unanchored <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
-<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_binY_contX, </span>
-<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
-<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_gcomp_ml</span>(</span>
-<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> <span class="fu">list</span>(<span class="at">outcome_model =</span> full_form),</span>
-<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>),</span>
-<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">N =</span> <span class="dv">1000</span></span>
-<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">scale =</span> <span class="st">"risk_difference"</span>, <span class="co"># Ensures absolute effects are on the probability scale</span></span>
-<span id="cb54-12"><a href="#cb54-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">12345</span></span>
-<span id="cb54-13"><a href="#cb54-13" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>full_form <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="st">"y ~ PF_cont_1 + PF_cont_2 + EM_cont_1 + EM_cont_2 + trt"</span>)</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>out_gcomp_unanchored <span class="ot">&lt;-</span> <span class="fu">outstandR</span>(</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">ipd_trial =</span> AC_IPD_binY_contX, </span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">ald_trial =</span> BC_ALD_binY_contX,</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">strategy =</span> <span class="fu">strategy_gcomp_ml</span>(</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> <span class="fu">list</span>(<span class="at">outcome_model =</span> full_form),</span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">family =</span> <span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">"logit"</span>),</span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">N =</span> <span class="dv">1000</span></span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">scale =</span> <span class="st">"risk_difference"</span>, <span class="co"># Ensures absolute effects are on the probability scale</span></span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">12345</span></span>
+<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>2.&nbsp;Extract the adjusted absolute effect for Treatment A, and compare it directly to the raw, unadjusted data for Treatment B.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
@@ -1258,18 +1229,18 @@ Tip
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Extract the marginalized probability for A in the target population</span></span>
-<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>prob_A_unanchored <span class="ot">&lt;-</span> out_gcomp_unanchored<span class="sc">$</span>results<span class="sc">$</span>absolute<span class="sc">$</span>means<span class="sc">$</span>A </span>
-<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Extract raw observed probability for B (from the ALD)</span></span>
-<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>prob_B_raw <span class="ot">&lt;-</span> BC_ALD_binY_contX <span class="sc">|&gt;</span> </span>
-<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span> <span class="st">"y"</span>, statistic <span class="sc">==</span> <span class="st">"mean"</span>, trt <span class="sc">==</span> <span class="st">"B"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(value)</span>
-<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Calculate the unanchored Risk Difference</span></span>
-<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a>unanchored_rd <span class="ot">&lt;-</span> prob_A_unanchored <span class="sc">-</span> prob_B_raw</span>
-<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Unanchored Risk Difference (A vs B):"</span>, <span class="fu">round</span>(unanchored_rd, <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Extract the marginalized probability for A in the target population</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>prob_A_unanchored <span class="ot">&lt;-</span> out_gcomp_unanchored<span class="sc">$</span>results<span class="sc">$</span>absolute<span class="sc">$</span>means<span class="sc">$</span>A </span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Extract raw observed probability for B (from the ALD)</span></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>prob_B_raw <span class="ot">&lt;-</span> BC_ALD_binY_contX <span class="sc">|&gt;</span> </span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">==</span> <span class="st">"y"</span>, statistic <span class="sc">==</span> <span class="st">"mean"</span>, trt <span class="sc">==</span> <span class="st">"B"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(value)</span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Calculate the unanchored Risk Difference</span></span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>unanchored_rd <span class="ot">&lt;-</span> prob_A_unanchored <span class="sc">-</span> prob_B_raw</span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Unanchored Risk Difference (A vs B):"</span>, <span class="fu">round</span>(unanchored_rd, <span class="dv">3</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <details>
 <summary>
 <strong>Click to expand output</strong>
@@ -1281,65 +1252,65 @@ Tip
 </div>
 <p>3.&nbsp;Calculate the naive unanchored estimate directly for comparison.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Raw probability from IPD for A</span></span>
-<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>prob_A_raw <span class="ot">&lt;-</span> <span class="fu">mean</span>(AC_IPD_binY_contX<span class="sc">$</span>y[AC_IPD_binY_contX<span class="sc">$</span>trt <span class="sc">==</span> <span class="st">"A"</span>])</span>
-<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Naive Unanchored Risk Difference: A - B directly</span></span>
-<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>naive_unanchored_rd <span class="ot">&lt;-</span> prob_A_raw <span class="sc">-</span> prob_B_raw</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Raw probability from IPD for A</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>prob_A_raw <span class="ot">&lt;-</span> <span class="fu">mean</span>(AC_IPD_binY_contX<span class="sc">$</span>y[AC_IPD_binY_contX<span class="sc">$</span>trt <span class="sc">==</span> <span class="st">"A"</span>])</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Naive Unanchored Risk Difference: A - B directly</span></span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>naive_unanchored_rd <span class="ot">&lt;-</span> prob_A_raw <span class="sc">-</span> prob_B_raw</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>4.&nbsp;Extract the previous adjusted results, bind them with the newly computed unanchored estimates, and build the final custom forest plot.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>adjusted_results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Estimate =</span> <span class="fu">c</span>(out_maic_rd<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>means<span class="sc">$</span>AB,</span>
-<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>               out_gcomp_ml<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>means<span class="sc">$</span>AB), </span>
-<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower.0.95 =</span> <span class="fu">c</span>(out_maic_rd<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>CI<span class="sc">$</span>AB[<span class="dv">1</span>],</span>
-<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>               out_gcomp_ml<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>CI<span class="sc">$</span>AB[<span class="dv">1</span>]), </span>
-<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper.0.95 =</span> <span class="fu">c</span>(out_maic_rd<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>CI<span class="sc">$</span>AB[<span class="dv">2</span>],</span>
-<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>               out_gcomp_ml<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>CI<span class="sc">$</span>AB[<span class="dv">2</span>]), </span>
-<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method =</span> <span class="fu">c</span>(<span class="st">"MAIC (Anchored, Adjusted)"</span>, <span class="st">"G-comp ML (Anchored, Adjusted)"</span>))</span>
-<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb58-10"><a href="#cb58-10" aria-hidden="true" tabindex="-1"></a>manual_results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb58-11"><a href="#cb58-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">Treatments =</span> <span class="fu">rep</span>(<span class="st">"AB"</span>, <span class="dv">3</span>),</span>
-<span id="cb58-12"><a href="#cb58-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">Estimate =</span> <span class="fu">c</span>(unanchored_rd, naive_anchored_rd, naive_unanchored_rd),</span>
-<span id="cb58-13"><a href="#cb58-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Std. Error</span><span class="st">`</span> <span class="ot">=</span> <span class="cn">NA</span>, </span>
-<span id="cb58-14"><a href="#cb58-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower.0.95 =</span> <span class="cn">NA</span>,   </span>
-<span id="cb58-15"><a href="#cb58-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper.0.95 =</span> <span class="cn">NA</span>,</span>
-<span id="cb58-16"><a href="#cb58-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method =</span> <span class="fu">c</span>(<span class="st">"G-comp ML (Unanchored, Adjusted)"</span>, </span>
-<span id="cb58-17"><a href="#cb58-17" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Naive Indirect (Anchored, Unadjusted)"</span>, </span>
-<span id="cb58-18"><a href="#cb58-18" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Naive Direct (Unanchored, Unadjusted)"</span>),</span>
-<span id="cb58-19"><a href="#cb58-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">check.names =</span> <span class="cn">FALSE</span></span>
-<span id="cb58-20"><a href="#cb58-20" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb58-21"><a href="#cb58-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb58-22"><a href="#cb58-22" aria-hidden="true" tabindex="-1"></a>all_results_final <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(adjusted_results, manual_results)</span>
-<span id="cb58-23"><a href="#cb58-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb58-24"><a href="#cb58-24" aria-hidden="true" tabindex="-1"></a>all_results_final<span class="sc">$</span>Method <span class="ot">&lt;-</span> <span class="fu">factor</span>(all_results_final<span class="sc">$</span>Method, <span class="at">levels =</span> <span class="fu">c</span>(</span>
-<span id="cb58-25"><a href="#cb58-25" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Naive Direct (Unanchored, Unadjusted)"</span>,</span>
-<span id="cb58-26"><a href="#cb58-26" aria-hidden="true" tabindex="-1"></a>  <span class="st">"G-comp ML (Unanchored, Adjusted)"</span>,</span>
-<span id="cb58-27"><a href="#cb58-27" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Naive Indirect (Anchored, Unadjusted)"</span>,</span>
-<span id="cb58-28"><a href="#cb58-28" aria-hidden="true" tabindex="-1"></a>  <span class="st">"MAIC (Anchored, Adjusted)"</span>,</span>
-<span id="cb58-29"><a href="#cb58-29" aria-hidden="true" tabindex="-1"></a>  <span class="st">"G-comp ML (Anchored, Adjusted)"</span></span>
-<span id="cb58-30"><a href="#cb58-30" aria-hidden="true" tabindex="-1"></a>))</span>
-<span id="cb58-31"><a href="#cb58-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb58-32"><a href="#cb58-32" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(all_results_final, <span class="fu">aes</span>(<span class="at">x =</span> Estimate, <span class="at">y =</span> Method, <span class="at">color =</span> Method)) <span class="sc">+</span></span>
-<span id="cb58-33"><a href="#cb58-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
-<span id="cb58-34"><a href="#cb58-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbarh</span>(<span class="fu">aes</span>(<span class="at">xmin =</span> lower.<span class="fl">0.95</span>, <span class="at">xmax =</span> upper.<span class="fl">0.95</span>), <span class="at">height =</span> <span class="fl">0.2</span>, <span class="at">linewidth =</span> <span class="dv">1</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
-<span id="cb58-35"><a href="#cb58-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"gray50"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb58-36"><a href="#cb58-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb58-37"><a href="#cb58-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb58-38"><a href="#cb58-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Relative Treatment Effect (A vs B)"</span>,</span>
-<span id="cb58-39"><a href="#cb58-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"The Impact of Population Adjustment and Anchoring Assumptions"</span>,</span>
-<span id="cb58-40"><a href="#cb58-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Risk Difference"</span>,</span>
-<span id="cb58-41"><a href="#cb58-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">""</span></span>
-<span id="cb58-42"><a href="#cb58-42" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb58-43"><a href="#cb58-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb58-44"><a href="#cb58-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
-<span id="cb58-45"><a href="#cb58-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">11</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
-<span id="cb58-46"><a href="#cb58-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">14</span>)</span>
-<span id="cb58-47"><a href="#cb58-47" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>adjusted_results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Estimate =</span> <span class="fu">c</span>(out_maic_rd<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>means<span class="sc">$</span>AB,</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>               out_gcomp_ml_rd<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>means<span class="sc">$</span>AB), </span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower.0.95 =</span> <span class="fu">c</span>(out_maic_rd<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>CI<span class="sc">$</span>AB[<span class="dv">1</span>],</span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>               out_gcomp_ml_rd<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>CI<span class="sc">$</span>AB[<span class="dv">1</span>]), </span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper.0.95 =</span> <span class="fu">c</span>(out_maic_rd<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>CI<span class="sc">$</span>AB[<span class="dv">2</span>],</span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>               out_gcomp_ml_rd<span class="sc">$</span>results<span class="sc">$</span>contrasts<span class="sc">$</span>CI<span class="sc">$</span>AB[<span class="dv">2</span>]), </span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method =</span> <span class="fu">c</span>(<span class="st">"MAIC (Anchored, Adjusted)"</span>, <span class="st">"G-comp ML (Anchored, Adjusted)"</span>))</span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a>manual_results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">Treatments =</span> <span class="fu">rep</span>(<span class="st">"AB"</span>, <span class="dv">3</span>),</span>
+<span id="cb54-12"><a href="#cb54-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">Estimate =</span> <span class="fu">c</span>(unanchored_rd, naive_anchored_rd, naive_unanchored_rd),</span>
+<span id="cb54-13"><a href="#cb54-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Std. Error</span><span class="st">`</span> <span class="ot">=</span> <span class="cn">NA</span>, </span>
+<span id="cb54-14"><a href="#cb54-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower.0.95 =</span> <span class="cn">NA</span>,   </span>
+<span id="cb54-15"><a href="#cb54-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">upper.0.95 =</span> <span class="cn">NA</span>,</span>
+<span id="cb54-16"><a href="#cb54-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">Method =</span> <span class="fu">c</span>(<span class="st">"G-comp ML (Unanchored, Adjusted)"</span>, </span>
+<span id="cb54-17"><a href="#cb54-17" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Naive Indirect (Anchored, Unadjusted)"</span>, </span>
+<span id="cb54-18"><a href="#cb54-18" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Naive Direct (Unanchored, Unadjusted)"</span>),</span>
+<span id="cb54-19"><a href="#cb54-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">check.names =</span> <span class="cn">FALSE</span></span>
+<span id="cb54-20"><a href="#cb54-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb54-21"><a href="#cb54-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-22"><a href="#cb54-22" aria-hidden="true" tabindex="-1"></a>all_results_final <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(adjusted_results, manual_results)</span>
+<span id="cb54-23"><a href="#cb54-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-24"><a href="#cb54-24" aria-hidden="true" tabindex="-1"></a>all_results_final<span class="sc">$</span>Method <span class="ot">&lt;-</span> <span class="fu">factor</span>(all_results_final<span class="sc">$</span>Method, <span class="at">levels =</span> <span class="fu">c</span>(</span>
+<span id="cb54-25"><a href="#cb54-25" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Naive Direct (Unanchored, Unadjusted)"</span>,</span>
+<span id="cb54-26"><a href="#cb54-26" aria-hidden="true" tabindex="-1"></a>  <span class="st">"G-comp ML (Unanchored, Adjusted)"</span>,</span>
+<span id="cb54-27"><a href="#cb54-27" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Naive Indirect (Anchored, Unadjusted)"</span>,</span>
+<span id="cb54-28"><a href="#cb54-28" aria-hidden="true" tabindex="-1"></a>  <span class="st">"MAIC (Anchored, Adjusted)"</span>,</span>
+<span id="cb54-29"><a href="#cb54-29" aria-hidden="true" tabindex="-1"></a>  <span class="st">"G-comp ML (Anchored, Adjusted)"</span></span>
+<span id="cb54-30"><a href="#cb54-30" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb54-31"><a href="#cb54-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-32"><a href="#cb54-32" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(all_results_final, <span class="fu">aes</span>(<span class="at">x =</span> Estimate, <span class="at">y =</span> Method, <span class="at">color =</span> Method)) <span class="sc">+</span></span>
+<span id="cb54-33"><a href="#cb54-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb54-34"><a href="#cb54-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbarh</span>(<span class="fu">aes</span>(<span class="at">xmin =</span> lower.<span class="fl">0.95</span>, <span class="at">xmax =</span> upper.<span class="fl">0.95</span>), <span class="at">height =</span> <span class="fl">0.2</span>, <span class="at">linewidth =</span> <span class="dv">1</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb54-35"><a href="#cb54-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"gray50"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb54-36"><a href="#cb54-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb54-37"><a href="#cb54-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb54-38"><a href="#cb54-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Relative Treatment Effect (A vs B)"</span>,</span>
+<span id="cb54-39"><a href="#cb54-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"The Impact of Population Adjustment and Anchoring Assumptions"</span>,</span>
+<span id="cb54-40"><a href="#cb54-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Risk Difference"</span>,</span>
+<span id="cb54-41"><a href="#cb54-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">""</span></span>
+<span id="cb54-42"><a href="#cb54-42" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb54-43"><a href="#cb54-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb54-44"><a href="#cb54-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
+<span id="cb54-45"><a href="#cb54-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">11</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb54-46"><a href="#cb54-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">14</span>)</span>
+<span id="cb54-47"><a href="#cb54-47" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="exercises_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="exercises2_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>

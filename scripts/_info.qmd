@@ -1,0 +1,48 @@
+<style>
+.button {
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-top: 0px!important;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  margin: 0px 0px;
+  border-radius: 8px;
+}
+</style>
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+library(tidyverse)
+button=function(x,icon,txt,type,target="_blank") {
+# target=c("_blank","_self")
+  if(type=="fab") {
+    class="fa-brands fa-"
+  }
+  if(type=="fas") {
+    class="fa-solid fa-"
+  }
+  htmltools::HTML(paste0('<a class="btn btn-outline-dark btn-sm" href="',x,'" target="',target,'" rel="noopener noreferrer"><i class="',class,icon,'" role="img" aria-label="',txt,'"></i> ',txt,'</a>'))
+}
+
+a=c()
+if(!is.null(rmarkdown::metadata$links)) {
+  links=rmarkdown::metadata$links %>% bind_rows()
+  if(nrow(links)>0) {
+    for (i in 1:nrow(links)) {
+      a[i]=button(links$url[i],links$icon[i],links$name[i],links$icon_pack[i],target="_self")
+    }
+  }
+}
+
+```
+
+```{r}
+#| echo: false
+#| eval: true
+#| results: asis
+cat(a)
+```

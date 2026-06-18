@@ -22,7 +22,6 @@ Useful links:
 
 Authors:
 \itemize{
-  \item Nathan Green \email{n.green@ucl.ac.uk} (\href{https://orcid.org/0000-0003-2745-1736}{ORCID}) (\href{https://ror.org/02jx3x895}{ROR}) [copyright holder]
   \item Chengyang Gao \email{chengyang.gao.15@ucl.ac.uk}
   \item Antonio Remiro-Azocar \email{antonio.remiro-azocar@bayer.com} (\href{https://orcid.org/0000-0002-7263-4251}{ORCID})
 }
