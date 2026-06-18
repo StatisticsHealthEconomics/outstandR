@@ -159,9 +159,19 @@ outstandR <- function(ipd_trial, ald_trial, strategy,
   
   stats <- result_stats(ipd_stats, ald_stats, CI)
   
+  naive_results <- calc_bucher_naive(
+    ipd_trial = ipd_trial_clean,
+    ald_trial = ald_trial_clean,
+    outcome_model = strategy$formula$outcome_model,
+    family = strategy$family,
+    ref_trt = ref_trt,
+    scale = scale_internal
+  )
+  
   structure(
     .Data = list(
       results = stats,
+      naive = naive_results,
       call = cl,
       outcome_model = strategy$outcome_model, 
       balance_model = strategy$balance_model,
