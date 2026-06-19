@@ -605,16 +605,16 @@ cat("Unanchored Risk Difference (A vs B):", round(unanchored_rd, 3), "\n")
 
 3.\ Calculate the unadjusted (naive) estimates for comparison.
 
-To see exactly how much our PAIC methods moved the needle, we will calculate the naive estimators. Let $p_A$ and $p_{C(AC)}$ be the raw probabilities of the event in the IPD trial, and let $p_B$ and $p_{C(BC)}$ be the raw probabilities in the ALD trial.
+To see exactly how much our PAIC methods moved the needle, we will calculate the naive estimators. Let $p_{A(AC)}$ and $p_{C(AC)}$ be the raw probabilities of the event in the IPD trial, and let $p_{B(BC)}$ and $p_{C(BC)}$ be the raw probabilities in the ALD trial.
 
 * **Naive Anchored Risk Difference:** This assumes the relative effect is transportable without adjustment (the classic Bucher indirect comparison).
 
-$$\hat{\Delta}_{AB}^{\text{naive\_anchored}} = (p_A - p_{C(AC)}) - (p_B - p_{C(BC)})$$
+$$\hat{\Delta}_{AB}^{\text{naive\_anchored}} = (p_{A(AC)} - p_{C(AC)}) - (p_{B(BC)} - p_{C(BC)})$$
 
 
 * **Naive Unanchored Risk Difference:** This drops the common comparator entirely and assumes absolute exchangeability between the two isolated active arms.
 
-$$\hat{\Delta}_{AB}^{\text{naive\_unanchored}} = p_A - p_B$$
+$$\hat{\Delta}_{AB}^{\text{naive\_unanchored}} = p_{A(AC)} - p_{B(BC)}$$
 
 
 ::: {.callout-warning}

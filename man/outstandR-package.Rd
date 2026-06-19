@@ -18,7 +18,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Nathan Green \email{n.green@ucl.ac.uk} (\href{https://orcid.org/0000-0003-2745-1736}{ORCID}) (02jx3x895) [copyright holder]
+\strong{Maintainer}: Nathan Green \email{n.green@ucl.ac.uk} (\href{https://orcid.org/0000-0003-2745-1736}{ORCID}) (\href{https://ror.org/02jx3x895}{ROR}) [copyright holder]
 
 Authors:
 \itemize{
