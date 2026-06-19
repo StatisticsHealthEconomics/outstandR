@@ -4,7 +4,13 @@
 \alias{plot.outstandR}
 \title{Default Plot Method for outstandR Objects}
 \usage{
-\method{plot}{outstandR}(x, ..., type = c("both", "contrasts", "absolute"), labels = NULL)
+\method{plot}{outstandR}(
+  x,
+  ...,
+  type = c("both", "contrasts", "absolute"),
+  labels = NULL,
+  include_naive = TRUE
+)
 }
 \arguments{
 \item{x}{An object of class 'outstandR' or a list of 'outstandR' objects.}
@@ -14,6 +20,8 @@
 \item{type}{Character, one of "both" (default), "contrasts", or "absolute".}
 
 \item{labels}{Optional character vector of names for the models.}
+
+\item{include_naive}{Logical. Should naive (unadjusted) estimates be included in the plot? Default is TRUE.}
 }
 \value{
 A \code{\link[ggplot2:ggplot]{ggplot2::ggplot()}} object representing the forest plot of the results.

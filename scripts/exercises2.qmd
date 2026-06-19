@@ -289,7 +289,24 @@ prob_C_raw_BC <- BC_ALD_binY_contX |>
   pull(value)
 
 # 3. Naive Anchored Risk Difference
-naive_anchored_rd <- (prob_A_raw - prob_C_raw_AC) - (prob_B_raw - prob_C_raw_BC)
+# Explicit manual calculation (direct subtraction):
+naive_anchored_rd_explicit <- (prob_A_raw - prob_C_raw_AC) - (prob_B_raw - prob_C_raw_BC)
+
+# Or using outstandR's built-in calc_bucher_naive() function:
+# This calculates it on the log-odds scale and back-transforms, which is HTA best practice.
+naive_results_pkg <- calc_bucher_naive(
+  ipd_trial = AC_IPD_binY_contX,
+  ald_trial = BC_ALD_binY_contX,
+  outcome_model = lin_form_bin,
+  family = binomial(link = "logit"),
+  ref_trt = "C",
+  scale = "risk_difference"
+)
+naive_anchored_rd <- naive_results_pkg$Estimate
+
+# Note: You can also extract this directly from any of the outstandR output objects
+# since the naive Bucher comparison is run automatically under the hood:
+# naive_anchored_rd <- out_maic_rd$naive$Estimate
 
 # 4. Extract and bind results
 adjusted_results <- data.frame(
@@ -440,9 +457,6 @@ ggplot(data.frame(weights = out_maic$model$weights), aes(x = weights)) +
 
 If a large percentage of your weights are near zero, your MAIC estimates may be highly unstable, suggesting poor covariate overlap between your IPD and target population.
 
-<<<<<<< HEAD
-2.\ Next, let's explore the Bias-Variance trade-off by running a minimal, correctly specified MAIC balancing *only one* the effect modifiers.
-=======
 2.\ Fit a deliberately misspecified G-computation model to observe the consequences. We will purposefully drop the `trt:EM` interaction terms.
 
 ```{r}
@@ -466,7 +480,6 @@ cat("Correct ML G-comp Risk Difference (A vs B):", out_gcomp_ml_rd$results$contr
 ```
 
 3.\ Next, let's explore the Bias-Variance trade-off by running a minimal, correctly specified MAIC balancing *only one* effect modifier.
->>>>>>> f052889ab1209f78958e28b82c66c95af339a23c
 
 ```{r}
 #| echo: true
@@ -624,6 +637,16 @@ odds_A_naive <- odds_B * exp(naive_anchored_logOR)
 prob_A_naive <- odds_A_naive / (1 + odds_A_naive)
 
 naive_anchored_rd <- prob_A_naive - prob_B_raw
+
+# Alternatively, the above back-transformation can be done in one line using calc_bucher_naive():
+# naive_anchored_rd <- calc_bucher_naive(
+#   ipd_trial = AC_IPD_binY_contX,
+#   ald_trial = BC_ALD_binY_contX,
+#   outcome_model = lin_form_bin,
+#   family = binomial(link = "logit"),
+#   ref_trt = "C",
+#   scale = "risk_difference"
+# )$Estimate
 
 # 5. Naive Unanchored Risk Difference
 # A simple unadjusted direct comparison of A vs B

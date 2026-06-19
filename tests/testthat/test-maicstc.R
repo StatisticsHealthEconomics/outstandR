@@ -42,7 +42,7 @@ test_that("different combinations of covariates in formula MAIC", {
     formula = list(balance_model = as.formula("~ X1")))
   
   res <- outstandR(AC_IPD, BC_ALD, strategy = strat_1234)
-  expect_length(res, 13)
+  expect_length(res, 14)
   
   res <- outstandR(AC_IPD, BC_ALD, strategy = strat_123)
   
