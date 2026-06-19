@@ -289,7 +289,7 @@ prob_C_raw_BC <- BC_ALD_binY_contX |>
   pull(value)
 
 # 3. Naive Anchored Risk Difference
-# Explicit manual calculation (direct subtraction):
+# Explicit manual calculation (direct subtraction on probability scale):
 naive_anchored_rd_explicit <- (prob_A_raw - prob_C_raw_AC) - (prob_B_raw - prob_C_raw_BC)
 
 # Or using outstandR's built-in calc_bucher_naive() function:
@@ -302,11 +302,11 @@ naive_results_pkg <- calc_bucher_naive(
   ref_trt = "C",
   scale = "risk_difference"
 )
-naive_anchored_rd <- naive_results_pkg$Estimate
+naive_anchored_rd_pkg <- naive_results_pkg$Estimate
 
 # Note: You can also extract this directly from any of the outstandR output objects
 # since the naive Bucher comparison is run automatically under the hood:
-# naive_anchored_rd <- out_maic_rd$naive$Estimate
+# naive_anchored_rd_pkg <- out_maic_rd$naive$Estimate
 
 # 4. Extract and bind results
 adjusted_results <- data.frame(
@@ -318,19 +318,28 @@ adjusted_results <- data.frame(
                out_gcomp_ml_rd$results$contrasts$CI$AB[2]), 
   Method = c("MAIC (Anchored, Adjusted)", "G-comp ML (Anchored, Adjusted)"))
 
-naive_result <- data.frame(
+naive_result_explicit <- data.frame(
   Treatments = "AB",
-  Estimate = naive_anchored_rd,
+  Estimate = naive_anchored_rd_explicit,
   `Std. Error` = NA, lower.0.95 = NA, upper.0.95 = NA,
-  Method = "Naive Indirect (Anchored, Unadjusted)",
+  Method = "Naive Indirect (Anchored, Unadjusted - Risk Subtraction)",
   check.names = FALSE
 )
 
-all_results_intro <- bind_rows(adjusted_results, naive_result)
+naive_result_pkg <- data.frame(
+  Treatments = "AB",
+  Estimate = naive_anchored_rd_pkg,
+  `Std. Error` = NA, lower.0.95 = NA, upper.0.95 = NA,
+  Method = "Naive Indirect (Anchored, Unadjusted - Log-Odds Back-transformed)",
+  check.names = FALSE
+)
+
+all_results_intro <- bind_rows(adjusted_results, naive_result_explicit, naive_result_pkg)
 
 # Order the factor for plotting
 all_results_intro$Method <- factor(all_results_intro$Method, levels = c(
-  "Naive Indirect (Anchored, Unadjusted)",
+  "Naive Indirect (Anchored, Unadjusted - Risk Subtraction)",
+  "Naive Indirect (Anchored, Unadjusted - Log-Odds Back-transformed)",
   "MAIC (Anchored, Adjusted)",
   "G-comp ML (Anchored, Adjusted)"
 ))
