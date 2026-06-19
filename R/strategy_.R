@@ -102,6 +102,16 @@ strategy_maic <- function(formula = NULL,
       }
     }
   }
+  # Ensure MAIC uses an unadjusted outcome model to prevent estimating conditional effects.
+  resp_var <- all.vars(outcome_model)[1]
+  out_vars <- all.vars(outcome_model)
+  
+  if (length(setdiff(out_vars, c(resp_var, trt_var))) > 0) {
+    if (verbatim) {
+      warning("Covariates detected in the MAIC outcome model. To ensure the estimation of compatible marginal treatment effects, MAIC requires an unadjusted outcome model. The outcome model is being automatically overridden to '", resp_var, " ~ ", trt_var, "'.", call. = FALSE)
+    }
+    outcome_model <- as.formula(paste(resp_var, "~", trt_var))
+  }
   
   check_formula(outcome_model, trt_var)
   

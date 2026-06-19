@@ -100,8 +100,8 @@ values.
 
 Remiro‐Azócar A, Heath A, Baio G (2022). “Parametric G‐computation for
 compatible indirect treatment comparisons with limited individual
-patient data.” *Res. Synth. Methods*, 1–31. ISSN 1759-2879.
-[doi:10.1002/jrsm.1565](https://doi.org/10.1002/jrsm.1565) . 2108.12208.
+patient data.” *Res. Synth. Methods*, 1–31. ISSN 1759-2879,
+[doi:10.1002/jrsm.1565](https://doi.org/10.1002/jrsm.1565) , 2108.12208.
 
 ## See also
 
@@ -179,8 +179,8 @@ outstandR_gcomp_bayes <- outstandR(
 #> 
 #> SAMPLING FOR MODEL 'continuous' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 5.2e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.52 seconds.
+#> Chain 1: Gradient evaluation took 3.7e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.37 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -197,9 +197,9 @@ outstandR_gcomp_bayes <- outstandR(
 #> Chain 1: Iteration: 520 / 1000 [ 52%]  (Sampling)
 #> Chain 1: Iteration: 1000 / 1000 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.001 seconds (Warm-up)
-#> Chain 1:                0.074 seconds (Sampling)
-#> Chain 1:                0.075 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.002 seconds (Warm-up)
+#> Chain 1:                0.103 seconds (Sampling)
+#> Chain 1:                0.105 seconds (Total)
 #> Chain 1: 
 
 # Multiple imputation marginalization
@@ -214,8 +214,8 @@ outstandR_mim <- outstandR(
 #> 
 #> SAMPLING FOR MODEL 'continuous' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 3.2e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.32 seconds.
+#> Chain 1: Gradient evaluation took 2.2e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.22 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -241,8 +241,8 @@ outstandR_mim <- outstandR(
 #> Chain 1: Iteration: 1000 / 1000 [100%]  (Sampling)
 #> Chain 1: 
 #> Chain 1:  Elapsed Time: 0 seconds (Warm-up)
-#> Chain 1:                0.075 seconds (Sampling)
-#> Chain 1:                0.075 seconds (Total)
+#> Chain 1:                0.107 seconds (Sampling)
+#> Chain 1:                0.107 seconds (Total)
 #> Chain 1: 
 #> Warning: There were 1 chains where the estimated Bayesian Fraction of Missing Information was low. See
 #> https://mc-stan.org/misc/warnings.html#bfmi-low

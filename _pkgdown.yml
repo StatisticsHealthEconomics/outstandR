@@ -83,14 +83,17 @@ reference:
   contents:
   - strategy-class
 
-# articles:
-# - title: "Binary outcome data example"
-#   contents:
-#     - "Binary_outcome_example"
-# - title: "Continuous outcome data example"
-#   contents:
-#     - "Continuous_outcome_example"
-# - title: "Count outcome data example"
-#   contents:
-#     - "Count_outcome_example"
+articles:
+- title: "Binary outcome data example"
+  contents:
+    - "Binary_outcome_example"
+- title: "Continuous outcome data example"
+  contents:
+    - "Continuous_outcome_example"
+- title: "Count outcome data example"
+  contents:
+    - "Count_outcome_example"
+- title: "Developer Guides"
+  contents:
+    - "articles/adding-a-new-strategy"
     

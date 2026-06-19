@@ -3,7 +3,7 @@
 ## Introduction
 
 This vignette will demonstrate the use of the
-[outstandR](https://StatisticsHealthEconomics.github.io/outstandR)
+[outstandR](https://StatisticsHealthEconomics.github.io/outstandR/)
 package to fit the range of types of models to simulated binary data.
 Related vignettes will provide equivalent analyses for continuous and
 count data.
@@ -27,7 +27,7 @@ library(tidyr)
 library(dplyr)
 library(MASS)
 library(outstandR)
-library(simcovariates)
+library(simcovariates)  # from GitHub
 ```
 
 ### Data
@@ -53,7 +53,7 @@ The simulation input parameters are given below.
 | `N` | Sample size | 200 |
 | `allocation` | Active treatment vs. placebo allocation ratio (2:1) | 2/3 |
 | `b_trt` | Conditional effect of active treatment vs. comparator (log(0.17)) | -1.77196 |
-| `b_X` | Conditional effect of each prognostic variable (-log(0.5)) | 0.69315 |
+| `b_PF` | Conditional effect of each prognostic variable (-log(0.5)) | 0.69315 |
 | `b_EM` | Conditional interaction effect of each effect modifier (-log(0.67)) | 0.40048 |
 | `meanX_AC[1]` | Mean of prognostic factor in AC trial | 0.45 |
 | `meanX_AC[2]` | Mean of prognostic factor in AC trial | 0.45 |
@@ -68,18 +68,14 @@ The simulation input parameters are given below.
 | `corX` | Covariate correlation coefficient | 0.2 |
 | `b_0` | Baseline intercept | -0.6 |
 
-We shall use the
-[`gen_data()`](https://rdrr.io/pkg/simcovariates/man/gen_data.html)
-function available with the
-[simcovariates](https://github.com/n8thangreen/simcovariates) package on
-GitHub.
+Translating to R code.
 
 ``` r
 
 N <- 200
 allocation <- 2/3      # active treatment vs. placebo allocation ratio (2:1)
 b_trt <- log(0.17)     # conditional effect of active treatment vs. common comparator
-b_X <- -log(0.5)       # conditional effect of each prognostic variable
+b_PF <- -log(0.5)       # conditional effect of each prognostic variable
 b_EM <- -log(0.67)     # conditional interaction effect of each effect modifier
 meanX_AC <- c(0.45, 0.45)       # mean of normally-distributed covariate in AC trial
 meanX_BC <- c(0.6, 0.6)         # mean of each normally-distributed covariate in BC
@@ -89,6 +85,15 @@ sdX <- c(0.4, 0.4)     # standard deviation of each covariate (same for AC and B
 sdX_EM <- c(0.4, 0.4)  # standard deviation of each EM covariate
 corX <- 0.2            # covariate correlation coefficient  
 b_0 <- -0.6            # baseline intercept coefficient  ##TODO: fixed value
+```
+
+We shall use the `gen_data()` function available with the
+[simcovariates](https://github.com/n8thangreen/simcovariates) package on
+GitHub. For this, we need to define a list of covariates with
+distribution `type` and relationship to the outcome `role` as either
+`prognostic`, `effect_modifier` or both.
+
+``` r
 
 covariate_defns_ipd <- list(
   PF_cont_1 = list(type = continuous(mean = meanX_AC[1], sd = sdX[1]),
@@ -101,7 +106,7 @@ covariate_defns_ipd <- list(
                     role = "effect_modifier")
 )
 
-b_prognostic <- c(PF_cont_1 = b_X, PF_cont_2 = b_X)
+b_prognostic <- c(PF_cont_1 = b_PF, PF_cont_2 = b_PF)
 
 b_effect_modifier <- c(EM_cont_1 = b_EM, EM_cont_2 = b_EM)
 
@@ -139,6 +144,8 @@ the additional summarise step. We set different mean values `meanX_BC`
 and `meanX_EM_BC` but otherwise use the same parameter values as for the
 $`AC`$ trial.
 
+First, simulate the underlying IPD similarly for the AC trial.
+
 ``` r
 
 covariate_defns_ald <- list(
@@ -164,6 +171,14 @@ BC.IPD <- simcovariates::gen_data(
   family = binomial("logit"))
 
 BC.IPD$trt <- factor(BC.IPD$trt, labels = c("C", "B"))
+```
+
+Next, we aggregate these data. We
+[`summarise()`](https://dplyr.tidyverse.org/reference/summarise.html)
+the covariates, sample sizes and outcomes separately and then bind the
+results together.
+
+``` r
 
 # covariate summary statistics
 # assume same between treatments
@@ -206,8 +221,6 @@ summary.y <-
     names_to = "statistic",
     values_to = "value") %>%
   ungroup()
-#> `summarise()` has grouped output by 'variable'. You can override using the
-#> `.groups` argument.
 
 # sample sizes
 summary.N <- 
@@ -244,18 +257,11 @@ the following.
 - `trt`: Treatment label. Because we assume a common covariate
   distribution between treatment arms this is `NA`
 
-Our data look like the following.
+Our final data look like the following.
 
 ``` r
 
 head(ipd_trial)
-#>   id   PF_cont_1   PF_cont_2  EM_cont_1   EM_cont_2 trt y     true_eta
-#> 1  1  0.75056436  0.95597583  0.3158969  1.19430733   C 0  0.582883524
-#> 2  2  0.83246940  0.11789773  0.5094678  0.08180243   A 1 -1.476422106
-#> 3  3  1.13401333  1.15036919  1.2342379  0.74771694   A 0  0.005184912
-#> 4  4  0.78518298  0.83080451 -0.1625820  0.35223227   C 1  0.520117172
-#> 5  5 -0.38547667  0.87070020  0.7213797 -0.03557032   A 1 -1.760974264
-#> 6  6 -0.04851591 -0.03013213  0.6580067  0.05853054   A 0 -2.139514435
 ```
 
 There are 4 correlated continuous covariates generated per subject,
@@ -266,25 +272,6 @@ is ‘anchored’ via *C*, the common treatment.
 ``` r
 
 ald_trial
-#> # A tibble: 16 × 4
-#>    variable  statistic   value trt  
-#>    <chr>     <chr>       <dbl> <chr>
-#>  1 EM_cont_1 mean        0.616 NA   
-#>  2 EM_cont_1 sd          0.408 NA   
-#>  3 EM_cont_2 mean        0.635 NA   
-#>  4 EM_cont_2 sd          0.354 NA   
-#>  5 PF_cont_1 mean        0.666 NA   
-#>  6 PF_cont_1 sd          0.398 NA   
-#>  7 PF_cont_2 mean        0.663 NA   
-#>  8 PF_cont_2 sd          0.404 NA   
-#>  9 y         mean        0.597 C    
-#> 10 y         sd          0.494 C    
-#> 11 y         sum        43     C    
-#> 12 y         mean        0.297 B    
-#> 13 y         sd          0.459 B    
-#> 14 y         sum        38     B    
-#> 15 NA        N          72     C    
-#> 16 NA        N         128     B
 ```
 
 In this case, we have 4 covariate mean and standard deviation values;
@@ -296,13 +283,13 @@ and the event total, average and sample size for each treatment *B* and
 The true logistic outcome model which we use to simulate the data is
 
 ``` math
-\text{logit}(p_{t}) = \beta_0 + \beta_X (X_3 + X_4) + [\beta_{t} + \beta_{EM} (X_1 + X_2)] \; \text{I}(t \neq C)
+\text{logit}(p_{t}) = \beta_0 + \beta_{PF} (X_3 + X_4) + [\beta_{t} + \beta_{EM} (X_1 + X_2)] \; \text{I}(t \neq C)
 ```
 
 $`\text{I}()`$ is an indicator function taking value 1 if true and 0
 otherwise. That is, for treatment $`C`$ the right hand side becomes
-$`\beta_0 + \beta_X (X_3 + X_4)`$ and for comparator treatments $`A`$ or
-$`B`$ there is an additional $`\beta_t + \beta_{EM} (X_1 + X_2)`$
+$`\beta_0 + \beta_{PF} (X_3 + X_4)`$ and for comparator treatments $`A`$
+or $`B`$ there is an additional $`\beta_t + \beta_{EM} (X_1 + X_2)`$
 component consisting of the effect modifier terms and the coefficient
 for the treatment parameter, $`\beta_t`$ (or `b_trt` in the R code),
 i.e. the log odds-ratio (LOR) for the logit model. Finally, $`p_{t}`$ is
@@ -332,7 +319,7 @@ outcome scales will be discussed below.
 
 ## Model fitting in R
 
-The [outstandR](https://StatisticsHealthEconomics.github.io/outstandR)
+The [outstandR](https://StatisticsHealthEconomics.github.io/outstandR/)
 package has been written to be easy to use and essentially consists of a
 single function,
 [`outstandR()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/outstandR.md).
@@ -366,7 +353,10 @@ appears as a linear regression. This corresponds to the following `R`
 
 ``` r
 
-lin_form <- as.formula("y ~ PF_cont_1 + PF_cont_2 + trt + trt:EM_cont_1 + trt:EM_cont_2")
+lin_form <- list(
+  outcome_model = as.formula("y ~ PF_cont_1 + PF_cont_2 + trt:EM_cont_1 + trt:EM_cont_2"),
+  balance_model = as.formula("~ PF_cont_1 + PF_cont_2 + EM_cont_1 + EM_cont_2")
+)
 ```
 
 Note that the more succinct formula
@@ -420,36 +410,6 @@ The returned object is of class `outstandR`.
 ``` r
 
 str(outstandR_maic)
-#> List of 2
-#>  $ contrasts:List of 3
-#>   ..$ means    :List of 3
-#>   .. ..$ AB: num 0.607
-#>   .. ..$ AC: num -0.649
-#>   .. ..$ BC: num -1.26
-#>   ..$ variances:List of 3
-#>   .. ..$ AB: num 0.233
-#>   .. ..$ AC: num 0.137
-#>   .. ..$ BC: num 0.0952
-#>   ..$ CI       :List of 3
-#>   .. ..$ AB: num [1:2] -0.338 1.552
-#>   .. ..$ AC: num [1:2] -1.3757 0.0776
-#>   .. ..$ BC: num [1:2] -1.861 -0.652
-#>  $ absolute :List of 2
-#>   ..$ means    :List of 2
-#>   .. ..$ A: Named num 0.341
-#>   .. .. ..- attr(*, "names")= chr "mean_A"
-#>   .. ..$ C: Named num 0.495
-#>   .. .. ..- attr(*, "names")= chr "mean_C"
-#>   ..$ variances:List of 2
-#>   .. ..$ A: Named num 0.00271
-#>   .. .. ..- attr(*, "names")= chr "mean_A"
-#>   .. ..$ C: Named num 0.00518
-#>   .. .. ..- attr(*, "names")= chr "mean_C"
-#>  - attr(*, "CI")= num 0.95
-#>  - attr(*, "ref_trt")= chr "C"
-#>  - attr(*, "scale")= chr "log_odds"
-#>  - attr(*, "model")= chr "binomial"
-#>  - attr(*, "class")= chr [1:2] "outstandR" "list"
 ```
 
 We see that this is a list object with 2 parts. The first contains
@@ -465,30 +425,6 @@ human-readable output
 ``` r
 
 outstandR_maic
-#> Object of class 'outstandR' 
-#> Model: binomial 
-#> Scale: log_odds 
-#> Common treatment: C 
-#> Individual patient data study: AC 
-#> Aggregate level data study: BC 
-#> Confidence interval level: 0.95 
-#> 
-#> Contrasts:
-#> 
-#> # A tibble: 3 × 5
-#>   Treatments Estimate Std.Error lower.0.95 upper.0.95
-#>   <chr>         <dbl>     <dbl>      <dbl>      <dbl>
-#> 1 AB            0.607    0.233      -0.338     1.55  
-#> 2 AC           -0.649    0.137      -1.38      0.0776
-#> 3 BC           -1.26     0.0952     -1.86     -0.652 
-#> 
-#> Absolute:
-#> 
-#> # A tibble: 2 × 5
-#>   Treatments Estimate Std.Error lower.0.95 upper.0.95
-#>   <chr>         <dbl>     <dbl> <lgl>      <lgl>     
-#> 1 A             0.341   0.00271 NA         NA        
-#> 2 C             0.495   0.00518 NA         NA
 ```
 
 #### Outcome scale
@@ -558,124 +494,7 @@ outstandR_maic_lrr <-
 ``` r
 
 outstandR_maic_lrr
-#> Object of class 'outstandR' 
-#> Model: binomial 
-#> Scale: log_relative_risk 
-#> Common treatment: C 
-#> Individual patient data study: AC 
-#> Aggregate level data study: BC 
-#> Confidence interval level: 0.95 
-#> 
-#> Contrasts:
-#> 
-#> # A tibble: 3 × 5
-#>   Treatments Estimate Std.Error lower.0.95 upper.0.95
-#>   <chr>         <dbl>     <dbl>      <dbl>      <dbl>
-#> 1 AB            0.307    0.0793     -0.244     0.859 
-#> 2 AC           -0.392    0.0514     -0.836     0.0527
-#> 3 BC           -0.699    0.0279     -1.03     -0.372 
-#> 
-#> Absolute:
-#> 
-#> # A tibble: 2 × 5
-#>   Treatments Estimate Std.Error lower.0.95 upper.0.95
-#>   <chr>         <dbl>     <dbl> <lgl>      <lgl>     
-#> 1 A             0.339   0.00258 NA         NA        
-#> 2 C             0.501   0.00537 NA         NA
 ```
-
-### Simulated treatment comparison (STC)
-
-Simulated treatment comparison (STC) is the conventional outcome
-regression method. It involves fitting a regression model of outcome on
-treatment and covariates to the IPD anad then ‘plugging-in’ mean
-covariate values from the aggregate data study.
-
-We can simply pass the same formula as before to the modified call with
-[`strategy_stc()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md).
-
-``` r
-
-outstandR_stc <-
-  outstandR(ipd_trial, ald_trial,
-            strategy = strategy_stc(
-              formula = lin_form,
-              family = binomial(link = "logit")))
-```
-
-``` r
-
-outstandR_stc
-#> Object of class 'outstandR' 
-#> Model: binomial 
-#> Scale: log_odds 
-#> Common treatment: C 
-#> Individual patient data study: AC 
-#> Aggregate level data study: BC 
-#> Confidence interval level: 0.95 
-#> 
-#> Contrasts:
-#> 
-#> # A tibble: 3 × 5
-#>   Treatments Estimate Std.Error lower.0.95 upper.0.95
-#>   <chr>         <dbl>     <dbl>      <dbl>      <dbl>
-#> 1 AB           0.0584   NA           NA        NA    
-#> 2 AC          -1.20     NA           NA        NA    
-#> 3 BC          -1.26      0.0952      -1.86     -0.652
-#> 
-#> Absolute:
-#> 
-#> # A tibble: 2 × 5
-#>   Treatments Estimate Std.Error lower.0.95 upper.0.95
-#>   <chr>         <dbl>     <dbl> <lgl>      <lgl>     
-#> 1 A             0.137        NA NA         NA        
-#> 2 C             0.344        NA NA         NA
-```
-
-Changing the outcome scale to LRR gives
-
-``` r
-
-outstandR_stc_lrr <-
-  outstandR(ipd_trial, ald_trial,
-            strategy = strategy_stc(
-              formula = lin_form,
-              family = binomial(link = "logit")),
-            scale = "log_relative_risk")
-```
-
-``` r
-
-outstandR_stc_lrr
-#> Object of class 'outstandR' 
-#> Model: binomial 
-#> Scale: log_relative_risk 
-#> Common treatment: C 
-#> Individual patient data study: AC 
-#> Aggregate level data study: BC 
-#> Confidence interval level: 0.95 
-#> 
-#> Contrasts:
-#> 
-#> # A tibble: 3 × 5
-#>   Treatments Estimate Std.Error lower.0.95 upper.0.95
-#>   <chr>         <dbl>     <dbl>      <dbl>      <dbl>
-#> 1 AB           -0.224   NA           NA        NA    
-#> 2 AC           -0.923   NA           NA        NA    
-#> 3 BC           -0.699    0.0279      -1.03     -0.372
-#> 
-#> Absolute:
-#> 
-#> # A tibble: 2 × 5
-#>   Treatments Estimate Std.Error lower.0.95 upper.0.95
-#>   <chr>         <dbl>     <dbl> <lgl>      <lgl>     
-#> 1 A             0.137        NA NA         NA        
-#> 2 C             0.344        NA NA         NA
-```
-
-The following approaches follow naturally from the simple ‘plug-in’
-version of STC. We will perform G-computation firstly with a frequentist
-MLE and then a Bayesian approach.
 
 ### Parametric G-computation with maximum-likelihood estimation
 
@@ -686,7 +505,7 @@ outcome $`y`$ on the covariates $`x`$ and treatment $`z`$ is fitted to
 the *AC* IPD:
 
 ``` math
-g(\mu_n) = \beta_0 + \boldsymbol{x}_n \boldsymbol{\beta_X} + (\beta_z + \boldsymbol{x_n^{EM}} \boldsymbol{\beta_{EM}}) \; \mbox{I}(t \neq C)
+g(\mu_n) = \beta_0 + \boldsymbol{x}_n \boldsymbol{\beta_{PF}} + (\beta_z + \boldsymbol{x_n^{EM}} \boldsymbol{\beta_{EM}}) \; \mbox{I}(t \neq C)
 ```
 
 In the context of G-computation, this regression model is often called
@@ -722,30 +541,6 @@ outstandR_gcomp_ml <-
 ``` r
 
 outstandR_gcomp_ml
-#> Object of class 'outstandR' 
-#> Model: binomial 
-#> Scale: log_odds 
-#> Common treatment: C 
-#> Individual patient data study: AC 
-#> Aggregate level data study: BC 
-#> Confidence interval level: 0.95 
-#> 
-#> Contrasts:
-#> 
-#> # A tibble: 3 × 5
-#>   Treatments Estimate Std.Error lower.0.95 upper.0.95
-#>   <chr>         <dbl>     <dbl>      <dbl>      <dbl>
-#> 1 AB            0.602    0.232      -0.342     1.55  
-#> 2 AC           -0.654    0.137      -1.38      0.0714
-#> 3 BC           -1.26     0.0952     -1.86     -0.652 
-#> 
-#> Absolute:
-#> 
-#> # A tibble: 2 × 5
-#>   Treatments Estimate Std.Error lower.0.95 upper.0.95
-#>   <chr>         <dbl>     <dbl> <lgl>      <lgl>     
-#> 1 A             0.411   0.00291 NA         NA        
-#> 2 C             0.570   0.00563 NA         NA
 ```
 
 Once again, let us change the outcome scale to LRR
@@ -763,30 +558,6 @@ outstandR_gcomp_ml_lrr <-
 ``` r
 
 outstandR_gcomp_ml_lrr
-#> Object of class 'outstandR' 
-#> Model: binomial 
-#> Scale: log_relative_risk 
-#> Common treatment: C 
-#> Individual patient data study: AC 
-#> Aggregate level data study: BC 
-#> Confidence interval level: 0.95 
-#> 
-#> Contrasts:
-#> 
-#> # A tibble: 3 × 5
-#>   Treatments Estimate Std.Error lower.0.95 upper.0.95
-#>   <chr>         <dbl>     <dbl>      <dbl>      <dbl>
-#> 1 AB            0.377    0.0602     -0.104     0.858 
-#> 2 AC           -0.322    0.0323     -0.674     0.0307
-#> 3 BC           -0.699    0.0279     -1.03     -0.372 
-#> 
-#> Absolute:
-#> 
-#> # A tibble: 2 × 5
-#>   Treatments Estimate Std.Error lower.0.95 upper.0.95
-#>   <chr>         <dbl>     <dbl> <lgl>      <lgl>     
-#> 1 A             0.409   0.00276 NA         NA        
-#> 2 C             0.563   0.00504 NA         NA
 ```
 
 ### Bayesian G-computation with MCMC
@@ -837,30 +608,6 @@ outstandR_gcomp_bayes <-
 ``` r
 
 outstandR_gcomp_bayes
-#> Object of class 'outstandR' 
-#> Model: binomial 
-#> Scale: log_odds 
-#> Common treatment: C 
-#> Individual patient data study: AC 
-#> Aggregate level data study: BC 
-#> Confidence interval level: 0.95 
-#> 
-#> Contrasts:
-#> 
-#> # A tibble: 3 × 5
-#>   Treatments Estimate Std.Error lower.0.95 upper.0.95
-#>   <chr>         <dbl>     <dbl>      <dbl>      <dbl>
-#> 1 AB            0.612    0.228      -0.325     1.55  
-#> 2 AC           -0.644    0.133      -1.36      0.0713
-#> 3 BC           -1.26     0.0952     -1.86     -0.652 
-#> 
-#> Absolute:
-#> 
-#> # A tibble: 2 × 5
-#>   Treatments Estimate Std.Error lower.0.95 upper.0.95
-#>   <chr>         <dbl>     <dbl> <lgl>      <lgl>     
-#> 1 A             0.411   0.00288 NA         NA        
-#> 2 C             0.568   0.00521 NA         NA
 ```
 
 As before, we can change the outcome scale to LRR.
@@ -878,30 +625,6 @@ outstandR_gcomp_bayes_lrr <-
 ``` r
 
 outstandR_gcomp_bayes_lrr
-#> Object of class 'outstandR' 
-#> Model: binomial 
-#> Scale: log_relative_risk 
-#> Common treatment: C 
-#> Individual patient data study: AC 
-#> Aggregate level data study: BC 
-#> Confidence interval level: 0.95 
-#> 
-#> Contrasts:
-#> 
-#> # A tibble: 3 × 5
-#>   Treatments Estimate Std.Error lower.0.95 upper.0.95
-#>   <chr>         <dbl>     <dbl>      <dbl>      <dbl>
-#> 1 AB            0.375    0.0607     -0.108     0.858 
-#> 2 AC           -0.324    0.0328     -0.679     0.0308
-#> 3 BC           -0.699    0.0279     -1.03     -0.372 
-#> 
-#> Absolute:
-#> 
-#> # A tibble: 2 × 5
-#>   Treatments Estimate Std.Error lower.0.95 upper.0.95
-#>   <chr>         <dbl>     <dbl> <lgl>      <lgl>     
-#> 1 A             0.411   0.00288 NA         NA        
-#> 2 C             0.568   0.00521 NA         NA
 ```
 
 ### Multiple imputation marginalisation
@@ -936,30 +659,6 @@ outstandR_mim <-
 ``` r
 
 outstandR_mim
-#> Object of class 'outstandR' 
-#> Model: binomial 
-#> Scale: log_odds 
-#> Common treatment: C 
-#> Individual patient data study: AC 
-#> Aggregate level data study: BC 
-#> Confidence interval level: 0.95 
-#> 
-#> Contrasts:
-#> 
-#> # A tibble: 3 × 5
-#>   Treatments Estimate Std.Error lower.0.95 upper.0.95
-#>   <chr>         <dbl>     <dbl>      <dbl>      <dbl>
-#> 1 AB            0.612    0.216      -0.299     1.52  
-#> 2 AC           -0.644    0.121      -1.33      0.0386
-#> 3 BC           -1.26     0.0952     -1.86     -0.652 
-#> 
-#> Absolute:
-#> 
-#> # A tibble: 2 × 5
-#>   Treatments Estimate Std.Error lower.0.95 upper.0.95
-#>   <chr>      <lgl>    <lgl>     <lgl>      <lgl>     
-#> 1 A          NA       NA        NA         NA        
-#> 2 C          NA       NA        NA         NA
 ```
 
 Change the outcome scale again for LRR,
@@ -977,30 +676,6 @@ outstandR_mim_lrr <-
 ``` r
 
 outstandR_mim_lrr
-#> Object of class 'outstandR' 
-#> Model: binomial 
-#> Scale: log_relative_risk 
-#> Common treatment: C 
-#> Individual patient data study: AC 
-#> Aggregate level data study: BC 
-#> Confidence interval level: 0.95 
-#> 
-#> Contrasts:
-#> 
-#> # A tibble: 3 × 5
-#>   Treatments Estimate Std.Error lower.0.95 upper.0.95
-#>   <chr>         <dbl>     <dbl>      <dbl>      <dbl>
-#> 1 AB            0.375    0.0516    -0.0704     0.820 
-#> 2 AC           -0.324    0.0237    -0.626     -0.0227
-#> 3 BC           -0.699    0.0279    -1.03      -0.372 
-#> 
-#> Absolute:
-#> 
-#> # A tibble: 2 × 5
-#>   Treatments Estimate Std.Error lower.0.95 upper.0.95
-#>   <chr>      <lgl>    <lgl>     <lgl>      <lgl>     
-#> 1 A          NA       NA        NA         NA        
-#> 2 C          NA       NA        NA         NA
 ```
 
 ## Model comparison
@@ -1067,6 +742,16 @@ var.d.BC <- with(ald_out, 1/sum_B + 1/(N_B - sum_B) + 1/sum_C + 1/(N_C - sum_C))
 var.d.AB.naive <- d_AC_naive$var_AC + var.d.BC
 ```
 
+Alternatively, we can compute this using `outstandR`’s built-in
+[`calc_bucher_naive()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_bucher_naive.md)
+function:
+
+``` r
+
+naive_results <- calc_bucher_naive(ipd_trial, ald_trial, outcome_model = lin_form, family = binomial(link = "logit"))
+naive_results
+```
+
 Of course, the $`BC`$ contrast is calculated directly.
 
 ## Results
@@ -1074,12 +759,6 @@ Of course, the $`BC`$ contrast is calculated directly.
 We now combine all outputs and present in plots and tables. For a
 log-odds ratio a table of all contrasts and methods in the $`BC`$
 population is given below.
-
-|     | d_true | d_naive |  MAIC |   STC | Gcomp.ML | Gcomp.Bayes |   MIM |
-|:----|-------:|--------:|------:|------:|---------:|------------:|------:|
-| AB  |   0.00 |    0.30 |  0.61 |  0.06 |     0.60 |        0.61 |  0.61 |
-| AC  |  -1.28 |   -0.95 | -0.65 | -1.20 |    -0.65 |       -0.64 | -0.64 |
-| BC  |  -1.26 |   -1.26 | -1.26 | -1.26 |    -1.26 |       -1.26 | -1.26 |
 
 We can see that the different corresponds reasonably well with one
 another.
@@ -1096,19 +775,9 @@ d_AC_true_lrr
 
 so that the summary table is
 
-|     |  MAIC |   STC | Gcomp.ML | Gcomp.Bayes |   MIM |
-|:----|------:|------:|---------:|------------:|------:|
-| AB  |  0.31 | -0.22 |     0.38 |        0.37 |  0.37 |
-| AC  | -0.39 | -0.92 |    -0.32 |       -0.32 | -0.32 |
-| BC  | -0.70 | -0.70 |    -0.70 |       -0.70 | -0.70 |
-
 #### Plots
 
 The same output can be presented in forest plots is as follows. Each
 horizontal bar represent a different method and the facets group these
 by treatment comparison for the $`BC`$ population. The log-odds ratio
 and log risk ratio plot are given below.
-
-![](Binary_outcome_example_files/figure-html/forest-lor-1.png)
-
-![](Binary_outcome_example_files/figure-html/forest-rr-1.png)
