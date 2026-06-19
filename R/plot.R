@@ -102,12 +102,31 @@ plot.outstandR <- function(x, ...,
     plot_df$Model <- factor(plot_df$Model, levels = model_levels)
   }
   
+  # Define custom colors so that any naive model is plotted in black
+  n_models <- length(model_levels)
+  is_naive <- grepl("Naive", model_levels, ignore.case = TRUE)
+  n_non_naive <- sum(!is_naive)
+  
+  if (n_non_naive > 0) {
+    non_naive_colors <- grDevices::hcl(
+      h = seq(15, 375, length.out = n_non_naive + 1)[1:n_non_naive], 
+      c = 100, 
+      l = 65
+    )
+  } else {
+    non_naive_colors <- character(0)
+  }
+  
+  model_colors <- stats::setNames(rep("black", n_models), model_levels)
+  model_colors[!is_naive] <- non_naive_colors
+
   # combined forest plot
   ggplot(
     plot_df, aes(x = .data$Estimate, y = .data$Treatments, color = .data$Model)) +
     geom_point(position = position_dodge(width = 0.5), size = 3) +
     geom_errorbarh(aes(xmin = .data$lower.0.95, xmax = .data$upper.0.95), 
                    position = position_dodge(width = 0.5), height = 0.2, na.rm = TRUE) +
+    scale_color_manual(values = model_colors) +
     facet_wrap(~.data$Type, scales = "free") +
     geom_vline(data = dplyr::filter(plot_df, .data$Type == "Relative Contrasts"), 
                aes(xintercept = 0), linetype = "dashed", color = "gray50") +

@@ -341,9 +341,20 @@ all_results_intro$Method <- factor(all_results_intro$Method, levels = c(
 ```{r}
 #| echo: true
 
+# Define colors: naive is black, others are default ggplot2 colors
+methods_intro <- levels(all_results_intro$Method)
+is_naive_intro <- grepl("Naive", methods_intro, ignore.case = TRUE)
+n_non_naive_intro <- sum(!is_naive_intro)
+colors_intro <- stats::setNames(rep("black", length(methods_intro)), methods_intro)
+colors_intro[!is_naive_intro] <- grDevices::hcl(
+  h = seq(15, 375, length.out = n_non_naive_intro + 1)[1:n_non_naive_intro], 
+  c = 100, l = 65
+)
+
 ggplot(all_results_intro, aes(x = Estimate, y = Method, color = Method)) +
   geom_point(size = 4) +
   geom_errorbarh(aes(xmin = lower.0.95, xmax = upper.0.95), height = 0.2, linewidth = 1, na.rm = TRUE) +
+  scale_color_manual(values = colors_intro) +
   geom_vline(xintercept = 0, linetype = "dashed", color = "gray50", linewidth = 1) +
   theme_minimal() +
   labs(
@@ -696,9 +707,20 @@ all_results_final$Method <- factor(all_results_final$Method, levels = c(
   "G-comp ML (Anchored, Adjusted)"
 ))
 
+# Define colors dynamically: naive is black, others are default ggplot2 colors
+methods_final <- levels(all_results_final$Method)
+is_naive_final <- grepl("Naive", methods_final, ignore.case = TRUE)
+n_non_naive_final <- sum(!is_naive_final)
+colors_final <- stats::setNames(rep("black", length(methods_final)), methods_final)
+colors_final[!is_naive_final] <- grDevices::hcl(
+  h = seq(15, 375, length.out = n_non_naive_final + 1)[1:n_non_naive_final], 
+  c = 100, l = 65
+)
+
 ggplot(all_results_final, aes(x = Estimate, y = Method, color = Method)) +
   geom_point(size = 4) +
   geom_errorbarh(aes(xmin = lower.0.95, xmax = upper.0.95), height = 0.2, linewidth = 1, na.rm = TRUE) +
+  scale_color_manual(values = colors_final) +
   
   # Highlight True Effect (0.0) with a distinct line
   geom_vline(aes(xintercept = 0, linetype = "True Underlying Effect"), color = "red", linewidth = 1.2) +
