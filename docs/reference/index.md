@@ -58,6 +58,8 @@ Helper functions used by the main functions.
   : Estimate Variance Sandwich Estimator
 - [`calc_ALD_stats()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_ALD_stats.md)
   : Aggregate-level data mean and variance statistics
+- [`calc_bucher_naive()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_bucher_naive.md)
+  : Calculate Naive (Unadjusted) Bucher Indirect Comparison
 - [`calc_gcomp_bayes()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_gcomp_bayes.md)
   : Bayesian G-computation using Stan
 - [`calc_gcomp_ml()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_gcomp_ml.md)

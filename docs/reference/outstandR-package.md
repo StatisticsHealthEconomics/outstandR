@@ -25,10 +25,6 @@ Useful links:
 
 Authors:
 
-- Nathan Green <n.green@ucl.ac.uk>
-  ([ORCID](https://orcid.org/0000-0003-2745-1736))
-  ([ROR](https://ror.org/02jx3x895)) \[copyright holder\]
-
 - Chengyang Gao <chengyang.gao.15@ucl.ac.uk>
 
 - Antonio Remiro-Azocar <antonio.remiro-azocar@bayer.com>

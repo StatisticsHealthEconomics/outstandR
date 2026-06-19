@@ -6,7 +6,13 @@ Default Plot Method for outstandR Objects
 
 ``` r
 # S3 method for class 'outstandR'
-plot(x, ..., type = c("both", "contrasts", "absolute"), labels = NULL)
+plot(
+  x,
+  ...,
+  type = c("both", "contrasts", "absolute"),
+  labels = NULL,
+  include_naive = TRUE
+)
 ```
 
 ## Arguments
@@ -26,6 +32,11 @@ plot(x, ..., type = c("both", "contrasts", "absolute"), labels = NULL)
 - labels:
 
   Optional character vector of names for the models.
+
+- include_naive:
+
+  Logical. Should naive (unadjusted) estimates be included in the plot?
+  Default is TRUE.
 
 ## Value
 

@@ -108,8 +108,8 @@ situation including the following:
 - *Simulated Treatment Comparison (STC) \[DEPRECATED\]:* While
   previously common, standard STC can produce biased marginal estimates
   due to aggregation bias and non-collapsibility when using non-linear
-  link functions. *Note: STC is formally deprecated as of v1.0.1 in
-  favor of the more robust G-computation approaches.*
+  link functions. *Note: STC is formally deprecated as of v2.0.0 in
+  favour of the more robust G-computation approaches.*
 
 ## General problem
 
@@ -242,6 +242,8 @@ Helper functions used by the main functions.
   : Estimate Variance Sandwich Estimator
 - [`calc_ALD_stats()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_ALD_stats.md)
   : Aggregate-level data mean and variance statistics
+- [`calc_bucher_naive()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_bucher_naive.md)
+  : Calculate Naive (Unadjusted) Bucher Indirect Comparison
 - [`calc_gcomp_bayes()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_gcomp_bayes.md)
   : Bayesian G-computation using Stan
 - [`calc_gcomp_ml()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_gcomp_ml.md)
@@ -293,7 +295,22 @@ Helper functions used by the main functions.
 
 # Articles
 
-### All vignettes
+### Binary outcome data example
+
+- [Binary data
+  example](https://StatisticsHealthEconomics.github.io/outstandR/articles/Binary_outcome_example.md):
+
+### Continuous outcome data example
+
+- [Continuous data
+  example](https://StatisticsHealthEconomics.github.io/outstandR/articles/Continuous_outcome_example.md):
+
+### Count outcome data example
+
+- [Count data
+  example](https://StatisticsHealthEconomics.github.io/outstandR/articles/Count_outcome_example.md):
+
+### Developer Guides
 
 - [Adding a New Strategy to
   \`outstandR\`](https://StatisticsHealthEconomics.github.io/outstandR/articles/adding-a-new-strategy.md):

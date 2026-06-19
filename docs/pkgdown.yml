@@ -3,7 +3,10 @@ pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
   articles/adding-a-new-strategy: adding-a-new-strategy.html
-last_built: 2026-06-10T06:47Z
+  Binary_outcome_example: Binary_outcome_example.html
+  Continuous_outcome_example: Continuous_outcome_example.html
+  Count_outcome_example: Count_outcome_example.html
+last_built: 2026-06-19T15:40Z
 urls:
   reference: https://StatisticsHealthEconomics.github.io/outstandR/reference
   article: https://StatisticsHealthEconomics.github.io/outstandR/articles
