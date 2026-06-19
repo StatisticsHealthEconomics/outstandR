@@ -35,7 +35,7 @@ test_that("different combinations of covariates in formula", {
                    ald_trial = BC_ALD,
                    strategy = strat_1234)
   
-  expect_length(res, 13)
+  expect_length(res, 14)
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_31))
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_13))
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_1))
@@ -67,7 +67,7 @@ test_that("different combinations of covariates in formula", {
                    ald_trial = BC_ALD,
                    strategy = strat_1234)
   
-  expect_length(res, 13)
+  expect_length(res, 14)
   
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_31))
   # expect_equal(outstandR(AC_IPD, BC_ALD, strategy = strat_13))
