@@ -353,7 +353,7 @@ appears as a linear regression. This corresponds to the following `R`
 
 ```{r}
 lin_form <- list(
-  outcome_model = as.formula("y ~ PF_cont_1 + PF_cont_2 + trt:EM_cont_1 + trt:EM_cont_2"),
+  outcome_model = as.formula("y ~ trt + PF_cont_1 + PF_cont_2 + EM_cont_1 + EM_cont_2"),
   balance_model = as.formula("~ PF_cont_1 + PF_cont_2 + EM_cont_1 + EM_cont_2")
 )
 ```
@@ -762,6 +762,13 @@ var.d.BC <- with(ald_out, 1/sum_B + 1/(N_B - sum_B) + 1/sum_C + 1/(N_C - sum_C))
 var.d.AB.naive <- d_AC_naive$var_AC + var.d.BC
 ```
 
+Alternatively, we can compute this using `outstandR`'s built-in `calc_bucher_naive()` function:
+
+```{r}
+naive_results <- calc_bucher_naive(ipd_trial, ald_trial, outcome_model = lin_form, family = binomial(link = "logit"))
+naive_results
+```
+
 Of course, the $BC$ contrast is calculated directly.
 
 ## Results
@@ -775,20 +782,20 @@ res_tab <-
   data.frame(
     d_true = c(d_AB_true, d_AC_true, d_BC),
     d_naive = c(d_AB_naive, d_AC_naive$d_AC, d_BC),
-    `MAIC` = unlist(outstandR_maic$contrasts$means),
-    `Gcomp ML` = unlist(outstandR_gcomp_ml$contrasts$means),
-    `Gcomp Bayes` = unlist(outstandR_gcomp_bayes$contrasts$means),
-    `MIM` = unlist(outstandR_mim$contrasts$means)) |> 
+    `MAIC` = unlist(outstandR_maic$results$contrasts$means),
+    `Gcomp ML` = unlist(outstandR_gcomp_ml$results$contrasts$means),
+    `Gcomp Bayes` = unlist(outstandR_gcomp_bayes$results$contrasts$means),
+    `MIM` = unlist(outstandR_mim$results$contrasts$means)) |> 
   round(2)
 
 res_tab_var <- 
   data.frame(
     d_true = c(NA, NA, NA),
     d_naive = c(var.d.AB.naive, d_AC_naive$var_AC, var.d.BC),
-    `MAIC` = unlist(outstandR_maic$contrasts$variances),
-    `Gcomp ML` = unlist(outstandR_gcomp_ml$contrasts$variances),
-    `Gcomp Bayes` = unlist(outstandR_gcomp_bayes$contrasts$variances),
-    `MIM` = unlist(outstandR_mim$contrasts$variances)) |> 
+    `MAIC` = unlist(outstandR_maic$results$contrasts$variances),
+    `Gcomp ML` = unlist(outstandR_gcomp_ml$results$contrasts$variances),
+    `Gcomp Bayes` = unlist(outstandR_gcomp_bayes$results$contrasts$variances),
+    `MIM` = unlist(outstandR_mim$results$contrasts$variances)) |> 
   round(2)
 
 knitr::kable(res_tab)
@@ -813,20 +820,20 @@ res_tab_lrr <-
   data.frame(
     # d_true = c(d_AB_true_lrr, d_AC_true_lrr, d_BC_lrr),
     # d_naive = c(d_AB_naive_lrr, d_AC_naive_lrr$d_AC, d_BC_lrr),
-    `MAIC` = unlist(outstandR_maic_lrr$contrasts$means),
-    `Gcomp ML` = unlist(outstandR_gcomp_ml_lrr$contrasts$means),
-    `Gcomp Bayes` = unlist(outstandR_gcomp_bayes_lrr$contrasts$means),
-    `MIM` = unlist(outstandR_mim_lrr$contrasts$means)) |> 
+    `MAIC` = unlist(outstandR_maic_lrr$results$contrasts$means),
+    `Gcomp ML` = unlist(outstandR_gcomp_ml_lrr$results$contrasts$means),
+    `Gcomp Bayes` = unlist(outstandR_gcomp_bayes_lrr$results$contrasts$means),
+    `MIM` = unlist(outstandR_mim_lrr$results$contrasts$means)) |> 
   round(2)
 
 res_tab_var_lrr <- 
   data.frame(
     # d_true = c(NA, NA, NA),
     # d_naive = c(var.d.AB.naive, d_AC_naive$var_AC, var.d.BC),
-    `MAIC` = unlist(outstandR_maic_lrr$contrasts$variances),
-    `Gcomp ML` = unlist(outstandR_gcomp_ml_lrr$contrasts$variances),
-    `Gcomp Bayes` = unlist(outstandR_gcomp_bayes_lrr$contrasts$variances),
-    `MIM` = unlist(outstandR_mim_lrr$contrasts$variances)) |> 
+    `MAIC` = unlist(outstandR_maic_lrr$results$contrasts$variances),
+    `Gcomp ML` = unlist(outstandR_gcomp_ml_lrr$results$contrasts$variances),
+    `Gcomp Bayes` = unlist(outstandR_gcomp_bayes_lrr$results$contrasts$variances),
+    `MIM` = unlist(outstandR_mim_lrr$results$contrasts$variances)) |> 
   round(2)
 
 knitr::kable(res_tab_lrr)
@@ -868,7 +875,10 @@ ggplot(aes(x = Estimate, y = id, col = type), data = plotdat) +
   xlab("Estimate (Log OR)") +
   facet_grid(Comparison~., switch = "y", scales = "free_y", space = "free_y") +
   scale_y_reverse(name = "Comparison in BC population",
-                  breaks = NULL, expand = c(0, 0.6))
+                  breaks = NULL, expand = c(0, 0.6)) +
+  scale_color_manual(values = c("d_naive" = "black", "d_true" = "red", 
+                                "MAIC" = "#E69F00", "Gcomp ML" = "#56B4E9", 
+                                "Gcomp Bayes" = "#009E73", "MIM" = "#F0E442"))
 ```
 
 ```{r forest-rr, fig.width=8, fig.height=6, warning=FALSE, message=FALSE, echo=FALSE}
@@ -898,5 +908,8 @@ ggplot(aes(x = Estimate, y = id, col = type), data = plotdat) +
   xlab("Estimate (Log RR)") +
   facet_grid(Comparison~., switch = "y", scales = "free_y", space = "free_y") +
   scale_y_reverse(name = "Comparison in BC population",
-                  breaks = NULL, expand = c(0, 0.6))
+                  breaks = NULL, expand = c(0, 0.6)) +
+  scale_color_manual(values = c("d_naive" = "black", "d_true" = "red", 
+                                "MAIC" = "#E69F00", "Gcomp ML" = "#56B4E9", 
+                                "Gcomp Bayes" = "#009E73", "MIM" = "#F0E442"))
 ```
