@@ -1,0 +1,64 @@
+---
+title: "Simulating Target Cohorts with Custom Copulas"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Simulating Target Cohorts with Custom Copulas}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Introduction
+
+In G-computation and MIM, `outstandR` simulates a synthetic pseudo-population reflecting the ALD trial using a Gaussian copula. This approach decouples the dependence structure (correlation matrix $\Sigma$) from the marginal distributions of covariates.
+
+The simulation follows three steps:
+1. Draw samples from a multivariate normal: $Z_i \sim MVN_K(0,\Sigma)$
+2. Apply the Probability Integral Transform: $U_{ik}=\Phi(Z_{ik})$
+3. Map to target scales using inverse CDFs: $X_{ik}=F_k^{-1}(U_{ik};\theta_k)$
+
+## Specifying Marginal Distributions
+
+By default, the package assumes a multivariate normal distribution. However, users can define specific marginal distributions using the `marginal_distns` argument. `outstandR` automatically retrieves reported means and SDs from the ALD to parameterize these via the method of moments.
+
+```r
+custom_distns <- c(X1 = "gamma", X2 = "binom")
+
+outstandR_custom <- outstandR(
+  ipd_trial = AC_IPD_contY_mixedX,
+  ald_trial = BC_ALD_contY_mixedX,
+  strategy = strategy_gcomp_ml(
+    formula = list(outcome_model = lin_form_mixedX),
+    family = gaussian(link = "identity"),
+    marginal_distns = custom_distns,
+    N = 1000),
+  seed = 12345
+)
+```
+
+## Manual Parameter Specification
+
+For sensitivity analyses, or when the method of moments conversion isn't natively supported, you can manually override target parameters using `marginal_params`.
+
+For instance, to simulate an older cohort (mean = 70, SD = 10.5) for covariate `X1` using a Gamma distribution:
+
+```r
+target_mean <- 70
+target_sd <- 10.5
+
+sens_params <- list(
+  X1 = list(shape = (target_mean/target_sd)^2,
+            rate = target_mean/(target_sd^2))
+)
+
+outstandR_sens <- outstandR(
+  ipd_trial = AC_IPD_contY_mixedX,
+  ald_trial = BC_ALD_contY_mixedX,
+  strategy = strategy_gcomp_ml(
+    formula = list(outcome_model = lin_form_mixedX),
+    family = gaussian(link = "identity"),
+    marginal_distns = c(X1 = "gamma"),
+    marginal_params = sens_params,
+    N = 1000),
+  seed = 12345
+)
+```

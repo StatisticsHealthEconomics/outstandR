@@ -62,3 +62,4 @@ LazyData: false
 Config/Needs/website: rmarkdown
 Config/roxygen2/version: 8.0.0
 RoxygenNote: 7.3.3
+VignetteBuilder: knitr

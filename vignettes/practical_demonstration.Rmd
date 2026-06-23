@@ -1,0 +1,98 @@
+---
+title: "Getting Started with outstandR: A Practical Demonstration"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting Started with outstandR: A Practical Demonstration}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Introduction
+
+The `outstandR` package provides a unified framework for Population-Adjusted Indirect Comparisons (PAIC). This vignette demonstrates an end-to-end workflow comparing a treatment with individual patient data (IPD) against a comparator with aggregate-level data (ALD).
+
+## 1. Binary Outcome Data
+
+First, we load the synthetic binary outcome data and continuous covariates. 
+
+```r
+library(outstandR)
+data(AC_IPD_binY_contX) # A vs C IPD
+data(BC_ALD_binY_contX) # B vs C ALD
+```
+
+We define the formula for the relationship between covariates, treatments, and the outcome. 
+
+```r
+# Linear formula for the outcome model
+lin_form_contX <- as.formula("y ~ PF_cont_1 + PF_cont_2 + trt + trt:EM_cont_1 + trt:EM_cont_2")
+
+# Balancing formula for MAIC
+bal_form_contX <- as.formula("~ EM_cont_1 + EM_cont_2")
+```
+
+### Running the Analysis
+
+We can run a Matching-Adjusted Indirect Comparison (MAIC) by passing the formulas and specifying the `binomial` family.
+
+```r
+outstandR_maic <- outstandR(
+  ipd_trial = AC_IPD_binY_contX,
+  ald_trial = BC_ALD_binY_contX,
+  strategy = strategy_maic(
+    formula = list(outcome_model = formula("y ~ trt"),
+                   balance_model = bal_form_contX),
+    family = binomial(link = "logit")),
+  seed = 12345
+)
+
+print(outstandR_maic)
+```
+
+## 2. Continuous Outcome Data
+
+For continuous data, `outstandR` behaves similarly but utilizes the `gaussian` family.
+
+```r
+data(AC_IPD_contY_mixedX) 
+data(BC_ALD_contY_mixedX) 
+
+lin_form_mixedX <- as.formula("y ~ X1 + X2 + X3 + trt + trt:(X1 + X2 + X4)")
+bal_form_mixedX <- as.formula("~ X1 + X2 + X4")
+
+outstandR_maic_cont <- outstandR(
+  ipd_trial = AC_IPD_contY_mixedX,
+  ald_trial = BC_ALD_contY_mixedX,
+  strategy = strategy_maic(
+    formula = list(outcome_model = formula("y ~ trt"),
+                   balance_model = bal_form_mixedX),
+    family = gaussian(link = "identity")),
+  seed = 12345
+)
+```
+
+## 3. Visualizing Results
+
+`outstandR` provides a default `plot()` method that extracts relative contrasts and absolute arm-specific estimates. You can pass multiple objects to compare strategies:
+
+```r
+# Assuming you have run models for G-computation and MIM as well
+plot(outstandR_maic, outstandR_gcomp_ml, outstandR_gcomp_bayes, outstandR_mim)
+```
+
+## 4. Alternative Scales
+
+By default, the package reports effects on the link function's scale. You can request alternative summary statistics (e.g., Risk Differences) using the `scale` argument:
+
+```r
+outstandR_maic_rd <- outstandR(
+  ipd_trial = AC_IPD_binY_contX,
+  ald_trial = BC_ALD_binY_contX,
+  strategy = strategy_maic(
+    formula = list(outcome_model = formula("y ~ trt"),
+                   balance_model = bal_form_contX),
+    family = binomial(link = "logit")),
+  scale = "risk_difference",
+  seed = 12345
+)
+```

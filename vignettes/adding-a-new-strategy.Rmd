@@ -1,5 +1,10 @@
 ---
-title: "Adding a New Strategy to `outstandR`"
+title: "Adding New Strategies"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Adding New Strategies}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}

@@ -1,0 +1,46 @@
+---
+title: "Methodological Background"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Methodological Background}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Introduction
+
+Indirect treatment comparisons (ITCs) are vital when head-to-head clinical trials are absent. Unadjusted comparisons are biased when trial populations differ in effect modifiers; thus, population adjustment is required. `outstandR` provides a unified framework for these methods.
+
+## Matching-Adjusted Indirect Comparison (MAIC)
+
+MAIC is a method-of-moments weighting approach designed to match the aggregate characteristics of the comparator trial. Weights $w_i$ for each patient $i$ in the IPD trial are derived via a logistic regression formulation:
+
+$$w_i=\exp(\beta^\top X_i)$$
+
+The parameters $\beta$ are found by minimizing a convex objective function to match target covariate means:
+
+$$\min_{\beta\in\mathbb{R}^p}\sum_{i=1}^{n_A}\exp(\beta^\top(X_i-\overline{X}_B))$$
+
+## Outcome Regression Models
+
+For an individual $i$ with outcome $Y_i$, treatment $T_i \in \{0,1\}$, and baseline covariates $X_i$, the general outcome model is:
+
+$$g(\mathbb{E}[Y_i|X_i,T_i])=\alpha+X_i^\top\beta_0+(\beta_{trt}+X_i^\top\beta_1)\mathbb{I}(T_i=1)$$
+
+## Parametric G-computation (Maximum Likelihood)
+
+G-computation standardizes outcomes across treatment regimens. We estimate the marginal mean outcome by simulating a pseudo-population of size $N$ reflecting the target ALD trial, predicting outcomes, and averaging:
+
+$$\hat{\mathbb{E}}[Y^T|\hat{\theta}]=\frac{1}{N}\sum_{i=1}^N\hat{Y_i}(T,\hat{\theta})$$
+
+## Parametric G-computation (Bayesian Inference)
+
+Bayesian G-computation estimates the full posterior distribution of the model parameters, offering robust uncertainty quantification. For $M$ posterior samples $\theta^{(m)}$, the marginal mean is computed as:
+
+$$\hat{\mathbb{E}}[Y^T|\theta^{(m)}]=\frac{1}{N}\sum_{i=1}^N\hat{Y}_i(T,\theta^{(m)})$$
+
+## Multiple Imputation Marginalization (MIM)
+
+MIM conceptualizes unobserved potential outcomes as a missing data problem. Using $M$ posterior draws, MIM imputes counterfactuals and utilizes modified Rubin's rules to calculate total variance by subtracting within-imputation variance ($\overline{U}$) from between-imputation variance ($B$):
+
+$$Var(\overline{Q})=B-\overline{U}$$

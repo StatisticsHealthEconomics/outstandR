@@ -47,6 +47,8 @@ reference:
   # - outstandR-package
   - starts_with("outstandR")
   - strategy
+  - starts_with("strategy_")
+  - "-strategy_stc"
 - title: "Constituent statistics"
   desc: "Helper functions used by the main functions."
   contents:
@@ -84,16 +86,22 @@ reference:
   - strategy-class
 
 articles:
-- title: "Binary outcome data example"
+- title: "Getting Started"
+  desc: "A practical demonstration of the core outstandR workflow."
   contents:
-    - "Binary_outcome_example"
-- title: "Continuous outcome data example"
+    - "articles/practical_demonstration"
+- title: "Methodological Background"
+  desc: "Theory behind population-adjusted indirect comparisons."
   contents:
-    - "Continuous_outcome_example"
-- title: "Count outcome data example"
+    - "articles/methodology"
+- title: "Advanced Features & Diagnostics"
+  desc: "Model fit, uncertainty quantification, and custom simulations."
   contents:
-    - "Count_outcome_example"
+    - "articles/diagnostics_and_uncertainty"
+    - "articles/custom_copula"
 - title: "Developer Guides"
+  desc: "Software architecture and extending the package."
   contents:
     - "articles/adding-a-new-strategy"
+    
     

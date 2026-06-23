@@ -1,0 +1,57 @@
+---
+title: "Advanced Features: Diagnostics and Uncertainty Quantification"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Advanced Features: Diagnostics and Uncertainty Quantification}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## 1. Robust Variance Estimation
+
+Standard errors in population-adjusted analyses can be sensitive to model misspecification. `outstandR` supports robust (sandwich) standard errors for MAIC and ML-based G-computation. 
+
+Variance is approximated using the delta method:
+
+$$\hat{Var}(\hat{\Delta})=\nabla g(\hat{\theta})^\top\cdot V_{sand}\cdot\nabla g(\hat{\theta})$$
+
+To use this, set `var_method = "sandwich"` in your `outstandR()` call:
+
+```r
+stc_robust <- outstandR(
+  ipd_trial = AC_IPD_binY_contX,
+  ald_trial = BC_ALD_binY_contX,
+  strategy = strategy_gcomp_ml(
+    formula = list(outcome_model = lin_form_contX),
+    family = binomial()),
+  seed = 12345,
+  var_method = "sandwich"
+)
+```
+
+## 2. Model Diagnostics
+
+`outstandR` returns detailed model artifacts to facilitate diagnostics. 
+
+### MAIC Weight Diagnostics
+For MAIC, you can extract the calculated weights to check for extreme outliers and view the Effective Sample Size (ESS).
+
+```r
+# Check Effective Sample Size
+print(outstandR_maic$model$ESS)
+
+# Plot a histogram of weights
+library(ggplot2)
+ggplot(data.frame(weights = outstandR_maic$model$weights), aes(x = weights)) +
+  geom_histogram(binwidth = 0.1, color = "black", fill = "lightgray") +
+  theme_minimal()
+```
+
+### Bayesian MCMC Diagnostics
+For Bayesian G-computation and MIM, the underlying `stanfit` object is retained in the output. You can pass this to packages like `bayesplot` to assess MCMC convergence:
+
+```r
+library(bayesplot)
+stan_obj <- outstandR_gcomp_bayes$model$fit
+mcmc_trace(stan_obj)
+```
