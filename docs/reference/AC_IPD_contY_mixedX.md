@@ -1,54 +1,86 @@
+<div id="main" class="col-md-9" role="main">
+
 # Individual-level patient data for continuous outcome, mixed covariates
+
+<div class="ref-description section level2">
 
 This data set contains simulated patient covariate and outcome values.
 Corresponds to ALD data set.
 
+</div>
+
+<div class="section level2">
+
 ## Usage
+
+<div class="sourceCode">
 
 ``` r
 data(AC_IPD_contY_mixedX)
 ```
 
+</div>
+
+</div>
+
+<div class="section level2">
+
 ## Format
+
+<div class="section">
 
 ### `y ~ X1 + X3 + X4 + trt + trt:(X2 + X3 + X4)`
 
-- id:
+-   id:
 
-  Numeric unique identifier
+    Numeric unique identifier
 
-- X1:
+-   X1:
 
-  Numeric prognostic factor continuous covariate
+    Numeric prognostic factor continuous covariate
 
-- X2:
+-   X2:
 
-  Numeric prognostic factor and effect modifier binary covariate
+    Numeric prognostic factor and effect modifier binary covariate
 
-- X3:
+-   X3:
 
-  Numeric prognostic factor and effect modifier continuous covariate
+    Numeric prognostic factor and effect modifier continuous covariate
 
-- X4:
+-   X4:
 
-  Numeric effect modifier binary covariate
+    Numeric effect modifier binary covariate
 
-- trt:
+-   trt:
 
-  Factor treatment identifier. Levels A, C
+    Factor treatment identifier. Levels A, C
 
-- y:
+-   y:
 
-  Integer binary outcome
+    Integer binary outcome
 
-- true_eta:
+-   true_eta:
 
-  Numeric linear predictor
+    Numeric linear predictor
+
+</div>
+
+</div>
+
+<div class="section level2">
 
 ## Source
 
 Simulated data
 
+</div>
+
+<div class="section level2">
+
 ## References
 
 Remiro‐Azocar A, Heath A, Baio G (2022)
+
+</div>
+
+</div>

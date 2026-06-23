@@ -1,51 +1,70 @@
+<div id="main" class="col-md-9" role="main">
+
 # Multiple imputation marginalization (MIM)
+
+<div class="ref-description section level2">
 
 Multiple imputation marginalization (MIM)
 
+</div>
+
+<div class="section level2">
+
 ## Usage
+
+<div class="sourceCode">
 
 ``` r
 calc_mim(strategy, analysis_params, ...)
 ```
 
+</div>
+
+</div>
+
+<div class="section level2">
+
 ## Arguments
 
-- strategy:
+-   strategy:
 
-  An object of class `strategy` created by functions such as
-  [`strategy_maic()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md),
-  [`strategy_stc()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md),
-  or
-  [`strategy_mim()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md).
-  Contains modelling details like the formula and family.
+    An object of class `strategy` created by functions such as
+    `strategy_maic()`, `strategy_stc()`, or `strategy_mim()`. Contains
+    modelling details like the formula and family.
 
-- analysis_params:
+-   analysis_params:
 
-  List of analysis parameters. Must contain `ipd` and `ald`.
+    List of analysis parameters. Must contain `ipd` and `ald`.
 
-- ...:
+-   ...:
 
-  Additional argument to pass to Stan model
+    Additional argument to pass to Stan model
+
+</div>
+
+<div class="section level2">
 
 ## Value
 
 A list containing:
 
-- `means`: A list containing named vectors of posterior means (one per
-  synthesis `n_imp`):
+-   `means`: A list containing named vectors of posterior means (one per
+    synthesis `n_imp`):
 
-  - Comparator means.
+    -   Comparator means.
 
-  - Reference means.
+    -   Reference means.
 
-- `model`: A list containing:
+-   `model`: A list containing:
 
-  - `fit`: The first-stage
-    [`rstanarm::stan_glm()`](https://mc-stan.org/rstanarm/reference/stan_glm.html)
-    object.
+    -   `fit`: The first-stage `rstanarm::stan_glm()` object.
 
-  - `hats.v`: Vector of variance point estimates for each synthesis.
+    -   `hats.v`: Vector of variance point estimates for each synthesis.
 
-  - `n_imp`: Number of posterior prediction draws (syntheses).
+    -   `n_imp`: Number of posterior prediction draws (syntheses).
 
-  - `rho`, `N`, `stan_args`: Strategy and model parameters.
+    -   `rho`, `N`, `stan_args`: Strategy and model parameters.
+
+</div>
+
+</div>

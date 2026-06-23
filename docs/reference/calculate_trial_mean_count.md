@@ -1,31 +1,55 @@
+<div id="main" class="col-md-9" role="main">
+
 # Calculate Trial Mean Count Data
+
+<div class="ref-description section level2">
 
 Calculate Trial Mean Count Data
 
+</div>
+
+<div class="section level2">
+
 ## Usage
+
+<div class="sourceCode">
 
 ``` r
 calculate_trial_mean_count(ald, tid, effect, verbatim = FALSE)
 ```
 
+</div>
+
+</div>
+
+<div class="section level2">
+
 ## Arguments
 
-- ald:
+-   ald:
 
-  Aggregate level data. Data frame in long format.
+    Aggregate level data. Data frame in long format.
 
-- tid:
+-   tid:
 
-  Treatment ID
+    Treatment ID
 
-- effect:
+-   effect:
 
-  Effect name. String.
+    Effect name. String.
 
-- verbatim:
+-   verbatim:
 
-  Print messages, logical
+    Print messages, logical
+
+</div>
+
+<div class="section level2">
 
 ## Value
 
 Numeric mean value.
+
+</div>
+
+</div>

@@ -136,9 +136,8 @@ strategy_maic <- function(formula = NULL,
   do.call(new_strategy, c(strategy = "maic", args))
 }
 
-#' @rdname strategy
+#' Simulated treatment comparison (STC)
 #' 
-#' @section Simulated treatment comparison (STC):
 #' `r lifecycle::badge("deprecated")`
 #' 
 #' `strategy_stc()` was deprecated in outstandR version 1.X.X. 
@@ -160,7 +159,9 @@ strategy_maic <- function(formula = NULL,
 #' treatment \eqn{t} with covariate values \eqn{X} which is transformed onto a
 #' chosen linear predictor scale with link function \eqn{g(\cdot)}.
 #' 
-#' @param trt_var Treatment variable name
+#' @param formula Model formula.
+#' @param family Model family.
+#' @param trt_var Treatment variable name.
 #'
 #' @return `stc` class object
 #' @importFrom utils modifyList

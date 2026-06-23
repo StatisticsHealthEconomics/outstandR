@@ -1,55 +1,80 @@
+<div id="main" class="col-md-9" role="main">
+
 # Bayesian G-computation using Stan
+
+<div class="ref-description section level2">
 
 Calculate draws of binary responses from posterior predictive
 distribution from the Bayesian G-computation method using Hamiltonian
 Monte Carlo.
 
+</div>
+
+<div class="section level2">
+
 ## Usage
+
+<div class="sourceCode">
 
 ``` r
 calc_gcomp_bayes(strategy, analysis_params, ...)
 ```
 
+</div>
+
+</div>
+
+<div class="section level2">
+
 ## Arguments
 
-- strategy:
+-   strategy:
 
-  A list specifying the model strategy, including:
+    A list specifying the model strategy, including:
 
-  - `outcome_model`: A linear regression `formula` object.
+    -   `outcome_model`: A linear regression `formula` object.
 
-  - `family`: A `family` object specifying the distribution and link
-    function (e.g., `binomial`).
+    -   `family`: A `family` object specifying the distribution and link
+        function (e.g., `binomial`).
 
-  - `iter`: Number of iterations for the MCMC sampling.
+    -   `iter`: Number of iterations for the MCMC sampling.
 
-  - `warmup`: Number of warmup iterations for the MCMC sampling.
+    -   `warmup`: Number of warmup iterations for the MCMC sampling.
 
-  - `chains`: Number of MCMC chains.
+    -   `chains`: Number of MCMC chains.
 
-- analysis_params:
+-   analysis_params:
 
-  List of analysis parameters. Must contain `ipd` and `ald`.
+    List of analysis parameters. Must contain `ipd` and `ald`.
 
-- ...:
+-   ...:
 
-  Additional arguments passed to
-  [`rstanarm::stan_glm()`](https://mc-stan.org/rstanarm/reference/stan_glm.html).
+    Additional arguments passed to `rstanarm::stan_glm()`.
+
+</div>
+
+<div class="section level2">
 
 ## Value
 
 A list containing:
 
-- `means`: A list containing:
+-   `means`: A list containing:
 
-  - Posterior means for comparator treatment group.
+    -   Posterior means for comparator treatment group.
 
-  - Posterior means for reference treatment group.
+    -   Posterior means for reference treatment group.
 
-- `model`: A list containing the `fit` object (from `stan_glm`), `rho`,
-  `N`, and `stan_args`.
+-   `model`: A list containing the `fit` object (from `stan_glm`),
+    `rho`, `N`, and `stan_args`.
+
+</div>
+
+<div class="section level2">
 
 ## Examples
+
+<div class="sourceCode">
 
 ``` r
 strategy <- list(
@@ -98,3 +123,9 @@ str(res, max.level = 2, list.len = 3, vec.len = 2)
 #>   ..$ N        : int 1000
 #>   .. [list output truncated]
 ```
+
+</div>
+
+</div>
+
+</div>

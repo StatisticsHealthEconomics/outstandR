@@ -7,92 +7,265 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  warning = FALSE,
+  message = FALSE
+)
+```
+
 ## Introduction
 
-The `outstandR` package provides a unified framework for Population-Adjusted Indirect Comparisons (PAIC). This vignette demonstrates an end-to-end workflow comparing a treatment with individual patient data (IPD) against a comparator with aggregate-level data (ALD).
+The `outstandR` package provides a unified framework for Population-Adjusted Indirect Comparisons (PAIC). It supports Matching-Adjusted Indirect Comparison (MAIC), G-computation via Maximum Likelihood Estimation (ML) or Bayesian MCMC inference, and Multiple Imputation Marginalization (MIM).
+
+This vignette walks through a practical demonstration of how to load data, specify strategies, run analyses, and compare the results across different outcome types: **binary**, **continuous**, and **count**.
+
+---
 
 ## 1. Binary Outcome Data
 
-First, we load the synthetic binary outcome data and continuous covariates. 
+We load the synthetic binary outcome data and continuous covariates. 
 
-```r
+```{r load-binary-data}
 library(outstandR)
 data(AC_IPD_binY_contX) # A vs C IPD
 data(BC_ALD_binY_contX) # B vs C ALD
 ```
 
-We define the formula for the relationship between covariates, treatments, and the outcome. 
+For regression-based adjustments (G-computation and MIM), we define the formula relating covariates, treatments, and the outcome. For weight-based adjustments (MAIC), we specify a balancing formula of covariates to match.
 
-```r
-# Linear formula for the outcome model
-lin_form_contX <- as.formula("y ~ PF_cont_1 + PF_cont_2 + trt + trt:EM_cont_1 + trt:EM_cont_2")
+```{r define-binary-formulas}
+# Outcome model formula (for G-computation and MIM)
+lin_form_bin <- as.formula("y ~ PF_cont_1 + PF_cont_2 + trt + trt:EM_cont_1 + trt:EM_cont_2")
 
-# Balancing formula for MAIC
-bal_form_contX <- as.formula("~ EM_cont_1 + EM_cont_2")
+# Balancing model formula (for MAIC)
+bal_form_bin <- as.formula("~ EM_cont_1 + EM_cont_2")
 ```
 
 ### Running the Analysis
 
-We can run a Matching-Adjusted Indirect Comparison (MAIC) by passing the formulas and specifying the `binomial` family.
+We can run all four strategy classes. For Bayesian methods, we specify fewer iterations and a single chain for speed in this demonstration.
 
-```r
-outstandR_maic <- outstandR(
+```{r run-binary-models}
+# 1. Matching-Adjusted Indirect Comparison (MAIC)
+outstandR_maic_bin <- outstandR(
   ipd_trial = AC_IPD_binY_contX,
   ald_trial = BC_ALD_binY_contX,
   strategy = strategy_maic(
     formula = list(outcome_model = formula("y ~ trt"),
-                   balance_model = bal_form_contX),
+                   balance_model = bal_form_bin),
     family = binomial(link = "logit")),
   seed = 12345
 )
 
-print(outstandR_maic)
+# 2. Maximum Likelihood G-computation (ML G-comp)
+outstandR_gcomp_ml_bin <- outstandR(
+  ipd_trial = AC_IPD_binY_contX,
+  ald_trial = BC_ALD_binY_contX,
+  strategy = strategy_gcomp_ml(
+    formula = list(outcome_model = lin_form_bin),
+    family = binomial(link = "logit")),
+  seed = 12345
+)
+
+# 3. Bayesian G-computation
+outstandR_gcomp_bayes_bin <- outstandR(
+  ipd_trial = AC_IPD_binY_contX,
+  ald_trial = BC_ALD_binY_contX,
+  strategy = strategy_gcomp_bayes(
+    formula = list(outcome_model = lin_form_bin),
+    family = binomial(link = "logit")),
+  seed = 12345,
+  iter = 250,      # Small iterations for speed
+  chains = 1,      # Single chain for demonstration
+  refresh = 0
+)
+
+# 4. Multiple Imputation Marginalization (MIM)
+outstandR_mim_bin <- outstandR(
+  ipd_trial = AC_IPD_binY_contX,
+  ald_trial = BC_ALD_binY_contX,
+  strategy = strategy_mim(
+    formula = list(outcome_model = lin_form_bin),
+    family = binomial(link = "logit")),
+  seed = 12345,
+  iter = 250,
+  chains = 1,
+  refresh = 0
+)
 ```
+
+---
 
 ## 2. Continuous Outcome Data
 
-For continuous data, `outstandR` behaves similarly but utilizes the `gaussian` family.
+For continuous data, we load the corresponding datasets and utilize the `gaussian(link = "identity")` family.
 
-```r
-data(AC_IPD_contY_mixedX) 
-data(BC_ALD_contY_mixedX) 
+```{r load-continuous-data}
+data(AC_IPD_contY_mixedX)
+data(BC_ALD_contY_mixedX)
 
-lin_form_mixedX <- as.formula("y ~ X1 + X2 + X3 + trt + trt:(X1 + X2 + X4)")
-bal_form_mixedX <- as.formula("~ X1 + X2 + X4")
+# Define models
+lin_form_cont <- as.formula("y ~ X1 + X2 + X3 + trt + trt:(X1 + X2 + X4)")
+bal_form_cont <- as.formula("~ X1 + X2 + X4")
+```
 
+### Running the Analysis
+
+We fit the strategies similarly, changing the outcome family to `gaussian`.
+
+```{r run-continuous-models}
+# 1. MAIC
 outstandR_maic_cont <- outstandR(
   ipd_trial = AC_IPD_contY_mixedX,
   ald_trial = BC_ALD_contY_mixedX,
   strategy = strategy_maic(
     formula = list(outcome_model = formula("y ~ trt"),
-                   balance_model = bal_form_mixedX),
+                   balance_model = bal_form_cont),
     family = gaussian(link = "identity")),
   seed = 12345
 )
+
+# 2. ML G-comp
+outstandR_gcomp_ml_cont <- outstandR(
+  ipd_trial = AC_IPD_contY_mixedX,
+  ald_trial = BC_ALD_contY_mixedX,
+  strategy = strategy_gcomp_ml(
+    formula = list(outcome_model = lin_form_cont),
+    family = gaussian(link = "identity")),
+  seed = 12345
+)
+
+# 3. Bayesian G-comp
+outstandR_gcomp_bayes_cont <- outstandR(
+  ipd_trial = AC_IPD_contY_mixedX,
+  ald_trial = BC_ALD_contY_mixedX,
+  strategy = strategy_gcomp_bayes(
+    formula = list(outcome_model = lin_form_cont),
+    family = gaussian(link = "identity")),
+  seed = 12345,
+  iter = 250,
+  chains = 1,
+  refresh = 0
+)
+
+# 4. MIM
+outstandR_mim_cont <- outstandR(
+  ipd_trial = AC_IPD_contY_mixedX,
+  ald_trial = BC_ALD_contY_mixedX,
+  strategy = strategy_mim(
+    formula = list(outcome_model = lin_form_cont),
+    family = gaussian(link = "identity")),
+  seed = 12345,
+  iter = 250,
+  chains = 1,
+  refresh = 0
+)
 ```
 
-## 3. Visualizing Results
+---
 
-`outstandR` provides a default `plot()` method that extracts relative contrasts and absolute arm-specific estimates. You can pass multiple objects to compare strategies:
+## 3. Count Outcome Data
 
-```r
-# Assuming you have run models for G-computation and MIM as well
-plot(outstandR_maic, outstandR_gcomp_ml, outstandR_gcomp_bayes, outstandR_mim)
+For count data, we use the `poisson(link = "log")` family with Poisson-distributed outcomes.
+
+```{r load-count-data}
+data(AC_IPD_countY_contX)
+data(BC_ALD_countY_contX)
+
+# Define models
+lin_form_count <- as.formula("y ~ PF_cont_1 + PF_cont_2 + trt + trt:EM_cont_1 + trt:EM_cont_2")
+bal_form_count <- as.formula("~ EM_cont_1 + EM_cont_2")
 ```
 
-## 4. Alternative Scales
+### Running the Analysis
 
-By default, the package reports effects on the link function's scale. You can request alternative summary statistics (e.g., Risk Differences) using the `scale` argument:
+```{r run-count-models}
+# 1. MAIC
+outstandR_maic_count <- outstandR(
+  ipd_trial = AC_IPD_countY_contX,
+  ald_trial = BC_ALD_countY_contX,
+  strategy = strategy_maic(
+    formula = list(outcome_model = formula("y ~ trt"),
+                   balance_model = bal_form_count),
+    family = poisson(link = "log")),
+  seed = 12345
+)
 
-```r
+# 2. ML G-comp
+outstandR_gcomp_ml_count <- outstandR(
+  ipd_trial = AC_IPD_countY_contX,
+  ald_trial = BC_ALD_countY_contX,
+  strategy = strategy_gcomp_ml(
+    formula = list(outcome_model = lin_form_count),
+    family = poisson(link = "log")),
+  seed = 12345
+)
+
+# 3. Bayesian G-comp
+outstandR_gcomp_bayes_count <- outstandR(
+  ipd_trial = AC_IPD_countY_contX,
+  ald_trial = BC_ALD_countY_contX,
+  strategy = strategy_gcomp_bayes(
+    formula = list(outcome_model = lin_form_count),
+    family = poisson(link = "log")),
+  seed = 12345,
+  iter = 250,
+  chains = 1,
+  refresh = 0
+)
+
+# 4. MIM
+outstandR_mim_count <- outstandR(
+  ipd_trial = AC_IPD_countY_contX,
+  ald_trial = BC_ALD_countY_contX,
+  strategy = strategy_mim(
+    formula = list(outcome_model = lin_form_count),
+    family = poisson(link = "log")),
+  seed = 12345,
+  iter = 250,
+  chains = 1,
+  refresh = 0
+)
+```
+
+---
+
+## 4. Comparing and Visualizing Results
+
+We can display the structured `outstandR` results using standard print methods or inspect individual estimates.
+
+```{r print-results}
+print(outstandR_maic_bin)
+```
+
+The package provides a built-in `plot()` method to visualize contrasts and absolute estimates side by side. By passing multiple fitted objects, we can directly compare strategies:
+
+```{r plot-comparison, fig.width=7, fig.height=5}
+plot(outstandR_maic_bin, outstandR_gcomp_ml_bin, outstandR_gcomp_bayes_bin, outstandR_mim_bin)
+```
+
+---
+
+## 5. Alternative Outcome Scales
+
+By default, the package reports effects on the link function's scale. You can customize the scale of interest using the `scale` argument. 
+
+For instance, we can specify a Risk Difference instead of Log-Odds for the binary outcome analysis:
+
+```{r scale-change}
 outstandR_maic_rd <- outstandR(
   ipd_trial = AC_IPD_binY_contX,
   ald_trial = BC_ALD_binY_contX,
   strategy = strategy_maic(
     formula = list(outcome_model = formula("y ~ trt"),
-                   balance_model = bal_form_contX),
+                   balance_model = bal_form_bin),
     family = binomial(link = "logit")),
   scale = "risk_difference",
   seed = 12345
 )
+
+print(outstandR_maic_rd)
 ```

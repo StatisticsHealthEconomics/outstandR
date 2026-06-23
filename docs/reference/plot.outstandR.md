@@ -1,8 +1,18 @@
+<div id="main" class="col-md-9" role="main">
+
 # Default Plot Method for outstandR Objects
+
+<div class="ref-description section level2">
 
 Default Plot Method for outstandR Objects
 
+</div>
+
+<div class="section level2">
+
 ## Usage
+
+<div class="sourceCode">
 
 ``` r
 # S3 method for class 'outstandR'
@@ -15,31 +25,44 @@ plot(
 )
 ```
 
+</div>
+
+</div>
+
+<div class="section level2">
+
 ## Arguments
 
-- x:
+-   x:
 
-  An object of class 'outstandR' or a list of 'outstandR' objects.
+    An object of class 'outstandR' or a list of 'outstandR' objects.
 
-- ...:
+-   ...:
 
-  Additional 'outstandR' objects for comparison.
+    Additional 'outstandR' objects for comparison.
 
-- type:
+-   type:
 
-  Character, one of "both" (default), "contrasts", or "absolute".
+    Character, one of "both" (default), "contrasts", or "absolute".
 
-- labels:
+-   labels:
 
-  Optional character vector of names for the models.
+    Optional character vector of names for the models.
 
-- include_naive:
+-   include_naive:
 
-  Logical. Should naive (unadjusted) estimates be included in the plot?
-  Default is TRUE.
+    Logical. Should naive (unadjusted) estimates be included in the
+    plot? Default is TRUE.
+
+</div>
+
+<div class="section level2">
 
 ## Value
 
-A
-[`ggplot2::ggplot()`](https://ggplot2.tidyverse.org/reference/ggplot.html)
-object representing the forest plot of the results.
+A `ggplot2::ggplot()` object representing the forest plot of the
+results.
+
+</div>
+
+</div>

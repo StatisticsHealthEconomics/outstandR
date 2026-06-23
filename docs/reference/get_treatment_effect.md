@@ -1,44 +1,70 @@
+<div id="main" class="col-md-9" role="main">
+
 # Get treatment effect scale corresponding to a link function
+
+<div class="ref-description section level2">
 
 Maps a given link function to its corresponding treatment effect scale.
 
+</div>
+
+<div class="section level2">
+
 ## Usage
+
+<div class="sourceCode">
 
 ``` r
 get_treatment_effect(link)
 ```
 
+</div>
+
+</div>
+
+<div class="section level2">
+
 ## Arguments
 
-- link:
+-   link:
 
-  A character string specifying the link function. Options are:
+    A character string specifying the link function. Options are:
 
-  "logit"
+    "logit"
 
-  :   Log-odds scale.
+    :   Log-odds scale.
 
-  "identity"
+    "identity"
 
-  :   Risk difference.
+    :   Risk difference.
 
-  "probit"
+    "probit"
 
-  :   Probit scale.
+    :   Probit scale.
 
-  "cloglog"
+    "cloglog"
 
-  :   Log relative risk for rare events.
+    :   Log relative risk for rare events.
 
-  "log"
+    "log"
 
-  :   Log relative risk.
+    :   Log relative risk.
+
+</div>
+
+<div class="section level2">
 
 ## Value
 
 A character string representing the treatment effect scale.
 
+</div>
+
+<div class="section level2">
+
 ## Examples
+
+<div class="sourceCode">
 
 ``` r
  get_treatment_effect(link = "logit")
@@ -47,3 +73,9 @@ A character string representing the treatment effect scale.
 #> [1] "mean_difference"
  
 ```
+
+</div>
+
+</div>
+
+</div>

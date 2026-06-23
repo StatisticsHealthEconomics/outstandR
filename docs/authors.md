@@ -1,15 +1,23 @@
+<div id="main" class="col-md-9" role="main">
+
 # Authors and Citation
+
+<div class="section level2">
 
 ## Authors
 
-- **[Nathan Green](https://n8thangreen.github.io/)**. Author,
-  maintainer, copyright holder.
-  [](https://orcid.org/0000-0003-2745-1736)[![ROR](https://raw.githubusercontent.com/ror-community/ror-logos/main/ror-icon-rgb.svg)](https://ror.org/02jx3x895)
+-   **[Nathan Green](https://n8thangreen.github.io/)**. Author,
+    maintainer, copyright holder.
+    [](https://orcid.org/0000-0003-2745-1736)[![ROR](https://raw.githubusercontent.com/ror-community/ror-logos/main/ror-icon-rgb.svg)](https://ror.org/02jx3x895)
 
-- **Chengyang Gao**. Author.
+-   **Chengyang Gao**. Author.
 
-- **Antonio Remiro-Azocar**. Author.
-  [](https://orcid.org/0000-0002-7263-4251)
+-   **Antonio Remiro-Azocar**. Author.
+    [](https://orcid.org/0000-0002-7263-4251)
+
+</div>
+
+<div class="section level2">
 
 ## Citation
 
@@ -28,3 +36,7 @@ Subject-Level Data*. R package version 2.0.0,
       note = {R package version 2.0.0},
       url = {https://StatisticsHealthEconomics.github.io/outstandR/},
     }
+
+</div>
+
+</div>

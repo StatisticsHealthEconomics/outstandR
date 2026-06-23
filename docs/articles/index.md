@@ -1,21 +1,67 @@
+<div id="main" class="col-md-9" role="main">
+
 # Articles
 
-### Binary outcome data example
+<div class="section">
 
-- [Binary data
-  example](https://StatisticsHealthEconomics.github.io/outstandR/articles/Binary_outcome_example.md):
+### Getting Started
 
-### Continuous outcome data example
+<div class="section-desc">
 
-- [Continuous data
-  example](https://StatisticsHealthEconomics.github.io/outstandR/articles/Continuous_outcome_example.md):
+A practical demonstration of the core outstandR workflow.
 
-### Count outcome data example
+</div>
 
-- [Count data
-  example](https://StatisticsHealthEconomics.github.io/outstandR/articles/Count_outcome_example.md):
+-   [Getting Started with outstandR: A Practical
+    Demonstration](https://StatisticsHealthEconomics.github.io/outstandR/articles/practical_demonstration.md):
+
+</div>
+
+<div class="section">
+
+### Methodological Background
+
+<div class="section-desc">
+
+Theory behind population-adjusted indirect comparisons.
+
+</div>
+
+-   [Methodological
+    Background](https://StatisticsHealthEconomics.github.io/outstandR/articles/methodology.md):
+
+</div>
+
+<div class="section">
+
+### Advanced Features & Diagnostics
+
+<div class="section-desc">
+
+Model fit, uncertainty quantification, and custom simulations.
+
+</div>
+
+-   [Advanced Features: Diagnostics and Uncertainty
+    Quantification](https://StatisticsHealthEconomics.github.io/outstandR/articles/diagnostics_and_uncertainty.md):
+-   [Simulating Target Cohorts with Custom
+    Copulas](https://StatisticsHealthEconomics.github.io/outstandR/articles/custom_copula.md):
+
+</div>
+
+<div class="section">
 
 ### Developer Guides
 
-- [Adding a New Strategy to
-  \`outstandR\`](https://StatisticsHealthEconomics.github.io/outstandR/articles/adding-a-new-strategy.md):
+<div class="section-desc">
+
+Software architecture and extending the package.
+
+</div>
+
+-   [Adding New
+    Strategies](https://StatisticsHealthEconomics.github.io/outstandR/articles/adding-a-new-strategy.md):
+
+</div>
+
+</div>

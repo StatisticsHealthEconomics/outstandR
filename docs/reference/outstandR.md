@@ -1,9 +1,19 @@
+<div id="main" class="col-md-9" role="main">
+
 # Calculate the difference between treatments using all evidence
+
+<div class="ref-description section level2">
 
 This is the main, top-level wrapper for `{outstandR}`. Methods taken
 from (Remiro‐Azócar et al. 2022) .
 
+</div>
+
+<div class="section level2">
+
 ## Usage
+
+<div class="sourceCode">
 
 ``` r
 outstandR(
@@ -20,74 +30,79 @@ outstandR(
 )
 ```
 
+</div>
+
+</div>
+
+<div class="section level2">
+
 ## Arguments
 
-- ipd_trial:
+-   ipd_trial:
 
-  Individual-level patient data. For example, suppose between studies
-  *A* and *C*. In a long format and must contain a treatment column and
-  outcome column consistent with the formula object. The labels in the
-  treatment are used internally so there must be a common treatment with
-  the aggregate-level data trial.
+    Individual-level patient data. For example, suppose between studies
+    *A* and *C*. In a long format and must contain a treatment column
+    and outcome column consistent with the formula object. The labels in
+    the treatment are used internally so there must be a common
+    treatment with the aggregate-level data trial.
 
-- ald_trial:
+-   ald_trial:
 
-  Aggregate-level data. For example, suppose between studies *B* and
-  *C*. The column names are
+    Aggregate-level data. For example, suppose between studies *B* and
+    *C*. The column names are
 
-  - `variable`: Covariate name. In the case of treatment arm sample size
-    this is `NA`,
+    -   `variable`: Covariate name. In the case of treatment arm sample
+        size this is `NA`,
 
-  - `statistic`: Summary statistic name from "mean", standard deviation
-    "sd", probability "prop", or "sum",
+    -   `statistic`: Summary statistic name from "mean", standard
+        deviation "sd", probability "prop", or "sum",
 
-  - `value`: Numerical value of summary statistic,
+    -   `value`: Numerical value of summary statistic,
 
-  - `trt`: Treatment label. Because we assume a common covariate
-    distribution between treatment arms this is `NA`.
+    -   `trt`: Treatment label. Because we assume a common covariate
+        distribution between treatment arms this is `NA`.
 
-- strategy:
+-   strategy:
 
-  Computation strategy function. These can be
-  [`strategy_maic()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md),
-  [`strategy_stc()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md),
-  [`strategy_gcomp_ml()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md)
-  and
-  [`strategy_gcomp_bayes()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md).
+    Computation strategy function. These can be `strategy_maic()`,
+    `strategy_stc()`, `strategy_gcomp_ml()` and
+    `strategy_gcomp_bayes()`.
 
-- ref_trt:
+-   ref_trt:
 
-  Reference / common / anchoring treatment name.
+    Reference / common / anchoring treatment name.
 
-- CI:
+-   CI:
 
-  Confidence interval level; between 0,1 with default 0.95.
+    Confidence interval level; between 0,1 with default 0.95.
 
-- scale:
+-   scale:
 
-  Relative treatment effect scale. If `NULL`, the scale is automatically
-  determined from the model. Choose from "log-odds",
-  "log_relative_risk", "risk_difference", "delta_z", "mean_difference",
-  "rate_difference" depending on the data type.
+    Relative treatment effect scale. If `NULL`, the scale is
+    automatically determined from the model. Choose from "log-odds",
+    "log_relative_risk", "risk_difference", "delta_z",
+    "mean_difference", "rate_difference" depending on the data type.
 
-- var_method:
+-   var_method:
 
-  Variance estimation method.
+    Variance estimation method.
 
-- seed:
+-   seed:
 
-  Random seed.
+    Random seed.
 
-- verbose:
+-   verbose:
 
-  Logical. If `TRUE`, prints progress messages and warnings.
+    Logical. If `TRUE`, prints progress messages and warnings.
 
-- ...:
+-   ...:
 
-  Additional arguments. Currently, can pass named arguments to
-  [`rstanarm::stan_glm()`](https://mc-stan.org/rstanarm/reference/stan_glm.html)
-  via
-  [`strategy_gcomp_bayes()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md).
+    Additional arguments. Currently, can pass named arguments to
+    `rstanarm::stan_glm()` via `strategy_gcomp_bayes()`.
+
+</div>
+
+<div class="section level2">
 
 ## Value
 
@@ -96,6 +111,10 @@ Containing statistics between each pair of treatments. These are the
 mean, variances and confidence intervals, for contrasts and absolute
 values.
 
+</div>
+
+<div class="section level2">
+
 ## References
 
 Remiro‐Azócar A, Heath A, Baio G (2022). “Parametric G‐computation for
@@ -103,14 +122,26 @@ compatible indirect treatment comparisons with limited individual
 patient data.” *Res. Synth. Methods*, 1–31. ISSN 1759-2879,
 [doi:10.1002/jrsm.1565](https://doi.org/10.1002/jrsm.1565) , 2108.12208.
 
+</div>
+
+<div class="section level2">
+
 ## See also
 
-[`strategy_maic()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md)
-[`strategy_stc()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md)
-[`strategy_gcomp_ml()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md)
-[`strategy_gcomp_bayes()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md)
+<div class="dont-index">
+
+`strategy_maic()` `strategy_stc()` `strategy_gcomp_ml()`
+`strategy_gcomp_bayes()`
+
+</div>
+
+</div>
+
+<div class="section level2">
 
 ## Examples
+
+<div class="sourceCode">
 
 ``` r
 data(AC_IPD_binY_contX)  # A vs C individual patient-level data
@@ -130,6 +161,7 @@ outstandR_maic <- outstandR(
 #> --> Analysis Model: y ~ PF_cont_1 + PF_cont_2 + trt * EM_cont_1 + trt * EM_cont_2
 #> --> Inferred Balance Model: ~ PF_cont_1 + PF_cont_2 + EM_cont_1 + EM_cont_2
 #>     (Balancing on means of these covariates by default)
+#> Warning: Covariates detected in the MAIC outcome model. To ensure the estimation of compatible marginal treatment effects, MAIC requires an unadjusted outcome model. The outcome model is being automatically overridden to 'y ~ trt'.
 #> 
 #> ── Starting outstandR Analysis ─────────────────────────────────────────────────
 #> ℹ Strategy: maic
@@ -138,6 +170,7 @@ outstandR_maic <- outstandR(
 #> 
 #> ℹ Calculating weights using method of moments...
 #> ℹ Starting Bootstrap with 100 replicates.
+#> Treatment is guessed as: trt
 
 # simulated treatment comparison
 outstandR_stc <- outstandR(
@@ -179,8 +212,8 @@ outstandR_gcomp_bayes <- outstandR(
 #> 
 #> SAMPLING FOR MODEL 'continuous' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 3.7e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.37 seconds.
+#> Chain 1: Gradient evaluation took 4.3e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.43 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -214,8 +247,8 @@ outstandR_mim <- outstandR(
 #> 
 #> SAMPLING FOR MODEL 'continuous' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 2.2e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.22 seconds.
+#> Chain 1: Gradient evaluation took 1.4e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.14 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -241,11 +274,17 @@ outstandR_mim <- outstandR(
 #> Chain 1: Iteration: 1000 / 1000 [100%]  (Sampling)
 #> Chain 1: 
 #> Chain 1:  Elapsed Time: 0 seconds (Warm-up)
-#> Chain 1:                0.107 seconds (Sampling)
-#> Chain 1:                0.107 seconds (Total)
+#> Chain 1:                0.106 seconds (Sampling)
+#> Chain 1:                0.106 seconds (Total)
 #> Chain 1: 
 #> Warning: There were 1 chains where the estimated Bayesian Fraction of Missing Information was low. See
 #> https://mc-stan.org/misc/warnings.html#bfmi-low
 #> Warning: Examine the pairs() plot to diagnose sampling problems
 # }
 ```
+
+</div>
+
+</div>
+
+</div>

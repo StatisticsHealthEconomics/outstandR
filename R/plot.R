@@ -23,6 +23,15 @@ plot.outstandR <- function(x, ...,
     stop("All objects passed to plot() must be of class 'outstandR'.")
   }
   
+  # Ensure all objects are on the same scale
+  scales <- sapply(models, function(m) {
+    if (is.null(m$scale)) "Unknown" else m$scale
+  })
+  if (length(unique(scales)) > 1) {
+    stop("All objects passed to plot() must be on the same scale. Found scales: ",
+         paste(unique(scales), collapse = ", "), ".")
+  }
+  
   # Internal helper to convert nested lists into tidy data frame
   tidy_outstandr <- function(res_list) {
     if (is.null(res_list) || all(is.na(unlist(res_list$means)))) return(NULL)
@@ -120,18 +129,32 @@ plot.outstandR <- function(x, ...,
   model_colors <- stats::setNames(rep("black", n_models), model_levels)
   model_colors[!is_naive] <- non_naive_colors
 
+  scale_lbl <- if (!is.null(x$scale)) {
+    scale_map <- list(
+      log_odds = "Log-Odds Ratio",
+      mean_difference = "Mean Difference",
+      delta_z = "Delta Z",
+      log_relative_risk_rare_events = "Log Relative Risk (Rare)",
+      log_relative_risk = "Log Relative Risk",
+      risk_difference = "Risk Difference"
+    )
+    if (x$scale %in% names(scale_map)) scale_map[[x$scale]] else x$scale
+  } else {
+    "Unknown"
+  }
+
   # combined forest plot
   ggplot(
     plot_df, aes(x = .data$Estimate, y = .data$Treatments, color = .data$Model)) +
     geom_point(position = position_dodge(width = 0.5), size = 3) +
-    geom_errorbarh(aes(xmin = .data$lower.0.95, xmax = .data$upper.0.95), 
-                   position = position_dodge(width = 0.5), height = 0.2, na.rm = TRUE) +
+    geom_errorbar(aes(xmin = .data$lower.0.95, xmax = .data$upper.0.95), 
+                  position = position_dodge(width = 0.5), width = 0.2, na.rm = TRUE) +
     scale_color_manual(values = model_colors) +
     facet_wrap(~.data$Type, scales = "free") +
     geom_vline(data = dplyr::filter(plot_df, .data$Type == "Relative Contrasts"), 
                aes(xintercept = 0), linetype = "dashed", color = "gray50") +
     labs(title = "Population-Adjusted Indirect Comparison Results",
-         x = "Estimate (95% CI)", y = NULL) +
+         x = paste0("Estimate (95% CI) [Scale: ", scale_lbl, "]"), y = NULL) +
     theme_bw() +
     theme(legend.position = "bottom")
 }

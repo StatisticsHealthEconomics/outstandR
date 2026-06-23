@@ -7,6 +7,15 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  warning = FALSE,
+  message = FALSE
+)
+```
+
 ## Introduction
 
 In G-computation and MIM, `outstandR` simulates a synthetic pseudo-population reflecting the ALD trial using a Gaussian copula. This approach decouples the dependence structure (correlation matrix $\Sigma$) from the marginal distributions of covariates.
@@ -16,11 +25,29 @@ The simulation follows three steps:
 2. Apply the Probability Integral Transform: $U_{ik}=\Phi(Z_{ik})$
 3. Map to target scales using inverse CDFs: $X_{ik}=F_k^{-1}(U_{ik};\theta_k)$
 
+First, let's load the package and prepare the mixed continuous/binary outcome data.
+
+```{r prep}
+library(outstandR)
+data(AC_IPD_contY_mixedX) 
+data(BC_ALD_contY_mixedX) 
+
+# Define mixed outcome regression formula
+lin_form_mixedX <- as.formula("y ~ X1 + X2 + X3 + trt + trt:(X1 + X2 + X4)")
+```
+
+---
+
 ## Specifying Marginal Distributions
 
 By default, the package assumes a multivariate normal distribution. However, users can define specific marginal distributions using the `marginal_distns` argument. `outstandR` automatically retrieves reported means and SDs from the ALD to parameterize these via the method of moments.
 
-```r
+Supported marginal distributions include:
+* `"gamma"` (Gamma)
+* `"binom"` (Binomial)
+* `"norm"` (Normal)
+
+```{r run-custom}
 custom_distns <- c(X1 = "gamma", X2 = "binom")
 
 outstandR_custom <- outstandR(
@@ -33,7 +60,11 @@ outstandR_custom <- outstandR(
     N = 1000),
   seed = 12345
 )
+
+print(outstandR_custom)
 ```
+
+---
 
 ## Manual Parameter Specification
 
@@ -41,7 +72,7 @@ For sensitivity analyses, or when the method of moments conversion isn't nativel
 
 For instance, to simulate an older cohort (mean = 70, SD = 10.5) for covariate `X1` using a Gamma distribution:
 
-```r
+```{r run-manual}
 target_mean <- 70
 target_sd <- 10.5
 
@@ -61,4 +92,6 @@ outstandR_sens <- outstandR(
     N = 1000),
   seed = 12345
 )
+
+print(outstandR_sens)
 ```

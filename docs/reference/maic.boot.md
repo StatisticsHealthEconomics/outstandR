@@ -1,8 +1,18 @@
+<div id="main" class="col-md-9" role="main">
+
 # MAIC bootstrap sample
+
+<div class="ref-description section level2">
 
 Matching-adjusted indirect comparison bootstrap sampling.
 
+</div>
+
+<div class="section level2">
+
 ## Usage
+
+<div class="sourceCode">
 
 ``` r
 maic.boot(
@@ -25,78 +35,99 @@ maic.boot(
 )
 ```
 
+</div>
+
+</div>
+
+<div class="section level2">
+
 ## Arguments
 
-- data:
+-   data:
 
-  Individual-level patient data (data frame).
+    Individual-level patient data (data frame).
 
-- indices:
+-   indices:
 
-  Vector of indices, same length as original, which define the bootstrap
-  sample.
+    Vector of indices, same length as original, which define the
+    bootstrap sample.
 
-- balance_matrix:
+-   balance_matrix:
 
-  Pre-computed balance matrix.
+    Pre-computed balance matrix.
 
-- outcome_x_matrix:
+-   outcome_x\_matrix:
 
-  Pre-computed outcome design matrix.
+    Pre-computed outcome design matrix.
 
-- outcome_y:
+-   outcome_y:
 
-  Pre-computed outcome vector.
+    Pre-computed outcome vector.
 
-- ald_targets:
+-   ald_targets:
 
-  Vector of ALD targets.
+    Vector of ALD targets.
 
-- scaling_factors:
+-   scaling_factors:
 
-  Vector of scaling factors.
+    Vector of scaling factors.
 
-- trt_var:
+-   trt_var:
 
-  Treatment variable name.
+    Treatment variable name.
 
-- family:
+-   family:
 
-  A 'family' object specifying the distribution and link function.
+    A 'family' object specifying the distribution and link function.
 
-- hat_w:
+-   hat_w:
 
-  MAIC weights; default `NULL` which calls
-  [`maic_weights()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/maic_weights.md).
+    MAIC weights; default `NULL` which calls `maic_weights()`.
 
-- ipd:
+-   ipd:
 
-  Backwards compatibility IPD data (optional).
+    Backwards compatibility IPD data (optional).
 
-- outcome_model:
+-   outcome_model:
 
-  Backwards compatibility outcome model formula (optional).
+    Backwards compatibility outcome model formula (optional).
 
-- balance_model:
+-   balance_model:
 
-  Backwards compatibility balance model formula (optional).
+    Backwards compatibility balance model formula (optional).
 
-- ald:
+-   ald:
 
-  Backwards compatibility ALD data (optional).
+    Backwards compatibility ALD data (optional).
 
-- moments:
+-   moments:
 
-  Backwards compatibility moments (default 1).
+    Backwards compatibility moments (default 1).
 
-- int:
+-   int:
 
-  Backwards compatibility interactions flag (default FALSE).
+    Backwards compatibility interactions flag (default FALSE).
+
+</div>
+
+<div class="section level2">
 
 ## Value
 
 Vector of fitted probabilities for treatments *A* and *C*
 
+</div>
+
+<div class="section level2">
+
 ## See also
 
-[`calc_IPD_stats.maic()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/calc_IPD_stats.md)
+<div class="dont-index">
+
+`calc_IPD_stats.maic()`
+
+</div>
+
+</div>
+
+</div>

@@ -1,49 +1,75 @@
+<div id="main" class="col-md-9" role="main">
+
 # Calculate Average Treatment Effect
+
+<div class="ref-description section level2">
 
 Computes the average treatment effect (ATE) based on the specified
 effect scale.
 
+</div>
+
+<div class="section level2">
+
 ## Usage
+
+<div class="sourceCode">
 
 ``` r
 calculate_ate(mean_comp, mean_ref, effect)
 ```
 
+</div>
+
+</div>
+
+<div class="section level2">
+
 ## Arguments
 
-- mean_comp, mean_ref:
+-   mean_comp, mean_ref:
 
-  Mean of the outcome for the comparator and reference / common
+    Mean of the outcome for the comparator and reference / common
 
-- effect:
+-   effect:
 
-  A character string specifying the effect scale. Options are:
+    A character string specifying the effect scale. Options are:
 
-  "log_odds"
+    "log_odds"
 
-  :   Log-odds difference.
+    :   Log-odds difference.
 
-  "risk_difference"
+    "risk_difference"
 
-  :   Risk difference.
+    :   Risk difference.
 
-  "delta_z"
+    "delta_z"
 
-  :   Probit scale difference (z-scores).
+    :   Probit scale difference (z-scores).
 
-  "log_relative_risk_rare_events"
+    "log_relative_risk_rare_events"
 
-  :   Log relative risk for rare events.
+    :   Log relative risk for rare events.
 
-  "log_relative_risk"
+    "log_relative_risk"
 
-  :   Log relative risk.
+    :   Log relative risk.
+
+</div>
+
+<div class="section level2">
 
 ## Value
 
 Numeric computed average treatment effect on the specified scale.
 
+</div>
+
+<div class="section level2">
+
 ## Examples
+
+<div class="sourceCode">
 
 ``` r
 calculate_ate(mean_comp = 0.7, mean_ref = 0.5, effect = "log_odds")
@@ -51,3 +77,9 @@ calculate_ate(mean_comp = 0.7, mean_ref = 0.5, effect = "log_odds")
 calculate_ate(mean_comp = 0.7, mean_ref = 0.5, effect = "risk_difference")
 #> [1] 0.2
 ```
+
+</div>
+
+</div>
+
+</div>

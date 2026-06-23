@@ -44,11 +44,8 @@ reference:
 - title: "Main"
   desc: "Main analysis functions."
   contents:
-  # - outstandR-package
-  - starts_with("outstandR")
-  - strategy
-  - starts_with("strategy_")
-  - "-strategy_stc"
+    - starts_with("outstandR")
+    - strategy
 - title: "Constituent statistics"
   desc: "Helper functions used by the main functions."
   contents:
@@ -89,19 +86,17 @@ articles:
 - title: "Getting Started"
   desc: "A practical demonstration of the core outstandR workflow."
   contents:
-    - "articles/practical_demonstration"
+    - "practical_demonstration"
 - title: "Methodological Background"
   desc: "Theory behind population-adjusted indirect comparisons."
   contents:
-    - "articles/methodology"
+    - "methodology"
 - title: "Advanced Features & Diagnostics"
   desc: "Model fit, uncertainty quantification, and custom simulations."
   contents:
-    - "articles/diagnostics_and_uncertainty"
-    - "articles/custom_copula"
+    - "diagnostics_and_uncertainty"
+    - "custom_copula"
 - title: "Developer Guides"
   desc: "Software architecture and extending the package."
   contents:
-    - "articles/adding-a-new-strategy"
-    
-    
+    - "adding-a-new-strategy"

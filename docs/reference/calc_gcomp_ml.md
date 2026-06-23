@@ -1,47 +1,73 @@
+<div id="main" class="col-md-9" role="main">
+
 # G-computation Maximum Likelihood Bootstrap
+
+<div class="ref-description section level2">
 
 Computes the mean difference in treatment effects using bootstrap
 resampling.
 
+</div>
+
+<div class="section level2">
+
 ## Usage
+
+<div class="sourceCode">
 
 ``` r
 calc_gcomp_ml(strategy, analysis_params)
 ```
 
+</div>
+
+</div>
+
+<div class="section level2">
+
 ## Arguments
 
-- strategy:
+-   strategy:
 
-  A list specifying the model strategy, including:
+    A list specifying the model strategy, including:
 
-  - `R`: Number of bootstrap replications.
+    -   `R`: Number of bootstrap replications.
 
-  - `outcome_model`: A linear regression `formula` object for the
-    outcome model.
+    -   `outcome_model`: A linear regression `formula` object for the
+        outcome model.
 
-  - `family`: A `family` object specifying the distribution and link
-    function (e.g., `binomial`).
+    -   `family`: A `family` object specifying the distribution and link
+        function (e.g., `binomial`).
 
-  - `N`: Synthetic sample size for g-computation.
+    -   `N`: Synthetic sample size for g-computation.
 
-- analysis_params:
+-   analysis_params:
 
-  List of analysis parameters.
+    List of analysis parameters.
+
+</div>
+
+<div class="section level2">
 
 ## Value
 
 A list containing:
 
-- `means`: A list containing:
+-   `means`: A list containing:
 
-  - `A`: Bootstrap estimates for comparator treatment group "A".
+    -   `A`: Bootstrap estimates for comparator treatment group "A".
 
-  - `C`: Bootstrap estimates for reference treatment group "C".
+    -   `C`: Bootstrap estimates for reference treatment group "C".
 
-- `model`: A list containing the `fit` object, `rho`, and `N`.
+-   `model`: A list containing the `fit` object, `rho`, and `N`.
+
+</div>
+
+<div class="section level2">
 
 ## Examples
+
+<div class="sourceCode">
 
 ``` r
 strategy <- list(
@@ -140,3 +166,9 @@ calc_gcomp_ml(
 #> 
          
 ```
+
+</div>
+
+</div>
+
+</div>

@@ -1,9 +1,19 @@
+<div id="main" class="col-md-9" role="main">
+
 # Simulate Aggregate-Level Data Pseudo-Population
+
+<div class="ref-description section level2">
 
 Generates a synthetic cohort using a normal copula based on
 aggregate-level data.
 
+</div>
+
+<div class="section level2">
+
 ## Usage
+
+<div class="sourceCode">
 
 ``` r
 simulate_ALD_pseudo_pop(
@@ -20,55 +30,63 @@ simulate_ALD_pseudo_pop(
 )
 ```
 
+</div>
+
+</div>
+
+<div class="section level2">
+
 ## Arguments
 
-- formula:
+-   formula:
 
-  Linear regression `formula` object. Prognostic factors (PF) are main
-  effects and effect modifiers (EM) are interactions with the treatment
-  variable, e.g., y ~ X1 + trt + trt:X2. For covariates as both PF and
-  EM use `*` syntax.
+    Linear regression `formula` object. Prognostic factors (PF) are main
+    effects and effect modifiers (EM) are interactions with the
+    treatment variable, e.g., y \~ X1 + trt + trt:X2. For covariates as
+    both PF and EM use `*` syntax.
 
-- ipd:
+-   ipd:
 
-  Individual-level patient data. Dataframe with one row per patient with
-  outcome, treatment and covariate columns.
+    Individual-level patient data. Dataframe with one row per patient
+    with outcome, treatment and covariate columns.
 
-- ald:
+-   ald:
 
-  Aggregate-level data. Long format summary statistics for each
-  covariate and treatment outcomes. We assume a common distribution for
-  each treatment arm.
+    Aggregate-level data. Long format summary statistics for each
+    covariate and treatment outcomes. We assume a common distribution
+    for each treatment arm.
 
-- rho:
+-   rho:
 
-  A named square matrix of covariate correlations or single value;
-  default NA takes from IPD.
+    A named square matrix of covariate correlations or single value;
+    default NA takes from IPD.
 
-- N:
+-   N:
 
-  Sample size for the synthetic cohort. Default is 1000.
+    Sample size for the synthetic cohort. Default is 1000.
 
-- marginal_distns:
+-   marginal_distns:
 
-  Marginal distributions names; vector default NA. Available
-  distributions are given in stats::Distributions. See
-  [`copula::Mvdc()`](https://rdrr.io/pkg/copula/man/Mvdc.html) for
-  details
+    Marginal distributions names; vector default NA. Available
+    distributions are given in stats::Distributions. See
+    `copula::Mvdc()` for details
 
-- marginal_params:
+-   marginal_params:
 
-  Marginal distributions parameters; named list of lists, default NA.
-  See [`copula::Mvdc()`](https://rdrr.io/pkg/copula/man/Mvdc.html) for
-  details.
+    Marginal distributions parameters; named list of lists, default NA.
+    See `copula::Mvdc()` for details.
 
-- seed:
+-   seed:
 
-  Random seed
+    Random seed
 
-- verbose:
+-   verbose:
 
-  Default `FALSE`
+    Default `FALSE`
+
+</div>
+
+<div class="section level2">
 
 ## Value
 
@@ -76,7 +94,13 @@ A data frame representing the synthetic pseudo-population. It contains
 `N` rows (one for each simulated individual) and columns for every
 covariate specified in `marginal_distns` of `formula`.
 
+</div>
+
+<div class="section level2">
+
 ## Examples
+
+<div class="sourceCode">
 
 ``` r
 if (FALSE) { # \dontrun{
@@ -156,3 +180,9 @@ sim_cohort_marginals <- simulate_ALD_pseudo_pop(
 head(sim_cohort_marginals)
 } # }
 ```
+
+</div>
+
+</div>
+
+</div>

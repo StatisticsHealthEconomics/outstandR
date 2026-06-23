@@ -2,7 +2,6 @@
 % Please edit documentation in R/strategy_.R
 \name{strategy_maic}
 \alias{strategy_maic}
-\alias{strategy_stc}
 \alias{strategy_gcomp_ml}
 \alias{strategy_gcomp_bayes}
 \alias{strategy_mim}
@@ -18,12 +17,6 @@ strategy_maic(
   moments = 1,
   int = FALSE,
   verbatim = TRUE
-)
-
-strategy_stc(
-  formula = NULL,
-  family = gaussian(link = "identity"),
-  trt_var = NULL
 )
 
 strategy_gcomp_ml(
@@ -97,8 +90,6 @@ Available distributions are given in stats::Distributions. See \code{\link[copul
 \value{
 \code{maic} class object
 
-\code{stc} class object
-
 \code{gcomp_ml} class object
 
 \code{gcomp_bayes} class object
@@ -132,30 +123,6 @@ differences in effect modifiers and limited patient-level data.
 }
 where the weight \eqn{w_{it}} assigned to the \eqn{i}-th individual receiving treatment
 \eqn{t} is equal to the odds of being enrolled in the \emph{AC} trial vs the \emph{AB} trial.
-}
-
-\section{Simulated treatment comparison (STC)}{
-
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
-
-\code{strategy_stc()} was deprecated in outstandR version 1.X.X.
-We recommend using G-computation (\code{strategy_gcomp_ml()}) as a more robust
-alternative for this type of analysis.
-
-Outcome regression-based method which targets a conditional treatment effect.
-STC is a modification of the covariate adjustment method.
-An outcome model is fitted using IPD in the \emph{AB} trial. For example,
-
-\deqn{
-g(\mu_{t(AB)}(X)) = \beta_0 + \beta_1^T X + (\beta_B + \beta_2^T X^{EM}) I(t=B)
-}
-where \eqn{\beta_0} is an intercept term, \eqn{\beta_1} is a vector of coefficients for
-prognostic variables, \eqn{\beta_B} is the relative effect of treatment \emph{B} compared
-to \emph{A} at \eqn{X=0}, \eqn{\beta_2} is a vector of coefficients for effect
-modifiers \eqn{X^{EM}} subvector of the full covariate vector \eqn{X}), and
-\eqn{\mu_{t(AB)}(X)} is the expected outcome of an individual assigned
-treatment \eqn{t} with covariate values \eqn{X} which is transformed onto a
-chosen linear predictor scale with link function \eqn{g(\cdot)}.
 }
 
 \section{G-computation maximum likelihood}{

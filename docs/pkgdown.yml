@@ -1,12 +1,13 @@
-pandoc: 3.8.3
+pandoc: 2.14.2
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
-  articles/adding-a-new-strategy: adding-a-new-strategy.html
-  Binary_outcome_example: Binary_outcome_example.html
-  Continuous_outcome_example: Continuous_outcome_example.html
-  Count_outcome_example: Count_outcome_example.html
-last_built: 2026-06-19T15:40Z
+  adding-a-new-strategy: adding-a-new-strategy.html
+  custom_copula: custom_copula.html
+  diagnostics_and_uncertainty: diagnostics_and_uncertainty.html
+  methodology: methodology.html
+  practical_demonstration: practical_demonstration.html
+last_built: 2026-06-23T14:07Z
 urls:
   reference: https://StatisticsHealthEconomics.github.io/outstandR/reference
   article: https://StatisticsHealthEconomics.github.io/outstandR/articles

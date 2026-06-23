@@ -1,12 +1,21 @@
+<div id="main" class="col-md-9" role="main">
+
 # Bootstrap for G-computation via Maximum Likelihood
 
-For use with a bootstrapping function (e.g.,
-[`boot::boot()`](https://rdrr.io/pkg/boot/man/boot.html)). On each
+<div class="ref-description section level2">
+
+For use with a bootstrapping function (e.g., `boot::boot()`). On each
 bootstrap sample of the data, it calculates a relative treatment effect
 (e.g., log odds ratio, log relative risk, or risk difference) using
 G-computation with maximum likelihood.
 
+</div>
+
+<div class="section level2">
+
 ## Usage
+
+<div class="sourceCode">
 
 ``` r
 gcomp_ml.boot(
@@ -26,46 +35,68 @@ gcomp_ml.boot(
 )
 ```
 
+</div>
+
+</div>
+
+<div class="section level2">
+
 ## Arguments
 
-- data:
+-   data:
 
-  A data frame containing the original individual participant data
-  (IPD).
+    A data frame containing the original individual participant data
+    (IPD).
 
-- indices:
+-   indices:
 
-  A vector of indices supplied by the bootstrapping function, used to
-  resample `data`.
+    A vector of indices supplied by the bootstrapping function, used to
+    resample `data`.
 
-- family:
+-   family:
 
-  A 'family' object specifying the distribution and link function (e.g.,
-  'binomial'). See stats::family() for more details.
+    A 'family' object specifying the distribution and link function
+    (e.g., 'binomial'). See stats::family() for more details.
 
-- rho:
+-   rho:
 
-  A named square matrix specifying the correlation between covariates
-  for synthetic data generation. Defaults to `NA`, assuming
-  independence.
+    A named square matrix specifying the correlation between covariates
+    for synthetic data generation. Defaults to `NA`, assuming
+    independence.
 
-- N:
+-   N:
 
-  Synthetic sample size for G-computation
+    Synthetic sample size for G-computation
 
-- marginal_distns, marginal_params:
+-   marginal_distns, marginal_params:
 
-  Marginal distributions and parameters
+    Marginal distributions and parameters
 
-- ald:
+-   ald:
 
-  A data frame of aggregate-level data providing covariate
-  distributions.
+    A data frame of aggregate-level data providing covariate
+    distributions.
+
+</div>
+
+<div class="section level2">
 
 ## Value
 
 A single numeric value representing the relative treatment effect
 
+</div>
+
+<div class="section level2">
+
 ## See also
 
-[`strategy_gcomp_ml()`](https://StatisticsHealthEconomics.github.io/outstandR/reference/strategy.md)
+<div class="dont-index">
+
+`strategy_gcomp_ml()`
+
+</div>
+
+</div>
+
+</div>

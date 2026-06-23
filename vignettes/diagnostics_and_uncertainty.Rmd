@@ -7,6 +7,35 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+## Introduction
+
+This vignette demonstrates how to access model diagnostics, check weight distributions, and perform robust variance estimation using the objects returned by `outstandR`.
+
+First, let's load the packages and prepare the data and models that we will use throughout the examples.
+
+```{r prep-models}
+library(outstandR)
+library(ggplot2)
+
+data(AC_IPD_binY_contX) # A vs C IPD
+data(BC_ALD_binY_contX) # B vs C ALD
+
+# Formulas
+lin_form_contX <- as.formula("y ~ PF_cont_1 + PF_cont_2 + trt + trt:EM_cont_1 + trt:EM_cont_2")
+bal_form_contX <- as.formula("~ EM_cont_1 + EM_cont_2")
+```
+
+---
+
 ## 1. Robust Variance Estimation
 
 Standard errors in population-adjusted analyses can be sensitive to model misspecification. `outstandR` supports robust (sandwich) standard errors for MAIC and ML-based G-computation. 
@@ -17,7 +46,7 @@ $$\hat{Var}(\hat{\Delta})=\nabla g(\hat{\theta})^\top\cdot V_{sand}\cdot\nabla g
 
 To use this, set `var_method = "sandwich"` in your `outstandR()` call:
 
-```r
+```{r run-robust}
 stc_robust <- outstandR(
   ipd_trial = AC_IPD_binY_contX,
   ald_trial = BC_ALD_binY_contX,
@@ -27,31 +56,77 @@ stc_robust <- outstandR(
   seed = 12345,
   var_method = "sandwich"
 )
+
+print(stc_robust)
 ```
+
+---
 
 ## 2. Model Diagnostics
 
 `outstandR` returns detailed model artifacts to facilitate diagnostics. 
 
 ### MAIC Weight Diagnostics
-For MAIC, you can extract the calculated weights to check for extreme outliers and view the Effective Sample Size (ESS).
 
-```r
+For MAIC, you can extract the calculated weights to check for extreme outliers and view the Effective Sample Size (ESS). First, we run the MAIC model:
+
+```{r run-maic}
+outstandR_maic <- outstandR(
+  ipd_trial = AC_IPD_binY_contX,
+  ald_trial = BC_ALD_binY_contX,
+  strategy = strategy_maic(
+    formula = list(outcome_model = formula("y ~ trt"),
+                   balance_model = bal_form_contX),
+    family = binomial(link = "logit")),
+  seed = 12345
+)
+```
+
+We can inspect the Effective Sample Size (ESS) to assess if we have suffered a severe loss of power due to matching:
+
+```{r print-ess}
 # Check Effective Sample Size
 print(outstandR_maic$model$ESS)
+```
 
+Next, we can plot a histogram of the weights to check for extreme or dominant weights:
+
+```{r plot-weights, fig.width=6, fig.height=4}
 # Plot a histogram of weights
-library(ggplot2)
 ggplot(data.frame(weights = outstandR_maic$model$weights), aes(x = weights)) +
   geom_histogram(binwidth = 0.1, color = "black", fill = "lightgray") +
-  theme_minimal()
+  theme_minimal() +
+  labs(title = "Distribution of MAIC Weights", x = "Weight", y = "Frequency")
 ```
 
 ### Bayesian MCMC Diagnostics
-For Bayesian G-computation and MIM, the underlying `stanfit` object is retained in the output. You can pass this to packages like `bayesplot` to assess MCMC convergence:
 
-```r
+For Bayesian G-computation and MIM, the underlying `stanfit` object is retained in the output. First, let's fit the Bayesian G-computation strategy:
+
+```{r run-bayes}
+outstandR_gcomp_bayes <- outstandR(
+  ipd_trial = AC_IPD_binY_contX,
+  ald_trial = BC_ALD_binY_contX,
+  strategy = strategy_gcomp_bayes(
+    formula = list(outcome_model = lin_form_contX),
+    family = binomial(link = "logit")),
+  seed = 12345,
+  iter = 250,
+  chains = 1,
+  refresh = 0
+)
+```
+
+We can extract the fit and pass it to packages like `bayesplot` (if installed) or use `rstanarm`'s built-in plotting to assess MCMC convergence:
+
+```{r bayesplot-trace, fig.width=7, fig.height=4, eval=requireNamespace("bayesplot", quietly = TRUE)}
 library(bayesplot)
 stan_obj <- outstandR_gcomp_bayes$model$fit
-mcmc_trace(stan_obj)
+mcmc_trace(stan_obj, pars = c("(Intercept)", "trtA"))
+```
+
+If `bayesplot` is not available, standard convergence diagnostics such as `summary()` are available:
+
+```{r bayes-summary}
+summary(outstandR_gcomp_bayes$model$fit, pars = c("(Intercept)", "trtA"))
 ```

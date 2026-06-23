@@ -5,17 +5,17 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Adding a New Strategy to `outstandR` • outstandR</title>
+<title>Adding New Strategies • outstandR</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Adding a New Strategy to `outstandR`">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Adding New Strategies">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -56,21 +56,17 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Adding a New Strategy to `outstandR`</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Adding New Strategies</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/StatisticsHealthEconomics/outstandR/blob/HEAD/vignettes/articles/adding-a-new-strategy.Rmd" class="external-link"><code>vignettes/articles/adding-a-new-strategy.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/StatisticsHealthEconomics/outstandR/blob/HEAD/vignettes/adding-a-new-strategy.Rmd" class="external-link"><code>vignettes/adding-a-new-strategy.Rmd</code></a></small>
       <div class="d-none name"><code>adding-a-new-strategy.Rmd</code></div>
     </div>
 
     
     
-<p>The <code>outstandR</code> package uses R’s S3 object-oriented system
-to manage different statistical approaches (strategies) for population
-adjustment. This modular design makes it straightforward to implement
-new methods without rewriting the package’s core infrastructure.</p>
-<p>To add a new statistical method (e.g., <code>custom_method</code>),
-you need to complete the following 5 steps:</p>
+<p>The <code>outstandR</code> package uses R’s S3 object-oriented system to manage different statistical approaches (strategies) for population adjustment. This modular design makes it straightforward to implement new methods without rewriting the package’s core infrastructure.</p>
+<p>To add a new statistical method (e.g., <code>custom_method</code>), you need to complete the following 5 steps:</p>
 <ol style="list-style-type: decimal">
 <li>Create a strategy constructor function.</li>
 <li>Document the new class fields.</li>
@@ -83,12 +79,8 @@ you need to complete the following 5 steps:</p>
 <h2 id="step-1-create-the-strategy-constructor">Step 1: Create the Strategy Constructor<a class="anchor" aria-label="anchor" href="#step-1-create-the-strategy-constructor"></a>
 </h2>
 <p><strong>File:</strong> <code>R/strategy_.R</code></p>
-<p>First, create a user-facing constructor function that validates user
-inputs and instantiates the strategy object. By convention, this
-function should be named
-<code>strategy_&lt;method_name&gt;()</code>.</p>
-<p>It must call the internal <code><a href="../reference/strategy.html">new_strategy()</a></code> function,
-passing the class name and the validated arguments.</p>
+<p>First, create a user-facing constructor function that validates user inputs and instantiates the strategy object. By convention, this function should be named <code>strategy_&lt;method_name&gt;()</code>.</p>
+<p>It must call the internal <code><a href="../reference/strategy.html">new_strategy()</a></code> function, passing the class name and the validated arguments.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#' @rdname strategy</span></span>
 <span><span class="co">#' </span></span>
@@ -127,9 +119,7 @@ passing the class name and the validated arguments.</p>
 <h2 id="step-2-document-the-class-fields">Step 2: Document the Class Fields<a class="anchor" aria-label="anchor" href="#step-2-document-the-class-fields"></a>
 </h2>
 <p><strong>File:</strong> <code>R/strategy-class.R</code></p>
-<p>Update the <code>strategy-class</code> documentation to inform users
-about the internal fields your new subclass carries. Add a new
-<code>\item</code> block under the details section:</p>
+<p>Update the <code>strategy-class</code> documentation to inform users about the internal fields your new subclass carries. Add a new <code>\item</code> block under the details section:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#'   \item{custom_method subclass}{Additional fields for the Custom Method:</span></span>
 <span><span class="co">#'     \itemize{</span></span>
@@ -140,26 +130,16 @@ about the internal fields your new subclass carries. Add a new
 <div class="section level2">
 <h2 id="step-3-write-the-core-calculation-function">Step 3: Write the Core Calculation Function<a class="anchor" aria-label="anchor" href="#step-3-write-the-core-calculation-function"></a>
 </h2>
-<p><strong>File:</strong> Create a new file (e.g.,
-<code>R/custom_method.R</code>) or add to existing calculation
-files.</p>
-<p>Write the function that actually performs the maths. It will receive
-two arguments: <code>strategy</code> (the object you created in Step 1)
-and <code>analysis_params</code> (a list containing the pre-processed
-<code>ipd</code>, <code>ald</code>, treatment labels, etc.).</p>
-<p><strong>Crucial Requirement:</strong> Your function MUST return a
-list containing exactly two elements: <code>means</code> and
-<code>model</code>.</p>
+<p><strong>File:</strong> Create a new file (e.g., <code>R/custom_method.R</code>) or add to existing calculation files.</p>
+<p>Write the function that actually performs the maths. It will receive two arguments: <code>strategy</code> (the object you created in Step 1) and <code>analysis_params</code> (a list containing the pre-processed <code>ipd</code>, <code>ald</code>, treatment labels, etc.).</p>
+<p><strong>Crucial Requirement:</strong> Your function MUST return a list containing exactly two elements: <code>means</code> and <code>model</code>.</p>
 <ul>
 <li>
-<code>means$A</code>: Estimates for the comparator treatment group
-(can be a scalar, or a vector of bootstrap/MCMC draws).</li>
+<code>means$A</code>: Estimates for the comparator treatment group (can be a scalar, or a vector of bootstrap/MCMC draws).</li>
 <li>
-<code>means$C</code>: Estimates for the reference treatment group
-(can be a scalar, or a vector of bootstrap/MCMC draws).</li>
+<code>means$C</code>: Estimates for the reference treatment group (can be a scalar, or a vector of bootstrap/MCMC draws).</li>
 <li>
-<code>model</code>: A list of any underlying models or diagnostics
-(e.g., weights, glm fit objects) you want returned to the user.</li>
+<code>model</code>: A list of any underlying models or diagnostics (e.g., weights, glm fit objects) you want returned to the user.</li>
 </ul>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#' Calculate Custom Method</span></span>
@@ -192,12 +172,8 @@ list containing exactly two elements: <code>means</code> and
 <h2 id="step-4-register-the-s3-dispatch-method">Step 4: Register the S3 Dispatch Method<a class="anchor" aria-label="anchor" href="#step-4-register-the-s3-dispatch-method"></a>
 </h2>
 <p><strong>File:</strong> <code>R/calc_IPD_stats.R</code></p>
-<p>To plug your core function into <code>outstandR</code>’s top-level
-execution, you must register it as an S3 method for
-<code>calc_IPD_stats</code>.</p>
-<p>Because <code>outstandR</code> handles the relative treatment effect
-transformations (ATE) and variance estimation automatically, you simply
-pass your core function to the <code><a href="../reference/IPD_stat_factory.html">IPD_stat_factory()</a></code>.</p>
+<p>To plug your core function into <code>outstandR</code>’s top-level execution, you must register it as an S3 method for <code>calc_IPD_stats</code>.</p>
+<p>Because <code>outstandR</code> handles the relative treatment effect transformations (ATE) and variance estimation automatically, you simply pass your core function to the <code><a href="../reference/IPD_stat_factory.html">IPD_stat_factory()</a></code>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#' @rdname calc_IPD_stats</span></span>
 <span><span class="co">#' @section Custom Method statistics:</span></span>
@@ -209,10 +185,7 @@ pass your core function to the <code><a href="../reference/IPD_stat_factory.html
 <h2 id="step-5-add-a-print-method">Step 5: Add a Print Method<a class="anchor" aria-label="anchor" href="#step-5-add-a-print-method"></a>
 </h2>
 <p><strong>File:</strong> <code>R/print-strategies.R</code></p>
-<p>Finally, create a nice console printout for when a user types the
-name of their instantiated strategy. Extend the generic
-<code>print.strategy</code> using <code><a href="https://rdrr.io/r/base/UseMethod.html" class="external-link">NextMethod()</a></code> to print the
-common fields, then print your specific parameters.</p>
+<p>Finally, create a nice console printout for when a user types the name of their instantiated strategy. Extend the generic <code>print.strategy</code> using <code><a href="https://rdrr.io/r/base/UseMethod.html" class="external-link">NextMethod()</a></code> to print the common fields, then print your specific parameters.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#' @export</span></span>
 <span><span class="co">#' @method print custom_method</span></span>
@@ -230,9 +203,7 @@ common fields, then print your specific parameters.</p>
 <div class="section level2">
 <h2 id="optional-step-6-passing-random-seeds">(Optional) Step 6: Passing Random Seeds<a class="anchor" aria-label="anchor" href="#optional-step-6-passing-random-seeds"></a>
 </h2>
-<p>If your new method utilizes a random number generator (e.g., MCMC
-sampling, pseudo-population simulation), you might need to catch the
-top-level <code>seed</code> argument.</p>
+<p>If your new method utilizes a random number generator (e.g., MCMC sampling, pseudo-population simulation), you might need to catch the top-level <code>seed</code> argument.</p>
 <p><strong>File:</strong> <code>R/outstandR.R</code></p>
 <p>Create an <code>add_seed</code> S3 method for your strategy:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -243,59 +214,40 @@ top-level <code>seed</code> argument.</p>
 <span>  <span class="op">}</span></span>
 <span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">fn_args</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p>Here is a section you can append to your vignette or developer guide.
-It provides a copy-pasteable utility script that future contributors can
-use to automate the boilerplate setup for a new strategy.</p>
+<p>Here is a section you can append to your vignette or developer guide. It provides a copy-pasteable utility script that future contributors can use to automate the boilerplate setup for a new strategy.</p>
 <hr>
 </div>
 <div class="section level2">
-<h2 id="step-7-automating-boilerplate-with-a-scaffolding-script-optional">Step 7: Automating Boilerplate with a Scaffolding Script
-(Optional)<a class="anchor" aria-label="anchor" href="#step-7-automating-boilerplate-with-a-scaffolding-script-optional"></a>
+<h2 id="step-7-automating-boilerplate-with-a-scaffolding-script-optional">Step 7: Automating Boilerplate with a Scaffolding Script (Optional)<a class="anchor" aria-label="anchor" href="#step-7-automating-boilerplate-with-a-scaffolding-script-optional"></a>
 </h2>
-<p>If you or your contributors find yourselves adding new strategies
-frequently, you can automate the creation of the boilerplate files using
-the <code>usethis</code> package.</p>
-<p>We recommend saving the following helper function in a script file
-(e.g., <code>scripts/scaffold_strategy.R</code>). This script will
-automatically create the necessary calculation file and open the
-registry files for you to edit.</p>
+<p>If you or your contributors find yourselves adding new strategies frequently, you can automate the creation of the boilerplate files using the <code>usethis</code> package.</p>
+<p>We recommend saving the following helper function in a script file (e.g., <code>scripts/scaffold_strategy.R</code>). This script will automatically create the necessary calculation file and open the registry files for you to edit.</p>
 <div class="section level3">
 <h3 id="how-to-use-it">How to Use It<a class="anchor" aria-label="anchor" href="#how-to-use-it"></a>
 </h3>
-<p>When you are ready to build a new method, simply source the script
-and run the function with the name of your new method:</p>
+<p>When you are ready to build a new method, simply source the script and run the function with the name of your new method:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load the helper function</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"scripts/scaffold_strategy.R"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Scaffold a new method called "gcomp_rf" (e.g., Random Forest G-computation)</span></span>
 <span><span class="fu">scaffold_strategy</span><span class="op">(</span><span class="st">"gcomp_rf"</span><span class="op">)</span></span></code></pre></div>
-<p>This will instantly set up your workspace, leaving you to focus
-solely on the statistical implementation rather than package wiring!</p>
-<p>Here is a section you can add to your Markdown document (perhaps at
-the end, right before or after the scaffolding script) that outlines
-best practices for writing a robust, user-friendly strategy in
-<code>outstandR</code>.</p>
+<p>This will instantly set up your workspace, leaving you to focus solely on the statistical implementation rather than package wiring!</p>
+<p>Here is a section you can add to your Markdown document (perhaps at the end, right before or after the scaffolding script) that outlines best practices for writing a robust, user-friendly strategy in <code>outstandR</code>.</p>
 <hr>
 </div>
 </div>
 <div class="section level2">
 <h2 id="best-practices-for-writing-a-good-strategy">Best Practices for Writing a Good Strategy<a class="anchor" aria-label="anchor" href="#best-practices-for-writing-a-good-strategy"></a>
 </h2>
-<p>When contributing a new statistical approach to
-<code>outstandR</code>, following these guidelines ensures your method
-is robust, user-friendly, and maintainable.</p>
+<p>When contributing a new statistical approach to <code>outstandR</code>, following these guidelines ensures your method is robust, user-friendly, and maintainable.</p>
 <div class="section level3">
 <h3 id="fail-fast-and-validate-early">1. Fail Fast and Validate Early<a class="anchor" aria-label="anchor" href="#fail-fast-and-validate-early"></a>
 </h3>
-<p>Catch user errors in the constructor function
-(<code>strategy_custom_method()</code>) before any heavy computation
-begins.</p>
+<p>Catch user errors in the constructor function (<code>strategy_custom_method()</code>) before any heavy computation begins.</p>
 <ul>
-<li>Use the package’s built-in <code><a href="../reference/check_formula.html">check_formula()</a></code> and
-<code>check_family()</code> helpers.</li>
-<li>If your method requires specific types of data (e.g., only binary
-outcomes), enforce it immediately:</li>
+<li>Use the package’s built-in <code><a href="../reference/check_formula.html">check_formula()</a></code> and <code>check_family()</code> helpers.</li>
+<li>If your method requires specific types of data (e.g., only binary outcomes), enforce it immediately:</li>
 </ul>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="va">family</span><span class="op">$</span><span class="va">family</span> <span class="op">!=</span> <span class="st">"binomial"</span><span class="op">)</span> <span class="op">{</span></span>
@@ -305,31 +257,20 @@ outcomes), enforce it immediately:</li>
 <div class="section level3">
 <h3 id="return-a-rich-model-object">2. Return a Rich <code>model</code> Object<a class="anchor" aria-label="anchor" href="#return-a-rich-model-object"></a>
 </h3>
-<p>The core calculation function must return a list with
-<code>means</code> and <code>model</code>. While <code>means</code> is
-strictly structured, the <code>model</code> element is a free-form list.
-Use this to give the user as much diagnostic power as possible.</p>
+<p>The core calculation function must return a list with <code>means</code> and <code>model</code>. While <code>means</code> is strictly structured, the <code>model</code> element is a free-form list. Use this to give the user as much diagnostic power as possible.</p>
 <ul>
 <li>
-<strong>Good things to include:</strong> The raw fitted model
-objects (e.g., <code>glm</code> or <code>stanfit</code>), calculated
-weights, convergence status flags, and effective sample sizes
-(ESS).</li>
-<li>This allows users to extract the <code>model</code> from the final
-<code>outstandR</code> object and check diagnostics themselves.</li>
+<strong>Good things to include:</strong> The raw fitted model objects (e.g., <code>glm</code> or <code>stanfit</code>), calculated weights, convergence status flags, and effective sample sizes (ESS).</li>
+<li>This allows users to extract the <code>model</code> from the final <code>outstandR</code> object and check diagnostics themselves.</li>
 </ul>
 </div>
 <div class="section level3">
 <h3 id="handle-convergence-issues-gracefully">3. Handle Convergence Issues Gracefully<a class="anchor" aria-label="anchor" href="#handle-convergence-issues-gracefully"></a>
 </h3>
-<p>Many population adjustment methods rely on optimization or iterative
-fitting (like GLMs or MAIC). If an internal model fails to converge,
-your function shouldn’t crash the entire R session—especially during a
-bootstrap loop.</p>
+<p>Many population adjustment methods rely on optimization or iterative fitting (like GLMs or MAIC). If an internal model fails to converge, your function shouldn’t crash the entire R session—especially during a bootstrap loop.</p>
 <ul>
 <li>Wrap volatile model fitting in <code><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch()</a></code>.</li>
-<li>If a fit fails, return <code>NA</code> for the means and pass a
-warning to the user.</li>
+<li>If a fit fails, return <code>NA</code> for the means and pass a warning to the user.</li>
 </ul>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span><span class="op">{</span></span>
@@ -346,15 +287,10 @@ warning to the user.</li>
 <div class="section level3">
 <h3 id="respect-the-verbose-flag">4. Respect the <code>verbose</code> Flag<a class="anchor" aria-label="anchor" href="#respect-the-verbose-flag"></a>
 </h3>
-<p><code>outstandR</code> provides a global <code>verbose</code>
-argument so users can silence console output during heavy
-simulations.</p>
+<p><code>outstandR</code> provides a global <code>verbose</code> argument so users can silence console output during heavy simulations.</p>
 <ul>
-<li>Extract <code>verbose &lt;- isTRUE(analysis_params$verbose)</code>
-at the top of your calculation function.</li>
-<li>Use the <code>cli</code> package to print progress updates or warn
-users about computationally expensive steps, but <em>only</em> if
-<code>verbose</code> is true.</li>
+<li>Extract <code>verbose &lt;- isTRUE(analysis_params$verbose)</code> at the top of your calculation function.</li>
+<li>Use the <code>cli</code> package to print progress updates or warn users about computationally expensive steps, but <em>only</em> if <code>verbose</code> is true.</li>
 </ul>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="va">verbose</span><span class="op">)</span> <span class="op">{</span></span>
@@ -365,15 +301,10 @@ users about computationally expensive steps, but <em>only</em> if
 <div class="section level3">
 <h3 id="write-unit-tests-for-your-method">5. Write Unit Tests for Your Method<a class="anchor" aria-label="anchor" href="#write-unit-tests-for-your-method"></a>
 </h3>
-<p>Whenever you add a new strategy, add a corresponding test file in
-<code>tests/testthat/</code> (e.g.,
-<code>test-custom_method.R</code>).</p>
+<p>Whenever you add a new strategy, add a corresponding test file in <code>tests/testthat/</code> (e.g., <code>test-custom_method.R</code>).</p>
 <ul>
 <li>Test that the strategy constructor throws errors on bad inputs.</li>
-<li>Use the package’s built-in dummy data
-(<code>AC_IPD_binY_contX</code>, etc.) to run a fast, low-iteration
-version of your method to ensure the output list matches the required
-<code>list(means = ..., model = ...)</code> structure.</li>
+<li>Use the package’s built-in dummy data (<code>AC_IPD_binY_contX</code>, etc.) to run a fast, low-iteration version of your method to ensure the output list matches the required <code>list(means = ..., model = ...)</code> structure.</li>
 </ul>
 </div>
 </div>

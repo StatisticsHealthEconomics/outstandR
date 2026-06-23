@@ -1,4 +1,8 @@
+<div id="main" class="col-md-9" role="main">
+
 # Calculate individual-level patient data statistics
+
+<div class="ref-description section level2">
 
 Computes mean and variance statistics for individual-level patient data
 using various approaches, including Matching-Adjusted Indirect
@@ -6,7 +10,13 @@ Comparison (MAIC), Simulated Treatment Comparison (STC), and
 G-computation via Maximum Likelihood Estimation (MLE) or Bayesian
 inference.
 
+</div>
+
+<div class="section level2">
+
 ## Usage
+
+<div class="sourceCode">
 
 ``` r
 calc_IPD_stats(strategy, analysis_params, ...)
@@ -30,66 +40,97 @@ calc_IPD_stats(strategy, analysis_params, var_method = NULL, ...)
 calc_IPD_stats(strategy, analysis_params, var_method = NULL, ...)
 ```
 
+</div>
+
+</div>
+
+<div class="section level2">
+
 ## Arguments
 
-- strategy:
+-   strategy:
 
-  A list corresponding to different modelling approaches
+    A list corresponding to different modelling approaches
 
-- analysis_params:
+-   analysis_params:
 
-  A list containing:
+    A list containing:
 
-  - `ipd`: Individual-level patient data (data frame)
+    -   `ipd`: Individual-level patient data (data frame)
 
-  - `ald`: Aggregate-level trial data (data frame)
+    -   `ald`: Aggregate-level trial data (data frame)
 
-  - `ref_trt`: Treatment label for the reference arm (common; e.g., "C")
+    -   `ref_trt`: Treatment label for the reference arm (common; e.g.,
+        "C")
 
-  - `ipd_comp`: Treatment label for the comparator arm in the IPD (e.g.,
-    "A")
+    -   `ipd_comp`: Treatment label for the comparator arm in the IPD
+        (e.g., "A")
 
-  - `scale`: Scaling parameter ("log_odds", "risk_difference",
-    "log_relative_risk")
+    -   `scale`: Scaling parameter ("log_odds", "risk_difference",
+        "log_relative_risk")
 
-- ...:
+-   ...:
 
-  Additional arguments
+    Additional arguments
 
-- var_method:
+-   var_method:
 
-  A string specifying the variance estimation method, either "sample"
-  (default) or "sandwich".
+    A string specifying the variance estimation method, either "sample"
+    (default) or "sandwich".
+
+</div>
+
+<div class="section level2">
 
 ## Value
 
 A list containing:
 
-- `contrasts`: A list with elements `mean` and `var`.
+-   `contrasts`: A list with elements `mean` and `var`.
 
-- `absolute`: A list with elements `mean` and `var`.
+-   `absolute`: A list with elements `mean` and `var`.
+
+</div>
+
+<div class="section level2">
 
 ## Simulated treatment comparison statistics
 
 IPD for reference "C" and comparator "A" trial arms are used to fit a
-regression model describing the observed outcomes \\y\\ in terms of the
-relevant baseline characteristics \\x\\ and the treatment variable
-\\z\\.
+regression model describing the observed outcomes \\(y\\) in terms of
+the relevant baseline characteristics \\(x\\) and the treatment variable
+\\(z\\).
+
+</div>
+
+<div class="section level2">
 
 ## Matching-adjusted indirect comparison statistics
 
 Marginal IPD comparator treatment "A" vs reference treatment "C"
 treatment effect estimates using bootstrapping sampling.
 
+</div>
+
+<div class="section level2">
+
 ## G-computation maximum likelihood statistics
 
-Compute a non-parametric bootstrap with default \\R=1000\\ resamples.
+Compute a non-parametric bootstrap with default \\(R=1000\\) resamples.
+
+</div>
+
+<div class="section level2">
 
 ## G-computation Bayesian statistics
 
 Using Stan, compute marginal relative effects for IPD comparator "A" vs
 reference "C" treatment arms for each MCMC sample by transforming from
 probability to linear predictor scale.
+
+</div>
+
+<div class="section level2">
 
 ## Multiple imputation marginalisation
 
@@ -98,7 +139,13 @@ comparator "A" vs reference "C" arms for each MCMC sample by
 transforming from probability to linear predictor scale. Approximate by
 using imputation and combining estimates using pooling.
 
+</div>
+
+<div class="section level2">
+
 ## Examples
+
+<div class="sourceCode">
 
 ``` r
 strategy <- strategy_maic(
@@ -179,3 +226,9 @@ calc_IPD_stats(strategy,
 #> 
   
 ```
+
+</div>
+
+</div>
+
+</div>
