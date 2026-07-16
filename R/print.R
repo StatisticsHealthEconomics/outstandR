@@ -47,7 +47,7 @@ print.outstandR <- function(x, ...) {
   con_tab <- tibble::tibble(
     Treatments = names(contrasts$means),
     Estimate = unlist(contrasts$means),
-    Std.Error = unlist(contrasts$variances),
+    Std.Error = sqrt(unlist(contrasts$variances)),
     lower.0.95 = sapply(contrasts$CI, \(x) x[1]),
     upper.0.95 = sapply(contrasts$CI, \(x) x[2])
   )
@@ -55,7 +55,7 @@ print.outstandR <- function(x, ...) {
   abs_tab <- tibble::tibble(
     Treatments = names(absolute$means),
     Estimate = unlist(absolute$means),
-    Std.Error = unlist(absolute$variances),
+    Std.Error = sqrt(unlist(absolute$variances)),
     lower.0.95 = sapply(absolute$CI, \(x) x[1]),
     upper.0.95 = sapply(absolute$CI, \(x) x[2])
   )

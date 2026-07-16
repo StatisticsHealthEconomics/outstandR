@@ -90,6 +90,9 @@
 -   Updated the `print.outstandR()` method to handle delayed balance model 
     functions, providing clearer output for auto-generated models.
 
+-   Fixed a bug in `print.outstandR()` where raw variances were displayed under 
+    the `Std.Error` column instead of actual standard errors (square root of the variances).
+
 -   Standardized strategy naming: `strategy_gcomp_stan()` is now 
     `strategy_gcomp_bayes()` to more accurately reflect the underlying 
     statistical approach.

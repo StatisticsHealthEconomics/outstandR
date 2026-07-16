@@ -220,6 +220,16 @@ test_that("compare with maicplus package with continuous outcome", {
   weighted_mean_ipd <- weighted.mean(ipd$y, ipd$weight)
 })
 
+test_that("print.outstandR runs without error", {
+  load(test_path("testdata/BC_ALD.RData"))
+  load(test_path("testdata/AC_IPD.RData"))
+  
+  strat <- strategy_maic(formula = list(balance_model = as.formula("~ X1")))
+  res <- outstandR(AC_IPD, BC_ALD, strategy = strat)
+  
+  expect_error(print(res), NA)
+})
+
 
 #
 test_that("mismatch between covariates in ald and ipd / formula", {
