@@ -5,13 +5,13 @@
 <!-- <img align="right" src="mime.png" width="100"> -->
 
 <!-- badges: start -->
-
 [![R-CMD-check](https://github.com/StatisticsHealthEconomics/outstandR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/StatisticsHealthEconomics/outstandR/actions/workflows/R-CMD-check.yaml)
-[![License: GPL
-v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 <a href="https://statisticshealtheconomics.r-universe.dev/outstandR"><img src="https://statisticshealtheconomics.r-universe.dev/outstandR/badges/version" alt="outstandR status badge" style="height: 20px;"></a>
 [![CRAN status](https://www.r-pkg.org/badges/version/outstandR)](https://CRAN.R-project.org/package=outstandR)
 [![codecov](https://codecov.io/gh/StatisticsHealthEconomics/outstandR/graph/badge.svg?token=YOUR_CODECOV_TOKEN)](https://codecov.io/gh/StatisticsHealthEconomics/outstandR)
+[![CRAN Total Downloads](https://cranlogs.r-pkg.org/badges/grand-total/outstandR)](https://CRAN.R-project.org/package=outstandR)
+[![CRAN Monthly Downloads](https://cranlogs.r-pkg.org/badges/last-month/outstandR)](https://CRAN.R-project.org/package=outstandR)
 <!-- badges: end -->
 
 > Indirect treatment comparison with limited subject-level data
