@@ -1,0 +1,47 @@
+citEntry(entry = "Manual",
+  title = "outstandR: Model-Based Standardisation for Indirect Treatment Comparison with Limited Subject-Level Data",
+  author = c(person("Nathan", "Green"),
+             person("Chengyang", "Gao"),
+             person("Antonio", "Remiro-Azocar")),
+  year = sub("-.*", "", meta$Date),
+  note = paste("R package version", meta$Version),
+  url = "https://CRAN.R-project.org/package=outstandR",
+  textVersion = paste("Green, N., Gao, C., & Remiro-Azocar, A. (2024).",
+                      "outstandR: Model-Based Standardisation for Indirect Treatment Comparison",
+                      "with Limited Subject-Level Data.",
+                      "R package version 2.0.0.")
+)
+
+citEntry(entry = "Article",
+  title = "Parametric G-computation for compatible indirect treatment comparisons with limited individual patient data",
+  author = c(person("Antonio", "Remiro-Azócar"),
+             person("Andrew", "Heath"),
+             person("Gianluca", "Baio")),
+  journal = "Research Synthesis Methods",
+  year = "2022",
+  volume = "13",
+  number = "6",
+  pages = "760-790",
+  doi = "10.1002/jrsm.1565",
+  textVersion = paste("Remiro-Azócar, A., Heath, A., & Baio, G. (2022).",
+                      "Parametric G-computation for compatible indirect treatment comparisons",
+                      "with limited individual patient data.",
+                      "Research Synthesis Methods, 13(6), 760-790.")
+)
+
+citEntry(entry = "Article",
+  title = "Model-based standardisation using multiple imputation for indirect treatment comparison with limited individual patient data",
+  author = c(person("Antonio", "Remiro-Azócar"),
+             person("Andrew", "Heath"),
+             person("Gianluca", "Baio")),
+  journal = "BMC Medical Research Methodology",
+  year = "2024",
+  volume = "24",
+  number = "1",
+  pages = "23",
+  doi = "10.1186/s12874-024-02157-x",
+  textVersion = paste("Remiro-Azócar, A., Heath, A., & Baio, G. (2024).",
+                      "Model-based standardisation using multiple imputation for indirect",
+                      "treatment comparison with limited individual patient data.",
+                      "BMC Medical Research Methodology, 24, 23.")
+)
