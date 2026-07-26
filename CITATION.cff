@@ -1,0 +1,78 @@
+cff-version: 1.2.0
+title: outstandR
+message: >-
+  If you use this software, please cite it using the metadata from this file.
+type: software
+authors:
+  - given-names: Nathan
+    family-names: Green
+    email: n.green@ucl.ac.uk
+    affiliation: University College London
+    orcid: 'https://orcid.org/0000-0003-2745-1736'
+  - given-names: Chengyang
+    family-names: Gao
+    email: chengyang.gao.15@ucl.ac.uk
+    affiliation: University College London
+  - given-names: Antonio
+    family-names: Remiro-Azocar
+    email: antonio.remiro-azocar@bayer.com
+    affiliation: Bayer AG
+    orcid: 'https://orcid.org/0000-0002-7263-4251'
+identifiers:
+  - type: url
+    value: 'https://CRAN.R-project.org/package=outstandR'
+    description: CRAN package page
+repository-code: 'https://github.com/StatisticsHealthEconomics/outstandR'
+url: 'https://statisticshealtheconomics.github.io/outstandR/'
+abstract: >-
+  An R package for model-based standardisation for indirect treatment comparison (ITC).
+  For the problem of indirect treatment comparison with limited subject-level data,
+  this package provides tools for model-based standardisation with several different
+  computation approaches. It facilitates outcome regression standardisation using
+  model-based approaches when head-to-head clinical trials are absent and trial
+  populations differ in effect modifiers.
+keywords:
+  - indirect-treatment-comparison
+  - population-adjustment
+  - model-based-standardisation
+  - health-technology-assessment
+  - parametric-g-computation
+  - matching-adjusted-indirect-comparison
+license: GPL-3.0-or-later
+version: 2.0.0
+date-released: '2024-01-15'
+references:
+  - type: journal-article
+    authors:
+      - given-names: Antonio
+        family-names: Remiro-Azócar
+      - given-names: Andrew
+        family-names: Heath
+      - given-names: Gianluca
+        family-names: Baio
+    title: >-
+      Parametric G-computation for compatible indirect treatment comparisons with
+      limited individual patient data
+    journal: Research Synthesis Methods
+    year: 2022
+    volume: 13
+    number: 6
+    pages: '760-790'
+    doi: 10.1002/jrsm.1565
+  - type: journal-article
+    authors:
+      - given-names: Antonio
+        family-names: Remiro-Azócar
+      - given-names: Andrew
+        family-names: Heath
+      - given-names: Gianluca
+        family-names: Baio
+    title: >-
+      Model-based standardisation using multiple imputation for indirect treatment
+      comparison with limited individual patient data
+    journal: BMC Medical Research Methodology
+    year: 2024
+    volume: 24
+    number: 1
+    pages: 23
+    doi: 10.1186/s12874-024-02157-x
