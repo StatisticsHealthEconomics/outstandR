@@ -17,7 +17,6 @@
 ^_pkgdown\.yml
 scripts/create_package_data\.R
 ^joss_paper/
-^vignettes$
 ^vignettes/.*\.html$
 ^_.*
 ^inst/doc/_comparison-with-other-packages\.Rmd
@@ -28,7 +27,6 @@ scripts/create_package_data\.R
 ^R/conversion-functions\.R$
 ^cran-comments\.md$
 ^.*\.qmd$
-^.*\.Rmd$
 ^check_results$
 ^vignettes/articles$
 ^_pkgdown\.yml$
@@ -36,3 +34,4 @@ scripts/create_package_data\.R
 ^\.positai$
 ^\.claude$
 ^GEMINI.md$
+^CITATION\.cff$
