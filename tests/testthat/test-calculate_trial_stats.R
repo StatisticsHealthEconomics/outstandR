@@ -176,3 +176,22 @@ test_that("marginal_treatment_effect works correctly", {
                               scale = "log_odds", family = "binomial"),
     expected)
 })
+
+
+test_that("calc_absolute_B transforms onto the natural outcome scale", {
+  res_lo <- outstandR:::calc_absolute_B(
+    mean_C = 0.5, var_C = 0.01,
+    delta_BC = qlogis(0.25), var_BC = 0.04,
+    scale = "log_odds"
+  )
+  expect_equal(res_lo$mean, 0.25)
+  expect_true(res_lo$var > 0)
+  
+  res_lrr <- outstandR:::calc_absolute_B(
+    mean_C = 2.0, var_C = 0.05,
+    delta_BC = log(0.5), var_BC = 0.02,
+    scale = "log_relative_risk"
+  )
+  expect_equal(res_lrr$mean, 1.0)
+  expect_true(res_lrr$var > 0)
+})

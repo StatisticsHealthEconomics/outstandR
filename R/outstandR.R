@@ -157,7 +157,7 @@ outstandR <- function(ipd_trial, ald_trial, strategy,
   ipd_stats <- calc_IPD_stats(strategy, analysis_params, ...) 
   ald_stats <- calc_ALD_stats(strategy, analysis_params) 
   
-  stats <- result_stats(ipd_stats, ald_stats, CI)
+  stats <- result_stats(ipd_stats, ald_stats, CI, scale = scale)
   
   naive_results <- calc_bucher_naive(
     ipd_trial = ipd_trial,

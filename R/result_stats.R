@@ -6,6 +6,7 @@
 #'
 #' @param ipd_stats,ald_stats Trial data for IPD and ALD
 #' @param CI Confidence interval level, i.e. 1-alpha; default 0.95
+#' @param scale Relative treatment effect scale; default "mean_difference"
 #'
 #' @returns List of ITC output:
 #' * `contrasts`: A list for relative effects containing:
@@ -21,7 +22,8 @@
 #'
 result_stats <- function(ipd_stats,
                          ald_stats,
-                         CI = 0.95) {
+                         CI = 0.95,
+                         scale = "mean_difference") {
 
   AC_contrasts <- ipd_stats$contrasts
   AC_absolute <- ipd_stats$absolute
@@ -50,15 +52,23 @@ result_stats <- function(ipd_stats,
   
   # absolute values ---
   
+  abs_B <- calc_absolute_B(
+    mean_C   = unname(AC_absolute$mean[2]),
+    var_C    = unname(AC_absolute$var[2]),
+    delta_BC = ald_stats$mean,
+    var_BC   = ald_stats$var,
+    scale    = scale
+  )
+  
   absolute <- list(
     A = unname(AC_absolute$mean[1]),
-    B = unname(AC_absolute$mean[2] + ald_stats$mean),
+    B = abs_B$mean,
     C = unname(AC_absolute$mean[2])
   )
   
   absolute_var <- list(
     A = unname(AC_absolute$var[1]),
-    B = unname(AC_absolute$var[2] + ald_stats$var),
+    B = abs_B$var,
     C = unname(AC_absolute$var[2])
   )
   
@@ -78,6 +88,64 @@ result_stats <- function(ipd_stats,
       variances = absolute_var,
       CI = absolute_ci
     ))
+}
+
+#' Calculate absolute mean and variance for ALD comparator arm B on the natural outcome scale
+#' @keywords internal
+calc_absolute_B <- function(mean_C, var_C, delta_BC, var_BC, scale = NULL) {
+  if (is.null(scale) || scale %in% c("mean_difference", "risk_difference", "rate_difference")) {
+    return(list(
+      mean = unname(mean_C + delta_BC),
+      var  = unname(var_C + var_BC)
+    ))
+  }
+  
+  if (scale == "log_odds") {
+    eta_C <- qlogis(mean_C)
+    var_eta_C <- var_C / ((mean_C * (1 - mean_C))^2)
+    eta_B <- eta_C + delta_BC
+    var_eta_B <- var_eta_C + var_BC
+    mean_B <- plogis(eta_B)
+    var_B <- ((mean_B * (1 - mean_B))^2) * var_eta_B
+    return(list(mean = unname(mean_B), var = unname(var_B)))
+  }
+  
+  if (scale == "log_relative_risk") {
+    eta_C <- log(mean_C)
+    var_eta_C <- var_C / (mean_C^2)
+    eta_B <- eta_C + delta_BC
+    var_eta_B <- var_eta_C + var_BC
+    mean_B <- exp(eta_B)
+    var_B <- (mean_B^2) * var_eta_B
+    return(list(mean = unname(mean_B), var = unname(var_B)))
+  }
+  
+  if (scale == "delta_z") {
+    eta_C <- qnorm(mean_C)
+    var_eta_C <- var_C / (dnorm(eta_C)^2)
+    eta_B <- eta_C + delta_BC
+    var_eta_B <- var_eta_C + var_BC
+    mean_B <- pnorm(eta_B)
+    var_B <- (dnorm(eta_B)^2) * var_eta_B
+    return(list(mean = unname(mean_B), var = unname(var_B)))
+  }
+  
+  if (scale == "log_relative_risk_rare_events") {
+    eta_C <- log(-log(1 - mean_C))
+    deriv_C <- 1 / ((1 - mean_C) * (-log(1 - mean_C)))
+    var_eta_C <- (deriv_C^2) * var_C
+    eta_B <- eta_C + delta_BC
+    var_eta_B <- var_eta_C + var_BC
+    mean_B <- 1 - exp(-exp(eta_B))
+    deriv_B <- 1 / ((1 - mean_B) * (-log(1 - mean_B)))
+    var_B <- var_eta_B / (deriv_B^2)
+    return(list(mean = unname(mean_B), var = unname(var_B)))
+  }
+  
+  list(
+    mean = unname(mean_C + delta_BC),
+    var  = unname(var_C + var_BC)
+  )
 }
 
 #' @keywords internal

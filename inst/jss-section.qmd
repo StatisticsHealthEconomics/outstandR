@@ -619,11 +619,11 @@ The following code illustrates how to manually override the ALD statistics to si
 ```{r}
 #| eval: true
 
-# manually specify parameters for 'age' (mean=70, sd=10.5)
-# convert mean=70/sd=10.5 to shape/rate manually 
+# manually specify parameters for 'X1' (mean=0.8, sd=0.45 instead of ALD mean=0.608, sd=0.436)
+# convert mean=0.8/sd=0.45 to shape/rate manually 
 # or pass them if we already know the specific shape/rate
-target_mean <- 70
-target_sd <- 10.5
+target_mean <- 0.8
+target_sd <- 0.45
 
 new_params <- list(
   X1 = list(shape = (target_mean/target_sd)^2, 
