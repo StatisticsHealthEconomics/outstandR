@@ -82,10 +82,10 @@ print(BC_ALD_binY_contX)
 The next step is to define the formula, which specifies the relationship between the covariates, treatments and outcome. For this example, the outcome regression is
 
 $$
-\text{logit}(p) = \alpha + \beta_{01} X_{1} + \beta_{02}X_{2} + (\beta_{trt} + \beta_{13} X_{3} + \beta_{14} X_{4}) \mathbb{I}(trt = 1),
+\operatorname{logit}\{m_t^{AC}(x; \theta)\} = \alpha + \beta_{01} X_{1} + \beta_{02}X_{2} + (\beta_{\mathrm{trt}} + \beta_{13} X_{3} + \beta_{14} X_{4}) \mathbb{I}(t = A),
 $$
 
-where $\mathbb{I}()$ is the indicator function, taking value 1 when true and 0 otherwise. The corresponding `R` formula used by `outstandR` is independent of the particular type of data and so we do not include a link function at this stage, i.e, the identity link.
+where $(X_1, X_2, X_3, X_4)$ denote $(\texttt{PF\_cont\_1}, \texttt{PF\_cont\_2}, \texttt{EM\_cont\_1}, \texttt{EM\_cont\_2})$ and $\mathbb{I}(t = A)$ is the indicator function, taking value 1 for treatment $A$ and 0 for treatment $C$. The corresponding `R` formula used by `outstandR` is independent of the particular type of data and so we do not include a link function at this stage, i.e, the identity link.
 
 ```{r}
 # linear formula for the outcome model
@@ -102,16 +102,16 @@ bal_form_contX <- as.formula("~ EM_cont_1 + EM_cont_2")
 
 #### Relative treatment effects
 
-Let $p_C$ be the proportion of events in the comparator treatment arm and $p_B$ be the proportion of events in the reference treatment arm. For the logit link with binary data, the mean treatment effect is the log-odds ratio:
+Let $p_B$ be the proportion of events in the comparator treatment arm and $p_C$ be the proportion of events in the reference treatment arm. For the logit link with binary data, the estimated $BC$ contrast is the log-odds ratio:
 
 $$
-\hat{\Delta}_{BC} = \text{logit}(p_B) - \text{logit}(p_C)
+\widehat{\Delta}_{BC(BC)} = \operatorname{logit}(p_B) - \operatorname{logit}(p_C)
 $$
 
 with variance
 
 $$
-\text{Var}(\Delta_{BC}) = \frac{1}{y_B} + \frac{1}{N_B - y_B} + \frac{1}{y_C} + \frac{1}{N_C - y_C},
+\widehat{V}_{BC} = \operatorname{Var}(\widehat{\Delta}_{BC(BC)}) = \frac{1}{y_B} + \frac{1}{N_B - y_B} + \frac{1}{y_C} + \frac{1}{N_C - y_C},
 $$
 
 where $y_t$ are the number of events and $N_t$ are the total number of subjects for treatment $t$.
@@ -249,7 +249,7 @@ The formats are the same as the previous binary example but now in the ALD the b
 The formula for this example is also a little more complicated. We shall assume that some of the covariate can be both prognostic factors and effect modifiers, so the regression is
 
 $$
-y = \alpha + \beta_{01} X_1 + \beta_{02} X_2 + \beta_{03} X_3 + (\beta_{trt} + \beta_{11} X_1 + \beta_{12} X_2 + \beta_{14} X_4) \mathbb{I}(trt = 1) 
+m_t^{AC}(x; \theta) = \alpha + \beta_{01} X_1 + \beta_{02} X_2 + \beta_{03} X_3 + (\beta_{\mathrm{trt}} + \beta_{11} X_1 + \beta_{12} X_2 + \beta_{14} X_4) \mathbb{I}(t = A) 
 $$
 
 This corresponds to the `R` formula given by
@@ -268,14 +268,14 @@ bal_form_mixedX <- as.formula("~ X1 + X2 + X4")
 Let $\hat{\mu}_B$ be the mean in the comparator arm and $\hat{\mu}_C$ be the mean in the reference arm. Then the mean treatment difference is simply:
 
 $$
-\hat{\Delta}_{BC} = \hat{\mu}_B - \hat{\mu}_C
+\widehat{\Delta}_{BC(BC)} = \hat{\mu}_B - \hat{\mu}_C
 $$
 For other scales on continuous data, the approach may involve transforming the means directly, although typical continuous outcome analyses focus on mean differences.
 
 The variance of the relative treatment effect is
 
 $$
-\text{Var}(\Delta_{BC}) = \frac{s_B^2}{N_B} + \frac{s_C^2}{N_C}
+\widehat{V}_{BC} = \operatorname{Var}(\widehat{\Delta}_{BC(BC)}) = \frac{s_B^2}{N_B} + \frac{s_C^2}{N_C}
 $$
 
 where, for treatment $t$, $N_t$ and $s_t$ are the number of patients and the observed standard deviation, respectively.
@@ -380,10 +380,10 @@ data(BC_ALD_countY_contX)
 print(BC_ALD_countY_contX)
 ```
 
-The formats are the same as the binary outcome data example. Let $\lambda$ be the outcome event rate, then the equation for the outcome regression for the count data is
+The formats are the same as the binary outcome data example. The outcome regression model for the conditional event rate $m_t^{AC}(x; \theta)$ of the count data is
 
 $$
-\log(\lambda) = \alpha + \beta_{01} X_{1} + \beta_{02}X_{2} + (\beta_{trt} + \beta_{13} X_{3} + \beta_{14} X_{4}) \mathbb{I}(trt = 1).
+\log\{m_t^{AC}(x; \theta)\} = \alpha + \beta_{01} X_{1} + \beta_{02}X_{2} + (\beta_{\mathrm{trt}} + \beta_{13} X_{3} + \beta_{14} X_{4}) \mathbb{I}(t = A).
 $$
 
 Recalling that the log link is defined separately in the `outstandR()` function call, we shall use the same linear formulae as for the binary outcome example, `lin_form_contX` and `bal_form_contX`.
@@ -393,13 +393,13 @@ Recalling that the log link is defined separately in the `outstandR()` function 
 The default relative effect with the log link is the log relative risk, with mean
 
 $$
-\hat{\Delta}_{BC} = \ln(\hat{\mu}_B) - \ln(\hat{\mu}_C)
+\widehat{\Delta}_{BC(BC)} = \log(\hat{\mu}_B) - \log(\hat{\mu}_C)
 $$
 
 and variance:
 
 $$
-\text{Var}(\Delta_{BC}) = \frac{1}{N_B \hat{\mu}_B} + \frac{1}{N_C \hat{\mu}_C}
+\widehat{V}_{BC} = \operatorname{Var}(\widehat{\Delta}_{BC(BC)}) = \frac{1}{N_B \hat{\mu}_B} + \frac{1}{N_C \hat{\mu}_C}
 $$
 Table 4 gives the full list of potential relative effects for count outcome data.
 
@@ -489,17 +489,17 @@ plot(outstandR_maic, outstandR_stc, outstandR_gcomp_ml,
 
 By default, `outstandR` reports treatment effects on the scale corresponding to the regression model's link function. For instance, a logistic regression specified with family `binomial(link = "logit")` naturally yields estimates in log-odds ratios, while a linear regression yields mean differences. However, health economic models often require parameters on specific scales, such as risk differences (RD) or relative risks (RR), to facilitate interpretation or align with decision-analytic model inputs.
 
-| Data Type | Model Metric | Mean Difference | Variance Component |
+| Data Type | Relative Effect | Contrast ($\widehat{\Delta}_{BC(BC)}$) | Arm Variance ($\widehat{V}_t$) |
 |:-----------------|:-----------------|:-----------------|:-----------------|
 | **Binary** | Log Odds Ratio$^\dagger$ | $\text{logit}(p_B) - \text{logit}(p_C)$ | $\frac{1}{y_t} + \frac{1}{N_t - y_t}$ |
 |  | Risk Difference | $p_B - p_C$ | $\frac{p_t(1 - p_t)}{N_t}$ |
 |  | Probit Scale Difference | $\text{probit}(p_B) - \text{probit}(p_C)$ | $\frac{1}{y_t} + \frac{1}{N_t - y_t}$ |
-|  | Log RR (cloglog) | $\ln(-\ln(1 - p_B)) - \ln(-\ln(1 - p_C))$ | $\frac{1}{y_t} - \frac{1}{N_t}$ |
-|  | Log RR (Log Link) | $\ln(p_B) - \ln(p_C)$ | $\frac{1}{y_t} - \frac{1}{N_t}$ |
-| **Count** | Log Relative Risk$^\dagger$ | $\ln(\bar{y}_B) - \ln(\bar{y}_C)$ | $\frac{1}{N_t \bar{y}_t}$ |
-|  | Rate Difference | $\bar{y}_B - \bar{y}_C$ | $\frac{\bar{y}_t}{N_t}$ |
+|  | Log RR (cloglog) | $\log(-\log(1 - p_B)) - \log(-\log(1 - p_C))$ | $\frac{1}{y_t} - \frac{1}{N_t}$ |
+|  | Log RR (Log Link) | $\log(p_B) - \log(p_C)$ | $\frac{1}{y_t} - \frac{1}{N_t}$ |
+| **Count** | Log Relative Risk$^\dagger$ | $\log(\hat{\mu}_B) - \log(\hat{\mu}_C)$ | $\frac{1}{N_t \hat{\mu}_t}$ |
+|  | Rate Difference | $\hat{\mu}_B - \hat{\mu}_C$ | $\frac{\hat{\mu}_t}{N_t}$ |
 |  | Delta $z$ (Signal-to-noise) | $\sqrt{\bar{y}_B} - \sqrt{\bar{y}_C}$ | $\frac{1}{4 N_t \bar{y}_t}$ |
-| **Continuous** | Mean Difference$^\dagger$ | $\bar{y}_B - \bar{y}_C$ | $\frac{s_t^2}{N_t}$ |
+| **Continuous** | Mean Difference$^\dagger$ | $\hat{\mu}_B - \hat{\mu}_C$ | $\frac{s_t^2}{N_t}$ |
 
 : Relative treatment effect statistics for different outcome data types ($^\dagger$default).
 
@@ -573,7 +573,7 @@ This option allows analysts to assess the stability of their conclusions without
 
 ## User-defined covariate distributions in G-computation
 
-By default, the simulation step in `outstandR` for G-computation assumes that covariates in the target population follow a multivariate normal distribution parameterized by the means and standard deviations reported in the ALD (corresponding to $F_{k}(\cdot;\eta_{k})$ in Equation (8)). However, this assumption may be inappropriate. For example, age or costs may be skewed and strictly positive, while binary variables, such as sex, are bounded.
+By default, the simulation step in `outstandR` for G-computation uses a Gaussian copula with normal marginal distributions for continuous covariates (parameterized by the means and standard deviations reported in the ALD) and Bernoulli marginal distributions for binary covariates (parameterized by the reported proportions), corresponding to $F_{k}(\cdot;\eta_{k})$ in Equation (8). However, the normal assumption for continuous covariates may be inappropriate when variables such as age or costs are skewed and strictly positive.
 
 `outstandR` allows users to specify alternative marginal distributions for specific covariates via the `marginal_distns` argument.
 
