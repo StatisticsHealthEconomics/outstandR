@@ -4,12 +4,14 @@
 \alias{result_stats}
 \title{Calculate and arrange result statistics}
 \usage{
-result_stats(ipd_stats, ald_stats, CI = 0.95)
+result_stats(ipd_stats, ald_stats, CI = 0.95, scale = "mean_difference")
 }
 \arguments{
 \item{ipd_stats, ald_stats}{Trial data for IPD and ALD}
 
 \item{CI}{Confidence interval level, i.e. 1-alpha; default 0.95}
+
+\item{scale}{Relative treatment effect scale; default "mean_difference"}
 }
 \value{
 List of ITC output:

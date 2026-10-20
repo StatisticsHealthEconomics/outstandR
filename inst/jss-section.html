@@ -478,9 +478,9 @@ Absolute:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-1 A             0.241    0.0457      0.151      0.330
-2 B            -1.03     0.328      -1.67      -0.384
-3 C             0.417    0.0731      0.274      0.561</code></pre>
+1 A             0.241    0.0457     0.151       0.330
+2 B             0.145    0.0543     0.0382      0.251
+3 C             0.417    0.0731     0.274       0.561</code></pre>
 </div>
 </div>
 <p>This contains the same information as the raw output but in a more presentable format. The first block of text provides modelling details, and the following tibbles show the contrast and absolute effects, respectively.</p>
@@ -554,9 +554,9 @@ Absolute:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-1 A             0.242    0.0493      0.145      0.339
-2 B            -1.03     0.328      -1.67      -0.390
-3 C             0.412    0.0713      0.272      0.551</code></pre>
+1 A             0.242    0.0493     0.145       0.339
+2 B             0.142    0.0529     0.0381      0.245
+3 C             0.412    0.0713     0.272       0.551</code></pre>
 </div>
 </div>
 <p>Imposing additional second-moment constraints slightly shifts the adjusted <span class="math inline">\(AC\)</span> log-odds ratio (from <span class="math inline">\(-0.824\)</span> to <span class="math inline">\(-0.797\)</span>) and increases its standard error (from <span class="math inline">\(0.390\)</span> to <span class="math inline">\(0.395\)</span>), while reducing the effective sample size (<code>$model$ESS</code>) from <span class="math inline">\(136.9\)</span> under <code>moments = 1</code> to <span class="math inline">\(128.9\)</span> under <code>moments = 2</code>. The STC, G-computation and MIM analyses are performed similarly but with the <code>outcome_model</code> specified instead of the <code>balance_model</code>.</p>
@@ -1029,9 +1029,9 @@ Absolute:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-1 A            0.402     0.0639      0.277      0.527
-2 B            0.0468    0.245      -0.433      0.526
-3 C            1.31      0.185       0.942      1.67 </code></pre>
+1 A             0.402    0.0639      0.277      0.527
+2 B             0.371    0.0793      0.215      0.526
+3 C             1.31     0.185       0.942      1.67 </code></pre>
 </div>
 </div>
 <p>The corresponding calls to <code>outstandR()</code> for the other analyses follow similarly.</p>
@@ -1469,11 +1469,11 @@ Absolute:
 <p>There are scenarios where manual specification via the <code>marginal_params</code> argument is also necessary. One use case is as a sensitivity analysis, where a researcher wishes to assess the robustness of the relative treatment effect estimates to deviations in the target population’s characteristics of the IPD trial. For instance, if the ALD reports a mean age of 65, a researcher might wish to simulate a target population with a mean age of 70 to test if the conclusions hold for an older cohort. Additionally, manual specification is required for distributions where the method of moments conversion is not natively supported by the package (e.g., specific parameterizations of the Weibull distribution).</p>
 <p>The following code illustrates how to manually override the ALD statistics to simulate an older population.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb200"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb200-1"><a href="#cb200-1" aria-hidden="true" tabindex="-1"></a><span class="co"># manually specify parameters for 'age' (mean=70, sd=10.5)</span></span>
-<span id="cb200-2"><a href="#cb200-2" aria-hidden="true" tabindex="-1"></a><span class="co"># convert mean=70/sd=10.5 to shape/rate manually </span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb200"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb200-1"><a href="#cb200-1" aria-hidden="true" tabindex="-1"></a><span class="co"># manually specify parameters for 'X1' (mean=0.8, sd=0.45 instead of ALD mean=0.608, sd=0.436)</span></span>
+<span id="cb200-2"><a href="#cb200-2" aria-hidden="true" tabindex="-1"></a><span class="co"># convert mean=0.8/sd=0.45 to shape/rate manually </span></span>
 <span id="cb200-3"><a href="#cb200-3" aria-hidden="true" tabindex="-1"></a><span class="co"># or pass them if we already know the specific shape/rate</span></span>
-<span id="cb200-4"><a href="#cb200-4" aria-hidden="true" tabindex="-1"></a>target_mean <span class="ot">&lt;-</span> <span class="dv">70</span></span>
-<span id="cb200-5"><a href="#cb200-5" aria-hidden="true" tabindex="-1"></a>target_sd <span class="ot">&lt;-</span> <span class="fl">10.5</span></span>
+<span id="cb200-4"><a href="#cb200-4" aria-hidden="true" tabindex="-1"></a>target_mean <span class="ot">&lt;-</span> <span class="fl">0.8</span></span>
+<span id="cb200-5"><a href="#cb200-5" aria-hidden="true" tabindex="-1"></a>target_sd <span class="ot">&lt;-</span> <span class="fl">0.45</span></span>
 <span id="cb200-6"><a href="#cb200-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb200-7"><a href="#cb200-7" aria-hidden="true" tabindex="-1"></a>new_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
 <span id="cb200-8"><a href="#cb200-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">X1 =</span> <span class="fu">list</span>(<span class="at">shape =</span> (target_mean<span class="sc">/</span>target_sd)<span class="sc">^</span><span class="dv">2</span>, </span>
@@ -1537,8 +1537,8 @@ Contrasts:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-1 AB          -22.8      32.8       -87.1      41.4  
-2 AC          -23.8      32.8       -88.0      40.4  
+1 AB           -0.355     0.346      -1.03      0.323
+2 AC           -1.28      0.298      -1.87     -0.698
 3 BC           -0.926     0.176      -1.27     -0.581
 
 Absolute:
@@ -1546,9 +1546,9 @@ Absolute:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-1 A              62.1      16.1       30.5       93.8
-2 B              85.0      29.2       27.7      142. 
-3 C              85.9      29.2       28.7      143. </code></pre>
+1 A           -0.334      0.153     -0.634    -0.0338
+2 B            0.0215     0.319     -0.603     0.646 
+3 C            0.948      0.265      0.428     1.47  </code></pre>
 </div>
 </div>
 </section>
