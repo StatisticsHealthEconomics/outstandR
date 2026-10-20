@@ -151,3 +151,40 @@ test_that("calc_maic processes moments and int arguments via the strategy object
   expect_length(results$model$weights, 100) # Should return weights for all 100 IPD patients
   expect_true(is.numeric(results$model$ESS))
 })
+
+test_that("outstandR end-to-end works with strategy_maic(moments = 2)", {
+  data(AC_IPD_binY_contX)
+  data(BC_ALD_binY_contX)
+  
+  res_m1 <- outstandR(
+    ipd_trial = AC_IPD_binY_contX,
+    ald_trial = BC_ALD_binY_contX,
+    strategy = strategy_maic(
+      formula = list(outcome_model = y ~ trt,
+                     balance_model = ~ EM_cont_1 + EM_cont_2),
+      family = binomial(link = "logit"),
+      moments = 1,
+      n_boot = 20
+    ),
+    seed = 12345,
+    verbose = FALSE
+  )
+  
+  res_m2 <- outstandR(
+    ipd_trial = AC_IPD_binY_contX,
+    ald_trial = BC_ALD_binY_contX,
+    strategy = strategy_maic(
+      formula = list(outcome_model = y ~ trt,
+                     balance_model = ~ EM_cont_1 + EM_cont_2),
+      family = binomial(link = "logit"),
+      moments = 2,
+      n_boot = 20
+    ),
+    seed = 12345,
+    verbose = FALSE
+  )
+  
+  expect_s3_class(res_m2, "outstandR")
+  expect_true(is.finite(res_m2$model$ESS))
+  expect_lt(res_m2$model$ESS, res_m1$model$ESS)
+})

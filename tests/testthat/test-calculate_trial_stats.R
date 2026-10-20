@@ -24,7 +24,7 @@ test_that("calculate_trial_variance_binary works correctly", {
                expected)
   
   # risk_difference
-  expected <- 30 * (1 - 30 / 100) / 100
+  expected <- (30 / 100) * (1 - 30 / 100) / 100
   expect_equal(calculate_trial_variance_binary(ald, "B", "risk_difference"),
                expected)
   

@@ -42,8 +42,8 @@ or the development version from GitHub using R-universe:
 ```{r install-runiverse}
 #| eval: false
 install.packages("outstandR",
-                 repos = c("[https://statisticshealtheconomics.r-universe.dev](https://statisticshealtheconomics.r-universe.dev)",
-                           "[https://cloud.r-project.org](https://cloud.r-project.org)"))
+                 repos = c("https://statisticshealtheconomics.r-universe.dev",
+                           "https://cloud.r-project.org"))
 ```
 
 ## Illustrative examples
@@ -143,6 +143,27 @@ print(outstandR_maic)
 ```
 
 This contains the same information as the raw output but in a more presentable format. The first block of text provides modelling details, and the following tibbles show the contrast and absolute effects, respectively.
+
+#### Matching higher-order moments in MAIC
+
+By default, `strategy_maic()` balances only the first moments (sample means or proportions) of the covariates specified in `balance_model` (`moments = 1`). When both means and standard deviations are available for continuous covariates in the ALD, we can additionally match second moments (variances) by setting `moments = 2`. Internally, `outstandR` expands the balance matrix to include squared covariate terms $\text{I}(X_k^2)$ and matches them to $\bar{x}_{k(BC)}^2 + s_{k(BC)}^2$.
+
+```{r outstandR_maic_m2}
+outstandR_maic_m2 <-
+  outstandR(
+    ipd_trial = AC_IPD_binY_contX,
+    ald_trial = BC_ALD_binY_contX,
+    strategy = strategy_maic(
+      formula = list(outcome_model = formula("y ~ trt"),
+                     balance_model = bal_form_contX),
+      family = binomial(link = "logit"),
+      moments = 2),
+    seed = 12345)
+
+print(outstandR_maic_m2)
+```
+
+Imposing additional second-moment constraints slightly shifts the adjusted $AC$ log-odds ratio (from $-0.824$ to $-0.797$) and increases its standard error (from $0.390$ to $0.395$), while reducing the effective sample size (`$model$ESS`) from $136.9$ under `moments = 1` to $128.9$ under `moments = 2`.
 The STC, G-computation and MIM analyses are performed similarly but with the `outcome_model` specified instead of the `balance_model`.
 
 ```{r echo=FALSE}
@@ -257,7 +278,7 @@ $$
 \text{Var}(\Delta_{BC}) = \frac{s_B^2}{N_B} + \frac{s_C^2}{N_C}
 $$
 
-where, for treatment $t$, $N_t$ and $s_t^2$ are the number of patients and the observed standard deviation, respectively.
+where, for treatment $t$, $N_t$ and $s_t$ are the number of patients and the observed standard deviation, respectively.
 
 #### Running outstandR()
 
@@ -372,7 +393,7 @@ Recalling that the log link is defined separately in the `outstandR()` function 
 The default relative effect with the log link is the log relative risk, with mean
 
 $$
-\hat{\Delta}_{BC} = \ln(\hat{\mu}_C) - \ln(\hat{\mu}_B)
+\hat{\Delta}_{BC} = \ln(\hat{\mu}_B) - \ln(\hat{\mu}_C)
 $$
 
 and variance:
@@ -398,7 +419,7 @@ outstandR_maic <-
              seed = 12345)
 ```
 
-The differences from the first example are that the model and scale attributes correspond to the input data used. That is, the default output contrast is the mean difference.
+The differences from the first example are that the model and scale attributes correspond to the input data used. That is, the default output contrast is the log relative risk.
 
 ```{r}
 print(outstandR_maic)
@@ -471,13 +492,13 @@ By default, `outstandR` reports treatment effects on the scale corresponding to 
 | Data Type | Model Metric | Mean Difference | Variance Component |
 |:-----------------|:-----------------|:-----------------|:-----------------|
 | **Binary** | Log Odds Ratio$^\dagger$ | $\text{logit}(p_B) - \text{logit}(p_C)$ | $\frac{1}{y_t} + \frac{1}{N_t - y_t}$ |
-|  | Risk Difference | $p_C - p_B$ | $\frac{p_t(1 - p_t)}{N_t}$ |
-|  | Probit Scale Difference | $\text{probit}(p_C) - \text{probit}(p_B)$ | $\frac{1}{y_t} + \frac{1}{N_t - y_t}$ |
-|  | Log RR (cloglog) | $\ln(-\ln(1 - p_C)) - \ln(-\ln(1 - p_B))$ | $\frac{1}{y_t} - \frac{1}{N_t}$ |
-|  | Log RR (Log Link) | $\ln(p_C) - \ln(p_B)$ | $\frac{1}{y_t} - \frac{1}{N_t}$ |
-| **Count** | Log Relative Risk$^\dagger$ | $\ln(\bar{y}_C) - \ln(\bar{y}_B)$ | $\frac{1}{N_t \bar{y}_t}$ |
-|  | Rate Difference | $\bar{y}_C - \bar{y}_B$ | $\frac{\bar{y}_t}{N_t}$ |
-|  | Delta $z$ (Signal-to-noise) | $\sqrt{\bar{y}_C} - \sqrt{\bar{y}_B}$ | $\frac{1}{4 N_t \bar{y}_t}$ |
+|  | Risk Difference | $p_B - p_C$ | $\frac{p_t(1 - p_t)}{N_t}$ |
+|  | Probit Scale Difference | $\text{probit}(p_B) - \text{probit}(p_C)$ | $\frac{1}{y_t} + \frac{1}{N_t - y_t}$ |
+|  | Log RR (cloglog) | $\ln(-\ln(1 - p_B)) - \ln(-\ln(1 - p_C))$ | $\frac{1}{y_t} - \frac{1}{N_t}$ |
+|  | Log RR (Log Link) | $\ln(p_B) - \ln(p_C)$ | $\frac{1}{y_t} - \frac{1}{N_t}$ |
+| **Count** | Log Relative Risk$^\dagger$ | $\ln(\bar{y}_B) - \ln(\bar{y}_C)$ | $\frac{1}{N_t \bar{y}_t}$ |
+|  | Rate Difference | $\bar{y}_B - \bar{y}_C$ | $\frac{\bar{y}_t}{N_t}$ |
+|  | Delta $z$ (Signal-to-noise) | $\sqrt{\bar{y}_B} - \sqrt{\bar{y}_C}$ | $\frac{1}{4 N_t \bar{y}_t}$ |
 | **Continuous** | Mean Difference$^\dagger$ | $\bar{y}_B - \bar{y}_C$ | $\frac{s_t^2}{N_t}$ |
 
 : Relative treatment effect statistics for different outcome data types ($^\dagger$default).
@@ -516,7 +537,7 @@ The package determines the validity of a conversion path based on the underlying
 
 Standard errors in population-adjusted analyses can be sensitive to model misspecification. Users can request robust (sandwich) standard errors by setting the `var_method` argument to `"sandwich"`.
 
-The following example demonstrates how to compare the naive model-based standard error with the robust sandwich estimate for a maximum likelihood G-computation analysis:
+The following example demonstrates how to compare the naive model-based variance with the robust sandwich estimate for a maximum likelihood G-computation analysis:
 
 ```{r robust-variance}
 # standard STC analysis
@@ -543,16 +564,16 @@ stc_robust <-
 ```
 
 ```{r se-compare}
-# compare standard errors
-unlist(stc_naive$results$contrasts$var)
-unlist(stc_robust$results$contrasts$var)
+# compare variance estimates
+unlist(stc_naive$results$contrasts$variances)
+unlist(stc_robust$results$contrasts$variances)
 ```
 
 This option allows analysts to assess the stability of their conclusions without requiring manual implementation of the delta method or bootstrapping.
 
 ## User-defined covariate distributions in G-computation
 
-By default, the simulation step in `outstandR` for G-computation assumes that covariates in the target population follow a multivariate normal distribution  parameterized by the means and standard deviations reported in the ALD (corresponding to $F_{k}(\cdot;\theta_{k})$ in Equation (3)). However, this assumption may be inappropriate. For example, age or costs may be skewed and strictly positive, while binary variables, such as sex, are bounded.
+By default, the simulation step in `outstandR` for G-computation assumes that covariates in the target population follow a multivariate normal distribution parameterized by the means and standard deviations reported in the ALD (corresponding to $F_{k}(\cdot;\eta_{k})$ in Equation (8)). However, this assumption may be inappropriate. For example, age or costs may be skewed and strictly positive, while binary variables, such as sex, are bounded.
 
 `outstandR` allows users to specify alternative marginal distributions for specific covariates via the `marginal_distns` argument.
 
@@ -627,7 +648,7 @@ print(outstandR_sens)
 
 ## Model diagnostics
 
-While `outstandR()` focuses on estimation, assessing model fit is crucial. The returned S3 object exposes the underlying statistical artifacts in the analysis_data slot, allowing users to leverage external diagnostic tools.
+While `outstandR()` focuses on estimation, assessing model fit is crucial. The returned S3 object exposes the underlying statistical artifacts in the `model` slot, allowing users to leverage external diagnostic tools.
 
 For example, for an MAIC analysis, we can inspect the distribution of weights to check for outliers or near-zero effective sample sizes.
 

@@ -11,7 +11,9 @@
 #' @keywords internal
 prep_ipd <- function(form, data) {
   # select data according to formula
-  model.frame(form, data = data)
+  mf <- model.frame(form, data = data)
+  attr(mf, "terms") <- NULL
+  mf
 }
 
 #' Prepare Aggregate Level Data
@@ -34,6 +36,14 @@ prep_ald <- function(form, data, trt_var = "trt") {
   # interaction separate by :
   term.labels <- unlist(strsplit(term.labels, ":", fixed = TRUE))
   term.labels <- setdiff(term.labels, trt_var)
+  int.labels <- if (length(term.labels) > 1) {
+    as.vector(utils::combn(term.labels, 2, FUN = function(x) {
+      c(paste(x, collapse = ":"), paste(rev(x), collapse = ":"))
+    }))
+  } else {
+    character(0)
+  }
+  term.labels <- c(term.labels, int.labels)
   
   dplyr::filter(
     data,

@@ -279,6 +279,7 @@ calc_maic <- function(strategy,
   
   # extract parameters
   ipd <- analysis_params$ipd
+  attr(ipd, "terms") <- NULL
   ald <- analysis_params$ald
   
   n_trts <- length(unique(ipd[[strategy$trt_var]]))

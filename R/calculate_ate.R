@@ -114,7 +114,7 @@ calculate_trial_variance_binary <- function(ald, tid, effect) {
       1/y - 1/N
     },
     "risk_difference" = function() {
-      y * (1 - y/N) / N
+      (y / N) * (1 - y / N) / N
     },
     "delta_z" = function() {
       1/y + 1/(N - y)

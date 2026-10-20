@@ -61,61 +61,79 @@ import(ggplot2)
 import(purrr)
 importFrom(Rdpack,reprompt)
 importFrom(boot,boot)
-importFrom(cli,cli_text)
-importFrom(cli,col_green)
-importFrom(cli,col_red)
-importFrom(copula,mvdc)
-importFrom(copula,normalCopula)
-importFrom(copula,rMvdc)
+importFrom(cli,
+  cli_text,
+  col_green,
+  col_red
+)
+importFrom(copula,
+  mvdc,
+  normalCopula,
+  rMvdc
+)
 importFrom(crayon,yellow)
-importFrom(dplyr,arrange)
-importFrom(dplyr,bind_cols)
-importFrom(dplyr,bind_rows)
-importFrom(dplyr,case_when)
-importFrom(dplyr,filter)
-importFrom(dplyr,group_by)
-importFrom(dplyr,mutate)
-importFrom(dplyr,pull)
-importFrom(dplyr,select)
+importFrom(dplyr,
+  arrange,
+  bind_cols,
+  bind_rows,
+  case_when,
+  filter,
+  group_by,
+  mutate,
+  pull,
+  select
+)
 importFrom(glue,glue)
-importFrom(pillar,style_bold)
-importFrom(pillar,style_subtle)
+importFrom(pillar,
+  style_bold,
+  style_subtle
+)
 importFrom(rlang,.data)
-importFrom(rstanarm,posterior_predict)
-importFrom(rstanarm,stan_glm)
-importFrom(stats,as.formula)
-importFrom(stats,coef)
-importFrom(stats,cor)
-importFrom(stats,delete.response)
-importFrom(stats,gaussian)
-importFrom(stats,glm)
-importFrom(stats,glm.fit)
-importFrom(stats,model.frame)
-importFrom(stats,model.matrix)
-importFrom(stats,optim)
-importFrom(stats,predict)
-importFrom(stats,qlogis)
-importFrom(stats,qnorm)
-importFrom(stats,qt)
-importFrom(stats,quasibinomial)
-importFrom(stats,residuals)
-importFrom(stats,sd)
-importFrom(stats,setNames)
-importFrom(stats,terms)
-importFrom(stats,update)
-importFrom(stats,var)
-importFrom(stats,vcov)
-importFrom(stats,weights)
+importFrom(rstanarm,
+  posterior_predict,
+  stan_glm
+)
+importFrom(stats,
+  as.formula,
+  coef,
+  cor,
+  delete.response,
+  gaussian,
+  glm,
+  glm.fit,
+  model.frame,
+  model.matrix,
+  optim,
+  predict,
+  qlogis,
+  qnorm,
+  qt,
+  quasibinomial,
+  residuals,
+  sd,
+  setNames,
+  terms,
+  update,
+  var,
+  vcov,
+  weights
+)
 importFrom(stringr,str_replace)
 importFrom(tibble,tibble)
-importFrom(tidyr,pivot_longer)
-importFrom(tidyr,pivot_wider)
-importFrom(tidyr,separate)
-importFrom(tidyr,spread)
-importFrom(tidyr,unite)
-importFrom(tidyselect,everything)
-importFrom(tidyselect,starts_with)
-importFrom(utils,methods)
-importFrom(utils,modifyList)
-importFrom(utils,tail)
+importFrom(tidyr,
+  pivot_longer,
+  pivot_wider,
+  separate,
+  spread,
+  unite
+)
+importFrom(tidyselect,
+  everything,
+  starts_with
+)
+importFrom(utils,
+  methods,
+  modifyList,
+  tail
+)
 importFrom(withr,local_seed)
