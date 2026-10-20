@@ -156,13 +156,7 @@ h\left\{\int m_A^{AC}(x)\,dF_{BC}(x)\right\}
 =\Delta_{AC(BC)}.
 \end{equation}
 
-A sufficient condition is the conditional transportability of the arm-specific means, $m_t^{AC}(x)=m_t^{BC}(x)$. This is stronger than is necessary for some treatment effect summary measures. For instance, with the identity transformation and additive difference measures:  
-
-
-
-
-
-For example, with the identity transformation, an additive baseline difference common to both treatments cancels. Such cancellation does not generally hold for a marginal odds ratio. Conditional constancy of relative effects should therefore not be used as a blanket justification for transporting marginal contrasts or absolute outcomes. If only Equation~\ref{eqn:transportability} is assumed, the standardized arm means are intermediate quantities; interpreting each as an absolute outcome in the $BC$ population requires additional justification.
+A sufficient condition is the conditional transportability of the arm-specific means, $m_t^{AC}(x)=m_t^{BC}(x)$. This is stronger than is necessary for some treatment effect summary measures. For example, with the identity transformation, an additive baseline difference common to both treatments cancels. Such cancellation does not generally hold for a marginal odds ratio. Conditional constancy of relative effects should therefore not be used as a blanket justification for transporting marginal contrasts or absolute outcomes. If only Equation~\ref{eqn:transportability} is assumed, the standardized arm means are intermediate quantities; interpreting each as an absolute outcome in the $BC$ population requires additional justification.
 
 
 
@@ -382,9 +376,11 @@ The primary function \code{outstandR()} orchestrates the standardisation process
 \hspace{6mm} \code{\$variances} & Numeric & Variances of the adjusted absolute means. \\
 \hspace{6mm} \code{\$CI} & List & Confidence intervals for absolute means. \\
 \addlinespace
+\code{naive} & List & Unadjusted Bucher indirect comparison estimate, method label, and treatment contrast. \\
 \code{call} & Language & Original function call. \\
-\code{outcome\_model} & Character & The covariates, treatments and outcome formula. \\
-\code{balance\_model} & Character & (MAIC) A covariates formula with empty left hand side. \\
+\code{outcome\_model} & Formula & The covariates, treatments and outcome formula. \\
+\code{balance\_model} & Formula & (MAIC) A covariates formula with empty left hand side. \\
+\code{formula} & Formula & Combined formula incorporating both outcome and balance terms. \\
 \code{scale} & Character & The scale of the treatment effect (e.g., \code{log\_odds}, \code{risk\_difference}). \\
 \code{family} & Character & The statistical model family (e.g., \code{binomial}, \code{gaussian} or \code{poisson}). \\
 \code{ref\_trt} & Character & Name of the common comparator or anchoring treatment. \\
@@ -394,24 +390,23 @@ The primary function \code{outstandR()} orchestrates the standardisation process
 \code{var\_method} & Character & Method used for variance estimation (\code{sample}, \code{sandwich} or \code{pool}). \\
 \code{model} & List & Container for method-specific elements. \\
 \hspace{3mm} \code{\$method\_name} & Character & From \code{MAIC}, \code{STC}, \code{GCOMP\_BAYES}, \code{GCOMP\_ML}, and \code{MIM}. \\
-\hspace{3mm} \code{\$rho} & Numeric & (G-computation, MIM) Matrix of correlation coefficients. \\
-\hspace{3mm} \code{\$N} & Numeric & (G-computation, MIM) Synthetic sample size for the pseudo-population. \\
-\hspace{3mm} \code{\$n\_boot} & Numeric & (MAIC, G-computation ML) Bootstrap replication size. \\
-\hspace{3mm} \code{\$weights} & Numeric & (MAIC) Estimated weights for IPD individuals. \\
-\hspace{3mm} \code{\$ESS} & Numeric & (MAIC) Effective Sample Size. \\
+\hspace{3mm} \code{\$rho} & Numeric & (G-computation, MIM) Latent correlation matrix $\Sigma_Z$ of the Gaussian copula. \\
+\hspace{3mm} \code{\$N} & Numeric & (G-computation, MIM) Synthetic sample size $N$ for the pseudo-population. \\
+\hspace{3mm} \code{\$n\_boot} & Numeric & (MAIC, G-computation ML) Bootstrap replication size $R$. \\
+\hspace{3mm} \code{\$weights} & Numeric & (MAIC) Estimated weights $\hat{w}_i$ for IPD individuals. \\
+\hspace{3mm} \code{\$ESS} & Numeric & (MAIC) Effective Sample Size $\operatorname{ESS} = (\sum_i \hat{w}_i)^2 / \sum_i \hat{w}_i^2$. \\
 \hspace{3mm} \code{\$fit} & Object & (STC, G-computation) The fitted model object (e.g., \code{glm} or \code{stanfit}). \\
 \hspace{3mm} \code{\$stan\_args} & List & (Bayesian G-computation, MIM) Arguments passed to the Stan engine. \\
-\hspace{3mm} \code{\$n\_imp, \$nu, \$hats.v} & Numeric & (MIM) Multiple imputation statistics. \\
-\hspace{3mm} \code{\$marginal\_params} & List & (G-computation) Marginal distributions parameters. \\ %TODO
-\hspace{3mm} \code{\$marginal\_distns} & Vector & (G-computation) Marginal distributions names. \\ %TODO
+\hspace{3mm} \code{\$n\_imp, \$nu, \$hats.v} & Numeric & (MIM) Multiple imputation count $M$, degrees of freedom, and within-imputation variances $U^{(m)}$ in Equation~(\ref{eqn:pooling-results}). \\
+\hspace{3mm} \code{\$marginal\_params} & List & (G-computation) Marginal distribution parameters $\eta_k$ in Equation~(\ref{eqn:marginal-transformation}). \\
+\hspace{3mm} \code{\$marginal\_distns} & Vector & (G-computation) Marginal distribution names $F_k$ in Equation~(\ref{eqn:marginal-transformation}). \\
 \bottomrule
 \end{tabular}
 \end{table}
-%%TODO need to sort out when M, R and N are used. I think maybe R should be used for STC instead of N?
 
 The function returns a list of statistics as an \code{outstandR} S3 class object. The output elements are shown in Table~\ref{tab:s3_structure}. Results are presented as both contrasts and absolute values. For each of these, the means, variances and confidence intervals are provided. Additional elements include the confidence level, reference treatment name, outcome scale, roles of the different treatments, variance estimation method and type of likelihood model. These can be thought of as the arguments provided to the call. A \code{model} list is also included with ITC algorithm-specific elements. These are useful for performing diagnostics and more detailed model interrogation.
 
-Although the output to the console and Table 1 refer broadly to a CI, users should interpret this as a frequentist confidence interval for MAIC and G-computation (ML), and as a Bayesian credible interval for the Bayesian G-computation and MIM strategies.
+As described in Section~\ref{sec:methodology}, \pkg{outstandR} combines the variance of the adjusted contrast $\widehat{V}_{AC}$ with the aggregate trial variance $\widehat{V}_{BC}$ via Equation~(\ref{eqn:paic-variance}), $\widehat{V}_{AB} = \widehat{V}_{AC} + \widehat{V}_{BC}$, to construct normal-approximation intervals for all contrasts. Here $\widehat{V}_{AC}$ is obtained via non-parametric bootstrap resampling for MAIC and ML G-computation, posterior draws for Bayesian G-computation, or synthetic-data pooling rules via Equation~(\ref{eqn:pooling-results}) for MIM. Although the output to the console and Table~\ref{tab:s3_structure} refer broadly to a \code{CI}, users can interpret the intervals for the $AC$ contrast under Bayesian G-computation and MIM from a Bayesian or multiple-imputation perspective, respectively.
 
 \subsubsection{How the outstandR() function works internally}
 The \code{outstandR()} function is a high-level wrapper function to carry out all required steps of ITC and population adjustment depending on the chosen method. It is designed to abstract away the task of transporting from the IPD to the ALD population and computing the contrast and absolute statistics of interest. The commonality of code across methods is exploited to simplify the code and adhere to the ``Don't Repeat Yourself'' (DRY) principle. 
@@ -447,7 +442,7 @@ The asterisk indicates a placeholder for the name of the particular approach fro
                            &                            & \code{moments} \\
                            &                            & \code{int} \\
         \addlinespace
-        Simulated Treatment Comparison$^{\dagger}$ & \code{strategy\_stc()} & \code{N} \\
+        Simulated Treatment Comparison$^{\dagger}$ & \code{strategy\_stc()} & --- \\
         \addlinespace
         G-Computation (ML) & \code{strategy\_gcomp\_ml()} & \code{rho} \\
                            &                            & \code{marginal\_distns} \\
@@ -644,12 +639,12 @@ Similarly, the ALD has the corresponding covariates but not as separate columns 
 \end{verbatim}
 
 The next step is to define the formula, which specifies the relationship between the covariates, treatments and outcome.
-For this example, the outcome regression is
+Following Equation~(\ref{eqn:outcome-regression}) in Section~\ref{sec:gcomp}, the outcome regression model for this example is
 
 $$
-\text{logit}(p) = \alpha + \beta_{01} X_{1} + \beta_{02}X_{2} + (\beta_{trt} + \beta_{13} X_{3} + \beta_{14} X_{4}) \mathbb{I}(trt = 1).
+\operatorname{logit}\{m_t^{AC}(x; \theta)\} = \alpha + \beta_{01} X_{1} + \beta_{02}X_{2} + (\beta_{\mathrm{trt}} + \beta_{13} X_{3} + \beta_{14} X_{4}) \mathbb{I}(t = A),
 $$
-% where $\mathbb{I}()$ is the indicator function, taking value 1 when true and 0 otherwise.
+where $(X_1, X_2, X_3, X_4)$ denote $(\code{PF\_cont\_1}, \code{PF\_cont\_2}, \code{EM\_cont\_1}, \code{EM\_cont\_2})$ and $\mathbb{I}(t = A)$ is the indicator function taking value 1 for treatment $A$ and 0 for treatment $C$.
 The corresponding \proglang{R} formula used by \pkg{outstandR} is independent of the particular type of data and so we do not include a link function at this stage, i.e, the identity link.
 \begin{verbatim}
 > # linear formula for the outcome model
@@ -658,22 +653,22 @@ The corresponding \proglang{R} formula used by \pkg{outstandR} is independent of
 \end{verbatim}
 That is, the main effects are the prognostic factors (\code{PF\_cont\_1} and \code{PF\_cont\_2}) and the treatment \code{trt}. The interaction terms are with the treatment defined as effect modifiers (\code{EM\_cont\_1} and \code{EM\_cont\_2}). 
 
-For the MAIC approach, we define the balancing formula to include the effect modifiers as follows 
+For the MAIC approach, we define the balancing formula specifying the covariates in $b(X_i)$ for the moment-matching constraints in Equation~(\ref{eqn:maic-balance}) to include the effect modifiers as follows:
 \begin{verbatim}
-> # linear formula for the outcome model
+> # formula for the balancing model
 > bal_form_contX <- as.formula("~ EM_cont_1 + EM_cont_2")
 \end{verbatim}
 
 \paragraph{Relative treatment effects}
-Let $p_C$ be the proportion of events in the comparator treatment arm and $p_B$ be the proportion of events in the reference treatment arm. For the logit link with binary data, the mean treatment effect required in Equation~(\ref{eqn:paic}) is the log-odds ratio
+Let $p_B$ be the proportion of events in the comparator treatment arm and $p_C$ be the proportion of events in the reference treatment arm. For the logit link with binary data, the estimated $BC$ contrast required in Equation~(\ref{eqn:paic}) is the log-odds ratio
 $$
-\hat{\Delta}_{BC} = \text{logit}(p_B) - \text{logit}(p_C)
+\widehat{\Delta}_{BC(BC)} = \operatorname{logit}(p_B) - \operatorname{logit}(p_C)
 $$
-with variance
+with variance in Equation~(\ref{eqn:paic-variance}) given by
 $$
-\text{Var}(\Delta_{BC}) = \frac{1}{y_B} + \frac{1}{N_B - y_B} + \frac{1}{y_C} + \frac{1}{N_C - y_C},
+\widehat{V}_{BC} = \operatorname{Var}(\widehat{\Delta}_{BC(BC)}) = \frac{1}{y_B} + \frac{1}{N_B - y_B} + \frac{1}{y_C} + \frac{1}{N_C - y_C},
 $$
-where $y_t$ are the number of events and $N_t$ are the total number of patients for treatment $t$.
+where $y_t$ are the number of events and $N_t$ are the total number of patients for treatment $t \in \{B, C\}$.
 
 A full list including alternative treatment effects and variance components available for binary outcome data is given in Table~\ref{tab:releff}.
 
@@ -713,21 +708,67 @@ Contrasts:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   <chr>         <dbl>     <dbl>      <dbl>      <dbl>
-1 AB            0.616     0.251     -0.365     1.60  
-2 AC           -0.828     0.149     -1.58     -0.0723
-3 BC           -1.44      0.102     -2.07     -0.817 
+1 AB            0.620     0.504     -0.368     1.61  
+2 AC           -0.824     0.390     -1.59     -0.0607
+3 BC           -1.44      0.320     -2.07     -0.817 
 
 Absolute:
 
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   <chr>         <dbl>     <dbl>      <dbl>      <dbl>
-1 A             0.244   0.00216      0.153      0.335
-2 B            -1.02    0.108       -1.67      -0.379
-3 C             0.422   0.00548      0.277      0.567
+1 A             0.241    0.0457     0.151       0.330
+2 B             0.145    0.0543     0.0382      0.251
+3 C             0.417    0.0731     0.274       0.561
 \end{verbatim}
 
 This contains the same information as the raw output but in a more presentable format. The first block of text provides modelling details, and the following tibbles show the contrast and absolute effects, respectively.
+
+\paragraph{Matching higher-order moments in MAIC}
+By default, \code{strategy\_maic()} balances only the first moments (sample means or proportions) of the covariates specified in \code{balance\_model} (\code{moments = 1}). As discussed in Section~\ref{sec:maic}, when both means and standard deviations are available for continuous covariates in the ALD, we can additionally match second moments (variances) by setting \code{moments = 2}. Internally, \pkg{outstandR} expands the balance vector $b(X_i)$ in Equation~(\ref{eqn:maic-balance}) to include squared covariate terms $\text{I}(X_k^2)$ and matches them to the target second moments in $\overline{b}_{BC}$, given by $\bar{x}_{k(BC)}^2 + s_{k(BC)}^2$.
+
+\begin{verbatim}
+> outstandR_maic_m2 <-
++   outstandR(ipd_trial = AC_IPD_binY_contX,
++             ald_trial = BC_ALD_binY_contX,
++             strategy = strategy_maic(
++               formula = list(outcome_model = formula("y ~ trt"),
++                              balance_model = bal_form_contX),
++               family = binomial(link = "logit"),
++               moments = 2),
++             seed = 12345)
+> print(outstandR_maic_m2)
+
+Object of class 'outstandR' 
+ITC algorithm: MAIC 
+Model: binomial 
+Scale: log_odds 
+Common treatment: C 
+Individual patient data study: A vs C 
+Aggregate level data study: B vs C 
+Confidence interval level: 0.95 
+
+Contrasts:
+
+# A tibble: 3 × 5
+  Treatments Estimate Std.Error lower.0.95 upper.0.95
+  <chr>         <dbl>     <dbl>      <dbl>      <dbl>
+1 AB            0.648     0.508     -0.349     1.64  
+2 AC           -0.797     0.395     -1.57     -0.0217
+3 BC           -1.44      0.320     -2.07     -0.817 
+
+Absolute:
+
+# A tibble: 3 × 5
+  Treatments Estimate Std.Error lower.0.95 upper.0.95
+  <chr>         <dbl>     <dbl>      <dbl>      <dbl>
+1 A             0.242    0.0493     0.145       0.339
+2 B             0.142    0.0529     0.0381      0.245
+3 C             0.412    0.0713     0.272       0.551
+\end{verbatim}
+
+Imposing additional second-moment constraints slightly shifts the adjusted $AC$ log-odds ratio (from $-0.824$ to $-0.797$) and increases its standard error (from $0.390$ to $0.395$), while reducing the effective sample size (\code{\$model\$ESS}) from $136.9$ under \code{moments = 1} to $128.9$ under \code{moments = 2}.
+
 The STC, G-computation and MIM analyses are performed similarly but with the \code{outcome\_model} specified instead of the \code{balance\_model}.
 % \begin{verbatim}
 % > outstandR_stc <-
@@ -746,7 +787,7 @@ The STC, G-computation and MIM analyses are performed similarly but with the \co
 %
 % > outstandR_gcomp_bayes <-
 % +   outstandR(ipd_trial = AC_IPD_binY_contX,
-% +             iald_trial = BC_ALD_binY_contX,
+% +             ald_trial = BC_ALD_binY_contX,
 % +             refresh = 0,  # turns off the iteration updates
 % +             strategy = strategy_gcomp_bayes(
 % +               formula = list(outcome_model = lin_form_contX),
@@ -817,10 +858,10 @@ The same steps are followed as previously, first, reading in the data.
 
 The formats are the same as the previous binary data example but now in the ALD the binary-valued covariates have \code{statistic} entry \code{prop}. Covariates \code{X1} and \code{X3} are continuous and \code{X2} and \code{X4} are binary.
 
-The formula for this example is also a little more complicated. We shall assume that some of the covariate can be both prognostic factors and effect modifiers, so the regression is
+The formula for this example is also a little more complicated. We shall assume that some of the covariates can be both prognostic factors and effect modifiers, so the outcome regression model in Equation~(\ref{eqn:outcome-regression}) is
 
 $$
-y = \alpha + \beta_{01} X_1 + \beta_{02} X_2 + \beta_{03} X_3 + (\beta_{trt} + \beta_{11} X_1 + \beta_{12} X_2 + \beta_{14} X_4 ) \mathbb{I}(trt = 1) 
+m_t^{AC}(x; \theta) = \alpha + \beta_{01} X_1 + \beta_{02} X_2 + \beta_{03} X_3 + (\beta_{\mathrm{trt}} + \beta_{11} X_1 + \beta_{12} X_2 + \beta_{14} X_4 ) \mathbb{I}(t = A).
 $$
 
 This corresponds to the \proglang{R} formula given by
@@ -834,17 +875,17 @@ The balance formula includes the effect modifiers and is given by
 \end{verbatim}
 
 \paragraph{Relative treatment effect}
-Let $\hat{\mu}_B$ be the mean in the comparator arm and $\hat{\mu}_C$ be the mean in the reference arm. Then the mean treatment difference required in Equation~(\ref{eqn:paic}) is simply
+Let $\hat{\mu}_B$ be the observed sample mean in the comparator arm and $\hat{\mu}_C$ be the observed sample mean in the reference arm. Then the mean treatment difference required in Equation~(\ref{eqn:paic}) is simply
 $$
-\hat{\Delta}_{BC} = \hat{\mu}_B - \hat{\mu}_C.
+\widehat{\Delta}_{BC(BC)} = \hat{\mu}_B - \hat{\mu}_C.
 $$
 For other scales on continuous data, the approach may involve transforming the means directly, although typical continuous outcome analyses focus on mean differences.
 
-The variance of the relative treatment effect is
+The variance of the relative treatment effect in Equation~(\ref{eqn:paic-variance}) is
 $$
-\text{Var}(\Delta_{BC}) = \frac{s_B^2}{N_B} + \frac{s_C^2}{N_C}.
+\widehat{V}_{BC} = \operatorname{Var}(\widehat{\Delta}_{BC(BC)}) = \frac{s_B^2}{N_B} + \frac{s_C^2}{N_C},
 $$
-where, for treatment arm $t$, $N_t$ and $s_t^2$ are the number of patients and the observed standard deviation, respectively.
+where, for treatment arm $t \in \{B, C\}$, $N_t$ and $s_t$ are the number of patients and the observed standard deviation, respectively.
 
 \paragraph{Running outstandR()}
 A difference from the previous binary outcome data example is the \code{family = gaussian(link = "identity")} argument indicating a normal linear regression. The full call to \code{outstandR()} is
@@ -865,20 +906,25 @@ Again, if we interrogate the output we see the same list format. The differences
 \begin{verbatim}
 > str(outstandR_maic, max.level = 1)
 
-List of 11
- $ results   :List of 2
- $ call      : language outstandR(ipd_trial = AC_IPD_contY_mixedX, __truncated__
- $ formula   :Class 'formula'  language y ~ X1 + X2 + X3 + trt + trt:(X1 + X2 + X4)
+List of 14
+ $ results      :List of 2
+ $ naive        :List of 3
+ $ call         : language outstandR(ipd_trial = AC_IPD_contY_mixedX, __truncated__
+ $ outcome_model:Class 'formula'  language y ~ trt
   .. ..- attr(*, ".Environment")=<environment: R_GlobalEnv> 
- $ CI        : num 0.95
- $ ref_trt   : chr "C"
- $ ipd_comp  : chr "A"
- $ ald_comp  : chr "B"
- $ scale     : chr "mean_difference"
- $ var_method: chr "sample"
- $ family    : chr "gaussian"
- $ model     :List of 3
- - attr(*, "class")= chr [1:2] "outstandR" "list
+ $ balance_model:Class 'formula'  language ~X1 + X2 + X4
+  .. ..- attr(*, ".Environment")=<environment: R_GlobalEnv> 
+ $ formula      :Class 'formula'  language y ~ trt + X1 + X2 + X4
+  .. ..- attr(*, ".Environment")=<environment: R_GlobalEnv> 
+ $ CI           : num 0.95
+ $ ref_trt      : chr "C"
+ $ ipd_comp     : chr "A"
+ $ ald_comp     : chr "B"
+ $ scale        : chr "mean_difference"
+ $ var_method   : NULL
+ $ family       : chr "gaussian"
+ $ model        :List of 3
+ - attr(*, "class")= chr [1:2] "outstandR" "list"
 
 > print(outstandR_maic)
 
@@ -891,21 +937,23 @@ Individual patient data study: A vs C
 Aggregate level data study: B vs C 
 Confidence interval level: 0.95 
 
+Contrasts:
+
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   <chr>         <dbl>     <dbl>      <dbl>      <dbl>
-1 AB           -0.181    0.132      -0.892      0.529
-2 AC           -1.11     0.100      -1.73      -0.487
-3 BC           -0.926    0.0311     -1.27      -0.581
+1 AB           -0.177     0.370     -0.903      0.549
+2 AC           -1.10      0.326     -1.74      -0.465
+3 BC           -0.926     0.176     -1.27      -0.581
 
 Absolute:
 
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   <chr>         <dbl>     <dbl>      <dbl>      <dbl>
-1 A            -0.579    0.0304    -0.921      -0.238
-2 B            -0.398    0.0925    -0.994       0.198
-3 C             0.528    0.0614     0.0425      1.01 
+1 A            -0.571     0.173    -0.910      -0.232
+2 B            -0.393     0.308    -0.998       0.211
+3 C             0.533     0.253     0.0373      1.03 
 \end{verbatim}
 
 The corresponding calls to \code{outstandR()} for the other analyses follow similarly.
@@ -954,21 +1002,21 @@ First, read in and view the two data sets.
 % \end{verbatim}
 
 The formats are the same as the binary outcome data example.
-Let $\lambda$ be the outcome event rate, then the equation for the outcome regression for the count data is
+Following Equation~(\ref{eqn:outcome-regression}), the outcome regression model for the conditional event rate $m_t^{AC}(x; \theta)$ of the count data is
 $$
-\log(\lambda) = \alpha + \beta_{01} X_{1} + \beta_{02} X_{2} + (\beta_{trt} + \beta_{13} X_{3} + \beta_{14} X_{4}) \mathbb{I}(trt = 1).
+\log\{m_t^{AC}(x; \theta)\} = \alpha + \beta_{01} X_{1} + \beta_{02} X_{2} + (\beta_{\mathrm{trt}} + \beta_{13} X_{3} + \beta_{14} X_{4}) \mathbb{I}(t = A).
 $$
 
 Recalling that the log link is defined separately in the \code{outstandR()} function call, we shall use the same linear formulae as for the binary outcome example, \code{lin\_form\_contX} and \code{bal\_form\_contX}.
 
 \paragraph{Relative treatment effects}
-The default relative effect with the log link is the log relative risk, with mean
+The default relative effect with the log link is the log relative risk, with point estimate in Equation~(\ref{eqn:paic}) given by
 $$
-\hat{\Delta}_{BC} = \ln(\hat{\mu}_B) - \ln(\hat{\mu}_C)
+\widehat{\Delta}_{BC(BC)} = \log(\hat{\mu}_B) - \log(\hat{\mu}_C)
 $$ 
-and variance
+and variance in Equation~(\ref{eqn:paic-variance}) given by
 $$
-\text{Var}(\Delta_{BC}) = \frac{1}{N_B \hat{\mu}_B} + \frac{1}{N_C \hat{\mu}_C}
+\widehat{V}_{BC} = \operatorname{Var}(\widehat{\Delta}_{BC(BC)}) = \frac{1}{N_B \hat{\mu}_B} + \frac{1}{N_C \hat{\mu}_C}.
 $$ 
 
 Table~\ref{tab:releff} gives the full list of potential relative effects for count outcome data.
@@ -987,7 +1035,7 @@ A difference from the previous outcome data examples is the \code{family = poiss
 +             seed = 12345)
 \end{verbatim}
 
-The differences from the first example are that the model and scale attributes correspond to the input data used. That is, the default output contrast is the mean difference.
+The differences from the first example are that the model and scale attributes correspond to the input data used. That is, the default output contrast is the log relative risk.
 
 \begin{verbatim}
 > print(outstandR_maic)
@@ -1006,18 +1054,18 @@ Contrasts:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   <chr>         <dbl>     <dbl>      <dbl>      <dbl>
-1 AB           0.0973    0.0727     -0.431      0.626
-2 AC          -1.16      0.0471     -1.59      -0.736
-3 BC          -1.26      0.0256     -1.57      -0.945
+1 AB           0.0780     0.275     -0.461      0.617
+2 AC          -1.18       0.224     -1.62      -0.741
+3 BC          -1.26       0.160     -1.57      -0.945
 
 Absolute:
 
-# A tibble: 2 × 5
+# A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   <chr>         <dbl>     <dbl>      <dbl>      <dbl>
-1 A            0.403    0.00384      0.281      0.524
-2 B            0.0313   0.0581      -0.441      0.504
-3 C            1.29     0.0325       0.936      1.64 
+1 A             0.402    0.0639      0.277      0.527
+2 B             0.371    0.0793      0.215      0.526
+3 C             1.31     0.185       0.942      1.67 
 \end{verbatim}
 The corresponding calls to \code{outstandR()} for the other analyses follow in a similar way.
 
@@ -1030,23 +1078,23 @@ By default, \pkg{outstandR} reports treatment effects on the scale corresponding
     \renewcommand{\arraystretch}{2.2}
     \begin{tabular}{@{} l l c c @{}}
         \toprule
-        \textbf{Outcome Data} & \textbf{Relative Effect} & \textbf{Mean Difference} & \textbf{Treatment Variance} \\
+        \textbf{Outcome Data} & \textbf{Relative Effect} & \textbf{Contrast ($\widehat{\Delta}_{BC(BC)}$)} & \textbf{Arm Variance ($\widehat{V}_t$)} \\
         \midrule
         Binary 
-          & Log Odds Ratio$^\dagger$ & $\text{logit}(p_B) - \text{logit}(p_C)$ & $\frac{1}{y_t} + \frac{1}{N_t - y_t}$ \\
+          & Log Odds Ratio$^\dagger$ & $\operatorname{logit}(p_B) - \operatorname{logit}(p_C)$ & $\frac{1}{y_t} + \frac{1}{N_t - y_t}$ \\
           & Risk Difference & $p_B - p_C$ & $\frac{p_t(1 - p_t)}{N_t}$ \\
-          & Probit Difference & $\text{probit}(p_B) - \text{probit}(p_C)$ & $\frac{1}{y_t} + \frac{1}{N_t - y_t}$ \\
-          & Log RR (cloglog) & $\ln(-\ln(1 - p_B)) - \ln(-\ln(1 - p_C))$ & $\frac{1}{y_t} - \frac{1}{N_t}$ \\
-          & Log RR (Log Link) & $\ln(p_B) - \ln(p_C)$ & $\frac{1}{y_t} - \frac{1}{N_t}$ \\
+          & Probit Difference & $\operatorname{probit}(p_B) - \operatorname{probit}(p_C)$ & $\frac{1}{y_t} + \frac{1}{N_t - y_t}$ \\
+          & Log RR (cloglog) & $\log(-\log(1 - p_B)) - \log(-\log(1 - p_C))$ & $\frac{1}{y_t} - \frac{1}{N_t}$ \\
+          & Log RR (Log Link) & $\log(p_B) - \log(p_C)$ & $\frac{1}{y_t} - \frac{1}{N_t}$ \\
         Count 
-          & Log Relative Risk$^\dagger$ & $\ln(\hat{\mu}_B) - \ln(\hat{\mu}_C)$ & $\frac{1}{N_t \hat{\mu}_t}$ \\
+          & Log Relative Risk$^\dagger$ & $\log(\hat{\mu}_B) - \log(\hat{\mu}_C)$ & $\frac{1}{N_t \hat{\mu}_t}$ \\
           & Rate Difference & $\hat{\mu}_B - \hat{\mu}_C$ & $\frac{\hat{\mu}_t}{N_t}$ \\
           % & Delta $z$ (Signal-to-noise) & $\sqrt{\hat{\mu}_C} - \sqrt{\hat{\mu}_B}$ & $\frac{1}{4 N_t \hat{\mu}_t}$ \\
         Continuous 
           & Mean Difference$^\dagger$ & $\hat{\mu}_B - \hat{\mu}_C$ & $\frac{s_t^2}{N_t}$ \\
         \bottomrule
     \end{tabular}
-    \caption{Relative treatment effect statistics for different outcome data types. For binary data, $y_t$ = events, $N_t$ = total patients. For count data, $\hat{\mu}_t$ = mean rate/count, $N_t$ = patients. $^\dagger$default in \pkg{outstandR}.}
+    \caption{Relative treatment effect statistics for different outcome data types. The contrast variance is $\widehat{V}_{BC} = \widehat{V}_B + \widehat{V}_C$. For binary data, $y_t$ = events, $N_t$ = total patients. For count data, $\hat{\mu}_t$ = mean rate/count, $N_t$ = patients. $^\dagger$default in \pkg{outstandR}.}
         \label{tab:releff}
 \end{table}
 % Supported scales include ``log\_odds", ``odds\_ratio", ``log\_relative\_risk", ``relative\_risk", ``risk\_difference", ``mean\_difference", and ``rate\_difference".
@@ -1095,18 +1143,18 @@ Contrasts:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   <chr>         <dbl>     <dbl>      <dbl>      <dbl>
-1 AB            0.164   0.442       -1.14      1.47  
-2 AC           -0.177   0.00675     -0.338    -0.0161
-3 BC           -0.341   0.436       -1.63      0.952 
+1 AB            0.165    0.110     -0.0514     0.381 
+2 AC           -0.177    0.0839    -0.341     -0.0121
+3 BC           -0.341    0.0715    -0.481     -0.201 
 
 Absolute:
 
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   <chr>         <dbl>     <dbl>      <dbl>      <dbl>
-1 A            0.244    0.00197      0.157      0.331
-2 B            0.0801   0.441       -1.22       1.38 
-3 C            0.421    0.00525      0.279      0.563
+1 A            0.241     0.0457      0.151      0.330
+2 B            0.0760    0.102      -0.124      0.276
+3 C            0.417     0.0731      0.274      0.561
 \end{verbatim}
 
 The package determines the validity of a conversion path based on the underlying data distribution; for instance, requesting a \code{mean\_difference} for a binary outcome model will raise a validation error.
@@ -1116,7 +1164,7 @@ The package determines the validity of a conversion path based on the underlying
 Standard errors in population-adjusted analyses can be sensitive to model misspecification. Users can request robust (sandwich) standard errors (see Section~\ref{sec:variance_methods}) by setting the argument \code{var\_method} to the value \code{"sandwich"}. 
 % This is particularly useful for methods like STC and G-computation (ML) where the outcome model parameters directly drive the effect estimate.
 
-The following example demonstrates how to compare the naive model-based standard error with the robust sandwich estimate for a maximum likelihood G-computation analysis:
+The following example demonstrates how to compare the naive model-based variance with the robust sandwich estimate for a maximum likelihood G-computation analysis:
 
 \begin{verbatim}
 > # standard G-computation ML analysis (model-based variance)
@@ -1134,27 +1182,27 @@ The following example demonstrates how to compare the naive model-based standard
 +    ipd_trial = AC_IPD_binY_contX,
 +    ald_trial = BC_ALD_binY_contX,
 +    strategy = strategy_gcomp_ml(
-+      formula = list(oucome_model = lin_form_contX),
++      formula = list(outcome_model = lin_form_contX),
 +      family = binomial()),
 +    seed = 12345,
 +    var_method = "sandwich")
 
-> # compare standard errors
-> stc_naive$contrasts$var
-> stc_robust$contrasts$var
+> # compare variance estimates
+> unlist(stc_naive$results$contrasts$variances)
+> unlist(stc_robust$results$contrasts$variances)
 
        AB        AC        BC 
-0.2727807 0.1705496 0.1022311 
+0.2465598 0.1443287 0.1022311 
 
        AB        AC        BC 
-0.2266784 0.1244473 0.1022311 
+0.2278323 0.1256012 0.1022311 
 \end{verbatim}
 
 This option allows analysts to assess the stability of their conclusions without requiring manual implementation of the delta method or bootstrapping.
 
 %
 \subsection{User-defined covariate distributions in G-computation}
-By default, the simulation step in G-computation assumes that the covariates in the target population follow a multivariate normal distribution, parameterized by the means and standard deviations reported in the ALD, corresponding to $F_k(\cdot; \eta_k)$ in Equation~(\ref{eqn:marginal-transformation}). However, this assumption may be inappropriate. For example, age or costs may be skewed and strictly positive, while binary variables, such as sex, are bounded.
+By default, the simulation step in G-computation uses a Gaussian copula with normal marginal distributions for continuous covariates (parameterized by the means and standard deviations reported in the ALD) and Bernoulli marginal distributions for binary covariates (parameterized by the reported proportions), corresponding to $F_k(\cdot; \eta_k)$ in Equation~(\ref{eqn:marginal-transformation}). However, the normal assumption for continuous covariates may be inappropriate when variables such as age or costs are skewed and strictly positive.
 
 \pkg{outstandR} allows users to specify alternative marginal distributions for specific covariates via the \code{marginal\_distns} argument.
 
@@ -1197,18 +1245,18 @@ Contrasts:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   <chr>         <dbl>     <dbl>      <dbl>      <dbl>
-1 AB           -0.285    0.0892     -0.871      0.300
-2 AC           -1.21     0.0581     -1.68      -0.739
-3 BC           -0.926    0.0311     -1.27      -0.581
+1 AB           -0.293     0.305     -0.891      0.305
+2 AC           -1.22      0.249     -1.71      -0.732
+3 BC           -0.926     0.176     -1.27      -0.581
 
 Absolute:
 
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   <chr>         <dbl>     <dbl>      <dbl>      <dbl>
-1 A            -0.514    0.0170     -0.770     -0.259
-2 B            -0.229    0.0765     -0.772      0.313
-3 C             0.697    0.0454      0.279      1.11 
+1 A            -0.507     0.133     -0.767     -0.247
+2 B            -0.214     0.284     -0.769      0.342
+3 C             0.713     0.222      0.277      1.15 
 \end{verbatim}
 
 This approach ensures that the synthetic cohort respects the natural constraints of the data (e.g., non-negative age) while strictly adhering to the evidence reported in the aggregate summary.
@@ -1219,13 +1267,13 @@ One use case is as a sensitivity analysis, where a researcher wishes to assess t
 The following code illustrates how to manually override the ALD statistics to simulate an older population.
 
 \begin{verbatim}
-> # manually specify parameters for 'age' (mean=70, sd=10.5)
-> # convert mean=70/sd=10.5 to shape/rate manually 
+> # manually specify parameters for 'X1' (mean=0.8, sd=0.45 instead of ALD mean=0.608, sd=0.436)
+> # convert mean=0.8/sd=0.45 to shape/rate manually 
 > # or pass them if we already know the specific shape/rate
-> target_mean <- 70
-> target_sd <- 10.5
+> target_mean <- 0.8
+> target_sd <- 0.45
 
-> sens_params <- list(
+> new_params <- list(
 +   X1 = list(shape = (target_mean/target_sd)^2, 
 +             rate = target_mean/(target_sd^2)))
 
@@ -1236,7 +1284,7 @@ The following code illustrates how to manually override the ALD statistics to si
 +    strategy = strategy_gcomp_ml(
 +      formula = list(outcome_model = lin_form_mixedX),
 +      family = gaussian(link = "identity"),
-+      marginal_distns = new_distns,
++      marginal_distns = custom_distns,
 +      marginal_params = new_params, # overrides ALD for X1
 +      N = 1000),
 +    seed = 12345)
@@ -1257,23 +1305,23 @@ Contrasts:
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   <chr>         <dbl>     <dbl>      <dbl>      <dbl>
-1 AB          -22.1   1160.         -88.9      44.6  
-2 AC          -23.1   1160.         -89.8      43.7  
-3 BC           -0.926    0.0311      -1.27     -0.581
+1 AB           -0.355     0.346      -1.03      0.323
+2 AC           -1.28      0.298      -1.87     -0.698
+3 BC           -0.926     0.176      -1.27     -0.581
 
 Absolute:
 
 # A tibble: 3 × 5
   Treatments Estimate Std.Error lower.0.95 upper.0.95
   <chr>         <dbl>     <dbl>      <dbl>      <dbl>
-1 A              62.4      271.       30.2       94.7
-2 B              84.6      914.       25.3      144. 
-3 C              85.5      914.       26.2      145
+1 A           -0.334      0.153     -0.634    -0.0338
+2 B            0.0215     0.319     -0.603     0.646 
+3 C            0.948      0.265      0.428     1.47  
 \end{verbatim}
 
 
 \subsection{Model diagnostics}
-While \code{outstandR()} focuses on estimation, assessing model fit is crucial. The returned S3 object exposes the underlying statistical artifacts in the \code{analysis\_data} slot, allowing users to leverage external diagnostic tools.
+While \code{outstandR()} focuses on estimation, assessing model fit is crucial. The returned S3 object exposes the underlying statistical artifacts in the \code{model} slot, allowing users to leverage external diagnostic tools.
 
 For example, for an MAIC analysis, we can inspect the distribution of weights to check for outliers or near-zero effective sample sizes.
 
